@@ -88,11 +88,11 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 	const [useCases, setUseCases] = useState(['', '', '']);
 
 	const steps = [
-		<span>Please provide a name for the new category that will be created</span>,
+		<span>Please name the new category</span>,
 		<span>
-			Describe the general functions and responsibilities of your company/department. Include
-			information about the role of {<b>{name}</b>} tickets within your operations. Provide details
-			about the broader context and challenges addressed by these tickets. (Minimum 100 words)
+			Explain how {<b>{name}</b>} tickets fit into your company/department's overall functions and
+			responsibilities. Provide details about the broader context and challenges addressed by these
+			tickets (Minimum 100 words).
 		</span>,
 		<span>
 			List at least 3 different use cases for {<b>{name}</b>} tickets. These use cases should cover
@@ -221,7 +221,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 									autoFocus={index === 0}
 									margin="dense"
 									name="question2"
-									label="Your answer"
+									label={'Use case ' + (index + 1)}
 									type="text"
 									fullWidth
 									variant="filled"
@@ -259,7 +259,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 								}}
 								color="primary"
 							>
-								Add another use case
+								Add use case
 							</Button>
 						</>
 					)}

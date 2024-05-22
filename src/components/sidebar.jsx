@@ -199,7 +199,7 @@ export const Sidebar = ({ taskId, processParam, finishedParam }) => {
 							<Typography
 								variant="h5"
 								sx={{
-									// textTransform: 'capitalize',
+									textTransform: 'capitalize',
 									fontWeight: 600,
 									mt: '-5px',
 									color: '#1B1D1F',
@@ -303,7 +303,9 @@ export const Sidebar = ({ taskId, processParam, finishedParam }) => {
 											variant="body1"
 											sx={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1B1D1F', mb: -0.5 }}
 										>
-											{progressBarPercent !== 100 ? 'Fine-tuning model' : 'Model is ready to use'}
+											{progressBarPercent !== 100
+												? 'Fine-tuning model'
+												: 'Model has been fine-tuned!'}
 										</Typography>
 									)}
 
@@ -350,7 +352,7 @@ export const Sidebar = ({ taskId, processParam, finishedParam }) => {
 											variant="caption"
 											sx={{ fontSize: '0.8125rem', fontWeight: 400, color: '#9A9FA5' }}
 										>
-											The model is ready to be used
+											The model is ready for testing
 										</Typography>
 									)}
 								</Box>

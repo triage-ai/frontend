@@ -10,8 +10,17 @@ import {
 	Typography,
 } from '@mui/material';
 import { Pencil } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export const EmailTable = ({ routes }) => {
+	const [activeModel, setActiveModel] = useState(sessionStorage.getItem('activeModel'));
+
+	useEffect(() => {
+		window.addEventListener('storage', () => {
+			setActiveModel(sessionStorage.getItem('activeModel'));
+		});
+	}, []);
+
 	return (
 		<>
 			<TableHead>
@@ -194,7 +203,8 @@ export const EmailTable = ({ routes }) => {
 								variant="body1"
 								sx={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1B1D1F' }}
 							>
-								No email routing mechanisms have been added yet
+								Model <span style={{ textTransform: 'capitalize' }}>{activeModel}</span> does not
+								currently contain any email routing mechanism
 							</Typography>
 						</TableCell>
 					</TableRow>

@@ -31,10 +31,11 @@ import { Test } from './pages/test/test';
 import { Route as RouteComponent } from './pages/route/route';
 import { CookiesProvider } from 'react-cookie';
 import { useSetAuthCookie } from './hooks/useSetAuthCookie';
+import { Landing } from './pages/landing/landing';
 
 const theme = createTheme({
 	typography: {
-		fontFamily: ['Inter', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
+		fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
 	},
 });
 
@@ -106,7 +107,7 @@ function App() {
 						<Route
 							path="/"
 							exact
-							element={<ComingSoon />}
+							element={<Landing />}
 							// element={<Home />}
 							// element={isAuth ? <Navigate to="/build" /> : <ComingSoon />}
 						/>

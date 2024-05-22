@@ -103,9 +103,10 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 	const [routeType, setRouteType] = useState('email');
 	const [expertise, setExpertise] = useState('');
 	const [level, setLevel] = useState('');
-	const [email, setEmail] = useState('');
 	const [slackToken, setSlackToken] = useState('');
 	const [slackChannelId, setSlackChannelId] = useState('');
+
+	const [emailError, setEmailError] = useState('');
 
 	useEffect(() => {
 		setCategoryList();
@@ -139,6 +140,16 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 
 	const handleRouteChange = type => {
 		setRouteType(type);
+	};
+
+	const validateEmail = email => {
+		const isValid = String(email)
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			);
+
+		setEmailError(isValid ? false : true);
 	};
 
 	return (
@@ -183,8 +194,8 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 					variant="body1"
 					sx={{ fontSize: '0.9375rem', fontWeight: 500, color: '#6F767E', mb: '8px', ml: '2px' }}
 				>
-					Please provide the route level, area of expertise and type for the routing mechanism that
-					will be created
+					Specify the route level, area of expertise, and type for the routing mechanism you wish to
+					create.
 				</Typography>
 
 				<RadioGroup
@@ -216,9 +227,9 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 						value={expertise}
 						onChange={handleExpertiseChange}
 					>
-						<MenuItem value="">
+						{/* <MenuItem value="">
 							<em>None</em>
-						</MenuItem>
+						</MenuItem> */}
 						{categories.map(category => (
 							<MenuItem
 								key={category.name}
@@ -322,6 +333,20 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 						type="text"
 						fullWidth
 						variant="filled"
+						sx={{
+							'& .MuiInputBase-root': {
+								border: emailError ? '2px solid #ff7474' : '2px solid #EFEFEF',
+
+								'&.Mui-focused': {
+									borderColor: emailError && '#ff7474',
+								},
+
+								'&:hover': {
+									borderColor: emailError && '#ff7474',
+								},
+							},
+						}}
+						onChange={event => validateEmail(event.target.value)}
 					/>
 				</ActiveContentContainer>
 

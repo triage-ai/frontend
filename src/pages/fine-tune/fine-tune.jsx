@@ -119,7 +119,7 @@ export const FineTune = ({ handleProgress }) => {
 							variant="h6"
 							sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 						>
-							Added categories
+							Historical ticket datasets
 						</Typography>
 					</Box>
 
@@ -232,7 +232,7 @@ export const FineTune = ({ handleProgress }) => {
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 								>
-									Files
+									Files (.csv)
 								</Typography>
 							</TableCell>
 
@@ -303,7 +303,7 @@ export const FineTune = ({ handleProgress }) => {
 
 			<Footer
 				text={files.length + ' datasets uploaded'}
-				buttonText={'Start fine-tuning process'}
+				buttonText={'Fine-tune model'}
 				buttonDisabled={finishedBuilding}
 				handleClick={startFineTune}
 			/>

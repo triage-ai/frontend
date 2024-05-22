@@ -120,7 +120,7 @@ export const SignIn = () => {
 		if (validateEmail(email) && password !== '') {
 			signInWithEmailAndPassword(auth, email, password)
 				.then(userCredential => {
-					// console.log(userCredential);
+					console.log(userCredential);
 					// getApiToken(userCredential);
 					const authInfo = {
 						userId: userCredential.user.uid,

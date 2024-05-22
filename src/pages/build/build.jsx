@@ -30,6 +30,7 @@ export const TableColorBox = styled(Box)(({ theme }) => ({
 }));
 
 export const Build = ({ handleProgress }) => {
+	const [activeModel, setActiveModel] = useState('');
 	const [openDialog, setOpenDialog] = useState(false);
 	const [categories, setCategories] = useState([]);
 	const [finishedBuilding, setFinishedBuilding] = useState(false);
@@ -45,8 +46,10 @@ export const Build = ({ handleProgress }) => {
 	}, []);
 
 	const setCategoryList = () => {
+		const activeModel = sessionStorage.getItem('activeModel');
+		setActiveModel(activeModel);
+
 		if (sessionStorage.getItem('categories')) {
-			const activeModel = sessionStorage.getItem('activeModel');
 			const parsedCategories = JSON.parse(sessionStorage.getItem('categories')).filter(
 				category => category.model === activeModel
 			);
@@ -90,7 +93,7 @@ export const Build = ({ handleProgress }) => {
 				variant="h4"
 				sx={{ fontSize: '2.5rem', fontWeight: 600, letterSpacing: '-0.02em', mb: '24px' }}
 			>
-				Categories
+				Ticket categories
 			</Typography>
 
 			<Box sx={{ width: '100%', background: '#FCFCFC', borderRadius: '10px', p: '24px' }}>
@@ -108,7 +111,7 @@ export const Build = ({ handleProgress }) => {
 							variant="h6"
 							sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 						>
-							Added categories
+							Add categories for <span style={{ textTransform: 'capitalize' }}>{activeModel}</span>
 						</Typography>
 					</Box>
 
@@ -160,7 +163,7 @@ export const Build = ({ handleProgress }) => {
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 								>
-									Description
+									Ticket Category Description
 								</Typography>
 							</TableCell>
 							<TableCell sx={{ borderColor: '#EFEFEF' }}>
@@ -168,7 +171,7 @@ export const Build = ({ handleProgress }) => {
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 								>
-									Use cases
+									Ticket Category Use Cases Overview
 								</Typography>
 							</TableCell>
 							<TableCell
@@ -262,7 +265,8 @@ export const Build = ({ handleProgress }) => {
 										variant="body1"
 										sx={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1B1D1F' }}
 									>
-										No categories have been added yet for this model
+										Model <span style={{ textTransform: 'capitalize' }}>{activeModel}</span> does
+										not currently contain any added categories
 									</Typography>
 								</TableCell>
 							</TableRow>
@@ -273,7 +277,7 @@ export const Build = ({ handleProgress }) => {
 
 			<Footer
 				text={categories.length + ' categories created'}
-				buttonText={'Submit build for base model'}
+				buttonText={'Build base model'}
 				buttonDisabled={finishedBuilding}
 				handleClick={submitBuild}
 			/>

@@ -91,7 +91,7 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 								fontSize: '0.9375rem',
 								fontWeight: 600,
 								color: '#1B1D1F',
-								// textTransform: 'capitalize',
+								textTransform: 'capitalize',
 							}}
 						>
 							{sessionStorage.getItem('activeModel')}
@@ -110,7 +110,7 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 								variant="caption"
 								sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
 							>
-								Development
+								In development
 							</Typography>
 						}
 						sx={{ background: '#CABDFF', color: '#1B1D1F' }}
@@ -138,7 +138,7 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 									fontSize: '0.9375rem',
 									fontWeight: 600,
 									color: '#1B1D1F',
-									// textTransform: 'capitalize',
+									textTransform: 'capitalize',
 								}}
 							>
 								{model}
@@ -157,7 +157,7 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
 								>
-									Development
+									In development
 								</Typography>
 							}
 							sx={{ background: '#CABDFF', color: '#1B1D1F' }}
@@ -167,12 +167,16 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 
 				<Divider sx={{ my: 0.5 }} />
 
-				{['Gamma'].map((model, index) => (
+				{['gamma'].map((model, index) => (
 					<MenuItem
 						key={model}
 						onClick={() => setActiveModel(model, 'prod')}
 						disableRipple
-						sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
 					>
 						<Box
 							sx={{
@@ -184,9 +188,20 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 						>
 							<Typography
 								variant="body1"
-								sx={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1B1D1F' }}
+								sx={{
+									fontSize: '0.9375rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									textTransform: 'capitalize',
+								}}
 							>
 								{model}
+							</Typography>
+							<Typography
+								variant="caption"
+								sx={{ fontSize: '0.8125rem', fontWeight: 500, color: '#9A9FA5' }}
+							>
+								Model is in production
 							</Typography>
 							{/* <Typography
 								variant="caption"
@@ -202,7 +217,7 @@ export const ModelSelectorMenu = ({ devModels, anchorEl, open, handleClose, hand
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
 								>
-									Production
+									In production
 								</Typography>
 							}
 							sx={{ background: '#B5E4CA', color: '#1B1D1F' }}

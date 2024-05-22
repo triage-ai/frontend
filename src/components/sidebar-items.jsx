@@ -260,7 +260,7 @@ export const SidebarItems = () => {
 									variant="body1"
 									sx={{ fontSize: '0.9375rem', fontWeight: 500, color: '#6F767E', mb: '8px' }}
 								>
-									Please provide a name for the new model that will be created
+									Please give your new model a name
 								</Typography>
 
 								<CustomTextField

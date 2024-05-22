@@ -9,8 +9,17 @@ import {
 	Typography,
 } from '@mui/material';
 import { Pencil } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export const SlackTable = ({ routes }) => {
+	const [activeModel, setActiveModel] = useState(sessionStorage.getItem('activeModel'));
+
+	useEffect(() => {
+		window.addEventListener('storage', () => {
+			setActiveModel(sessionStorage.getItem('activeModel'));
+		});
+	}, []);
+
 	const getToken = () => {
 		if (routes.length > 0) {
 			const tokenFound = routes?.find(route => route[0].includes('token'));
@@ -193,7 +202,8 @@ export const SlackTable = ({ routes }) => {
 								variant="body1"
 								sx={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1B1D1F' }}
 							>
-								No slack routing mechanisms have been added yet
+								Model <span style={{ textTransform: 'capitalize' }}>{activeModel}</span> does not
+								currently contain any slack routing mechanism
 							</Typography>
 						</TableCell>
 					</TableRow>

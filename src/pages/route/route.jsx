@@ -196,7 +196,7 @@ export const Route = () => {
 							size={24}
 							style={{ marginRight: '10px' }}
 						/>
-						New routing mechanism
+						Add routing mechanism
 					</Button>
 				</Box>
 
@@ -239,11 +239,6 @@ export const Route = () => {
 					handleRouteTypeChange={handleRouteTypeChange}
 				/>
 			</Dialog>
-
-			{/* <Footer
-				text={'4 categories created'}
-				buttonText={'Submit build for base model'}
-			/> */}
 		</Box>
 	);
 };

@@ -139,6 +139,8 @@ export const Test = ({ handlePublishProgress }) => {
 	const [expandedAccordionIndex, setExpandedAccordionIndex] = useState(-1);
 	const [finishedDeploying, setFinishedDeploying] = useState(false);
 
+	const [activeModel, setActiveModel] = useState('');
+
 	const { testIndividualTicket, testUploadedFiles, publishModelIntoProd } = useModelBackend();
 
 	useEffect(() => {
@@ -151,8 +153,10 @@ export const Test = ({ handlePublishProgress }) => {
 	}, []);
 
 	const setCategoryList = () => {
+		const activeModel = sessionStorage.getItem('activeModel');
+		setActiveModel(activeModel);
+
 		if (sessionStorage.getItem('categories')) {
-			const activeModel = sessionStorage.getItem('activeModel');
 			const parsedCategories = JSON.parse(sessionStorage.getItem('categories')).filter(
 				category => category.model === activeModel
 			);
@@ -360,7 +364,7 @@ export const Test = ({ handlePublishProgress }) => {
 									variant="h6"
 									sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 								>
-									Type of testing
+									Types of testing
 								</Typography>
 							</Box>
 						</Box>
@@ -397,7 +401,7 @@ export const Test = ({ handlePublishProgress }) => {
 										variant="caption"
 										sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#575757' }}
 									>
-										Testing type
+										Test one ticket at a time
 									</Typography>
 
 									<Typography variant="h4">Micro</Typography>
@@ -427,7 +431,7 @@ export const Test = ({ handlePublishProgress }) => {
 										variant="caption"
 										sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#575757' }}
 									>
-										Testing type
+										Test your classifier's performance at scale
 									</Typography>
 
 									<Typography variant="h4">Macro</Typography>
@@ -458,7 +462,7 @@ export const Test = ({ handlePublishProgress }) => {
 									variant="h6"
 									sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 								>
-									Create ticket
+									Create fictional ticket for quick testing
 								</Typography>
 							</Box>
 						</Box>
@@ -499,7 +503,7 @@ export const Test = ({ handlePublishProgress }) => {
 
 							<CustomTextField
 								label=""
-								placeholder="Extra information"
+								placeholder="Relevant information (optional)"
 								multiline
 								minRows={4}
 								maxRows={4}
@@ -560,7 +564,8 @@ export const Test = ({ handlePublishProgress }) => {
 									variant="h6"
 									sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 								>
-									Categories
+									<span style={{ textTransform: 'capitalize' }}>{activeModel}</span>'s ticket
+									categories
 								</Typography>
 							</Box>
 						</Box>
@@ -769,7 +774,7 @@ export const Test = ({ handlePublishProgress }) => {
 									variant="h6"
 									sx={{ fontWeight: 600, letterSpacing: '-0.02em' }}
 								>
-									Upload dataset
+									Upload testing dataset
 								</Typography>
 							</Box>
 						</Box>
@@ -781,6 +786,7 @@ export const Test = ({ handlePublishProgress }) => {
 								borderRadius: '12px',
 								background: '#F4F4F4',
 								display: 'flex',
+								flexDirection: 'column',
 								alignItems: 'center',
 								justifyContent: 'center',
 								'&:hover .upload-files-button': {
@@ -816,6 +822,13 @@ export const Test = ({ handlePublishProgress }) => {
 									onChange={handleFileUpload}
 								/>
 							</Button>
+
+							<Typography
+								variant="caption"
+								sx={{ mt: 0.5 }}
+							>
+								Only .csv files accepted
+							</Typography>
 						</Box>
 
 						{files.length > 0 && (
@@ -853,7 +866,10 @@ export const Test = ({ handlePublishProgress }) => {
 										onClick={testFiles}
 										disabled={loadingMetrics}
 									>
-										Test the files
+										Run testing against
+										<span style={{ textTransform: 'capitalize', marginLeft: 4 }}>
+											{activeModel}
+										</span>
 									</Button>
 								</Box>
 
@@ -935,7 +951,7 @@ export const Test = ({ handlePublishProgress }) => {
 								<Tooltip title="Translate metrics for easy ingestion">
 									<IconButton
 										edge="end"
-										aria-label="download metrics file"
+										aria-label="translate metrics"
 										sx={{
 											color: '#575757',
 											padding: '10px',
@@ -951,10 +967,10 @@ export const Test = ({ handlePublishProgress }) => {
 									</IconButton>
 								</Tooltip>
 
-								<Tooltip title="Download metrics file">
+								<Tooltip title="Download metrics">
 									<IconButton
 										edge="end"
-										aria-label="download metrics file"
+										aria-label="download metrics"
 										sx={{
 											// background: '#EFEFEF',
 											color: '#575757',
@@ -1121,10 +1137,10 @@ export const Test = ({ handlePublishProgress }) => {
 			<Footer
 				text={
 					<span>
-						Happy with your model? Send it into <b>production</b>
+						Happy with your model? Send it to <b>production</b>
 					</span>
 				}
-				buttonText={'Deploy model'}
+				buttonText={'Deploy ' + activeModel.charAt(0).toUpperCase() + activeModel.slice(1)}
 				buttonDisabled={finishedDeploying}
 				handleClick={publishModel}
 			/>
