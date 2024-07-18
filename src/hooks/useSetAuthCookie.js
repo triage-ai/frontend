@@ -1,6 +1,7 @@
 import { useCookies } from 'react-cookie';
 import { auth } from '../config/firebase-config';
 import { useEffect } from 'react';
+import axios from 'axios';
 
 export const useSetAuthCookie = () => {
 	const [authCookie, setAuthCookie, removeAuthCookie] = useCookies(['auth']);
@@ -35,6 +36,17 @@ export const useSetAuthCookie = () => {
 		// 	});
 	};
 
+	const signInEmailAndPassword = async (email, password) => {
+		const config = {
+			auth: {
+				username: email,
+				password: password,
+			},
+		};
+
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'auth/login', {}, config);
+	};
+
 	const handleAuthCookie = user => {
 		setAuthCookie('auth', user);
 	};
@@ -47,5 +59,5 @@ export const useSetAuthCookie = () => {
 		return authCookie;
 	};
 
-	return { getApiToken, handleAuthCookie, getAuthCookie, handleLogout };
+	return { getApiToken, signInEmailAndPassword, handleAuthCookie, getAuthCookie, handleLogout };
 };

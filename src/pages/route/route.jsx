@@ -174,10 +174,10 @@ export const Route = () => {
 					<Button
 						variant="outlined"
 						sx={{
-							// border: '2px solid #2B85FF',
+							// border: '2px solid #22874E',
 							border: 0,
-							boxShadow: '0 0 0 2px #2B85FF inset',
-							color: '2B85FF',
+							boxShadow: '0 0 0 2px #22874E inset',
+							color: '#22874E',
 							textTransform: 'unset',
 							fontSize: '0.9375rem',
 							fontWeight: 700,
@@ -185,7 +185,7 @@ export const Route = () => {
 							p: '10px 18px',
 							transition: 'all 0.3s',
 							'&:hover': {
-								background: '#2B85FF',
+								background: '#22874E',
 								color: '#FFF',
 								border: 0,
 							},

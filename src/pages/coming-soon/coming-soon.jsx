@@ -317,7 +317,7 @@ export const ComingSoon = () => {
 
 					<Button
 						sx={{
-							backgroundColor: '#2B85FF',
+							backgroundColor: '#22874E',
 							color: '#FFF',
 							borderRadius: '12px',
 							width: '100%',
@@ -330,7 +330,7 @@ export const ComingSoon = () => {
 							marginBottom: '28px',
 							transition: 'all 0.3s',
 							'&:hover': {
-								backgroundColor: '#0069f6',
+								backgroundColor: '#29b866',
 							},
 							'&:disabled': {
 								color: 'unset',

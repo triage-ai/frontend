@@ -519,8 +519,8 @@ export const Test = ({ handlePublishProgress }) => {
 								disableElevation
 								sx={{
 									border: 0,
-									// boxShadow: '0 0 0 2px #2B85FF inset',
-									background: '#2B85FF',
+									// boxShadow: '0 0 0 2px #22874E inset',
+									background: '#22874E',
 									color: '#FFF',
 									textTransform: 'unset',
 									fontSize: '0.9375rem',
@@ -529,7 +529,7 @@ export const Test = ({ handlePublishProgress }) => {
 									p: '10px 18px',
 									transition: 'all 0.3s',
 									'&:hover': {
-										background: '#2B85FF',
+										background: '#22874E',
 										color: '#FFF',
 										border: 0,
 									},
@@ -802,7 +802,7 @@ export const Test = ({ handlePublishProgress }) => {
 								disableElevation
 								sx={{
 									border: '2px solid #EFEFEF',
-									// boxShadow: '0 0 0 2px #2B85FF inset',
+									// boxShadow: '0 0 0 2px #22874E inset',
 									background: '#FCFCFC',
 									color: '#1B1D1F',
 									boxShadow: '0px 12px 13px -6px rgba(0, 0, 0, 0.04)',
@@ -848,8 +848,8 @@ export const Test = ({ handlePublishProgress }) => {
 										disableElevation
 										sx={{
 											border: 0,
-											// boxShadow: '0 0 0 2px #2B85FF inset',
-											background: '#2B85FF',
+											// boxShadow: '0 0 0 2px #22874E inset',
+											background: '#22874E',
 											color: '#FFF',
 											textTransform: 'unset',
 											fontSize: '0.9375rem',
@@ -858,7 +858,7 @@ export const Test = ({ handlePublishProgress }) => {
 											p: '10px 18px',
 											transition: 'all 0.3s',
 											'&:hover': {
-												background: '#2B85FF',
+												background: '#22874E',
 												color: '#FFF',
 												border: 0,
 											},
@@ -958,7 +958,7 @@ export const Test = ({ handlePublishProgress }) => {
 											transition: 'all 0.3s',
 											mr: '2px',
 											'&:hover': {
-												color: '#2B85FF',
+												color: '#22874E',
 											},
 										}}
 										onClick={downloadJSON}
@@ -978,7 +978,7 @@ export const Test = ({ handlePublishProgress }) => {
 											transition: 'all 0.3s',
 											mr: '-8px',
 											'&:hover': {
-												color: '#2B85FF',
+												color: '#22874E',
 											},
 										}}
 										onClick={downloadJSON}

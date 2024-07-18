@@ -242,7 +242,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 								disableElevation
 								sx={{
 									border: 0,
-									// background: '#2B85FF',
+									// background: '#22874E',
 									// color: '#FFF',
 									textTransform: 'unset',
 									fontSize: '0.9375rem',
@@ -280,8 +280,8 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 							disableElevation
 							sx={{
 								border: 0,
-								boxShadow: '0 0 0 2px #2B85FF inset',
-								color: '2B85FF',
+								boxShadow: '0 0 0 2px #22874E inset',
+								color: '#22874E',
 								textTransform: 'unset',
 								fontSize: '0.9375rem',
 								fontWeight: 700,
@@ -289,7 +289,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 								p: '10px 18px',
 								transition: 'all 0.3s',
 								'&:hover': {
-									background: '#2B85FF',
+									background: '#22874E',
 									color: '#FFF',
 									border: 0,
 								},
@@ -306,7 +306,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 							disableElevation
 							sx={{
 								border: 0,
-								background: '#2B85FF',
+								background: '#22874E',
 								color: '#FFF',
 								textTransform: 'unset',
 								fontSize: '0.9375rem',
@@ -315,7 +315,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 								p: '10px 18px',
 								transition: 'all 0.3s',
 								'&:hover': {
-									background: '#0069f6',
+									background: '#29b866',
 								},
 							}}
 							onClick={handleNext}
@@ -330,7 +330,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 							disableElevation
 							sx={{
 								border: 0,
-								background: '#2B85FF',
+								background: '#22874E',
 								color: '#FFF',
 								textTransform: 'unset',
 								fontSize: '0.9375rem',
@@ -339,7 +339,7 @@ export const CategoryDialog = ({ handleDialogClose }) => {
 								p: '10px 18px',
 								transition: 'all 0.3s',
 								'&:hover': {
-									background: '#0069f6',
+									background: '#29b866',
 								},
 							}}
 							onClick={saveCategory}

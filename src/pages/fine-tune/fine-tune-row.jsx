@@ -127,7 +127,7 @@ export const FineTuneRow = ({
 					backgroundColor: open ? '#f4f4f4' : 'unset',
 					// cursor: 'pointer',
 					'&:hover .category-title': {
-						color: '#2B85FF',
+						color: '#22874E',
 					},
 					'&:last-child td, &:last-child th': { border: 0 },
 					'& > *': {
@@ -204,7 +204,7 @@ export const FineTuneRow = ({
 						variant="outlined"
 						component="label"
 						sx={{
-							// border: '2px solid #2B85FF',
+							// border: '2px solid #22874E',
 							border: 0,
 							boxShadow: open ? '0 0 0 2px #9A9FA5 inset' : '0 0 0 2px #EFEFEF inset',
 							color: '#1B1D1F',

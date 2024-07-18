@@ -5,13 +5,12 @@ export const useModelBackend = () => {
 	const { getAuthCookie } = useSetAuthCookie();
 
 	const getAllDevModels = async () => {
-		const { auth } = getAuthCookie();
-
-		const config = {
-			headers: { Authorization: `Bearer ${auth.token}` },
-		};
-
-		return await axios.get('https://demo-docker-3jtvhz75ca-uk.a.run.app/model/list/dev', config);
+		// const { auth } = getAuthCookie();
+		// const config = {
+		// 	headers: { Authorization: `Bearer ${auth.token}` },
+		// };
+		// return await axios.get('https://demo-docker-3jtvhz75ca-uk.a.run.app/model/list/dev', config);
+		return [];
 	};
 
 	const createDataset = async categories => {

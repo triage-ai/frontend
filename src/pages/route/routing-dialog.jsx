@@ -81,14 +81,14 @@ const CustomFormControl = styled(FormControl)({
 
 		'&:hover': {
 			background: 'transparent',
-			borderColor: '#2B85FF',
+			borderColor: '#22874E',
 			'&:before': {
 				content: 'none',
 			},
 		},
 
 		'&.Mui-focused': {
-			borderColor: '#2B85FF',
+			borderColor: '#22874E',
 		},
 		// },
 		// '& .MuiInputBase-input': {
@@ -383,7 +383,7 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 					type="submit"
 					sx={{
 						border: 0,
-						background: '#2B85FF',
+						background: '#22874E',
 						color: '#FFF',
 						textTransform: 'unset',
 						fontSize: '0.9375rem',
@@ -393,7 +393,7 @@ export const RoutingDialog = ({ handleDialogClose, handleRouteTypeChange }) => {
 						transition: 'all 0.3s',
 						mt: '24px',
 						'&:hover': {
-							background: '#0069f6',
+							background: '#29b866',
 						},
 					}}
 				>

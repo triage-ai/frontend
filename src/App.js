@@ -1,93 +1,76 @@
-import logo from './logo-icon.svg';
 import './App.css';
-import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
-import {
-	Button,
-	Grid,
-	IconButton,
-	Input,
-	InputAdornment,
-	Snackbar,
-	TextField,
-	ThemeProvider,
-	createTheme,
-} from '@mui/material';
-import { CheckCircle, Mail, X } from 'lucide-react';
-import instaIcon from './assets/instagram-icon.svg';
-import linkedInIcon from './assets/linkedin-icon.svg';
-import { Fragment, useEffect, useState } from 'react';
-import { useAddWaitlistEmail } from './hooks/useAddWaitlistEmail';
-import { Box, useMediaQuery, useTheme } from '@mui/system';
-import styled from '@emotion/styled';
+import { ThemeProvider, createTheme } from '@mui/material';
+import { useContext, useState } from 'react';
 import { ComingSoon } from './pages/coming-soon/coming-soon';
 import { Auth } from './pages/auth/auth';
 import { SignIn } from './pages/auth/sign-in';
-import { Sidebar } from './components/sidebar';
-import { Home } from './pages/home/home';
 import { Build } from './pages/build/build';
 import { FineTune } from './pages/fine-tune/fine-tune';
 import { Test } from './pages/test/test';
 import { Route as RouteComponent } from './pages/route/route';
 import { CookiesProvider } from 'react-cookie';
-import { useSetAuthCookie } from './hooks/useSetAuthCookie';
-import { Landing } from './pages/landing/landing';
+import { Dashboard } from './pages/dashboard/dashboard';
+import { AuthContext } from './context/AuthContext';
+import ProtectedRoute from './components/protected-route';
+import { Tickets } from './pages/ticket/Tickets';
+import { Agents } from './pages/agent/Agents';
+// import { Landing } from './pages/landing/landing';
 
 const theme = createTheme({
 	typography: {
 		fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
+		h1: {
+			fontSize: '2rem',
+			lineHeight: 1.1875,
+			fontWeight: 600,
+			letterSpacing: '-0.03em',
+		},
+		h2: {
+			fontSize: '1.5rem',
+			fontWeight: 600,
+			letterSpacing: '-0.02em',
+		},
+		h3: {
+			fontSize: '1.25rem',
+			fontWeight: 500,
+			letterSpacing: '-0.02em',
+		},
+		h4: {
+			fontSize: '1.125rem',
+			fontWeight: 500,
+			letterSpacing: '-0.02em',
+		},
+		subtitle2: {
+			color: '#545555',
+		},
+		overline: {
+			fontWeight: 600,
+			lineHeight: 'unset',
+			letterSpacing: '-0.03em',
+		},
 	},
 });
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-	height: '80px',
-	// necessary for content to be below app bar
-	...theme.mixins.toolbar,
-}));
+// const DrawerHeader = styled('div')(({ theme }) => ({
+// 	height: '80px',
+// 	// necessary for content to be below app bar
+// 	...theme.mixins.toolbar,
+// }));
 
-const DrawerContentContainer = styled(Box)(({ theme }) => ({
-	width: '100%',
-	minHeight: '100vh',
-	background: '#F4F4F4',
-}));
+// const DrawerContentContainer = styled(Box)(() => ({
+// 	width: '100%',
+// 	minHeight: '100vh',
+// 	background: '#F4F4F4',
+// }));
 
 function App() {
-	const { addWaitlistEmail } = useAddWaitlistEmail();
-	const currentTheme = useTheme();
-	const onlySmallScreen = useMediaQuery(currentTheme.breakpoints.down('md'));
-
-	const [email, setEmail] = useState('');
-	const [open, setOpen] = useState(false);
-	const [error, setError] = useState(false);
-	const [added, setAdded] = useState(false);
+	const { authState } = useContext(AuthContext);
 
 	const [taskId, setTaskId] = useState(0);
 	const [process, setProcess] = useState('');
 	const [isFinished, setIsFinished] = useState('');
-
-	const [isAuth, setIsAuth] = useState(false);
-
-	const { getAuthCookie } = useSetAuthCookie();
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		// debugger;
-		// const { auth } = getAuthCookie();
-		// setIsAuth(auth?.isAuth);
-		// if (auth) {
-		// 	navigate('/build');
-		// } else {
-		// 	navigate('/auth');
-		// }
-	}, []);
-
-	const handleClose = (event, reason) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-
-		setOpen(false);
-	};
 
 	const handleProgress = (taskId, processCalled) => {
 		setTaskId(taskId);
@@ -107,9 +90,7 @@ function App() {
 						<Route
 							path="/"
 							exact
-							element={<Landing />}
-							// element={<Home />}
-							// element={isAuth ? <Navigate to="/build" /> : <ComingSoon />}
+							element={authState.isAuth ? <Navigate to="/agents" /> : <SignIn />}
 						/>
 						<Route
 							path="coming-soon"
@@ -124,60 +105,69 @@ function App() {
 							element={<SignIn />}
 						/>
 						<Route
-							path="build"
+							path="dashboard"
+							element={<Dashboard />}
+						/>
+						<Route
+							path="agents"
 							element={
-								<Box sx={{ display: 'flex' }}>
-									<Sidebar
-										taskId={taskId}
-										processParam={process}
-									/>
-									<DrawerContentContainer>
-										<DrawerHeader />
-										<Build handleProgress={handleProgress} />
-									</DrawerContentContainer>
-								</Box>
+								<ProtectedRoute>
+									<Agents />
+								</ProtectedRoute>
 							}
+						/>
+						<Route
+							path="tickets"
+							element={
+								<ProtectedRoute>
+									<Tickets />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="build"
+							element={<Build handleProgress={handleProgress} />}
 						/>
 						<Route
 							path="fine-tune"
 							element={
-								<Box sx={{ display: 'flex' }}>
-									<Sidebar
-										taskId={taskId}
-										processParam={process}
-									/>
-									<DrawerContentContainer>
-										<DrawerHeader />
-										<FineTune handleProgress={handleProgress} />
-									</DrawerContentContainer>
-								</Box>
+								// <Box sx={{ display: 'flex' }}>
+								// 	<Sidebar
+								// 		taskId={taskId}
+								// 		processParam={process}
+								// 	/>
+								// 	<DrawerContentContainer>
+								// 		<DrawerHeader />
+								<FineTune handleProgress={handleProgress} />
+								// 	</DrawerContentContainer>
+								// </Box>
 							}
 						/>
 						<Route
 							path="playground"
 							element={
-								<Box sx={{ display: 'flex' }}>
-									<Sidebar
-										processParam={process}
-										finishedParam={isFinished}
-									/>
-									<DrawerContentContainer>
-										<DrawerHeader />
-										<Test handlePublishProgress={handlePublishProgress} />
-									</DrawerContentContainer>
-								</Box>
+								// <Box sx={{ display: 'flex' }}>
+								// 	<Sidebar
+								// 		processParam={process}
+								// 		finishedParam={isFinished}
+								// 	/>
+								// 	<DrawerContentContainer>
+								// 		<DrawerHeader />
+								<Test handlePublishProgress={handlePublishProgress} />
+								// 	</DrawerContentContainer>
+								// </Box>
 							}
 						/>
 						<Route
 							path="route"
 							element={
-								<Box sx={{ display: 'flex' }}>
-									<Sidebar />
-									<DrawerContentContainer>
-										<DrawerHeader />
-										<RouteComponent />
-									</DrawerContentContainer>
-								</Box>
+								// <Box sx={{ display: 'flex' }}>
+								// 	<Sidebar />
+								// 	<DrawerContentContainer>
+								// 		<DrawerHeader />
+								<RouteComponent />
+								// 	</DrawerContentContainer>
+								// </Box>
 							}
 						/>
 					</Routes>

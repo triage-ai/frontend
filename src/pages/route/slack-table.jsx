@@ -174,7 +174,7 @@ export const SlackTable = ({ routes }) => {
 											padding: '10px',
 											mr: '12px',
 											'&:hover': {
-												color: '#2B85FF',
+												color: '#22874E',
 											},
 										}}
 									>

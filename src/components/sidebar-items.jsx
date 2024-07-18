@@ -13,17 +13,30 @@ import {
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
+	ListSubheader,
 	TextField,
 	Typography,
 	styled,
 } from '@mui/material';
-import triageIcon from '../assets/triage-icon.svg';
-import { Blocks, ListChecks, Route, SlidersHorizontal, ToyBrick, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {
+	Blocks,
+	Files,
+	Headset,
+	ListChecks,
+	PanelLeft,
+	Route,
+	SlidersHorizontal,
+	Tags,
+	Ticket,
+	ToyBrick,
+	X,
+} from 'lucide-react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ModelSelectorMenu } from './model-selector-menu';
 import { useModelBackend } from '../hooks/useModelBackend';
 import { TableColorBox } from '../pages/build/build';
+import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
 
 const ModelSelector = styled(Box)(({ theme }) => ({
 	width: '55px',
@@ -38,7 +51,7 @@ const ModelSelector = styled(Box)(({ theme }) => ({
 	cursor: 'pointer',
 
 	'& h5': {
-		color: '#1B1D1F',
+		color: '#000',
 	},
 }));
 
@@ -67,14 +80,14 @@ export const CustomTextField = styled(TextField)({
 
 		'&:hover': {
 			background: 'transparent',
-			borderColor: '#2B85FF',
+			borderColor: '#22874E',
 			'&:before': {
 				content: 'none',
 			},
 		},
 
 		'&.Mui-focused': {
-			borderColor: '#2B85FF',
+			borderColor: '#22874E',
 		},
 		// },
 		// '& .MuiInputBase-input': {
@@ -82,6 +95,76 @@ export const CustomTextField = styled(TextField)({
 		// 	paddingLeft: '6px',
 	},
 });
+
+const menuItems = [
+	{
+		title: 'Dashboard',
+		icon: (
+			<PanelLeft
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+
+	{ subheader: 'PEOPLE' },
+	{
+		title: 'Agents',
+		icon: (
+			<Headset
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Tickets',
+		icon: (
+			<Ticket
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+
+	{ subheader: 'PREVIOUS' },
+	{
+		title: 'Build',
+		icon: (
+			<Blocks
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Fine-tune',
+		icon: (
+			<SlidersHorizontal
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Playground',
+		icon: (
+			<ToyBrick
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Route',
+		icon: (
+			<Route
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+];
 
 export const SidebarItems = () => {
 	const [path, setPath] = useState('');
@@ -94,16 +177,16 @@ export const SidebarItems = () => {
 
 	let location = useLocation();
 
-	useEffect(() => {
-		getAllDevModels()
-			.then(res => {
-				const { models } = res.data;
-				setModels(models);
-			})
-			.catch(res => {
-				console.log(res.response);
-			});
-	}, []);
+	// useEffect(() => {
+	// 	getAllDevModels()
+	// 		.then(res => {
+	// 			const { models } = res.data;
+	// 			setModels(models);
+	// 		})
+	// 		.catch(res => {
+	// 			console.log(res.response);
+	// 		});
+	// }, []);
 
 	useEffect(() => {
 		setPath(location.pathname);
@@ -154,16 +237,18 @@ export const SidebarItems = () => {
 				{/* <DrawerHeader /> */}
 				<Box
 					sx={{
+						width: '100%',
 						height: '100%',
 						display: 'flex',
 						flexDirection: 'column',
-						alignItems: 'center',
+						alignItems: 'flex-start',
 						justifyContent: 'space-between',
-						py: '18px',
+						pt: '26px',
+						px: '16px',
 					}}
 				>
-					<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-						<ModelSelector
+					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						{/* <ModelSelector
 							aria-haspopup="true"
 							aria-expanded={menuSelectorOpen ? 'true' : undefined}
 							sx={{ backgroundColor: getModelBackgroundColor() }}
@@ -280,7 +365,7 @@ export const SidebarItems = () => {
 									type="submit"
 									sx={{
 										border: 0,
-										background: '#2B85FF',
+										background: '#22874E',
 										color: '#FFF',
 										textTransform: 'unset',
 										fontSize: '0.9375rem',
@@ -290,7 +375,7 @@ export const SidebarItems = () => {
 										transition: 'all 0.3s',
 										mt: '24px',
 										'&:hover': {
-											background: '#0069f6',
+											background: '#29b866',
 										},
 									}}
 								>
@@ -305,99 +390,106 @@ export const SidebarItems = () => {
 							open={menuSelectorOpen}
 							handleClose={handleClose}
 							handleClickOpen={handleClickOpen}
-						/>
+						/> */}
 
-						<List sx={{ p: 0 }}>
-							{['Build', 'Fine-tune', 'Playground', 'Route'].map((text, index) => (
-								<ListItem
-									key={text}
-									disablePadding
-									sx={{ display: 'block' }}
-								>
-									<ListItemButton
-										component={Link}
-										to={'/' + text.toLowerCase()}
-										selected={activeRoute(text.toLowerCase())}
-										sx={{
-											minHeight: 48,
-											flexDirection: 'column',
-											alignItems: 'center',
-											justifyContent: 'center',
-											px: 1,
-											'&:hover': {
-												background: 'unset',
-												'.MuiListItemIcon-root': {
-													background: '#EFEFEF',
-													color: '#1B1D1F',
+						<Box sx={{ width: '100%', px: 1 }}>
+							<img
+								src={LogoHorizontal}
+								alt="Triage logo"
+								style={{ width: '60%', objectFit: 'cover' }}
+							/>
+						</Box>
 
-													svg: {
-														scale: '1.1',
-													},
-												},
-												'.MuiTypography-root': {
-													color: '#1B1D1F',
-												},
-											},
-											'&.Mui-selected': {
-												background: 'unset',
-												'&:hover': {
-													background: 'unset',
-													svg: {
-														scale: '1',
-													},
-												},
-												'.MuiListItemIcon-root': {
-													background: '#EFEFEF',
-													color: '#1B1D1F',
-												},
-												'.MuiTypography-root': {
-													color: '#1B1D1F',
-												},
-											},
-										}}
-										disableRipple
-									>
-										<ListItemIcon
-											sx={{
-												width: '40px',
-												minWidth: '40px',
-												height: '40px',
-												alignItems: 'center',
-												justifyContent: 'center',
-												borderRadius: '8px',
-												color: '#575757',
-												transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
-											}}
-										>
-											{text.toLowerCase() === 'build' && <Blocks />}
-											{text.toLowerCase() === 'fine-tune' && <SlidersHorizontal />}
-											{text.toLowerCase() === 'playground' && <ToyBrick />}
-											{text.toLowerCase() === 'route' && <Route />}
-										</ListItemIcon>
-										{
+						<List
+							sx={{ p: 0, mt: 4 }}
+							dense={true}
+						>
+							{menuItems.map((item, index) => (
+								<Fragment key={index}>
+									{item?.subheader && (
+										<ListSubheader sx={{ lineHeight: 'unset', mt: 3, mb: 1 }}>
 											<Typography
-												variant="caption"
+												variant="overline"
 												sx={{
-													fontWeight: 600,
-													color: '#575757',
-													mt: '3px',
-													transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
+													color: '#585858',
 												}}
 											>
-												{text}
+												{item.subheader}
 											</Typography>
-										}
-									</ListItemButton>
-								</ListItem>
+										</ListSubheader>
+									)}
+
+									{!item?.subheader && (
+										<ListItem
+											disablePadding
+											sx={{ display: 'block', mt: index !== 0 && 0.2 }}
+										>
+											<ListItemButton
+												component={Link}
+												to={'/' + item.title.toLowerCase()}
+												selected={activeRoute(item.title.toLowerCase())}
+												disabled={item.title !== 'Agents'}
+												// disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+												sx={{
+													minHeight: 42,
+													alignItems: 'center',
+													justifyContent: 'flex-start',
+													px: 1,
+													pl: 0.7,
+													borderRadius: '12px',
+													'.MuiListItemIcon-root, .MuiTypography-root': {
+														color: '#000',
+													},
+													'&:hover': {
+														background: '#f1f4f2',
+													},
+													'&.Mui-selected': {
+														background: '#ECFFEF',
+														'&:hover': {
+															background: '#ECFFEF',
+														},
+														'.MuiListItemIcon-root, .MuiTypography-root': {
+															color: '#1A4A13',
+														},
+													},
+												}}
+												disableRipple
+											>
+												<ListItemIcon
+													sx={{
+														width: '38px',
+														minWidth: '38px',
+														height: '38px',
+														alignItems: 'center',
+														justifyContent: 'center',
+														borderRadius: '8px',
+														color: '#575757',
+														transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
+													}}
+												>
+													{item.icon}
+												</ListItemIcon>
+												{
+													<Typography
+														variant="subtitle2"
+														sx={{
+															fontWeight: 600,
+															color: '#575757',
+															letterSpacing: '-0.05em',
+															transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
+															mt: '3px',
+														}}
+													>
+														{item.title}
+													</Typography>
+												}
+											</ListItemButton>
+										</ListItem>
+									)}
+								</Fragment>
 							))}
 						</List>
 					</Box>
-
-					<img
-						src={triageIcon}
-						alt="Triage Logo Icon"
-						style={{ width: '42px' }}
-					/>
 				</Box>
 			</Drawer>
 		</>
