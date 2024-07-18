@@ -22,7 +22,7 @@ import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { Ellipsis, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useAgentsBackend } from '../../hooks/useAgentsBackend';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddAgent } from './AddAgent';
@@ -68,9 +68,7 @@ export const Agents = () => {
 
 	useEffect(() => {
 		refreshAgents();
-	}, [refreshAgents]);
 
-	useEffect(() => {
 		getAllDepartments()
 			.then(depts => {
 				setDepartments(depts.data);

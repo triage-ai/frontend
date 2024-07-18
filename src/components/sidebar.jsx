@@ -18,7 +18,6 @@ import { CheckCircle, LogOut, Menu, UserRoundPlus, X } from 'lucide-react';
 import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react';
 import { SidebarItems } from './sidebar-items';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { auth } from '../config/firebase-config';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useModelBackend } from '../hooks/useModelBackend';
 import { useSetAuthCookie } from '../hooks/useSetAuthCookie';

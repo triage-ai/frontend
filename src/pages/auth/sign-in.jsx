@@ -3,11 +3,9 @@ import logoBlack from '../../assets/logo-black.svg';
 import AppIcon from '../../assets/app-icon-black.png';
 import '../../App.css';
 import React, { useContext, useState } from 'react';
-import googleIcon from '../../assets/google-icon.svg';
-import microsoftIcon from '../../assets/microsoft-icon.svg';
 
-import { signInWithPopup } from 'firebase/auth';
-import { auth, samlProvider } from '../../config/firebase-config';
+// import { signInWithPopup } from 'firebase/auth';
+// import { auth, samlProvider } from '../../config/firebase-config';
 import {
 	Box,
 	Button,
@@ -17,7 +15,6 @@ import {
 	TextField,
 	Typography,
 	styled,
-	useMediaQuery,
 } from '@mui/material';
 import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useTheme } from '@emotion/react';
@@ -80,9 +77,6 @@ const RedirectButton = styled('a')({
 
 export const SignIn = () => {
 	const { setUserData } = useContext(AuthContext);
-	const currentTheme = useTheme();
-
-	const onlySmallScreen = useMediaQuery(currentTheme.breakpoints.down('md'));
 	const [loading, setLoading] = useState(false);
 
 	const [email, setEmail] = useState('');
@@ -93,30 +87,6 @@ export const SignIn = () => {
 
 	const navigate = useNavigate();
 	const { signInEmailAndPassword } = useSetAuthCookie();
-
-	const goToAuth = () => {
-		navigate('/auth');
-	};
-
-	const loginWithSAML = async () => {
-		const results = await signInWithPopup(auth, samlProvider);
-		const authInfo = {
-			userId: results.user.uid,
-			isAuth: true,
-			token: results.user.accessToken,
-		};
-		setUserData(authInfo);
-		navigate('/build');
-	};
-
-	// const refreshToken = () => {
-	// 	auth.currentUser
-	// 		.getIdToken(true)
-	// 		.then(newToken => {
-	// 			console.log(newToken);
-	// 		})
-	// 		.catch(error => {});
-	// };
 
 	const signIn = async e => {
 		e.preventDefault();
