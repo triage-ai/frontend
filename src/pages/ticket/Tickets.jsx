@@ -1,67 +1,59 @@
 import {
 	Box,
+	Chip,
 	Dialog,
-	FormControl,
 	IconButton,
-	InputAdornment,
-	InputLabel,
-	MenuItem,
-	Select,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableRow,
-	TextField,
 	Typography,
-	inputLabelClasses,
-	styled,
 } from '@mui/material';
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
-import { Ellipsis, Pencil, Search, TicketPlus, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
-
-export const SearchTextField = styled('input')({
-	width: '100%',
-	border: '1.5px solid #bcc2bf',
-	borderRadius: '12px',
-	padding: '10px',
-	paddingLeft: '36px',
-	fontWeight: 500,
-	fontSize: '0.9375rem',
-	color: '#000',
-	position: 'relative',
-	zIndex: 1,
-	background: 'transparent',
-	'&:hover': {
-		background: 'transparent',
-		borderColor: '#22874E',
-	},
-	'&::placeholder': {
-		fontWeight: 500,
-		color: '#575757',
-	},
-	'&:focus': {
-		outline: 'none',
-		borderColor: '#22874E',
-	},
-});
+import { SearchTextField } from '../agent/Agents';
+import { useProrityBackend } from '../../hooks/usePriorityBackend';
 
 export const Tickets = () => {
-	const { agents, refreshAgents } = useData();
+	const { tickets, refreshTickets } = useData();
+	const { getAllPriorities } = useProrityBackend();
 
 	const [selectedAgent, setSelectedAgent] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
+	const [priorities, setPriorities] = useState([]);
+	const [ticketList, setTicketList] = useState([]);
 
 	useEffect(() => {
-		refreshAgents();
-	}, [refreshAgents]);
+		getPriorityList();
+		refreshTickets();
+	}, []);
+
+	useEffect(() => {
+		if (priorities.length > 0 && tickets.length > 0) {
+			const mappedTicketsPriority = tickets.map(ticket => ({
+				...ticket,
+				priority: priorities.find(priority => priority.priority_id === ticket.priority_id),
+			}));
+			setTicketList(mappedTicketsPriority);
+		}
+	}, [tickets]);
+
+	const getPriorityList = () => {
+		getAllPriorities()
+			.then(res => {
+				setPriorities(res.data);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	};
 
 	const handleDialogOpen = agent => {
 		setSelectedAgent(agent);
@@ -72,10 +64,10 @@ export const Tickets = () => {
 		setOpenDialog(false);
 	};
 
-	const handleAgentEdited = () => {
-		handleDialogClose();
-		refreshAgents();
-	};
+	// const handleAgentEdited = () => {
+	// 	handleDialogClose();
+	// 	refreshAgents();
+	// };
 
 	return (
 		<Layout
@@ -88,12 +80,14 @@ export const Tickets = () => {
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
-					<Box sx={{ position: 'relative', width: '20%' }}>
+					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							type="text"
 							label="Search"
 							variant="filled"
 							placeholder="Search"
+							disabled
+							sx={{ '&:hover': { borderColor: '#bcc2bf' } }}
 						/>
 						<Box
 							sx={{
@@ -114,64 +108,6 @@ export const Tickets = () => {
 							/>
 						</Box>
 					</Box>
-
-					{/* <TextField
-						size="small"
-						defaultValue={''}
-						select
-						sx={{
-							width: '20%',
-							ml: 1,
-							'& fieldset': {
-								border: '1.5px solid #bcc2bf',
-								borderRadius: '12px',
-							},
-							'& .MuiSelect-select': {
-								fontSize: '0.9375rem',
-								fontWeight: 500,
-								fontFamily:
-									"Mont, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-							},
-							'& .MuiSelect-select span::before': {
-								content: "'-- Select --'",
-								color: '#575757',
-								opacity: 1,
-								fontSize: '0.9375rem',
-								fontWeight: 500,
-								fontFamily:
-									"Mont, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-							},
-							'& .MuiInputBase-root': {
-								color: '#000',
-								minHeight: '42px',
-
-								'&:hover': {
-									'& fieldset': {
-										borderColor: '#22874E',
-									},
-								},
-
-								'&.Mui-focused': {
-									'& fieldset': {
-										borderColor: '#22874E',
-									},
-								},
-							},
-						}}
-						//   value={country}
-						//   onChange={(e) => setCountry(e.target.value)}
-					>
-						<MenuItem value="">-- Select --</MenuItem>
-
-						{departments.map(option => (
-							<MenuItem
-								key={option.value}
-								value={option.value}
-							>
-								{option.label}
-							</MenuItem>
-						))}
-					</TextField> */}
 				</Box>
 
 				<Table>
@@ -185,19 +121,19 @@ export const Tickets = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant="overline">Title</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Username</Typography>
+								<Typography variant="overline">Number</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Department</Typography>
+								<Typography variant="overline">Last updated</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Email</Typography>
+								<Typography variant="overline">Priority</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Phone</Typography>
+								<Typography variant="overline">From</Typography>
 							</TableCell>
 							<TableCell align="right">
 								<Typography variant="overline"></Typography>
@@ -205,9 +141,9 @@ export const Tickets = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{agents.map(agent => (
+						{ticketList.map(ticket => (
 							<TableRow
-								key={agent.agent_id}
+								key={ticket.ticket_id}
 								sx={{
 									'&:last-child td, &:last-child th': { border: 0 },
 									'& .MuiTableCell-root': {
@@ -220,13 +156,33 @@ export const Tickets = () => {
 								<TableCell
 									component="th"
 									scope="row"
+									sx={{ maxWidth: '200px' }}
 								>
-									{agent.firstname + ' ' + agent.lastname}
+									{ticket.title}
+									<Typography
+										variant="subtitle2"
+										sx={{
+											fontSize: '0.75rem',
+											lineHeight: 1.2,
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitBoxOrient: 'vertical',
+											WebkitLineClamp: 2,
+										}}
+									>
+										{ticket.description}
+									</Typography>
 								</TableCell>
-								<TableCell>{agent.username}</TableCell>
-								<TableCell>{agent.dept_id}</TableCell>
-								<TableCell>{agent.email}</TableCell>
-								<TableCell>{agent.phone}</TableCell>
+								<TableCell>{ticket.number}</TableCell>
+								<TableCell>{ticket.updated.replace('T', ' ')}</TableCell>
+								<TableCell>
+									<Chip
+										label={ticket.priority.priority_desc}
+										sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+									/>
+								</TableCell>
+								<TableCell>{ticket.user_id}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"
@@ -237,11 +193,11 @@ export const Tickets = () => {
 										spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										<IconButton onClick={() => handleDialogOpen(agent)}>
+										<IconButton onClick={() => handleDialogOpen(ticket)}>
 											<Pencil size={18} />
 										</IconButton>
 
-										<IconButton onClick={() => handleDialogOpen(agent)}>
+										<IconButton onClick={() => handleDialogOpen(ticket)}>
 											<Trash2 size={18} />
 										</IconButton>
 									</Stack>
@@ -292,7 +248,7 @@ export const Tickets = () => {
 					</IconButton>
 
 					<AddTicket
-						handleAgentEdited={handleAgentEdited}
+						// handleAgentEdited={handleAgentEdited}
 						editAgent={selectedAgent}
 					/>
 				</Box>

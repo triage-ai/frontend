@@ -7,20 +7,18 @@ import {
 	Drawer,
 	IconButton,
 	Slide,
-	Toolbar,
 	Typography,
 	circularProgressClasses,
 	styled,
 	useMediaQuery,
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { CheckCircle, LogOut, Menu, UserRoundPlus, X } from 'lucide-react';
+import { CheckCircle, LogOut, Menu, X } from 'lucide-react';
 import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react';
 import { SidebarItems } from './sidebar-items';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useModelBackend } from '../hooks/useModelBackend';
-import { useSetAuthCookie } from '../hooks/useSetAuthCookie';
 import { AppBarHeight } from './layout';
 import { useTheme } from '@emotion/react';
 import { AddAgent } from '../pages/agent/AddAgent';

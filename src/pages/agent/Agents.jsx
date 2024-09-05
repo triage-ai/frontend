@@ -258,7 +258,7 @@ export const Agents = () => {
 									{agent.firstname + ' ' + agent.lastname}
 								</TableCell>
 								<TableCell>{agent.username}</TableCell>
-								<TableCell>{agent.dept_id}</TableCell>
+								<TableCell>{agent.department.name}</TableCell>
 								<TableCell>{agent.email}</TableCell>
 								<TableCell>{agent.phone}</TableCell>
 								<TableCell
@@ -271,11 +271,27 @@ export const Agents = () => {
 										spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										<IconButton onClick={() => handleDialogOpen(agent, 'edit')}>
+										<IconButton
+											sx={{
+												'&:hover': {
+													background: '#f3f6fa',
+													color: '#105293',
+												},
+											}}
+											onClick={() => handleDialogOpen(agent, 'edit')}
+										>
 											<Pencil size={18} />
 										</IconButton>
 
-										<IconButton onClick={() => handleDialogOpen(agent, 'delete')}>
+										<IconButton
+											sx={{
+												'&:hover': {
+													background: '#faf3f3',
+													color: '#921010',
+												},
+											}}
+											onClick={() => handleDialogOpen(agent, 'delete')}
+										>
 											<Trash2 size={18} />
 										</IconButton>
 									</Stack>

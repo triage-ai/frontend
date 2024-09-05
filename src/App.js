@@ -3,7 +3,6 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 
 import { ThemeProvider, createTheme } from '@mui/material';
 import { useContext, useState } from 'react';
-import { ComingSoon } from './pages/coming-soon/coming-soon';
 import { Auth } from './pages/auth/auth';
 import { SignIn } from './pages/auth/sign-in';
 import { Build } from './pages/build/build';
@@ -91,10 +90,6 @@ function App() {
 							path="/"
 							exact
 							element={authState.isAuth ? <Navigate to="/agents" /> : <SignIn />}
-						/>
-						<Route
-							path="coming-soon"
-							element={<ComingSoon />}
 						/>
 						<Route
 							path="auth"

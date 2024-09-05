@@ -1,14 +1,6 @@
 import {
 	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Divider,
 	Drawer,
-	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
@@ -20,22 +12,16 @@ import {
 } from '@mui/material';
 import {
 	Blocks,
-	Files,
 	Headset,
-	ListChecks,
 	PanelLeft,
 	Route,
 	SlidersHorizontal,
-	Tags,
 	Ticket,
 	ToyBrick,
-	X,
 } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ModelSelectorMenu } from './model-selector-menu';
 import { useModelBackend } from '../hooks/useModelBackend';
-import { TableColorBox } from '../pages/build/build';
 import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
 
 const ModelSelector = styled(Box)(({ theme }) => ({
@@ -428,8 +414,8 @@ export const SidebarItems = () => {
 												component={Link}
 												to={'/' + item.title.toLowerCase()}
 												selected={activeRoute(item.title.toLowerCase())}
-												disabled={item.title !== 'Agents'}
-												// disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+												// disabled={item.title !== 'Agents'}
+												disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
 												sx={{
 													minHeight: 42,
 													alignItems: 'center',

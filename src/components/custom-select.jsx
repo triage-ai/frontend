@@ -1,4 +1,5 @@
 import { Box, Button, MenuItem, TextField, Typography, alpha, styled } from '@mui/material';
+import { useEffect } from 'react';
 
 const CustomInput = styled(props => (
 	<TextField
@@ -54,12 +55,21 @@ export const CustomSelect = ({
 				<Typography variant="subtitle2">- Choose {label.toLowerCase()} -</Typography>
 			</MenuItem>
 
-			{options.map(option => (
+			{options?.map(option => (
 				<MenuItem
 					key={option.value}
 					value={option.value}
+					sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
 				>
-					{option.label}
+					{option.label}{' '}
+					{option.sublabel && (
+						<Typography
+							variant="caption"
+							sx={{ lineHeight: 1, color: '#545555' }}
+						>
+							({option.sublabel})
+						</Typography>
+					)}
 				</MenuItem>
 			))}
 

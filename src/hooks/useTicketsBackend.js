@@ -1,17 +1,19 @@
 import axios from 'axios';
-import { useSetAuthCookie } from './useSetAuthCookie';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useTicketsBackend = () => {
 	const { authState } = useContext(AuthContext);
 
-	const getAllTickets = async () => {
+	const getAllOpenTickets = async () => {
 		const config = {
 			headers: { Authorization: `Bearer ${authState.token}` },
 		};
 
-		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'ticket/get', config);
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + 'ticket/search?status_id=1&order_by=created',
+			config
+		);
 	};
 
 	const createTicket = async ticketInfo => {
@@ -38,5 +40,5 @@ export const useTicketsBackend = () => {
 		);
 	};
 
-	return { getAllTickets, createTicket, updateTicket };
+	return { getAllOpenTickets, createTicket, updateTicket };
 };

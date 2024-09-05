@@ -4,8 +4,6 @@ import AppIcon from '../../assets/app-icon-black.png';
 import '../../App.css';
 import React, { useContext, useState } from 'react';
 
-// import { signInWithPopup } from 'firebase/auth';
-// import { auth, samlProvider } from '../../config/firebase-config';
 import {
 	Box,
 	Button,
@@ -17,7 +15,6 @@ import {
 	styled,
 } from '@mui/material';
 import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
-import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
 import { AuthContext } from '../../context/AuthContext';

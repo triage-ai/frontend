@@ -13,5 +13,13 @@ export const useRolesBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'role/get', config);
 	};
 
-	return { getAllRoles };
+	const createRole = async roleInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${authState.token}` },
+		};
+
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'role/create', roleInfo, config);
+	};
+
+	return { getAllRoles, createRole };
 };

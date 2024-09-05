@@ -5,8 +5,6 @@ import React, { useState } from 'react';
 import googleIcon from '../../assets/google-icon.svg';
 import microsoftIcon from '../../assets/microsoft-icon.svg';
 
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { auth, samlProvider } from '../../config/firebase-config';
 import {
 	Box,
 	Button,
@@ -95,47 +93,46 @@ export const Auth = () => {
 	};
 
 	const loginWithSAML = async () => {
-		const results = await signInWithPopup(auth, samlProvider);
-		const authInfo = {
-			userId: results.user.uid,
-			isAuth: true,
-			token: results.user.accessToken,
-		};
-		handleAuthCookie(authInfo);
-		// localStorage.setItem('auth', JSON.stringify(authInfo));
-		navigate('/build');
+		// const results = await signInWithPopup(auth, samlProvider);
+		// const authInfo = {
+		// 	userId: results.user.uid,
+		// 	isAuth: true,
+		// 	token: results.user.accessToken,
+		// };
+		// handleAuthCookie(authInfo);
+		// // localStorage.setItem('auth', JSON.stringify(authInfo));
+		// navigate('/build');
 	};
 
 	const signUp = async e => {
-		e.preventDefault();
-		setLoading(true);
-
-		if (validateEmail(email) && password !== '') {
-			createUserWithEmailAndPassword(auth, email, password)
-				.then(userCredential => {
-					const authInfo = {
-						userId: userCredential.user.uid,
-						isAuth: true,
-						token: userCredential.user.accessToken,
-					};
-					handleAuthCookie(authInfo);
-					// localStorage.setItem('auth', JSON.stringify(authInfo));
-					setLoading(false);
-					navigate('/build');
-				})
-				.catch(error => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					console.error(errorCode, errorMessage);
-					setLoading(false);
-				});
-		} else if (!validateEmail(email)) {
-			setError(true);
-			setLoading(false);
-		} else if (password === '') {
-			setPasswordError(true);
-			setLoading(false);
-		}
+		// e.preventDefault();
+		// setLoading(true);
+		// if (validateEmail(email) && password !== '') {
+		// 	createUserWithEmailAndPassword(auth, email, password)
+		// 		.then(userCredential => {
+		// 			const authInfo = {
+		// 				userId: userCredential.user.uid,
+		// 				isAuth: true,
+		// 				token: userCredential.user.accessToken,
+		// 			};
+		// 			handleAuthCookie(authInfo);
+		// 			// localStorage.setItem('auth', JSON.stringify(authInfo));
+		// 			setLoading(false);
+		// 			navigate('/build');
+		// 		})
+		// 		.catch(error => {
+		// 			const errorCode = error.code;
+		// 			const errorMessage = error.message;
+		// 			console.error(errorCode, errorMessage);
+		// 			setLoading(false);
+		// 		});
+		// } else if (!validateEmail(email)) {
+		// 	setError(true);
+		// 	setLoading(false);
+		// } else if (password === '') {
+		// 	setPasswordError(true);
+		// 	setLoading(false);
+		// }
 	};
 
 	const validateEmail = email => {

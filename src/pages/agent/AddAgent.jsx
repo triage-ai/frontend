@@ -24,10 +24,12 @@ import { CustomFilledInput } from '../../components/custom-input';
 import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
-import { Check, Eye, EyeOff } from 'lucide-react';
-import { useDepartmentsBackend } from '../../hooks/useDepartmentsBackend';
+import { Check, Eye, EyeOff, X } from 'lucide-react';
 import { useRolesBackend } from '../../hooks/useRolesBackend';
 import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { AddDepartment } from '../department/AddDepartment';
+import { DepartmentSelect } from '../department/DepartmentSelect';
+import { RoleSelect } from '../role/RoleSelect';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -93,13 +95,10 @@ function QontoStepIcon(props) {
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) => {
-	const { getAllDepartments } = useDepartmentsBackend();
 	const { getAllRoles } = useRolesBackend();
 	const { createAgent, updateAgent } = useAgentsBackend();
 
-	const [departments, setDepartments] = useState([]);
 	const [roles, setRoles] = useState([]);
-	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [isNextDisabled, setIsNextDisabled] = useState(true);
@@ -119,19 +118,6 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 	});
 
 	useEffect(() => {
-		getAllDepartments()
-			.then(depts => {
-				const departmentsData = depts.data;
-				const formattedDepts = departmentsData.map(dept => {
-					return { value: dept.dept_id, label: dept.name };
-				});
-
-				setDepartments(formattedDepts);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-
 		getAllRoles()
 			.then(roles => {
 				const rolesData = roles.data;
@@ -234,14 +220,6 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 		}
 	};
 
-	const openDialog = () => {
-		setOpenCreateDialog(true);
-	};
-
-	const handleClose = () => {
-		setOpenCreateDialog(false);
-	};
-
 	return (
 		<>
 			<Typography
@@ -252,8 +230,8 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 			</Typography>
 
 			<Typography variant="subtitle2">
-				We will send an invite to your client to onboard on Remote. Once their onboarding is
-				complete, you will be able to create or schedule invoices.
+				We will gather essential details about the new agent. Complete the following steps to ensure
+				accurate setup and access.
 			</Typography>
 
 			<Stepper
@@ -410,7 +388,7 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 						Access
 					</Typography>
 
-					<CustomSelect
+					{/* <CustomSelect
 						label="Department"
 						onChange={handleInputChange}
 						value={formData.dept_id}
@@ -420,9 +398,19 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 						addNewButton
 						handleAddBtnClick={openDialog}
 						options={departments}
+					/> */}
+
+					<DepartmentSelect
+						handleInputChange={handleInputChange}
+						value={formData.dept_id}
 					/>
 
-					<CustomSelect
+					<RoleSelect
+						handleInputChange={handleInputChange}
+						value={formData.role_id}
+					/>
+
+					{/* <CustomSelect
 						label="Role"
 						onChange={handleInputChange}
 						value={formData.role_id}
@@ -430,48 +418,9 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 						fullWidth
 						mb={2}
 						addNewButton
-						handleAddBtnClick={openDialog}
+						// handleAddBtnClick={openDialog}
 						options={roles}
-					/>
-
-					<Dialog
-						open={openCreateDialog}
-						onClose={handleClose}
-						PaperProps={{
-							component: 'form',
-							onSubmit: event => {
-								event.preventDefault();
-								const formData = new FormData(event.currentTarget);
-								const formJson = Object.fromEntries(formData.entries());
-								const email = formJson.email;
-								console.log(email);
-								handleClose();
-							},
-						}}
-					>
-						<DialogTitle>Subscribe</DialogTitle>
-						<DialogContent>
-							<DialogContentText>
-								To subscribe to this website, please enter your email address here. We will send
-								updates occasionally.
-							</DialogContentText>
-							<TextField
-								autoFocus
-								required
-								margin="dense"
-								id="name"
-								name="email"
-								label="Email Address"
-								type="email"
-								fullWidth
-								variant="standard"
-							/>
-						</DialogContent>
-						<DialogActions>
-							<Button onClick={handleClose}>Cancel</Button>
-							<Button type="submit">Subscribe</Button>
-						</DialogActions>
-					</Dialog>
+					/> */}
 				</Box>
 			)}
 
@@ -520,6 +469,7 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 							name="password"
 							halfWidth
 							type={showPassword ? 'text' : 'password'}
+							autoComplete="new-password"
 							endAdornment={
 								<InputAdornment position="end">
 									<IconButton

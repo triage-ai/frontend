@@ -13,5 +13,17 @@ export const useDepartmentsBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'department/get', config);
 	};
 
-	return { getAllDepartments };
+	const createDepartment = async departmentInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${authState.token}` },
+		};
+
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + 'department/create',
+			departmentInfo,
+			config
+		);
+	};
+
+	return { getAllDepartments, createDepartment };
 };
