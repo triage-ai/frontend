@@ -2,6 +2,7 @@ import {
 	Box,
 	Chip,
 	Dialog,
+	Drawer,
 	IconButton,
 	Stack,
 	Table,
@@ -20,6 +21,7 @@ import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { TicketDetailContainer } from './TicketDetailContainer';
 
 export const Tickets = () => {
 	const { tickets, refreshTickets } = useData();
@@ -29,6 +31,8 @@ export const Tickets = () => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [priorities, setPriorities] = useState([]);
 	const [ticketList, setTicketList] = useState([]);
+	const [openDetail, setOpenDetail] = useState(false);
+	const [selectedTicket, setSelectedTicket] = useState(false);
 
 	useEffect(() => {
 		getPriorityList();
@@ -55,7 +59,9 @@ export const Tickets = () => {
 			});
 	};
 
-	const handleDialogOpen = agent => {
+	const handleDialogOpen = (event, agent) => {
+		event.stopPropagation();
+
 		setSelectedAgent(agent);
 		setOpenDialog(true);
 	};
@@ -64,10 +70,12 @@ export const Tickets = () => {
 		setOpenDialog(false);
 	};
 
-	// const handleAgentEdited = () => {
-	// 	handleDialogClose();
-	// 	refreshAgents();
-	// };
+	const toggleDetailDrawer =
+		(newOpen, ticket = null) =>
+		() => {
+			setOpenDetail(newOpen);
+			setSelectedTicket(ticket);
+		};
 
 	return (
 		<Layout
@@ -144,12 +152,17 @@ export const Tickets = () => {
 						{ticketList.map(ticket => (
 							<TableRow
 								key={ticket.ticket_id}
+								onClick={toggleDetailDrawer(true, ticket)}
 								sx={{
 									'&:last-child td, &:last-child th': { border: 0 },
 									'& .MuiTableCell-root': {
 										color: '#1B1D1F',
 										fontWeight: 500,
 										letterSpacing: '-0.02em',
+									},
+									'&:hover': {
+										background: '#f9fbfa',
+										cursor: 'pointer',
 									},
 								}}
 							>
@@ -193,11 +206,11 @@ export const Tickets = () => {
 										spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										<IconButton onClick={() => handleDialogOpen(ticket)}>
+										<IconButton onClick={event => handleDialogOpen(event, ticket)}>
 											<Pencil size={18} />
 										</IconButton>
 
-										<IconButton onClick={() => handleDialogOpen(ticket)}>
+										<IconButton onClick={event => handleDialogOpen(event, ticket)}>
 											<Trash2 size={18} />
 										</IconButton>
 									</Stack>
@@ -253,6 +266,27 @@ export const Tickets = () => {
 					/>
 				</Box>
 			</Dialog>
+
+			<Drawer
+				open={openDetail}
+				anchor={'right'}
+				onClose={toggleDetailDrawer(false)}
+				PaperProps={{
+					sx: {
+						minWidth: 700,
+						maxWidth: 735,
+						margin: '12px',
+						height: 'calc(100vh - 24px)',
+						borderRadius: '24px',
+						background: '#F2F4F2',
+					},
+				}}
+			>
+				<TicketDetailContainer
+					ticketInfo={selectedTicket}
+					closeDrawer={toggleDetailDrawer(false)}
+				/>
+			</Drawer>
 		</Layout>
 	);
 };

@@ -13,5 +13,24 @@ export const useProrityBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'ticket_priority/get', config);
 	};
 
-	return { getAllPriorities };
+	const getPriorityColor = priority => {
+		switch (priority) {
+			case 'low':
+				return '#2278C3';
+
+			case 'normal':
+				return '#22C368';
+
+			case 'hight':
+				return '#FFA726';
+
+			case 'emergency':
+				return '#C32222';
+
+			default:
+				return '#2278C3';
+		}
+	};
+
+	return { getAllPriorities, getPriorityColor };
 };

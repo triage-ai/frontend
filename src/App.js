@@ -41,8 +41,19 @@ const theme = createTheme({
 			fontWeight: 500,
 			letterSpacing: '-0.02em',
 		},
+		h6: {
+			letterSpacing: '-0.02em',
+		},
+		subtitle1: {
+			letterSpacing: '-0.05em',
+		},
 		subtitle2: {
 			color: '#545555',
+			letterSpacing: '-0.05em',
+		},
+		caption: {
+			letterSpacing: '-0.03em',
+			fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
 		},
 		overline: {
 			fontWeight: 600,
