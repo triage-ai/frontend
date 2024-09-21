@@ -6,6 +6,14 @@ import { AuthContext } from '../context/AuthContext';
 export const useAgentsBackend = () => {
 	const { authState } = useContext(AuthContext);
 
+	const getAgent = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${authState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `agent/id/${authState.userId}`, config);
+	};
+
 	const getAllAgents = async () => {
 		const config = {
 			headers: { Authorization: `Bearer ${authState.token}` },
@@ -46,5 +54,5 @@ export const useAgentsBackend = () => {
 		);
 	};
 
-	return { getAllAgents, createAgent, updateAgent, removeAgent };
+	return { getAgent, getAllAgents, createAgent, updateAgent, removeAgent };
 };
