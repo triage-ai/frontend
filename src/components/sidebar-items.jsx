@@ -18,6 +18,7 @@ import {
 	SlidersHorizontal,
 	Ticket,
 	ToyBrick,
+	UserRound
 } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -107,6 +108,15 @@ const menuItems = [
 		title: 'Tickets',
 		icon: (
 			<Ticket
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Profile',
+		icon: (
+			<UserRound
 				size={20}
 				// strokeWidth={2}
 			/>
@@ -415,7 +425,8 @@ export const SidebarItems = () => {
 												to={'/' + item.title.toLowerCase()}
 												selected={activeRoute(item.title.toLowerCase())}
 												// disabled={item.title !== 'Agents'}
-												disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+												// disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+												disabled={item.title !== 'Agents' && item.title !== 'Tickets' && item.title !== 'Profile'}
 												sx={{
 													minHeight: 42,
 													alignItems: 'center',

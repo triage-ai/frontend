@@ -15,6 +15,7 @@ import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/protected-route';
 import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
+import {Profiles} from './pages/profile/Profiles'
 // import { Landing } from './pages/landing/landing';
 
 const theme = createTheme({
@@ -174,6 +175,14 @@ function App() {
 								<RouteComponent />
 								// 	</DrawerContentContainer>
 								// </Box>
+							}
+						/>
+						<Route
+							path="profile"
+							element={
+								<ProtectedRoute>
+									<Profiles />
+								</ProtectedRoute>
 							}
 						/>
 					</Routes>
