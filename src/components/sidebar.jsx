@@ -24,6 +24,7 @@ import { useTheme } from '@emotion/react';
 import { AddAgent } from '../pages/agent/AddAgent';
 import { AuthContext } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
+import { AddTicket } from '../pages/ticket/AddTicket';
 
 export const drawerWidth = 250;
 
@@ -93,7 +94,7 @@ export const Sidebar = ({
 	processParam,
 	finishedParam,
 }) => {
-	const { refreshAgents } = useData();
+	const { refreshAgents, refreshTickets } = useData();
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
@@ -231,6 +232,11 @@ export const Sidebar = ({
 	const handleAgentCreated = () => {
 		handleDialogClose();
 		refreshAgents();
+	};
+
+	const handleTicketCreated = () => {
+		handleDialogClose();
+		refreshTickets();
 	};
 
 	return (
@@ -568,7 +574,12 @@ export const Sidebar = ({
 						<X size={20} />
 					</IconButton>
 
-					<AddAgent handleAgentCreated={handleAgentCreated} />
+					{appBarTitle.toLowerCase().includes('agent list') && (
+						<AddAgent handleAgentCreated={handleAgentCreated} />
+					)}
+					{appBarTitle.toLowerCase().includes('ticket list') && (
+						<AddTicket handleTicketCreated={handleTicketCreated} />
+					)}
 				</Box>
 
 				{/* <h1>{"Use Google's location service?"}</h1>

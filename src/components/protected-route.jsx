@@ -6,6 +6,7 @@ const ProtectedRoute = ({ children }) => {
 	const { authState } = useContext(AuthContext);
 
 	if (!authState.isAuth) {
+		debugger;
 		return <Navigate to="/login" />;
 	}
 

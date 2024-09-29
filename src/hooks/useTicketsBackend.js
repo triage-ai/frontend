@@ -36,13 +36,13 @@ export const useTicketsBackend = () => {
 		);
 	};
 
-	const updateTicket = async ticketInfo => {
+	const updateTicket = async (ticketId, ticketInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${authState.token}` },
 		};
 
 		return await axios.put(
-			process.env.REACT_APP_BACKEND_URL + 'ticket/put/' + ticketInfo.ticket_id,
+			process.env.REACT_APP_BACKEND_URL + 'ticket/put/' + ticketId,
 			ticketInfo,
 			config
 		);

@@ -22,8 +22,12 @@ import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const Tickets = () => {
+	const navigate = useNavigate();
+	const { ticketId } = useParams();
+
 	const { tickets, refreshTickets } = useData();
 	const { getAllPriorities } = useProrityBackend();
 
@@ -38,6 +42,17 @@ export const Tickets = () => {
 		getPriorityList();
 		refreshTickets();
 	}, []);
+
+	useEffect(() => {
+		if (ticketList.length > 0 && ticketId) {
+			const ticket = {
+				ticket_id: parseInt(ticketId, 10),
+			};
+
+			setOpenDetail(true);
+			setSelectedTicket(ticket);
+		}
+	}, [ticketList, ticketId]);
 
 	useEffect(() => {
 		if (priorities.length > 0 && tickets.length > 0) {
@@ -73,6 +88,11 @@ export const Tickets = () => {
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
 		() => {
+			if (newOpen) {
+				navigate('ticket-modal/' + ticket.ticket_id);
+			} else {
+				navigate('/tickets');
+			}
 			setOpenDetail(newOpen);
 			setSelectedTicket(ticket);
 		};

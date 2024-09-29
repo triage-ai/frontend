@@ -24,6 +24,9 @@ const CustomInput = styled(props => (
 			backgroundColor: 'transparent',
 			borderColor: '#22874E',
 		},
+		'& input': {
+			paddingBottom: '5px',
+		},
 	},
 	'& label.Mui-focused': {
 		color: '#545555',

@@ -1,21 +1,26 @@
 import axios from 'axios';
 import { useSetAuthCookie } from './useSetAuthCookie';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 export const useStatusBackend = () => {
-	const { getAuthCookie } = useSetAuthCookie();
+	const { authState } = useContext(AuthContext);
 
-	const getTaskStatus = async taskId => {
-		const { auth } = getAuthCookie();
-
+	const getAllStatuses = async () => {
 		const config = {
-			headers: { Authorization: `Bearer ${auth.token}` },
+			headers: { Authorization: `Bearer ${authState.token}` },
 		};
 
-		return await axios.get(
-			'https://demo-docker-3jtvhz75ca-uk.a.run.app/task/result/' + taskId,
-			config
-		);
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'ticket_status/get', config);
 	};
 
-	return { getTaskStatus };
+	const getTaskStatus = async taskId => {
+		const config = {
+			headers: { Authorization: `Bearer ${authState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + taskId, config);
+	};
+
+	return { getAllStatuses, getTaskStatus };
 };

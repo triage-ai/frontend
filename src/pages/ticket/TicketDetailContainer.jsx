@@ -13,12 +13,13 @@ const CircularTab = styled(Tab)(() => ({
 	border: '1px solid #E5EFE9',
 	padding: 0,
 	color: '#6E7772',
+	transition: 'border-color 0.3s',
 	'&.Mui-selected': {
-		border: '1.5px solid #22874E',
+		border: '1.25px solid #22874E',
 		color: '#22874E',
 	},
 	'&:hover': {
-		background: '#E8EFEA',
+		border: '1.25px solid #22874E',
 	},
 }));
 

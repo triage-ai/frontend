@@ -1,12 +1,6 @@
 import {
 	Box,
-	Button,
 	Checkbox,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
 	FormControlLabel,
 	IconButton,
 	InputAdornment,
@@ -15,19 +9,18 @@ import {
 	StepConnector,
 	StepLabel,
 	Stepper,
-	TextField,
 	Typography,
 	stepConnectorClasses,
 	styled,
 } from '@mui/material';
 import { CustomFilledInput } from '../../components/custom-input';
-import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { Check, Eye, EyeOff } from 'lucide-react';
-import { useDepartmentsBackend } from '../../hooks/useDepartmentsBackend';
 import { useRolesBackend } from '../../hooks/useRolesBackend';
 import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { DepartmentSelect } from '../department/DepartmentSelect';
+import { RoleSelect } from '../role/RoleSelect';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -92,14 +85,11 @@ function QontoStepIcon(props) {
 
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
-export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) => {
-	const { getAllDepartments } = useDepartmentsBackend();
+export const AddTicket = ({ handleTicketCreated, handleAgentEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
 	const { createAgent, updateAgent } = useAgentsBackend();
 
-	const [departments, setDepartments] = useState([]);
 	const [roles, setRoles] = useState([]);
-	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [isNextDisabled, setIsNextDisabled] = useState(true);
@@ -119,19 +109,6 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 	});
 
 	useEffect(() => {
-		getAllDepartments()
-			.then(depts => {
-				const departmentsData = depts.data;
-				const formattedDepts = departmentsData.map(dept => {
-					return { value: dept.dept_id, label: dept.name };
-				});
-
-				setDepartments(formattedDepts);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-
 		getAllRoles()
 			.then(roles => {
 				const rolesData = roles.data;
@@ -147,7 +124,9 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 	}, []);
 
 	useEffect(() => {
-		setFormData(editAgent);
+		if (editAgent) {
+			setFormData(editAgent);
+		}
 	}, [editAgent]);
 
 	// Effect to check validation whenever formData or currentStep changes
@@ -226,18 +205,10 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 		} else {
 			createAgent(formData)
 				.then(res => {
-					handleAgentCreated();
+					handleTicketCreated();
 				})
 				.catch(err => console.error(err));
 		}
-	};
-
-	const openDialog = () => {
-		setOpenCreateDialog(true);
-	};
-
-	const handleClose = () => {
-		setOpenCreateDialog(false);
 	};
 
 	return (
@@ -246,12 +217,12 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 				variant="h1"
 				sx={{ mb: 1.5 }}
 			>
-				Add new agent
+				Add new ticket
 			</Typography>
 
 			<Typography variant="subtitle2">
-				We will send an invite to your client to onboard on Remote. Once their onboarding is
-				complete, you will be able to create or schedule invoices.
+				We will gather essential details about the new agent. Complete the following steps to ensure
+				accurate setup and access.
 			</Typography>
 
 			<Stepper
@@ -408,7 +379,7 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 						Access
 					</Typography>
 
-					<CustomSelect
+					{/* <CustomSelect
 						label="Department"
 						onChange={handleInputChange}
 						value={formData.dept_id}
@@ -418,9 +389,19 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 						addNewButton
 						handleAddBtnClick={openDialog}
 						options={departments}
+					/> */}
+
+					<DepartmentSelect
+						handleInputChange={handleInputChange}
+						value={formData.dept_id}
 					/>
 
-					<CustomSelect
+					<RoleSelect
+						handleInputChange={handleInputChange}
+						value={formData.role_id}
+					/>
+
+					{/* <CustomSelect
 						label="Role"
 						onChange={handleInputChange}
 						value={formData.role_id}
@@ -428,48 +409,9 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 						fullWidth
 						mb={2}
 						addNewButton
-						handleAddBtnClick={openDialog}
+						// handleAddBtnClick={openDialog}
 						options={roles}
-					/>
-
-					<Dialog
-						open={openCreateDialog}
-						onClose={handleClose}
-						PaperProps={{
-							component: 'form',
-							onSubmit: event => {
-								event.preventDefault();
-								const formData = new FormData(event.currentTarget);
-								const formJson = Object.fromEntries(formData.entries());
-								const email = formJson.email;
-								console.log(email);
-								handleClose();
-							},
-						}}
-					>
-						<DialogTitle>Subscribe</DialogTitle>
-						<DialogContent>
-							<DialogContentText>
-								To subscribe to this website, please enter your email address here. We will send
-								updates occasionally.
-							</DialogContentText>
-							<TextField
-								autoFocus
-								required
-								margin="dense"
-								id="name"
-								name="email"
-								label="Email Address"
-								type="email"
-								fullWidth
-								variant="standard"
-							/>
-						</DialogContent>
-						<DialogActions>
-							<Button onClick={handleClose}>Cancel</Button>
-							<Button type="submit">Subscribe</Button>
-						</DialogActions>
-					</Dialog>
+					/> */}
 				</Box>
 			)}
 
@@ -518,6 +460,7 @@ export const AddTicket = ({ handleAgentCreated, handleAgentEdited, editAgent }) 
 							name="password"
 							halfWidth
 							type={showPassword ? 'text' : 'password'}
+							autoComplete="new-password"
 							endAdornment={
 								<InputAdornment position="end">
 									<IconButton

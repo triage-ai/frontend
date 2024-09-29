@@ -131,6 +131,14 @@ function App() {
 							}
 						/>
 						<Route
+							path="tickets/ticket-modal/:ticketId"
+							element={
+								<ProtectedRoute>
+									<Tickets />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
 							path="build"
 							element={<Build handleProgress={handleProgress} />}
 						/>

@@ -5,6 +5,7 @@ import {
 	Grid,
 	IconButton,
 	Input,
+	InputLabel,
 	MenuItem,
 	Select,
 	styled,
@@ -13,8 +14,10 @@ import {
 import {
 	BadgeAlert,
 	CalendarClock,
+	ChevronDown,
 	CircleAlert,
 	FileText,
+	Info,
 	Network,
 	OctagonAlert,
 	Pencil,
@@ -26,6 +29,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
 import { useTicketsBackend } from '../../hooks/useTicketsBackend';
+import { useStatusBackend } from '../../hooks/useStatusBackend';
 
 const IconBox = styled(Box)(() => ({
 	height: '35px',
@@ -41,13 +45,41 @@ const IconBox = styled(Box)(() => ({
 
 export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 	const { getPriorityColor } = useProrityBackend();
-	const { getTicketById } = useTicketsBackend();
+	const { getTicketById, updateTicket } = useTicketsBackend();
+	const { getAllStatuses } = useStatusBackend();
 
 	const [ticket, setTicket] = useState(null);
+	const [statusList, setStatusList] = useState([]);
 
-	// const handleChange = event => {
-	// 	setStatus(event.target.value);
-	// };
+	const handleStatusChange = event => {
+		const updatedTicket = { ...ticket };
+		const newStatusName = event.target.value;
+		const newStatus = statusList.find(status => status.name === newStatusName);
+		const newStatusJSON = {
+			status_id: newStatus.status_id,
+			name: newStatus.name,
+			state: newStatus.state,
+			properties: newStatus.properties,
+		};
+		updatedTicket.status = newStatusJSON;
+
+		const statusUpdate = {
+			status: newStatusJSON,
+		};
+		updateTicket(updatedTicket.ticket_id, statusUpdate)
+			.then(() => {
+				setTicket(updatedTicket);
+			})
+			.catch(err => alert('Error while updating ticket status'));
+	};
+
+	useEffect(() => {
+		getAllStatuses()
+			.then(({ data }) => {
+				setStatusList(data);
+			})
+			.catch(err => alert('Could not get status list'));
+	}, []);
 
 	useEffect(() => {
 		if (ticketInfo) {
@@ -220,23 +252,68 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 									Status
 								</Typography>
 
-								<FormControl
-									sx={{ m: 1 }}
-									variant="standard"
-								>
+								{/* <FormControl sx={{ m: 1 }}>
+									<InputLabel id="demo-simple-select-label">Status</InputLabel>
 									<Select
 										labelId="demo-customized-select-label"
 										id="demo-customized-select"
 										value={ticket.status.state}
 										// onChange={handleChange}
 										input={<Input />}
+									> */}
+								<FormControl
+									fullWidth
+									sx={{ m: 1, minWidth: 120 }}
+									size="small"
+								>
+									<Select
+										displayEmpty
+										value={ticket.status?.name || ''}
+										onChange={handleStatusChange}
+										renderValue={item => (
+											<Box
+												display={'flex'}
+												alignItems={'center'}
+											>
+												<Box
+													width={'6px'}
+													height={'6px'}
+													borderRadius={'6px'}
+													marginRight={1}
+													sx={{ backgroundColor: '#D9D9D9' }}
+												/>
+
+												<Typography
+													variant="subtitle2"
+													fontWeight={600}
+													sx={{ color: '#1B1D1F' }}
+												>
+													{item}
+												</Typography>
+											</Box>
+										)}
+										sx={{
+											'.MuiOutlinedInput-notchedOutline': {
+												borderRadius: '8px',
+												borderColor: '#E5EFE9',
+											},
+										}}
+										IconComponent={props => (
+											<ChevronDown
+												{...props}
+												size={17}
+												color="#1B1D1F"
+											/>
+										)}
 									>
-										<MenuItem value="">
-											<em>None</em>
-										</MenuItem>
-										<MenuItem value={10}>Ten</MenuItem>
-										<MenuItem value={20}>Twenty</MenuItem>
-										<MenuItem value={30}>Thirty</MenuItem>
+										{statusList.map(status => (
+											<MenuItem
+												key={status.status_id}
+												value={status.name}
+											>
+												<Typography variant="subtitle2">{status.name}</Typography>
+											</MenuItem>
+										))}
 									</Select>
 								</FormControl>
 							</Box>
@@ -319,13 +396,15 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 										color={'#1B1D1F'}
 										fontWeight={600}
 									>
-										{new Date(ticket.due_date)
-											.toLocaleDateString('en-US', {
-												day: '2-digit',
-												month: 'short',
-												year: 'numeric',
-											})
-											.replace(',', ' ')}
+										{ticket.due_date
+											? new Date(ticket.due_date)
+													.toLocaleDateString('en-US', {
+														day: '2-digit',
+														month: 'short',
+														year: 'numeric',
+													})
+													.replace(',', ' ')
+											: 'Not set'}
 									</Typography>
 								</Box>
 							</Box>
@@ -582,12 +661,19 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 						variant="caption"
 						className="text-muted"
 						width={'100%'}
-						textAlign={'center'}
 						position={'absolute'}
 						bottom={12}
 						left={0}
+						display={'flex'}
+						alignItems={'center'}
+						justifyContent={'center'}
+						gap={0.25}
 						// sx={{ transform: 'translateX(-50%)' }}
 					>
+						<Info
+							size={18}
+							strokeWidth={1.25}
+						/>{' '}
 						Created {ticket.created} • Last updated {ticket.updated}
 					</Typography>
 				</>
