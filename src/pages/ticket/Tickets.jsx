@@ -22,6 +22,7 @@ import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
+import { AddAgent } from '../agent/AddAgent';
 
 export const Tickets = () => {
 	const { tickets, refreshTickets } = useData();
@@ -84,6 +85,7 @@ export const Tickets = () => {
 			buttonInfo={{
 				label: 'Add new ticket',
 				icon: <TicketPlus size={20} />,
+				button: <AddAgent handleAgentCreated={handleAgentCreated} />,
 			}}
 		>
 			<WhiteContainer noPadding>
