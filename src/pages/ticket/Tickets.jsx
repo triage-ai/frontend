@@ -115,7 +115,7 @@ export const Tickets = () => {
 							variant="filled"
 							placeholder="Search"
 							disabled
-							sx={{ '&:hover': { borderColor: '#bcc2bf' } }}
+							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
 							sx={{
@@ -223,7 +223,7 @@ export const Tickets = () => {
 								>
 									<Stack
 										direction="row"
-										spacing={0.5}
+										// spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
 										<IconButton onClick={event => handleDialogOpen(event, ticket)}>
@@ -298,7 +298,7 @@ export const Tickets = () => {
 						margin: '12px',
 						height: 'calc(100vh - 24px)',
 						borderRadius: '24px',
-						background: '#F2F4F2',
+						background: '#F1F4F2',
 					},
 				}}
 			>

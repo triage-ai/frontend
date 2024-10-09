@@ -408,7 +408,7 @@ export const SidebarItems = () => {
 									{!item?.subheader && (
 										<ListItem
 											disablePadding
-											sx={{ display: 'block', mt: index !== 0 && 0.2 }}
+											sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}
 										>
 											<ListItemButton
 												component={Link}

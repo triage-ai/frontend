@@ -13,7 +13,7 @@ const CustomInput = styled(props => (
 		overflow: 'hidden',
 		borderRadius: 12,
 		backgroundColor: 'transparent',
-		border: '1.5px solid #bcc2bf',
+		border: '1.5px solid #E5EFE9',
 		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
 		fontSize: '0.9375rem',
 		fontWeight: 500,

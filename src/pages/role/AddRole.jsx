@@ -55,7 +55,7 @@ export const AddRole = ({ handleClose }) => {
 			</Typography>
 
 			<Stack
-				spacing={1.5}
+				// spacing={1.5}
 				sx={{ alignItems: 'center' }}
 			>
 				<CustomFilledInput
@@ -90,7 +90,7 @@ export const AddRole = ({ handleClose }) => {
 
 			<Stack
 				direction={'row'}
-				spacing={1.5}
+				// spacing={1.5}
 				sx={{ justifyContent: 'center', mt: 3.5, mb: 2 }}
 			>
 				<CircularButton
