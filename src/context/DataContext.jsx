@@ -3,6 +3,7 @@ import { useAgentsBackend } from '../hooks/useAgentsBackend';
 import { useTicketsBackend } from '../hooks/useTicketsBackend';
 import { useDepartmentsBackend } from '../hooks/useDepartmentsBackend';
 import { useRolesBackend } from '../hooks/useRolesBackend';
+import { useSettingsBackend } from '../hooks/useSettingsBackend';
 
 const DataContext = createContext();
 
@@ -11,6 +12,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllOpenTickets } = useTicketsBackend();
 	const { getAllDepartments } = useDepartmentsBackend();
 	const { getAllRoles } = useRolesBackend();
+	const { getAllSettings} = useSettingsBackend();
 
 	const [agents, setAgents] = useState([]);
 	const [tickets, setTickets] = useState([]);
@@ -18,6 +20,7 @@ export const DataProvider = ({ children }) => {
 	const [formattedDepartments, setFormattedDepartments] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const [formattedRoles, setFormattedRoles] = useState([]);
+	const [settings, setSettings] = useState({});
 
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
@@ -32,6 +35,16 @@ export const DataProvider = ({ children }) => {
 		});
 	}, [getAllOpenTickets]);
 
+	const refreshSettings = useCallback(() => {
+		getAllSettings().then(settingsList => {
+			var formattedSettings = {}
+			Object.values(settingsList.data).forEach(setting => {
+				formattedSettings[setting.key] = setting
+			})
+			setSettings(formattedSettings);
+		});
+	}, [getAllSettings]);
+
 	const refreshDepartments = useCallback(() => {
 		getAllDepartments()
 			.then(depts => {
@@ -39,7 +52,6 @@ export const DataProvider = ({ children }) => {
 				const formattedDepts = departmentsData.map(dept => {
 					return { value: dept.dept_id, label: dept.name };
 				});
-
 				setDepartments(departmentsData);
 				setFormattedDepartments(formattedDepts);
 			})
@@ -77,6 +89,8 @@ export const DataProvider = ({ children }) => {
 				roles,
 				formattedRoles,
 				refreshRoles,
+				settings,
+				refreshSettings
 			}}
 		>
 			{children}

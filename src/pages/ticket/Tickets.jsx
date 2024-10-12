@@ -100,7 +100,7 @@ export const Tickets = () => {
 	return (
 		<Layout
 			title={'Ticket List'}
-			subtitle={'View your tickets and add new ones.'}
+			subtitle={'View your tickets and add new ones'}
 			buttonInfo={{
 				label: 'Add new ticket',
 				icon: <TicketPlus size={20} />,

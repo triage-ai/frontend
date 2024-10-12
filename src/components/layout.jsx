@@ -37,6 +37,8 @@ export const Layout = ({ children, title, subtitle, buttonInfo, taskId, process 
 					sx={{
 						height: `calc(100% - ${AppBarHeight})`,
 						px: { xs: 2, md: 5 },
+						zIndex: '4',
+						position: 'relative'
 						// padding: 1,
 						// overflow: 'hidden',
 					}}

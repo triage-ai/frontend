@@ -110,7 +110,7 @@ export const Agents = () => {
 	return (
 		<Layout
 			title={'Agent List'}
-			subtitle={'View your agents and add new ones.'}
+			subtitle={'View your agents and add new ones'}
 			buttonInfo={{
 				label: 'Add new agent',
 				icon: <UserRoundPlus size={20} />,
