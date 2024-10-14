@@ -9,7 +9,6 @@ import {
 	Box,
 	Button,
 	CircularProgress,
-	Grid,
 	InputAdornment,
 	TextField,
 	Typography,
@@ -20,6 +19,7 @@ import { Activity, CheckCircle, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
+import Grid from '@mui/material/Grid2';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -150,12 +150,10 @@ export const Auth = () => {
 				spacing={{ xs: 6, md: 8, lg: 2 }}
 			>
 				<Grid
-					xs={0}
-					md={6}
+					size={{ xs: 0, md: 6 }}
 					sx={{
 						display: { xs: 'none', md: 'block' },
 					}}
-					item
 				>
 					<Box
 						sx={{
@@ -258,8 +256,7 @@ export const Auth = () => {
 								sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}
 							>
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -286,8 +283,7 @@ export const Auth = () => {
 								</Grid>
 
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -314,8 +310,7 @@ export const Auth = () => {
 								</Grid>
 
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -345,11 +340,7 @@ export const Auth = () => {
 					</Box>
 				</Grid>
 
-				<Grid
-					xs={12}
-					md={6}
-					item
-				>
+				<Grid size={{ xs: 12, md: 6 }}>
 					<div
 						style={{
 							width: '100%',

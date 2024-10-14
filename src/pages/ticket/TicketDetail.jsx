@@ -2,7 +2,6 @@ import {
 	Box,
 	Button,
 	FormControl,
-	Grid,
 	IconButton,
 	Input,
 	InputLabel,
@@ -11,6 +10,8 @@ import {
 	styled,
 	Typography,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
 import {
 	BadgeAlert,
 	CalendarClock,
@@ -34,7 +35,7 @@ import { useStatusBackend } from '../../hooks/useStatusBackend';
 const IconBox = styled(Box)(() => ({
 	height: '35px',
 	width: '35px',
-	background: '#EAFAF1',
+	background: '#ecffef',
 	borderRadius: '8px',
 	display: 'flex',
 	alignItems: 'center',
@@ -43,12 +44,11 @@ const IconBox = styled(Box)(() => ({
 	marginRight: '12px',
 }));
 
-export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
+export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const { getPriorityColor } = useProrityBackend();
-	const { getTicketById, updateTicket } = useTicketsBackend();
+	const { updateTicket } = useTicketsBackend();
 	const { getAllStatuses } = useStatusBackend();
 
-	const [ticket, setTicket] = useState(null);
 	const [statusList, setStatusList] = useState([]);
 
 	const handleStatusChange = event => {
@@ -68,7 +68,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 		};
 		updateTicket(updatedTicket.ticket_id, statusUpdate)
 			.then(() => {
-				setTicket(updatedTicket);
+				updateCurrentTicket(updatedTicket);
 			})
 			.catch(err => alert('Error while updating ticket status'));
 	};
@@ -80,15 +80,6 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 			})
 			.catch(err => alert('Could not get status list'));
 	}, []);
-
-	useEffect(() => {
-		if (ticketInfo) {
-			getTicketById(ticketInfo.ticket_id).then(ticket => {
-				console.log(ticket.data);
-				setTicket(ticket.data);
-			});
-		}
-	}, [ticketInfo]);
 
 	const getPriorityIcon = priority => {
 		switch (priority) {
@@ -367,10 +358,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 						container
 						mb={'36px'}
 					>
-						<Grid
-							item
-							xs={4}
-						>
+						<Grid size={{ xs: 4 }}>
 							<Box
 								display={'flex'}
 								alignItems={'flex-start'}
@@ -410,10 +398,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 							</Box>
 						</Grid>
 
-						<Grid
-							item
-							xs={4}
-						>
+						<Grid size={{ xs: 4 }}>
 							<Box
 								display={'flex'}
 								alignItems={'flex-start'}
@@ -445,10 +430,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 							</Box>
 						</Grid>
 
-						<Grid
-							item
-							xs={4}
-						>
+						<Grid size={{ xs: 4 }}>
 							<Box
 								display={'flex'}
 								alignItems={'flex-start'}
@@ -547,10 +529,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 						</Typography>
 
 						<Grid container>
-							<Grid
-								item
-								xs={6}
-							>
+							<Grid size={{ xs: 6 }}>
 								<Box
 									display={'flex'}
 									flexDirection={'column'}
@@ -573,10 +552,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 								</Box>
 							</Grid>
 
-							<Grid
-								item
-								xs={6}
-							>
+							<Grid size={{ xs: 6 }}>
 								<Box
 									display={'flex'}
 									flexDirection={'column'}
@@ -600,10 +576,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 							</Grid>
 
 							{ticket.group && (
-								<Grid
-									item
-									xs={6}
-								>
+								<Grid size={{ xs: 6 }}>
 									<Box
 										display={'flex'}
 										flexDirection={'column'}
@@ -628,10 +601,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 							)}
 
 							{ticket.category && (
-								<Grid
-									item
-									xs={6}
-								>
+								<Grid size={{ xs: 6 }}>
 									<Box
 										display={'flex'}
 										flexDirection={'column'}
@@ -671,7 +641,7 @@ export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 						// sx={{ transform: 'translateX(-50%)' }}
 					>
 						<Info
-							size={18}
+							size={16}
 							strokeWidth={1.25}
 						/>{' '}
 						Created {ticket.created} • Last updated {ticket.updated}

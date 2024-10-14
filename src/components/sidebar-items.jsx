@@ -452,7 +452,10 @@ export const SidebarItems = () => {
 									)}
 
 									{!item?.subheader && (
-										<ListItem disablePadding sx={{ display: 'block', mt: index !== 0 && 0.2 }}>
+										<ListItem
+											disablePadding
+											sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}
+										>
 											<ListItemButton
 												component={Link}
 												to={item.title === 'Settings' ? '/settings/system' : '/' + item.title.toLowerCase()}
