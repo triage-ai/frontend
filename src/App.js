@@ -13,7 +13,9 @@ import ProtectedRoute from './components/protected-route';
 import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
 import { UserDashboard } from './pages/dashboard/user-dashboard'
-// import { Landing } from './pages/landing/landing';
+import { Settings } from './pages/settings/Settings';
+import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
+import { Landing } from './pages/landing/landing';
 
 const theme = createTheme({
 	typography: {
@@ -115,6 +117,76 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<UserDashboard />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/system"
+							element={
+								<ProtectedRoute>
+									<Settings 
+										Menu={ SystemMenu }
+									/> 
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/company"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ CompanyMenu }
+									/>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/tickets"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ TicketMenu }
+									/>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/tasks"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ TaskMenu }
+									/>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/agents"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ AgentMenu }
+									/>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/users"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ UserMenu }
+									/>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="settings/knowledgebase"
+							element={
+								<ProtectedRoute>
+									<Settings 
+									Menu={ KnowledgebaseMenu }
+									/>
 								</ProtectedRoute>
 							}
 						/>
