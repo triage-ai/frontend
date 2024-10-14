@@ -215,7 +215,7 @@ export const Tickets = () => {
 										sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
 									/>
 								</TableCell>
-								<TableCell>{ticket.user_id}</TableCell>
+								<TableCell>{ticket.user.name}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"

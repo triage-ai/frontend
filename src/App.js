@@ -15,7 +15,6 @@ import { Agents } from './pages/agent/Agents';
 import { UserDashboard } from './pages/dashboard/user-dashboard'
 import { Settings } from './pages/settings/Settings';
 import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
-import { Landing } from './pages/landing/landing';
 
 const theme = createTheme({
 	typography: {
