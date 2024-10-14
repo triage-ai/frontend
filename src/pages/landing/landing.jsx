@@ -7,14 +7,44 @@ import React, { useContext, useState } from 'react';
 import {
 	Box,
 	Button,
-	CircularProgress,
-	Grid,
-	InputAdornment,
-	TextField,
+	Chip,
+	Container,
+	Dialog,
+	IconButton,
+	Menu,
+	MenuItem,
+	Modal,
+	Toolbar,
+	Tooltip,
 	Typography,
 	styled,
 } from '@mui/material';
-import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
+import Grid from '@mui/material/Grid2';
+
+import { ArrowUpRight, MenuIcon, Play, Quote, X } from 'lucide-react';
+import { useState } from 'react';
+import TriageMintLogo from '../../assets/triage-logo-mint-white.svg';
+import AntlerIcon from '../../assets/antler-icon.svg';
+import AppPreview from '../../assets/app-preview.png';
+import StealthIcon from '../../assets/stealth-icon.png';
+import AmazonIcon from '../../assets/amazon-icon.jpeg';
+import WorkdayIcon from '../../assets/workday-icon.webp';
+import MongoIcon from '../../assets/mongo-icon.png';
+import FooterCardBg from '../../assets/footer-card-bg.png';
+
+import InstagramIcon from '../../assets/instagram-outline-icon.svg';
+import MailIcon from '../../assets/mail-outline-icon.svg';
+import LinkedInIcon from '../../assets/linkedIn-outline-icon.svg';
+
+import Feature1 from '../../assets/feature1.png';
+import Feature2 from '../../assets/feature2.png';
+import Feature3 from '../../assets/feature3.png';
+import Feature4 from '../../assets/feature4.png';
+
+import ProductVideo from '../../assets/productVideo.mov';
+import Collaborate from '../../assets/collaborate.png';
+
+import Marquee from 'react-fast-marquee';
 import { useNavigate } from 'react-router-dom';
 
 const ProviderButton = styled(Box)({
@@ -184,23 +214,59 @@ export const Landing = () => {
 								</Box>
 							</Box> */}
 
+					<Grid
+						container
+						// spacing={2}
+					>
+						{features.map((feature, index) => (
 							<Grid
-								container
-								spacing={2}
-								sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}
+								key={feature.title}
+								size={{ xs: 12, md: index + 1 === 1 || index + 1 === 4 ? 8 : 4 }}
 							>
-								<Grid
-									item
-									xs={4}
-									sx={{ textAlign: 'left' }}
-								>
-									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Tag
-											color="#fff"
-											size={16}
-											strokeWidth={2.2}
-											style={{ opacity: 0.6, marginRight: '0.4rem' }}
-										/>
+								<FeatureItem>
+									<Box
+										sx={{
+											width: '100%',
+											height: '285px',
+											position: 'absolute',
+											top: index + 1 === 1 || index + 1 === 4 ? 0 : 15,
+											paddingX: '24px',
+											boxSizing: 'border-box',
+										}}
+									>
+										<Box
+											sx={{
+												height: '100%',
+												width: '100%',
+												borderRadius: '31px',
+												display: 'flex',
+												justifyContent: 'center',
+												overflow: 'hidden',
+											}}
+										>
+											<img
+												src={feature.image}
+												alt={'Feature ' + index + 1}
+												style={{
+													width:
+														index + 1 === 1 || index + 1 === 4
+															? { xs: '205%', md: '100%' }
+															: 'unset',
+												}}
+											/>
+										</Box>
+									</Box>
+									<Box
+										sx={{
+											width: { xs: '90%', md: index + 1 === 1 || index + 1 === 4 ? '60%' : '80%' },
+										}}
+									>
+										<Typography
+											variant="h5"
+											sx={{ fontWeight: 600, letterSpacing: '-0.08em', mb: 1.75 }}
+										>
+											{feature.title}
+										</Typography>
 										<Typography
 											variant="subtitle1"
 											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
@@ -361,138 +427,306 @@ export const Landing = () => {
 									textAlign: 'center',
 								}}
 							>
-								Sign in with a provider
-							</p>
+								<Typography
+									variant="h5"
+									sx={{ fontWeight: 600, mb: 2 }}
+								>
+									Got questions?
+								</Typography>
 
-							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
-								<ProviderButton onClick={loginWithSAML}>
+								<Typography
+									variant="subtitle2"
+									sx={{ color: '#FFF', fontWeight: 400, opacity: 0.5 }}
+								>
+									We're here to help! Reach out clicking this box, and our team will get back to you
+									ASAP.
+								</Typography>
+
+								<img
+									src={FooterCardBg}
+									alt="Footer Card BG"
+									style={{ position: 'absolute', right: 20, top: 20, height: '80%' }}
+								/>
+							</Box>
+						</a> */}
+
+						<Grid
+							container
+							// spacing={{ xs: 6, md: 8, lg: 2 }}
+						>
+							<Grid size={{ xs: 12, md: 4 }}>
+								<Box
+									sx={{
+										width: '320px',
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'flex-start',
+										color: '#FFF',
+										textAlign: 'left',
+									}}
+								>
 									<img
-										src={microsoftIcon}
-										alt="Microsoft Icon"
+										src={TriageMintLogo}
+										alt="Triage Logo"
+										style={{ width: '50%', marginBottom: '30px' }}
 									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
+									<Typography variant="subtitle1">
+										Experience the future of customer support
+									</Typography>
+								</Box>
+							</Grid>
+
+							<Grid
+								size={{ xs: 6, md: 4, lg: 2 }}
+								sx={{ display: 'flex', justifyContent: { xs: 'unset', md: 'center', lg: 'unset' } }}
+							>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'flex-start',
+										color: '#FFF',
+										gap: '26px',
+									}}
+								>
+									<Typography
+										variant="subtitle2"
+										sx={{ color: '#FFF', fontWeight: 600 }}
+									>
+										Product
+									</Typography>
+
+									{pages.map(page => (
+										<Button
+											key={page}
+											variant="text"
+											disableRipple
+											href={'#' + page}
+											sx={{
+												ml: '-8px',
+												textTransform: 'none',
+												minWidth: 'unset',
+												'&:hover': {
+													background: '#e8ffeb0d',
+												},
+											}}
+										>
+											<Typography
+												variant="subtitle2"
+												sx={{ color: 'rgba(236, 255, 239, 0.6)', fontWeight: 600 }}
+											>
+												{page}
+											</Typography>
+										</Button>
+									))}
+								</Box>
+							</Grid>
+
+							<Grid
+								size={{ xs: 6, md: 4, lg: 2 }}
+								sx={{ display: 'flex', justifyContent: { xs: 'unset', md: 'center', lg: 'unset' } }}
+							>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'flex-start',
+										color: '#FFF',
+										gap: '26px',
+									}}
+								>
+									<Typography
+										variant="subtitle2"
+										sx={{ color: '#FFF', fontWeight: 600 }}
+									>
+										Legals
+									</Typography>
+
+									<Button
+										variant="text"
+										disableRipple
+										sx={{
+											ml: '-8px',
+											textTransform: 'none',
+											minWidth: 'unset',
+											'&:hover': {
+												background: '#e8ffeb0d',
+											},
+										}}
+										onClick={() => handleLegalsOpen('terms')}
+									>
+										<Typography
+											variant="subtitle2"
+											sx={{ color: 'rgba(236, 255, 239, 0.6)', fontWeight: 600 }}
+										>
+											Terms of Services
+										</Typography>
+									</Button>
+
+									<Button
+										variant="text"
+										disableRipple
+										sx={{
+											ml: '-8px',
+											textTransform: 'none',
+											minWidth: 'unset',
+											'&:hover': {
+												background: '#e8ffeb0d',
+											},
+										}}
+										onClick={() => handleLegalsOpen('privacy')}
+									>
+										<Typography
+											variant="subtitle2"
+											sx={{ color: 'rgba(236, 255, 239, 0.6)', fontWeight: 600 }}
+										>
+											Privacy Policy
+										</Typography>
+									</Button>
+								</Box>
+							</Grid>
+
+							<Grid
+								size={{ xs: 12, md: 12, lg: 4 }}
+								sx={{ display: 'flex', justifyContent: { xs: 'flex-start', lg: 'flex-end' } }}
+							>
+								<a
+									href="mailto:shivam.p36181@gmail.com?cc=rayan.dabbagh@gmail.com"
+									style={{ textDecoration: 'none' }}
+								>
+									<Box
+										sx={{
+											width: { xs: '100%', sm: '320px' },
+											padding: '28px',
+											background: 'rgba(26, 74, 19, 0.05)',
+											border: '1px solid rgba(13, 37, 10, 0.65)',
+											borderRadius: '22px',
+											boxSizing: 'border-box',
+											position: 'relative',
+											textAlign: 'left',
+											color: '#FFF',
 										}}
 									>
-										Microsoft
-									</span>
-								</ProviderButton>
+										<Typography
+											variant="h5"
+											sx={{ fontWeight: 600, mb: 2 }}
+										>
+											Got questions?
+										</Typography>
 
-								<ProviderButton>
-									<img
-										src={googleIcon}
-										alt="Google Icon"
+										<Typography
+											variant="subtitle2"
+											sx={{ color: '#FFF', fontWeight: 400, opacity: 0.5 }}
+										>
+											We're here to help! Reach out clicking this box, and our team will get back to
+											you ASAP.
+										</Typography>
+
+										<img
+											src={FooterCardBg}
+											alt="Footer Card BG"
+											style={{ position: 'absolute', right: 20, top: 20, height: '80%' }}
+										/>
+									</Box>
+								</a>
+							</Grid>
+						</Grid>
+
+						<Dialog
+							onClose={handleLegalsClose}
+							open={legalsOpen}
+							fullScreen={true}
+							scroll="body"
+							PaperProps={{
+								style: {
+									backgroundColor: '#000',
+									color: '#FFF',
+									justifyContent: 'center',
+									padding: '20px',
+									borderRadius: '15px',
+									boxSizing: 'border-box',
+								},
+							}}
+							slotProps={{ backdrop: { style: { backgroundColor: 'rgba(5, 15, 4, 0.75)' } } }}
+						>
+							<Box sx={{ width: '100%', display: 'grid' }}>
+								<IconButton
+									onClick={handleLegalsClose}
+									sx={{ justifyContent: 'flex-end' }}
+								>
+									<X
+										color="#FFF"
+										style={{ marginBottom: '20px', justifySelf: 'flex-end' }}
 									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Google
-									</span>
-								</ProviderButton>
+								</IconButton>
 							</Box>
 
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
+							<Box sx={{ maxWidth: '580px', margin: '0 auto' }}>
+								{legalsType === 'terms' && <TOS />}
+								{legalsType === 'privacy' && <PrivacyPolicy />}
+							</Box>
+						</Dialog>
+					</footer>
 
-							{/* <span
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: '32px',
-									marginBottom: '25px',
-								}}
+					<GradientDivider sx={{ mb: '70px', mt: { xs: '70px' } }} />
+
+					<Box
+						sx={{
+							width: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							mb: '30px',
+						}}
+					>
+						<Typography
+							variant="subtitle2"
+							sx={{ color: '#FFF', fontWeight: 400, textAlign: 'left' }}
+						>
+							©{new Date().getFullYear()} Triage.ai <br />
+							All rights reserved.
+						</Typography>
+
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+							<IconButton
+								aria-label="instagram"
+								href="https://www.instagram.com/triage.ai"
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								Or continue with email and password
-							</span> */}
+								<img
+									src={InstagramIcon}
+									alt="Instagram"
+								/>
+							</IconButton>
 
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
+							<IconButton
+								aria-label="email"
+								href="mailto:shivam.p36181@gmail.com?cc=rayan.dabbagh@gmail.com"
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								Landing Page
-							</p> */}
+								<img
+									src={MailIcon}
+									alt="Email"
+								/>
+							</IconButton>
 
-							<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
-										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
-									}}
-									onClick={() => navigate('user/login')}
-								>
-									User Sign in
-								</Button>
-								<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
-										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										marginBottom: '28px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
-									}}
-									onClick={() => navigate('agent/login')}
-								>
-									Agent Sign in
-								</Button>
-
-							{/* <Typography
-								variant="caption"
-								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
+							<IconButton
+								aria-label="linked in"
+								href="https://www.linkedin.com/company/triageaii"
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
-							</Typography> */}
-						</header>
-					</div>
-				</Grid>
-			</Grid>
+								<img
+									src={LinkedInIcon}
+									alt="LinkedIn"
+								/>
+							</IconButton>
+						</Box>
+					</Box>
+				</Box>
+			</Container>
 		</Box>
 	);
 };

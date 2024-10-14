@@ -8,7 +8,6 @@ import {
 	Box,
 	Button,
 	CircularProgress,
-	Grid,
 	InputAdornment,
 	TextField,
 	Typography,
@@ -18,6 +17,7 @@ import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
 import { AuthContext } from '../../context/AuthContext';
+import Grid from '@mui/material/Grid2';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -130,18 +130,24 @@ export const UserSignIn = () => {
 	};
 
 	return (
-		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', backgroundColor: '#FCFCFC' }}>
+		<Box
+			sx={{
+				width: '100%',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				backgroundColor: '#FCFCFC',
+			}}
+		>
 			<Grid
 				container
 				spacing={{ xs: 6, md: 8, lg: 2 }}
 			>
 				<Grid
-					xs={0}
-					md={6}
+					size={{ xs: 0, md: 6 }}
 					sx={{
 						display: { xs: 'none', md: 'block' },
 					}}
-					item
 				>
 					<Box
 						sx={{
@@ -244,8 +250,7 @@ export const UserSignIn = () => {
 								sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}
 							>
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -272,8 +277,7 @@ export const UserSignIn = () => {
 								</Grid>
 
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -300,8 +304,7 @@ export const UserSignIn = () => {
 								</Grid>
 
 								<Grid
-									item
-									xs={4}
+									size={{ xs: 4 }}
 									sx={{ textAlign: 'left' }}
 								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
@@ -331,11 +334,7 @@ export const UserSignIn = () => {
 					</Box>
 				</Grid>
 
-				<Grid
-					xs={12}
-					md={6}
-					item
-				>
+				<Grid size={{ xs: 12, md: 6 }}>
 					<div
 						style={{
 							width: '100%',

@@ -12,7 +12,7 @@ const CustomInput = styled(props => (
 		overflow: 'hidden',
 		borderRadius: 12,
 		backgroundColor: 'transparent',
-		border: '1.5px solid #bcc2bf',
+		border: '1.5px solid #E5EFE9',
 		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
 		fontSize: '0.9375rem',
 		fontWeight: 500,
@@ -33,12 +33,20 @@ const CustomInput = styled(props => (
 	},
 }));
 
-export const CustomFilledInput = ({ label, halfWidth, endAdornment, ...props }) => {
+export const CustomFilledInput = ({ label, halfWidth, endAdornment, borderWidth, ...props }) => {
 	return (
 		<CustomInput
 			variant="filled"
 			label={label}
-			sx={{ mt: props.mt, mb: props.mb, mr: props.mr, width: halfWidth && '49%' }}
+			sx={{
+				mt: props.mt,
+				mb: props.mb,
+				mr: props.mr,
+				width: halfWidth && '49%',
+				'& .MuiFilledInput-root': {
+					borderWidth: borderWidth ? borderWidth : 1.5,
+				},
+			}}
 			InputProps={{ disableUnderline: true, endAdornment }}
 			{...props}
 		/>

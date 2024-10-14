@@ -32,7 +32,7 @@ import { useDepartmentsBackend } from '../../hooks/useDepartmentsBackend';
 export const SearchTextField = styled('input')({
 	width: '100%',
 	height: '42px',
-	border: '1.5px solid #bcc2bf',
+	border: '1.5px solid #E5EFE9',
 	borderRadius: '12px',
 	padding: '10px',
 	paddingLeft: '36px',
@@ -125,7 +125,7 @@ export const Agents = () => {
 							variant="filled"
 							placeholder="Search"
 							disabled
-							sx={{ '&:hover': { borderColor: '#bcc2bf' } }}
+							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
 							sx={{
@@ -155,7 +155,7 @@ export const Agents = () => {
 							width: '20%',
 							ml: 1,
 							'& fieldset': {
-								border: '1.5px solid #bcc2bf',
+								border: '1.5px solid #E5EFE9',
 								borderRadius: '12px',
 							},
 							'& .MuiSelect-select': {
