@@ -3,44 +3,72 @@ import React, { createContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-	const getInitialAuthState = () => {
-		const storedAuthState = localStorage.getItem('authState');
+
+	const getAgentInitialAuthState = () => {
+		const storedAuthState = localStorage.getItem('agentAuthState');
 		return storedAuthState
 			? JSON.parse(storedAuthState)
 			: {
 					isAuth: false,
-					userId: null,
+					agentId: null,
 					isAdmin: false,
 					token: null,
 			  };
 	};
 
-	const [authState, setAuthState] = useState(getInitialAuthState);
-
-	useEffect(() => {
-		const storedAuthState = localStorage.getItem('authState');
-		if (storedAuthState) {
-			setAuthState(JSON.parse(storedAuthState));
-		}
-	}, []);
-
-	const setUserData = userData => {
-		setAuthState(userData);
-		localStorage.setItem('authState', JSON.stringify(userData));
+	const getUserInitialAuthState = () => {
+		const storedAuthState = localStorage.getItem('userAuthState');
+		return storedAuthState
+			? JSON.parse(storedAuthState)
+			: {
+					isAuth: false,
+					userId: null,
+					token: null,
+			  };
 	};
 
-	const logout = () => {
-		setAuthState({
+	const [agentAuthState, setAgentAuthState] = useState(getAgentInitialAuthState);
+	const [userAuthState, setUserAuthState] = useState(getUserInitialAuthState);
+
+
+	useEffect(() => {
+		const storedAgentAuthState = localStorage.getItem('agentAuthState');
+		const storedUserAuthState = localStorage.getItem('userAuthState');
+		if (storedAgentAuthState) setAgentAuthState(JSON.parse(storedAgentAuthState));
+		if (storedUserAuthState) setUserAuthState(JSON.parse(storedUserAuthState));
+	}, []);
+
+	const setAgentData = agentData => {
+		setAgentAuthState(agentData);
+		localStorage.setItem('agentAuthState', JSON.stringify(agentData));
+	};
+
+	const setUserData = userData => {
+		setUserAuthState(userData);
+		localStorage.setItem('userAuthState', JSON.stringify(userData));
+	};
+
+	const agentLogout = () => {
+		setAgentAuthState({
 			isAuth: false,
-			userId: null,
+			agentId: null,
 			isAdmin: false,
 			token: null,
 		});
-		localStorage.removeItem('authState');
+		localStorage.removeItem('agentAuthState');
+	};
+
+	const userLogout = () => {
+		setUserAuthState({
+			isAuth: false,
+			userId: null,
+			token: null,
+		});
+		localStorage.removeItem('userAuthState');
 	};
 
 	return (
-		<AuthContext.Provider value={{ authState, setUserData, logout }}>
+		<AuthContext.Provider value={{ agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout }}>
 			{children}
 		</AuthContext.Provider>
 	);

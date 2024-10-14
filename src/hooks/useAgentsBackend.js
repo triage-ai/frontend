@@ -4,11 +4,11 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useAgentsBackend = () => {
-	const { authState } = useContext(AuthContext);
+	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllAgents = async () => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
@@ -16,7 +16,7 @@ export const useAgentsBackend = () => {
 
 	const createAgent = async agentInfo => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'agent/create', agentInfo, config);
@@ -24,7 +24,7 @@ export const useAgentsBackend = () => {
 
 	const updateAgent = async agentInfo => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.put(
@@ -36,7 +36,7 @@ export const useAgentsBackend = () => {
 
 	const removeAgent = async agentInfo => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.delete(
