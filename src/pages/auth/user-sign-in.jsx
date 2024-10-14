@@ -1,9 +1,8 @@
 import logo from '../../assets/logo-white.svg';
 import logoBlack from '../../assets/logo-black.svg';
+import AppIcon from '../../assets/app-icon-black.png';
 import '../../App.css';
-import React, { useState } from 'react';
-import googleIcon from '../../assets/google-icon.svg';
-import microsoftIcon from '../../assets/microsoft-icon.svg';
+import React, { useContext, useState } from 'react';
 
 import {
 	Box,
@@ -14,12 +13,11 @@ import {
 	TextField,
 	Typography,
 	styled,
-	useMediaQuery,
 } from '@mui/material';
-import { Activity, CheckCircle, Lock, Mail, Split, Tag } from 'lucide-react';
-import { useTheme } from '@emotion/react';
+import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -65,7 +63,7 @@ const CustomTextField = styled(TextField)({
 	},
 });
 
-export const RedirectButton = styled('a')({
+const RedirectButton = styled('a')({
 	cursor: 'pointer',
 	color: '#1B1D1F',
 	transition: 'color 0.3s',
@@ -74,9 +72,8 @@ export const RedirectButton = styled('a')({
 	},
 });
 
-export const Auth = () => {
-	const currentTheme = useTheme();
-	const onlySmallScreen = useMediaQuery(currentTheme.breakpoints.down('md'));
+export const UserSignIn = () => {
+	const { setUserData } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 
 	const [email, setEmail] = useState('');
@@ -86,53 +83,42 @@ export const Auth = () => {
 	const [passwordError, setPasswordError] = useState(false);
 
 	const navigate = useNavigate();
-	const { handleAuthCookie } = useSetAuthCookie();
+	const { userSignInEmailAndPassword } = useSetAuthCookie();
 
-	const goToLogin = () => {
-		navigate('/login');
-	};
+	const signIn = async e => {
+		e.preventDefault();
+		setLoading(true);
 
-	const loginWithSAML = async () => {
-		// const results = await signInWithPopup(auth, samlProvider);
-		// const authInfo = {
-		// 	userId: results.user.uid,
-		// 	isAuth: true,
-		// 	token: results.user.accessToken,
-		// };
-		// handleAuthCookie(authInfo);
-		// // localStorage.setItem('auth', JSON.stringify(authInfo));
-		// navigate('/build');
-	};
+		if (validateEmail(email) && password !== '') {
+			userSignInEmailAndPassword(email, password)
+				// signInWithEmailAndPassword(auth, email, password)
+				.then(userCredential => {
+					// console.log(userCredential.data);
+					// getApiToken(userCredential);
+					const userData = userCredential.data;
 
-	const signUp = async e => {
-		// e.preventDefault();
-		// setLoading(true);
-		// if (validateEmail(email) && password !== '') {
-		// 	createUserWithEmailAndPassword(auth, email, password)
-		// 		.then(userCredential => {
-		// 			const authInfo = {
-		// 				userId: userCredential.user.uid,
-		// 				isAuth: true,
-		// 				token: userCredential.user.accessToken,
-		// 			};
-		// 			handleAuthCookie(authInfo);
-		// 			// localStorage.setItem('auth', JSON.stringify(authInfo));
-		// 			setLoading(false);
-		// 			navigate('/build');
-		// 		})
-		// 		.catch(error => {
-		// 			const errorCode = error.code;
-		// 			const errorMessage = error.message;
-		// 			console.error(errorCode, errorMessage);
-		// 			setLoading(false);
-		// 		});
-		// } else if (!validateEmail(email)) {
-		// 	setError(true);
-		// 	setLoading(false);
-		// } else if (password === '') {
-		// 	setPasswordError(true);
-		// 	setLoading(false);
-		// }
+					const authInfo = {
+						isAuth: true,
+						userId: userData.user_id,
+						token: userData.token,
+					};
+					setUserData(authInfo);
+					setLoading(false);
+					navigate('/user/dashboard');
+				})
+				.catch(error => {
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					console.error(errorCode, errorMessage);
+					setLoading(false);
+				});
+		} else if (!validateEmail(email)) {
+			setError(true);
+			setLoading(false);
+		} else if (password === '') {
+			setPasswordError(true);
+			setLoading(false);
+		}
 	};
 
 	const validateEmail = email => {
@@ -356,6 +342,7 @@ export const Auth = () => {
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
+							// backgroundColor: '#FCFCFC',
 						}}
 					>
 						<header className="App-header">
@@ -388,28 +375,35 @@ export const Auth = () => {
 									/>
 								</Box>
 
-								<Typography
+								{/* <Typography
 									variant="caption"
 									sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 								>
 									Already a member? <RedirectButton onClick={goToLogin}>Sign in</RedirectButton>
-								</Typography>
+								</Typography> */}
 							</Box>
 
-							<Typography
-								variant="h2"
-								sx={{
+							<img
+								src={AppIcon}
+								className="App-logo"
+								// style={{ width: '0px' }}
+								alt="logo"
+							/>
+
+							<h1
+								style={{
 									fontSize: '3rem',
 									fontWeight: 600,
 									color: '#1B1D1F',
 									letterSpacing: '-0.03em',
-									marginY: '30px',
+									marginTop: '30px',
+									marginBottom: '30px',
 								}}
 							>
-								Sign up
-							</Typography>
+								User Sign in
+							</h1>
 
-							<p
+							{/* <p
 								style={{
 									fontSize: '0.875rem',
 									fontWeight: 600,
@@ -421,7 +415,7 @@ export const Auth = () => {
 									textAlign: 'center',
 								}}
 							>
-								Sign up with a provider
+								Sign in with a provider
 							</p>
 
 							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
@@ -460,9 +454,9 @@ export const Auth = () => {
 								</ProviderButton>
 							</Box>
 
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} />
+							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
 
-							<span
+							{/* <span
 								style={{
 									fontSize: '0.875rem',
 									fontWeight: 600,
@@ -474,9 +468,24 @@ export const Auth = () => {
 								}}
 							>
 								Or continue with email and password
-							</span>
+							</span> */}
 
-							<form onSubmit={e => signUp(e)}>
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 0,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+								Sign in with email and password
+							</p>
+
+							<form onSubmit={e => signIn(e)}>
 								<CustomTextField
 									label=""
 									id="email"
@@ -508,7 +517,7 @@ export const Auth = () => {
 									label=""
 									id="password"
 									type="password"
-									autoComplete="new-password"
+									autoComplete="current-password"
 									sx={{
 										'& .MuiInputBase-root': {
 											border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
@@ -530,68 +539,54 @@ export const Auth = () => {
 										setPassword(event.target.value);
 									}}
 								/>
+
+								<Button
+									sx={{
+										backgroundColor: '#22874E',
+										color: '#FFF',
+										borderRadius: '12px',
+										width: '100%',
+										fontSize: '0.9375rem',
+										fontWeight: 600,
+										lineHeight: 1,
+										textTransform: 'unset',
+										padding: '16.5px 10px',
+										marginTop: '12px',
+										marginBottom: '28px',
+										transition: 'all 0.3s',
+										'&:hover': {
+											backgroundColor: '#29b866',
+										},
+										'&:disabled': {
+											color: 'unset',
+											opacity: 0.4,
+										},
+									}}
+									type="submit"
+									disabled={loading || !validateEmail(email) || password === ''}
+								>
+									{loading ? (
+										<CircularProgress
+											size={22}
+											thickness={5}
+											sx={{ color: '#FFF' }}
+										/>
+									) : (
+										'Sign in'
+									)}
+								</Button>
 							</form>
 
-							<Button
-								sx={{
-									backgroundColor: '#22874E',
-									color: '#FFF',
-									borderRadius: '12px',
-									width: '100%',
-									fontSize: '0.9375rem',
-									fontWeight: 600,
-									lineHeight: 1,
-									textTransform: 'unset',
-									padding: loading ? '13.5px 10px' : '16.5px 10px',
-									marginTop: '12px',
-									marginBottom: '28px',
-									transition: 'all 0.3s',
-									'&:hover': {
-										backgroundColor: '#29b866',
-									},
-									'&:disabled': {
-										color: 'unset',
-										opacity: 0.4,
-									},
-								}}
-								type="submit"
-								disabled={loading || !validateEmail(email) || password === ''}
+							{/* <Typography
+								variant="caption"
+								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 							>
-								{loading ? (
-									<CircularProgress
-										size={22}
-										thickness={5}
-										sx={{ color: '#FFF' }}
-									/>
-								) : (
-									'Create account'
-								)}
-							</Button>
+								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
+							</Typography> */}
 						</header>
 					</div>
 				</Grid>
 			</Grid>
 		</Box>
 	);
-	// return (
-	// 	// <div id="main-div">
-	// 	// 	{token === "" ? <RegisterView setToken={setToken} /> : <ModelView token={token} />}
-	// 	// </div>
-	// 	<div>
-	// 		<button
-	// 			onClick={() => {
-	// 				loginWithSAML();
-	// 			}}
-	// 		>
-	// 			Login
-	// 		</button>
-	// 		<button
-	// 			onClick={() => {
-	// 				GetInfo();
-	// 			}}
-	// 		>
-	// 			Print
-	// 		</button>
-	// 	</div>
-	// );
 };

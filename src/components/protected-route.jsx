@@ -3,11 +3,11 @@ import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-	const { authState } = useContext(AuthContext);
+	const { agentAuthState } = useContext(AuthContext);
 
-	if (!authState.isAuth) {
+	if (!agentAuthState.isAuth) {
 		debugger;
-		return <Navigate to="/login" />;
+		return <Navigate to="/" />;
 	}
 
 	return children;

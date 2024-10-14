@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useTicketsBackend = () => {
-	const { authState } = useContext(AuthContext);
+	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllOpenTickets = async () => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(
@@ -18,7 +18,7 @@ export const useTicketsBackend = () => {
 
 	const getTicketById = async id => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/id/${id}`, config);
@@ -26,7 +26,7 @@ export const useTicketsBackend = () => {
 
 	const createTicket = async ticketInfo => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.post(
@@ -38,7 +38,7 @@ export const useTicketsBackend = () => {
 
 	const updateTicket = async (ticketId, ticketInfo) => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.put(

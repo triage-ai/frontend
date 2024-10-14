@@ -72,8 +72,8 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const SignIn = () => {
-	const { setUserData } = useContext(AuthContext);
+export const AgentSignIn = () => {
+	const { setAgentData } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 
 	const [email, setEmail] = useState('');
@@ -83,27 +83,28 @@ export const SignIn = () => {
 	const [passwordError, setPasswordError] = useState(false);
 
 	const navigate = useNavigate();
-	const { signInEmailAndPassword } = useSetAuthCookie();
+	const { agentSignInEmailAndPassword } = useSetAuthCookie();
 
 	const signIn = async e => {
 		e.preventDefault();
 		setLoading(true);
 
 		if (validateEmail(email) && password !== '') {
-			signInEmailAndPassword(email, password)
+			agentSignInEmailAndPassword(email, password)
 				// signInWithEmailAndPassword(auth, email, password)
 				.then(userCredential => {
 					// console.log(userCredential.data);
 					// getApiToken(userCredential);
-					const userData = userCredential.data;
+					const agentData = userCredential.data;
+					console.log(agentData)
 
 					const authInfo = {
 						isAuth: true,
-						userId: userData.agent_id,
-						isAdmin: userData.admin === 1,
-						token: userData.token,
+						agentId: agentData.agent_id,
+						isAdmin: agentData.admin === 1,
+						token: agentData.token,
 					};
-					setUserData(authInfo);
+					setAgentData(authInfo);
 					setLoading(false);
 					navigate('/agents');
 				})
@@ -401,7 +402,7 @@ export const SignIn = () => {
 									marginBottom: '30px',
 								}}
 							>
-								Sign in
+								Agent Sign in
 							</h1>
 
 							{/* <p
