@@ -8,7 +8,6 @@ export const useSetAuthCookie = () => {
 				password: password,
 			},
 		};
-
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'auth/login', {}, config);
 	};
 

@@ -1,15 +1,4 @@
-import {
-	Box,
-	Drawer,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListSubheader,
-	TextField,
-	Typography,
-	styled,
-} from '@mui/material';
+import { Backdrop, Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListSubheader, TextField, Typography, styled } from '@mui/material';
 import {
 	Blocks,
 	Headset,
@@ -18,11 +7,18 @@ import {
 	SlidersHorizontal,
 	Ticket,
 	ToyBrick,
+	Settings,
+	Lightbulb,
+	UsersRound,
+	ClipboardList,
+	MonitorCog,
+	Building2,
 } from 'lucide-react';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useModelBackend } from '../hooks/useModelBackend';
 import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
+import { drawerWidth } from './sidebar';
 
 const ModelSelector = styled(Box)(({ theme }) => ({
 	width: '55px',
@@ -112,6 +108,15 @@ const menuItems = [
 			/>
 		),
 	},
+	{
+		title: 'Settings',
+		icon: (
+			<Settings
+				size={20}
+				// strokeWidth={2}
+			/>
+		),
+	},
 
 	{ subheader: 'PREVIOUS' },
 	{
@@ -152,11 +157,47 @@ const menuItems = [
 	},
 ];
 
+const subMenuItems = [
+	{
+		title: 'System',
+		icon: <MonitorCog size={20} />,
+	},
+	{
+		title: 'Company',
+		icon: <Building2 size={20} />,
+	},
+	{
+		title: 'Tickets',
+		icon: <Ticket size={20} />,
+	},
+	{
+		title: 'Tasks',
+		icon: <ClipboardList size={20} />,
+	},
+	{
+		title: 'Agents',
+		icon: <Headset size={20} />,
+	},
+	{
+		title: 'Users',
+		icon: <UsersRound size={20} />,
+	},
+	{
+		title: 'Knowledgebase',
+		icon: <Lightbulb size={20} />,
+	},
+];
+
+// const urlCheck = new RegExp('')
+
 export const SidebarItems = () => {
 	const [path, setPath] = useState('');
+	const [hoverSettings, setHoverSettings] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [models, setModels] = useState([]);
 	const [open, setOpen] = useState(false);
+	const [drawerTop, setDrawerTop] = useState(0); // State to store top position of the drawer
+	const settingsRef = useRef(null); // Ref to the 'Settings' menu item
 
 	const menuSelectorOpen = Boolean(anchorEl);
 	const { getAllDevModels } = useModelBackend();
@@ -178,11 +219,11 @@ export const SidebarItems = () => {
 		setPath(location.pathname);
 	}, [location, setPath]);
 
-	const activeRoute = route => {
+	const activeRoute = (route) => {
 		return route === path.replace('/', '');
 	};
 
-	const handleClick = event => {
+	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 	const handleClose = () => {
@@ -217,9 +258,21 @@ export const SidebarItems = () => {
 		return '#7A8087';
 	};
 
+	const handleMouseEnter = () => {
+		const settingsItem = settingsRef.current.getBoundingClientRect();
+		// Calculate the top position to center the drawer content around 'Settings'
+		const topPosition = settingsItem.top + window.scrollY - 175; // Offset by 100px (tweak as needed)
+		setDrawerTop(topPosition);
+		setHoverSettings(true);
+	};
+
+	const handleMouseLeave = () => {
+		setHoverSettings(false);
+	};
+
 	return (
 		<>
-			<Drawer variant="permanent">
+			<Drawer variant='permanent' sx={{ zIndex: '1100' }}>
 				{/* <DrawerHeader /> */}
 				<Box
 					sx={{
@@ -379,23 +432,16 @@ export const SidebarItems = () => {
 						/> */}
 
 						<Box sx={{ width: '100%', px: 1 }}>
-							<img
-								src={LogoHorizontal}
-								alt="Triage logo"
-								style={{ width: '60%', objectFit: 'cover' }}
-							/>
+							<img src={LogoHorizontal} alt='Triage logo' style={{ width: '60%', objectFit: 'cover' }} />
 						</Box>
 
-						<List
-							sx={{ p: 0, mt: 4 }}
-							dense={true}
-						>
+						<List sx={{ p: 0, mt: 4 }} dense={true}>
 							{menuItems.map((item, index) => (
 								<Fragment key={index}>
 									{item?.subheader && (
 										<ListSubheader sx={{ lineHeight: 'unset', mt: 3, mb: 1 }}>
 											<Typography
-												variant="overline"
+												variant='overline'
 												sx={{
 													color: '#585858',
 												}}
@@ -412,10 +458,16 @@ export const SidebarItems = () => {
 										>
 											<ListItemButton
 												component={Link}
-												to={'/' + item.title.toLowerCase()}
-												selected={activeRoute(item.title.toLowerCase())}
+												to={item.title === 'Settings' ? '/settings/system' : '/' + item.title.toLowerCase()}
+												selected={
+													item.title === 'Settings'
+														? JSON.stringify(location).split('/')[1] === 'settings'
+														: activeRoute(item.title.toLowerCase())
+												}
 												// disabled={item.title !== 'Agents'}
-												disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+												disabled={item.title !== 'Agents' && item.title !== 'Tickets' && item.title !== 'Settings'}
+												ref={item.title === 'Settings' ? settingsRef : null}
+												onMouseEnter={item.title === 'Settings' ? handleMouseEnter : null}
 												sx={{
 													minHeight: 42,
 													alignItems: 'center',
@@ -457,7 +509,7 @@ export const SidebarItems = () => {
 												</ListItemIcon>
 												{
 													<Typography
-														variant="subtitle2"
+														variant='subtitle2'
 														sx={{
 															fontWeight: 600,
 															color: '#575757',
@@ -478,6 +530,115 @@ export const SidebarItems = () => {
 					</Box>
 				</Box>
 			</Drawer>
+
+			{hoverSettings && (
+				<Drawer
+					variant='persistent'
+					open={hoverSettings}
+					onClose={handleMouseLeave}
+					slotprops={{ backdrop: { style: { invisible: true } } }}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					PaperProps={{
+						style: {
+							position: 'fixed',
+							left: drawerWidth,
+							zIndex: '1300',
+							top: `${drawerTop}px`,
+							height: 'auto',
+							paddingBottom: '20px',
+							justifyItems: 'center',
+							paddingTop: '5px',
+							border: '1.5px solid #E5EFE9',
+							width: '200px',
+						},
+					}}
+				>
+					<Box
+						sx={{
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'flex-start',
+							justifyContent: 'space-between',
+							pt: '15px',
+							px: '8px',
+						}}
+					>
+						<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+							<List sx={{ p: 0, mt: 4, marginTop: '0px' }} dense={true}>
+								{subMenuItems.map((item, index) => (
+									<Fragment key={index}>
+										{
+											<ListItem disablePadding sx={{ display: 'block', mt: index !== 0 && 0.2 }}>
+												<ListItemButton
+													component={Link}
+													to={'/settings/' + item.title.toLowerCase()}
+													selected={activeRoute(`settings/${item.title.toLowerCase()}`)}
+													sx={{
+														minHeight: 42,
+														alignItems: 'center',
+														justifyContent: 'flex-start',
+														px: 1,
+														pl: 0.7,
+														borderRadius: '12px',
+														'.MuiListItemIcon-root, .MuiTypography-root': {
+															color: '#000',
+														},
+														'&:hover': {
+															background: '#f1f4f2',
+														},
+														'&.Mui-selected': {
+															background: '#ECFFEF',
+															'&:hover': {
+																background: '#ECFFEF',
+															},
+															'.MuiListItemIcon-root, .MuiTypography-root': {
+																color: '#1A4A13',
+															},
+														},
+													}}
+													disableRipple
+												>
+													<ListItemIcon
+														sx={{
+															width: '38px',
+															minWidth: '38px',
+															height: '38px',
+															alignItems: 'center',
+															justifyContent: 'center',
+															borderRadius: '8px',
+															color: '#575757',
+															transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
+														}}
+													>
+														{item.icon}
+													</ListItemIcon>
+													{
+														<Typography
+															variant='subtitle2'
+															sx={{
+																fontWeight: 600,
+																color: '#575757',
+																letterSpacing: '-0.05em',
+																transition: 'all .125s cubic-bezier(.17,.67,.55,1.09)',
+																mt: '3px',
+															}}
+														>
+															{item.title}
+														</Typography>
+													}
+												</ListItemButton>
+											</ListItem>
+										}
+									</Fragment>
+								))}
+							</List>
+						</Box>
+					</Box>
+				</Drawer>
+			)}
 		</>
 	);
 };
