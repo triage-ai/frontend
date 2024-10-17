@@ -166,43 +166,43 @@ const menuItems = [
 		),
 	},
 
-	{ subheader: 'PREVIOUS' },
-	{
-		title: 'Build',
-		icon: (
-			<Blocks
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Fine-tune',
-		icon: (
-			<SlidersHorizontal
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Playground',
-		icon: (
-			<ToyBrick
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Route',
-		icon: (
-			<Route
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
+// 	{ subheader: 'PREVIOUS' },
+// 	{
+// 		title: 'Build',
+// 		icon: (
+// 			<Blocks
+// 				size={20}
+// 				// strokeWidth={2}
+// 			/>
+// 		),
+// 	},
+// 	{
+// 		title: 'Fine-tune',
+// 		icon: (
+// 			<SlidersHorizontal
+// 				size={20}
+// 				// strokeWidth={2}
+// 			/>
+// 		),
+// 	},
+// 	{
+// 		title: 'Playground',
+// 		icon: (
+// 			<ToyBrick
+// 				size={20}
+// 				// strokeWidth={2}
+// 			/>
+// 		),
+// 	},
+// 	{
+// 		title: 'Route',
+// 		icon: (
+// 			<Route
+// 				size={20}
+// 				// strokeWidth={2}
+// 			/>
+// 		),
+// 	},
 ];
 
 const subMenuItems = [

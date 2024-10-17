@@ -37,12 +37,17 @@ import { Transition } from '../../components/sidebar';
 import { useSettingsBackend } from '../../hooks/useSettingsBackend';
 import { useLocation } from 'react-router-dom';
 import { SearchTextField } from '../agent/Agents';
+import { ChevronDown } from 'lucide-react';
 import { GeneralSettings } from './GeneralSettings';
-import zIndex from '@mui/material/styles/zIndex';
 import { DateAndTime } from './DateTimeSettings';
 import { SystemLanguages } from './SystemLanguages';
 import { Attachments } from './AttachmentsSettings';
 import { BasicInformation } from './CompanyBasicInfo';
+import { TicketSettings } from './TicketSettings';
+import { Queues } from './Queues';
+import { Autoresponder } from './AutoResponder';
+import { AlertsAndNotices } from './AlertsAndNotices';
+
 
 export const handleSave = async (
 	data,
@@ -71,6 +76,37 @@ export const handleSave = async (
 		console.error('Error saving settings:', err);
 	}
 };
+
+export const StyledSelect = styled(props => (
+	<Select
+	{...props}
+	IconComponent={props => (
+		<ChevronDown
+		{...props}
+		size={17}
+		color="#1B1D1F"
+		/>
+	)}
+	renderValue={item => (
+		<Typography
+		variant="subtitle1"
+		sx={{ fontWeight: 500 }}
+		>
+				{props.array ? props.array[item] : item}
+			</Typography>
+		)}
+		/>
+	))({
+		'.MuiOutlinedInput-notchedOutline': {
+			borderRadius: '12px',
+			borderColor: '#E5EFE9',
+		},
+		'&:hover': {
+			'&& fieldset': {
+				borderColor: '#22874E',
+			},
+		},
+	});
 
 const StyledTabs = styled(props => (
 	<Tabs
@@ -179,8 +215,6 @@ export const SystemMenu = props => {
 };
 
 export const CompanyMenu = props => {
-	const { settingsData } = props;
-
 	const headers = [
 		{ id: 1, label: 'Basic Information' },
 		// { id: 2, label: 'Site Pages' },
@@ -290,8 +324,6 @@ export const CompanyMenu = props => {
 // }
 
 export const TicketMenu = (props) => {
-	const { settingsData } = props;
-
 	const headers = [
 		{ id: 1, label: 'Settings' },
 		{ id: 2, label: 'Autoresponder' },
@@ -299,12 +331,12 @@ export const TicketMenu = (props) => {
 		{ id: 4, label: 'Queues' },
 	];
 
-	const components = {
-		1: <TicketSettings {...props} />,
-		2: <Autoresponder {...props} />,
-		3: <AlertsAndNotices {...props} />,
-		4: <Queues {...props} />,
-	};
+	const components = [
+		<TicketSettings {...props} />,
+		<Autoresponder {...props} />,
+		<AlertsAndNotices {...props} />,
+		<Queues {...props} />,
+	];
 	return <Header headers={headers} components={components} />;
 };
 

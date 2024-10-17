@@ -9,13 +9,16 @@ import {
 	FormControl,
 	FormControlLabel,
 	MenuItem,
-	Select,
 	Stack,
 	Typography,
+    TextField,
 } from '@mui/material';
+import { CustomTextField } from '../../components/sidebar-items';
 import { handleSave } from './SettingsMenus';
-import { StyledSelect } from './GeneralSettings';
+import { CustomFilledInput } from '../../components/custom-input';
+import { StyledSelect } from './SettingsMenus';
 import { CircularButton } from '../../components/sidebar';
+
 
 
 
@@ -70,13 +73,13 @@ export const TicketSettings = props => {
     return (
         <Box p={3}>
 			<Stack spacing={2} sx={{ maxWidth: 600, mt: 2 }}>
-                <TextField label='Default Ticket Number Format' name='default_ticket_number_format' value={formState.default_ticket_number_format} onChange={handleChange} />
+                <CustomFilledInput label='Default Ticket Number Format' name='default_ticket_number_format' value={formState.default_ticket_number_format} onChange={handleChange} />
 
                 <Typography variant='subtitle1'>Default Ticket Number Sequence:</Typography>
-                <Select name='default_ticket_number_sequence' value={formState.default_ticket_number_sequence} onChange={handleChange} sx={{ width: 200 }}>
+                <StyledSelect name='default_ticket_number_sequence' value={formState.default_ticket_number_sequence} onChange={handleChange} sx={{ width: 200 }}>
                     <MenuItem value='Random'>Random</MenuItem>
                     <MenuItem value='Incrementing'>Incrementing</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Stack direction='row' spacing={2} alignItems='center'>
 					<Typography variant='subtitle1'>Top-Level Ticket Counts:</Typography>
@@ -88,42 +91,42 @@ export const TicketSettings = props => {
 				</Stack>
 
                 <Typography variant='subtitle1'>Default Status:</Typography>
-                <Select name='default_status' value={formState.default_status} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='default_status' value={formState.default_status} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='Open'>Open</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Typography variant='subtitle1'>Default Priority:</Typography>
-                <Select name='default_priority' value={formState.default_priority} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='default_priority' value={formState.default_priority} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='Low'>Low</MenuItem>
                     <MenuItem value='Normal'>Normal</MenuItem>
                     <MenuItem value='High'>High</MenuItem>
                     <MenuItem value='Emergency'>Emergency</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Typography variant='subtitle1'>Default SLA:</Typography>
-                <Select name='default_sla' value={formState.default_sla} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='default_sla' value={formState.default_sla} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='None'>None</MenuItem>
                     <MenuItem value='Default'>Default SLA (18 Hours - Active)</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Typography variant='subtitle1'>Default Help Topic:</Typography>
-                <Select name='default_help_topic' value={formState.default_help_topic} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='default_help_topic' value={formState.default_help_topic} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='None'>None</MenuItem>
                     <MenuItem value='Feedback'>Feedback</MenuItem>
                     <MenuItem value='General Inquiry'>General Inquiry</MenuItem>
                     <MenuItem value='Report a Problem'>Report a Problem</MenuItem>
                     <MenuItem value='Report a Problem / Access Issue'>Report a Problem / Access Issue</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Typography variant='subtitle1'>Lock Semantics:</Typography>
-                <Select name='lock_semantics' value={formState.lock_semantics} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='lock_semantics' value={formState.lock_semantics} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='Disabled'>Disabled</MenuItem>
                     <MenuItem value='Lock on view'>Lock on view</MenuItem>
                     <MenuItem value='Lock on activity'>Lock on activity</MenuItem>
-                </Select>
+                </StyledSelect>
 
                 <Typography variant='subtitle1'>Default Ticket Queue:</Typography>
-                <Select name='default_ticket_queue' value={formState.default_ticket_queue} onChange={handleChange} sx={{ width: 350 }}>
+                <StyledSelect name='default_ticket_queue' value={formState.default_ticket_queue} onChange={handleChange} sx={{ width: 350 }}>
                     <MenuItem value='Open'>Open</MenuItem>
                     <MenuItem value='Open / Open'>Open / Open</MenuItem>
                     <MenuItem value='My Tickets / Assigned to Me'>My Tickets / Assigned to Me</MenuItem>
@@ -138,24 +141,40 @@ export const TicketSettings = props => {
                     <MenuItem value='Closed / This Month'>Closed / This Month</MenuItem>
                     <MenuItem value='Closed / This Quarter'>Closed / This Quarter</MenuItem>
                     <MenuItem value='Closed / This Year'>Closed / This Year</MenuItem>
-                </Select>
+                </StyledSelect>
+
+                <Stack>
+                    <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}
+                    >
+                        Maximum Open Tickets
+                    </Typography>
+
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="center"
+                    >
+                        <CustomTextField
+                            type="number"
+                            name="max_open_tickets"
+                            value={formState.max_open_tickets}
+                            onChange={handleChange}
+                            sx={{
+                                width: 80,
+                                '& .MuiInputBase-root': {
+                                    borderWidth: 1,
+                                    fontWeight: 500,
+                                },
+                            }}
+                        />
+                        <Typography variant="subtitle1">per end user</Typography>
+                    </Stack>
+			    </Stack>
 
                 <Stack spacing={2}>
-					<Typography variant='subtitle1'>Maximum Open Tickets:</Typography>
-					<Stack direction='row' spacing={2} alignItems='center'>
-						<TextField
-							type='number'
-							name='max_open_tickets'
-							value={formState.max_open_tickets}
-							onChange={handleChange}
-							sx={{ width: 80 }}
-						/>
-						<Typography variant='subtitle1'>per end user</Typography>
-					</Stack>
-				</Stack>
-
-                <Stack spacing={2}>
-                    <Stack direction='row' spacing={10.3} alignItems='center'>
+                    <Stack direction='row' spacing={10.28625} alignItems='center'>
                         <Typography variant='subtitle1'>Human Verification:</Typography>
                         <FormControlLabel
                             name='human_verification'
@@ -173,7 +192,7 @@ export const TicketSettings = props => {
                         />
                     </Stack>
 
-                    <Stack direction='row' spacing={10.2} alignItems='center'>
+                    <Stack direction='row' spacing={10.16125} alignItems='center'>
                         <Typography variant='subtitle1'>Claim on Response:</Typography>
                         <FormControlLabel
                             name='claim_on_response'
@@ -182,7 +201,7 @@ export const TicketSettings = props => {
                         />
                     </Stack>
 
-                    <Stack direction='row' spacing={10} alignItems='center'>
+                    <Stack direction='row' spacing={10.08875} alignItems='center'>
                         <Typography variant='subtitle1'>Auto-refer on Close:</Typography>
                         <FormControlLabel
                             name='auto_refer_on_close'
@@ -191,7 +210,7 @@ export const TicketSettings = props => {
                         />
                     </Stack>
 
-                    <Stack direction='row' spacing={3} alignItems='center'>
+                    <Stack direction='row' spacing={3.07625} alignItems='center'>
                         <Typography variant='subtitle1'>Require Help Topic to Close:</Typography>
                         <FormControlLabel
                             name='require_help_topic_to_close'
@@ -200,7 +219,7 @@ export const TicketSettings = props => {
                         />
                     </Stack>
 
-                    <Stack direction='row' spacing={8} alignItems='center'>
+                    <Stack direction='row' spacing={7.93375} alignItems='center'>
                         <Typography variant='subtitle1'>Allow External Images:</Typography>
                         <FormControlLabel
                             name='allow_external_images'
@@ -211,14 +230,30 @@ export const TicketSettings = props => {
                 </Stack>
 
 
-                <Button
-					variant='contained'
-					onClick={() => handleSave(formState, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings)}
+				<CircularButton
+					sx={{ py: 2, px: 6, width: 250 }}
+					onClick={() =>
+						handleSave(
+							formState,
+							setLoading,
+							setCircleLoading,
+							settingsData,
+							updateSettings,
+							refreshSettings
+						)
+					}
 					disabled={loading || circleLoading}
-					sx={{ width: 200 }}
 				>
-					{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
-				</Button>
+					{circleLoading ? (
+						<CircularProgress
+							size={22}
+							thickness={5}
+							sx={{ color: '#FFF' }}
+						/>
+					) : (
+						'Save Changes'
+					)}
+				</CircularButton>
 
 
 

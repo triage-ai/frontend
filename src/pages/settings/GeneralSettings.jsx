@@ -20,39 +20,9 @@ import {
 import { CustomTextField } from '../../components/sidebar-items';
 import { handleSave } from './SettingsMenus';
 import { CustomFilledInput } from '../../components/custom-input';
-import { ChevronDown } from 'lucide-react';
+import { StyledSelect } from './SettingsMenus';
 import { CircularButton } from '../../components/sidebar';
 
-export const StyledSelect = styled(props => (
-	<Select
-		{...props}
-		IconComponent={props => (
-			<ChevronDown
-				{...props}
-				size={17}
-				color="#1B1D1F"
-			/>
-		)}
-		renderValue={item => (
-			<Typography
-				variant="subtitle1"
-				sx={{ fontWeight: 500 }}
-			>
-				{item}
-			</Typography>
-		)}
-	/>
-))({
-	'.MuiOutlinedInput-notchedOutline': {
-		borderRadius: '12px',
-		borderColor: '#E5EFE9',
-	},
-	'&:hover': {
-		'&& fieldset': {
-			borderColor: '#22874E',
-		},
-	},
-});
 
 export const GeneralSettings = props => {
 	const { settingsData } = props;
@@ -76,6 +46,21 @@ export const GeneralSettings = props => {
 		embedded_domain_whitelist: settingsData.embedded_domain_whitelist.value || '',
 		acl: settingsData.acl.value || '',
 	});
+	const purge = [
+		'Never Purge Logs',
+		'After 1 month',
+		'After 2 months',
+		'After 3 months',
+		'After 4 months',
+		'After 5 months',
+		'After 6 months',
+		'After 7 months',
+		'After 8 months',
+		'After 9 months',
+		'After 10 months',
+		'After 11 months',
+		'After 12 months',
+	]
 
 	const handleChange = entry => {
 		console.log(formState);
@@ -307,22 +292,16 @@ export const GeneralSettings = props => {
 				<FormControl>
 					<StyledSelect
 						name="purge_logs"
-						value={formState.purge_logs}
+						value={ formState.purge_logs }
 						onChange={handleChange}
+						array={ purge }
 					>
-						<MenuItem value="0">Never Purge Logs</MenuItem>
-						<MenuItem value="1">After 1 month</MenuItem>
-						<MenuItem value="2">After 2 months</MenuItem>
-						<MenuItem value="3">After 3 months</MenuItem>
-						<MenuItem value="4">After 4 months</MenuItem>
-						<MenuItem value="5">After 5 months</MenuItem>
-						<MenuItem value="6">After 6 months</MenuItem>
-						<MenuItem value="7">After 7 months</MenuItem>
-						<MenuItem value="8">After 8 months</MenuItem>
-						<MenuItem value="9">After 9 months</MenuItem>
-						<MenuItem value="10">After 10 months</MenuItem>
-						<MenuItem value="11">After 11 months</MenuItem>
-						<MenuItem value="12">After 12 months</MenuItem>
+						{purge.map((item, idx) => {
+							console.log(item)
+							return (
+								<MenuItem value={`${idx}`} label={item}>{item}</MenuItem>
+							)
+						})}
 					</StyledSelect>
 				</FormControl>
 			</Stack>
