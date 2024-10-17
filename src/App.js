@@ -12,11 +12,24 @@ import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/protected-route';
 import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
-import { UserDashboard } from './pages/dashboard/user-dashboard'
+import { UserDashboard } from './pages/dashboard/user-dashboard';
 import { Settings } from './pages/settings/Settings';
-import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
+import {
+	SystemMenu,
+	CompanyMenu,
+	TicketMenu,
+	TaskMenu,
+	AgentMenu,
+	UserMenu,
+	KnowledgebaseMenu,
+} from './pages/settings/SettingsMenus';
 
 const theme = createTheme({
+	palette: {
+		primary: {
+			main: '#22874E',
+		},
+	},
 	typography: {
 		fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
 		h1: {
@@ -77,11 +90,11 @@ function App() {
 						/>
 						<Route
 							path="agent/login"
-							element={ agentAuthState.isAuth ? <Navigate to="/agents" /> : <AgentSignIn /> }
+							element={agentAuthState.isAuth ? <Navigate to="/agents" /> : <AgentSignIn />}
 						/>
 						<Route
 							path="user/login"
-							element={ userAuthState.isAuth ? <Navigate to="/user/tickets" /> : <UserSignIn /> }
+							element={userAuthState.isAuth ? <Navigate to="/user/tickets" /> : <UserSignIn />}
 						/>
 						<Route
 							path="dashboard"
@@ -123,9 +136,7 @@ function App() {
 							path="settings/system"
 							element={
 								<ProtectedRoute>
-									<Settings 
-										Menu={ SystemMenu }
-									/> 
+									<Settings Menu={SystemMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -133,9 +144,7 @@ function App() {
 							path="settings/company"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ CompanyMenu }
-									/>
+									<Settings Menu={CompanyMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -143,9 +152,7 @@ function App() {
 							path="settings/tickets"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ TicketMenu }
-									/>
+									<Settings Menu={TicketMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -153,9 +160,7 @@ function App() {
 							path="settings/tasks"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ TaskMenu }
-									/>
+									<Settings Menu={TaskMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -163,9 +168,7 @@ function App() {
 							path="settings/agents"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ AgentMenu }
-									/>
+									<Settings Menu={AgentMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -173,9 +176,7 @@ function App() {
 							path="settings/users"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ UserMenu }
-									/>
+									<Settings Menu={UserMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -183,9 +184,7 @@ function App() {
 							path="settings/knowledgebase"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ KnowledgebaseMenu }
-									/>
+									<Settings Menu={KnowledgebaseMenu} />
 								</ProtectedRoute>
 							}
 						/>
