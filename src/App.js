@@ -1,25 +1,35 @@
 import './App.css';
 import { Route, Routes, Navigate } from 'react-router-dom';
-
 import { ThemeProvider, createTheme } from '@mui/material';
 import { useContext, useState } from 'react';
-import { Auth } from './pages/auth/auth';
-import { SignIn } from './pages/auth/sign-in';
-import { Build } from './pages/build/build';
-import { FineTune } from './pages/fine-tune/fine-tune';
-import { Test } from './pages/test/test';
+import { AgentSignIn } from './pages/auth/agent-sign-in';
+import { UserSignIn } from './pages/auth/user-sign-in';
+import { Landing } from './pages/landing/landing';
 import { Route as RouteComponent } from './pages/route/route';
 import { CookiesProvider } from 'react-cookie';
-import { Dashboard } from './pages/dashboard/dashboard';
+import { AgentDashboard } from './pages/dashboard/agent-dashboard';
 import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/protected-route';
 import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
+import { UserDashboard } from './pages/dashboard/user-dashboard';
 import { Settings } from './pages/settings/Settings';
-import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
-// import { Landing } from './pages/landing/landing';
+import {
+	SystemMenu,
+	CompanyMenu,
+	TicketMenu,
+	TaskMenu,
+	AgentMenu,
+	UserMenu,
+	KnowledgebaseMenu,
+} from './pages/settings/SettingsMenus';
 
 const theme = createTheme({
+	palette: {
+		primary: {
+			main: '#22874E',
+		},
+	},
 	typography: {
 		fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
 		h1: {
@@ -65,34 +75,8 @@ const theme = createTheme({
 	},
 });
 
-// const DrawerHeader = styled('div')(({ theme }) => ({
-// 	height: '80px',
-// 	// necessary for content to be below app bar
-// 	...theme.mixins.toolbar,
-// }));
-
-// const DrawerContentContainer = styled(Box)(() => ({
-// 	width: '100%',
-// 	minHeight: '100vh',
-// 	background: '#F4F4F4',
-// }));
-
 function App() {
-	const { authState } = useContext(AuthContext);
-
-	const [taskId, setTaskId] = useState(0);
-	const [process, setProcess] = useState('');
-	const [isFinished, setIsFinished] = useState('');
-
-	const handleProgress = (taskId, processCalled) => {
-		setTaskId(taskId);
-		setProcess(processCalled);
-	};
-
-	const handlePublishProgress = (processCalled, finished) => {
-		setProcess(processCalled);
-		setIsFinished(finished);
-	};
+	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -102,19 +86,19 @@ function App() {
 						<Route
 							path="/"
 							exact
-							element={authState.isAuth ? <Navigate to="/agents" /> : <SignIn />}
+							element={<Landing />}
 						/>
 						<Route
-							path="auth"
-							element={<Auth />}
+							path="agent/login"
+							element={agentAuthState.isAuth ? <Navigate to="/agents" /> : <AgentSignIn />}
 						/>
 						<Route
-							path="login"
-							element={<SignIn />}
+							path="user/login"
+							element={userAuthState.isAuth ? <Navigate to="/user/tickets" /> : <UserSignIn />}
 						/>
 						<Route
 							path="dashboard"
-							element={<Dashboard />}
+							element={<AgentDashboard />}
 						/>
 						<Route
 							path="agents"
@@ -141,58 +125,18 @@ function App() {
 							}
 						/>
 						<Route
-							path="build"
-							element={<Build handleProgress={handleProgress} />}
-						/>
-						<Route
-							path="fine-tune"
+							path="user/tickets/"
 							element={
-								// <Box sx={{ display: 'flex' }}>
-								// 	<Sidebar
-								// 		taskId={taskId}
-								// 		processParam={process}
-								// 	/>
-								// 	<DrawerContentContainer>
-								// 		<DrawerHeader />
-								<FineTune handleProgress={handleProgress} />
-								// 	</DrawerContentContainer>
-								// </Box>
-							}
-						/>
-						<Route
-							path="playground"
-							element={
-								// <Box sx={{ display: 'flex' }}>
-								// 	<Sidebar
-								// 		processParam={process}
-								// 		finishedParam={isFinished}
-								// 	/>
-								// 	<DrawerContentContainer>
-								// 		<DrawerHeader />
-								<Test handlePublishProgress={handlePublishProgress} />
-								// 	</DrawerContentContainer>
-								// </Box>
-							}
-						/>
-						<Route
-							path="route"
-							element={
-								// <Box sx={{ display: 'flex' }}>
-								// 	<Sidebar />
-								// 	<DrawerContentContainer>
-								// 		<DrawerHeader />
-								<RouteComponent />
-								// 	</DrawerContentContainer>
-								// </Box>
+								<ProtectedRoute>
+									<UserDashboard />
+								</ProtectedRoute>
 							}
 						/>
 						<Route
 							path="settings/system"
 							element={
 								<ProtectedRoute>
-									<Settings 
-										Menu={ SystemMenu }
-									/> 
+									<Settings Menu={SystemMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -200,9 +144,7 @@ function App() {
 							path="settings/company"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ CompanyMenu }
-									/>
+									<Settings Menu={CompanyMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -210,9 +152,7 @@ function App() {
 							path="settings/tickets"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ TicketMenu }
-									/>
+									<Settings Menu={TicketMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -220,9 +160,7 @@ function App() {
 							path="settings/tasks"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ TaskMenu }
-									/>
+									<Settings Menu={TaskMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -230,9 +168,7 @@ function App() {
 							path="settings/agents"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ AgentMenu }
-									/>
+									<Settings Menu={AgentMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -240,9 +176,7 @@ function App() {
 							path="settings/users"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ UserMenu }
-									/>
+									<Settings Menu={UserMenu} />
 								</ProtectedRoute>
 							}
 						/>
@@ -250,9 +184,7 @@ function App() {
 							path="settings/knowledgebase"
 							element={
 								<ProtectedRoute>
-									<Settings 
-									Menu={ KnowledgebaseMenu }
-									/>
+									<Settings Menu={KnowledgebaseMenu} />
 								</ProtectedRoute>
 							}
 						/>

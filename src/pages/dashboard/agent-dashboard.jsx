@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { Layout } from '../../components/layout';
 
-export const Dashboard = () => {
+export const AgentDashboard = () => {
 	return (
 		<Layout
 			title={'Hello, Bertrand Bruandet'}

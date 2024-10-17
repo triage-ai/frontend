@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useDepartmentsBackend = () => {
-	const { authState } = useContext(AuthContext);
+	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllDepartments = async () => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'department/get', config);
@@ -15,7 +15,7 @@ export const useDepartmentsBackend = () => {
 
 	const createDepartment = async departmentInfo => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.post(

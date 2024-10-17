@@ -115,7 +115,7 @@ export const Sidebar = ({
 
 	const location = useLocation();
 	// const { handleLogout } = useSetAuthCookie();
-	const { logout } = useContext(AuthContext);
+	const { agentLogout } = useContext(AuthContext);
 
 	const theme = useTheme();
 	const [openDialog, setOpenDialog] = useState(false);
@@ -205,7 +205,7 @@ export const Sidebar = ({
 	};
 
 	const authLogout = async () => {
-		logout();
+		agentLogout();
 		navigate('/', { replace: true });
 	};
 

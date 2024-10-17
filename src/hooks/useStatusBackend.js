@@ -4,11 +4,11 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useStatusBackend = () => {
-	const { authState } = useContext(AuthContext);
+	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllStatuses = async () => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'ticket_status/get', config);
@@ -16,7 +16,7 @@ export const useStatusBackend = () => {
 
 	const getTaskStatus = async taskId => {
 		const config = {
-			headers: { Authorization: `Bearer ${authState.token}` },
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + taskId, config);
