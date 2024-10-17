@@ -51,24 +51,13 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 
 	const [statusList, setStatusList] = useState([]);
 
-	const handleStatusChange = event => {
-		const updatedTicket = { ...ticket };
-		const newStatusName = event.target.value;
-		const newStatus = statusList.find(status => status.name === newStatusName);
-		const newStatusJSON = {
-			status_id: newStatus.status_id,
-			name: newStatus.name,
-			state: newStatus.state,
-			properties: newStatus.properties,
-		};
-		updatedTicket.status = newStatusJSON;
-
+	const handleStatusChange = e => {
 		const statusUpdate = {
-			status: newStatusJSON,
+			status_id: e.target.value.status_id
 		};
-		updateTicket(updatedTicket.ticket_id, statusUpdate)
-			.then(() => {
-				updateCurrentTicket(updatedTicket);
+		updateTicket(ticket.ticket_id, statusUpdate)
+			.then((res) => {
+				updateCurrentTicket(res.data);
 			})
 			.catch(err => alert('Error while updating ticket status'));
 	};
@@ -300,7 +289,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 										{statusList.map(status => (
 											<MenuItem
 												key={status.status_id}
-												value={status.name}
+												value={status}
 											>
 												<Typography variant="subtitle2">{status.name}</Typography>
 											</MenuItem>

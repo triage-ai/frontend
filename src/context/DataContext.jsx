@@ -9,7 +9,7 @@ const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
 	const { getAllAgents } = useAgentsBackend();
-	const { getAllOpenTickets } = useTicketsBackend();
+	const { getTicketsbyAdvancedSearch } = useTicketsBackend();
 	const { getAllDepartments } = useDepartmentsBackend();
 	const { getAllRoles } = useRolesBackend();
 	const { getAllSettings} = useSettingsBackend();
@@ -28,12 +28,12 @@ export const DataProvider = ({ children }) => {
 		});
 	}, [getAllAgents]);
 
-	const refreshTickets = useCallback(() => {
-		getAllOpenTickets().then(ticketList => {
+	const refreshTickets = useCallback((advSearch) => {
+		getTicketsbyAdvancedSearch(advSearch).then(ticketList => {
 			const { items } = ticketList.data;
 			setTickets(items);
 		});
-	}, [getAllOpenTickets]);
+	}, [getTicketsbyAdvancedSearch]);
 
 	const refreshSettings = useCallback(() => {
 		getAllSettings().then(settingsList => {
