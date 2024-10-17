@@ -1,7 +1,9 @@
 import { Box, Fab, styled, Tab, Tabs, Typography } from '@mui/material';
 import { MessageCircle, MessageSquareText, NotepadText } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TicketDetail } from './TicketDetail';
+import { TicketThread } from './TicketThread';
+import { useTicketsBackend } from '../../hooks/useTicketsBackend';
 
 const CircularTab = styled(Tab)(() => ({
 	width: '44px',
@@ -46,7 +48,23 @@ function TabPanel(props) {
 }
 
 export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
+	const { getTicketById } = useTicketsBackend();
+
+	const [ticket, setTicket] = useState(null);
 	const [value, setValue] = useState(0);
+
+	useEffect(() => {
+		if (ticketInfo) {
+			getTicketById(ticketInfo.ticket_id).then(ticket => {
+				console.log(ticket.data);
+				setTicket(ticket.data);
+			});
+		}
+	}, [ticketInfo]);
+
+	const updateTicket = newTicket => {
+		setTicket(newTicket);
+	};
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
@@ -92,15 +110,19 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 					index={0}
 				>
 					<TicketDetail
-						ticketInfo={ticketInfo}
+						ticket={ticket}
 						closeDrawer={closeDrawer}
+						updateCurrentTicket={updateTicket}
 					/>
 				</TabPanel>
 				<TabPanel
 					value={value}
 					index={1}
 				>
-					Item Two
+					<TicketThread
+						ticket={ticket}
+						closeDrawer={closeDrawer}
+					/>
 				</TabPanel>
 			</Box>
 		</Box>

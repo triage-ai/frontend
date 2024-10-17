@@ -480,7 +480,7 @@ export const AddTicket = ({ handleTicketCreated, handleAgentEdited, editAgent })
 
 			<Stack
 				direction="row"
-				spacing={1.5}
+				// spacing={1.5}
 				sx={{ justifyContent: 'center' }}
 			>
 				{activeStep !== 0 && (

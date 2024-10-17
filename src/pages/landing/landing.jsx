@@ -6,7 +6,6 @@ import {
 	Chip,
 	Container,
 	Dialog,
-	Grid,
 	IconButton,
 	Menu,
 	MenuItem,
@@ -19,6 +18,8 @@ import {
 	useMediaQuery,
 	useTheme,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
 import { ArrowUpRight, MenuIcon, Play, Quote, X } from 'lucide-react';
 import { useState } from 'react';
 import TriageMintLogo from '../../assets/triage-logo-mint-white.svg';
@@ -687,14 +688,12 @@ export const Landing = () => {
 
 					<Grid
 						container
-						spacing={2}
+						// spacing={2}
 					>
 						{features.map((feature, index) => (
 							<Grid
 								key={feature.title}
-								xs={12}
-								md={index + 1 === 1 || index + 1 === 4 ? 8 : 4}
-								item
+								size={{ xs: 12, md: index + 1 === 1 || index + 1 === 4 ? 8 : 4 }}
 							>
 								<FeatureItem>
 									<Box
@@ -1010,14 +1009,9 @@ export const Landing = () => {
 
 						<Grid
 							container
-							spacing={{ xs: 6, md: 8, lg: 2 }}
+							// spacing={{ xs: 6, md: 8, lg: 2 }}
 						>
-							<Grid
-								xs={12}
-								md={4}
-								lg={4}
-								item
-							>
+							<Grid size={{ xs: 12, md: 4 }}>
 								<Box
 									sx={{
 										width: '320px',
@@ -1040,10 +1034,7 @@ export const Landing = () => {
 							</Grid>
 
 							<Grid
-								xs={6}
-								md={4}
-								lg={2}
-								item
+								size={{ xs: 6, md: 4, lg: 2 }}
 								sx={{ display: 'flex', justifyContent: { xs: 'unset', md: 'center', lg: 'unset' } }}
 							>
 								<Box
@@ -1089,10 +1080,7 @@ export const Landing = () => {
 							</Grid>
 
 							<Grid
-								xs={6}
-								md={4}
-								lg={2}
-								item
+								size={{ xs: 6, md: 4, lg: 2 }}
 								sx={{ display: 'flex', justifyContent: { xs: 'unset', md: 'center', lg: 'unset' } }}
 							>
 								<Box
@@ -1156,10 +1144,7 @@ export const Landing = () => {
 							</Grid>
 
 							<Grid
-								xs={12}
-								md={12}
-								lg={4}
-								item
+								size={{ xs: 12, md: 12, lg: 4 }}
 								sx={{ display: 'flex', justifyContent: { xs: 'flex-start', lg: 'flex-end' } }}
 							>
 								<a

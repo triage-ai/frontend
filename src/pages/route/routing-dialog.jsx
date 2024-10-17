@@ -6,7 +6,6 @@ import {
 	Divider,
 	FormControl,
 	FormControlLabel,
-	Grid,
 	IconButton,
 	InputLabel,
 	MenuItem,
@@ -22,6 +21,7 @@ import { X } from 'lucide-react';
 import { TableColorBox } from '../build/build';
 import { MenuTab } from '../test/test';
 import { useEffect, useState } from 'react';
+import Grid from '@mui/material/Grid2';
 
 const CustomMenuTab = styled(MenuTab)(() => ({
 	padding: '8px 14px',
