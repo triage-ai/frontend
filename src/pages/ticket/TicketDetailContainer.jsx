@@ -53,16 +53,47 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 	const [ticket, setTicket] = useState(null);
 	const [value, setValue] = useState(0);
 
+	function datetime_sort(a, b) {
+		return new Date(a.created).getTime() - new Date(b.created).getTime();
+	}
+	
+	function preProcessTicket(ticket) {
+		if (ticket.thread && ticket.thread.events) {
+			ticket.thread.events.forEach(event => {
+				// Parse the event data (assuming it's JSON)
+				let eventData = JSON.parse(event.data);
+
+				// Loop through each key in the event data
+				for (let key in eventData) {
+					if (eventData.hasOwnProperty(key)) {
+						event.field_updated = key;
+						event.previous_value = eventData[key][0];
+						event.updated_value = eventData[key][1];
+					}
+				}
+			});
+
+		}
+		if (ticket.thread) {
+			var events_and_entries = ticket.thread.entries.concat(ticket.thread.events)
+			ticket.thread.events_and_entries = events_and_entries.sort(datetime_sort)
+		}
+		return ticket
+	}
+
 	useEffect(() => {
 		if (ticketInfo) {
-			getTicketById(ticketInfo.ticket_id).then(ticket => {
-				console.log(ticket.data);
-				setTicket(ticket.data);
+			getTicketById(ticketInfo.ticket_id)
+			.then(response => response.data)
+			.then(ticket => {
+				ticket = preProcessTicket(ticket)
+				setTicket(ticket);
 			});
 		}
 	}, [ticketInfo]);
 
 	const updateTicket = newTicket => {
+		newTicket = preProcessTicket(newTicket)
 		setTicket(newTicket);
 	};
 
@@ -122,6 +153,7 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 					<TicketThread
 						ticket={ticket}
 						closeDrawer={closeDrawer}
+						updateCurrentTicket={updateTicket}
 					/>
 				</TabPanel>
 			</Box>

@@ -12,42 +12,40 @@ import { Pencil, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
+import { useThreadsBackend } from '../../hooks/useThreadsBackend'
 
-export const TicketThread = ({ ticket, closeDrawer }) => {
-	const getEventValue = event => {
-		const parsedData = JSON.parse(event.data);
-		let value = '';
+export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
+	const [formData, setFormData] = useState({'subject': '', 'body': '', 'type': 'A', 'editor': '', 'recipients': ''});
+	const [postDisabled, setPostDisabled] = useState(true)
+	const { createThreadEntry } = useThreadsBackend();
 
-		// Loop through the keys to find the dynamic key
-		for (const key in parsedData) {
-			if (parsedData.hasOwnProperty(key)) {
-				console.log(`Key: ${key}, Value: ${parsedData[key]}`);
-				// You can also directly access the value like this:
-				value = parsedData[key];
-			}
-		}
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		setFormData(prevFormData => ({
+			...prevFormData,
+			[name]: value
+		}));
+	}
 
-		return value;
-	};
+	const handleSubmit = () => {
+		const newThreadEntry = { ...formData, 'thread_id': ticket.thread.thread_id }
+		var updatedTicket = { ...ticket }
+		createThreadEntry(newThreadEntry)
+			.then((response) => {
+				updatedTicket.thread.entries.push(response.data)
+				updateCurrentTicket(updatedTicket)
+				setFormData({...formData, 'subject':'', 'body':''})
+			})
+			.catch(err => {
+				alert('Error while creating thread entry')
+				console.log(err)
+			});
+	}
 
 	useEffect(() => {
-		// Loop through the events and update the event data
-		if (ticket.thread && ticket.thread.events) {
-			ticket.thread.events.forEach(event => {
-				// Parse the event data (assuming it's JSON)
-				let eventData = JSON.parse(event.data);
+		setPostDisabled(formData.subject === '' || formData.body === '')
+	},[formData])
 
-				// Loop through each key in the event data
-				for (let key in eventData) {
-					if (eventData.hasOwnProperty(key)) {
-						event.field_updated = key;
-						event.previous_value = eventData[key][0];
-						event.updated_value = eventData[key][1];
-					}
-				}
-			});
-		}
-	}, [ticket]);
 
 	return (
 		<Box sx={{ height: '100%', padding: '28px', position: 'relative', overflowY: 'scroll' }}>
@@ -109,9 +107,9 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 					},
 				}}
 			>
-				{ticket.thread.entries.map(entry => (
+				{ticket.thread.events_and_entries.map(item => item.entry_id ? (
 					<TimelineItem
-						key={entry.entry_id}
+						key={"entry"+item.entry_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -125,7 +123,7 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 									fontWeight={600}
 									color="#1B1D1F"
 								>
-									{entry.subject}
+									{item.subject}
 								</Typography>
 
 								<Box
@@ -144,7 +142,7 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 										color="#1B1D1F"
 										fontWeight={500}
 									>
-										{entry.body}
+										{item.body}
 									</Typography>
 								</Box>
 
@@ -152,16 +150,14 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 									variant="caption"
 									fontWeight={500}
 								>
-									<span className="text-muted">By</span> {entry.owner}
+									<span className="text-muted">By</span> {item.owner}
 								</Typography>
 							</Box>
 						</TimelineContent>
 					</TimelineItem>
-				))}
-
-				{ticket.thread.events.map(event => (
+				) : (
 					<TimelineItem
-						key={event.event_id}
+						key={"event"+item.event_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -171,16 +167,16 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 						</TimelineSeparator>
 						<TimelineContent paddingTop={0}>
 							<Box>
-								{event.field_updated && (
+								{item.field_updated && (
 									<Typography
 										variant="subtitle2"
 										fontWeight={600}
 										color="#1B1D1F"
 									>
 										<span style={{ textTransform: 'capitalize' }}>
-											{event.field_updated.replace('_', ' ')}
+											{item.field_updated.replace('_', ' ')}
 										</span>{' '}
-										updated to {event.updated_value}
+										updated from {item.previous_value} to {item.updated_value}
 									</Typography>
 								)}
 
@@ -188,12 +184,13 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 									variant="caption"
 									fontWeight={500}
 								>
-									<span className="text-muted">By</span> {event.owner}
+									<span className="text-muted">By</span> {item.owner}
 								</Typography>
 							</Box>
 						</TimelineContent>
 					</TimelineItem>
 				))}
+
 
 				<TimelineItem sx={{ marginBottom: '24px' }}>
 					<TimelineSeparator>
@@ -203,8 +200,8 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 						<Box>
 							<CustomFilledInput
 								label="Subject"
-								// onChange={handleInputChange}
-								// value={formData.email}
+								onChange={handleInputChange}
+								value={formData.subject}
 								name="subject"
 								mb={1}
 								fullWidth
@@ -212,8 +209,8 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 
 							<CustomFilledInput
 								label="Body"
-								// onChange={handleInputChange}
-								// value={formData.signature}
+								onChange={handleInputChange}
+								value={formData.body}
 								name="body"
 								fullWidth
 								multiline
@@ -224,8 +221,8 @@ export const TicketThread = ({ ticket, closeDrawer }) => {
 
 							<CircularButton
 								sx={{ py: 2, px: 6 }}
-								// onClick={handleNext}
-								// disabled={isNextDisabled}
+								onClick={handleSubmit}
+								disabled={postDisabled}
 							>
 								Post
 							</CircularButton>

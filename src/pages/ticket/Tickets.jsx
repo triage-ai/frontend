@@ -3,7 +3,10 @@ import {
 	Chip,
 	Dialog,
 	Drawer,
+	FormControl,
 	IconButton,
+	MenuItem,
+	Select,
 	Stack,
 	Table,
 	TableBody,
@@ -14,15 +17,17 @@ import {
 } from '@mui/material';
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
-import { Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
+import { ChevronDown, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { useQueuesBackend } from '../../hooks/useQueuesBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getQueriesForElement } from '@testing-library/react';
 
 export const Tickets = () => {
 	const navigate = useNavigate();
@@ -30,18 +35,30 @@ export const Tickets = () => {
 
 	const { tickets, refreshTickets } = useData();
 	const { getAllPriorities } = useProrityBackend();
+	const { getQueuesForAgent } = useQueuesBackend();
 
+	const [queueIdx, setQueueIdx] = useState(0);
+	const [page, setPage] = useState(1);
+	const [size, setSize] = useState(10);
+	const [queues, setQueues] = useState([]);
 	const [selectedAgent, setSelectedAgent] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [priorities, setPriorities] = useState([]);
+	const [selectedStatus, setSelectedStatus] = useState('');
 	const [ticketList, setTicketList] = useState([]);
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState(false);
 
 	useEffect(() => {
 		getPriorityList();
-		refreshTickets();
+		getQueueList();
 	}, []);
+
+	useEffect(() => {
+		if (queues.length != 0) {
+			refreshTickets({...queues[queueIdx].config, 'size': size, 'page': page})
+		}
+	}, [queues, queueIdx])
 
 	useEffect(() => {
 		if (ticketList.length > 0 && ticketId) {
@@ -55,7 +72,8 @@ export const Tickets = () => {
 	}, [ticketList, ticketId]);
 
 	useEffect(() => {
-		if (priorities.length > 0 && tickets.length > 0) {
+		console.log(tickets)
+		if (priorities.length > 0 && tickets) {
 			const mappedTicketsPriority = tickets.map(ticket => ({
 				...ticket,
 				priority: priorities.find(priority => priority.priority_id === ticket.priority_id),
@@ -74,6 +92,20 @@ export const Tickets = () => {
 			});
 	};
 
+	const getQueueList = () => {
+		getQueuesForAgent()
+			.then(res => {
+				res.data.map(entry => {
+					entry.config = JSON.parse(entry.config)
+				})
+				console.log(res.data)
+				setQueues(res.data)
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}
+
 	const handleDialogOpen = (event, agent) => {
 		event.stopPropagation();
 
@@ -85,17 +117,21 @@ export const Tickets = () => {
 		setOpenDialog(false);
 	};
 
+	const handleQueueChange = (e) => {
+		setQueueIdx(e.target.value.queue_id - 1)
+	}
+
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
-		() => {
-			if (newOpen) {
-				navigate('ticket-modal/' + ticket.ticket_id);
-			} else {
-				navigate('/tickets');
-			}
-			setOpenDetail(newOpen);
-			setSelectedTicket(ticket);
-		};
+			() => {
+				if (newOpen) {
+					navigate('ticket-modal/' + ticket.ticket_id);
+				} else {
+					navigate('/tickets');
+				}
+				setOpenDetail(newOpen);
+				setSelectedTicket(ticket);
+			};
 
 	return (
 		<Layout
@@ -136,6 +172,74 @@ export const Tickets = () => {
 							/>
 						</Box>
 					</Box>
+				</Box>
+
+				<Box
+					display={'flex'}
+					alignItems={'center'}
+					sx = {{ px: 2.25 }}
+				>
+					<Typography
+						variant="caption"
+						className="text-muted"
+						fontWeight={600}
+					>
+						Queue
+					</Typography>
+					<FormControl
+						sx={{ m: 1, minWidth: 120 }}
+						size="small"
+					>
+						<Select
+							displayEmpty
+							value={queues.length === 0 ? '   ' : queues[queueIdx]}
+							onChange={handleQueueChange}
+							renderValue={item => (
+								<Box
+									display={'flex'}
+									alignItems={'center'}
+								>
+									<Box
+										width={'6px'}
+										height={'6px'}
+										borderRadius={'6px'}
+										marginRight={1}
+										sx={{ backgroundColor: '#D9D9D9' }}
+									/>
+
+									<Typography
+										variant="subtitle2"
+										fontWeight={600}
+										sx={{ color: '#1B1D1F' }}
+									>
+										{item.title}
+									</Typography>
+								</Box>
+							)}
+							sx={{
+								'.MuiOutlinedInput-notchedOutline': {
+									borderRadius: '8px',
+									borderColor: '#E5EFE9',
+								},
+							}}
+							IconComponent={props => (
+								<ChevronDown
+									{...props}
+									size={17}
+									color="#1B1D1F"
+								/>
+							)}
+						>
+							{queues.map((queue, idx) => (
+								<MenuItem
+									key={queue.queue_id}
+									value={queue}
+								>
+									<Typography variant="subtitle2">{queue.title}</Typography>
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 				</Box>
 
 				<Table>
