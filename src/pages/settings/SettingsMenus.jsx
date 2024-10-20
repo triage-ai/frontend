@@ -1,65 +1,28 @@
-import {
-	Box,
-	Button,
-	Grid,
-	CircularProgress,
-	Dialog,
-	FormControl,
-	FormControlLabel,
-	Radio,
-	RadioGroup,
-	Checkbox,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	MenuItem,
-	Select,
-	Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	TextField,
-	Typography,
-	inputLabelClasses,
-	styled,
-    FormGroup,
-	Tabs,
-	Tab,
-} from '@mui/material';
-import { AlignRight, Settings, Settings2 } from 'lucide-react';
-import { Layout } from '../../components/layout';
+import { Box, Select, Typography, styled, Tabs, Tab } from '@mui/material';
 import { WhiteContainer } from '../../components/white-container';
-import { useContext, useEffect, useState, useRef } from 'react';
-import { useData } from '../../context/DataContext';
-import { Transition } from '../../components/sidebar';
-import { useSettingsBackend } from '../../hooks/useSettingsBackend';
-import { useLocation } from 'react-router-dom';
-import { SearchTextField } from '../agent/Agents';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { GeneralSettings } from './GeneralSettings';
-import { DateAndTime } from './DateTimeSettings';
-import { SystemLanguages } from './SystemLanguages';
-import { Attachments } from './AttachmentsSettings';
-import { BasicInformation } from './CompanyBasicInfo';
-import { TicketSettings } from './TicketSettings';
-import { Queues } from './Queues';
-import { Autoresponder } from './AutoResponder';
-import { AlertsAndNotices } from './AlertsAndNotices';
+import { GeneralSettings } from './system/GeneralSettings';
+import { DateAndTime } from './system/DateTimeSettings';
+import { SystemLanguages } from './system/SystemLanguages';
+import { Attachments } from './system/AttachmentsSettings';
+import { BasicInformation } from './company/CompanyBasicInfo';
+import { TicketSettings } from './tickets/TicketSettings';
+import { Queues } from './tickets/Queues';
+import { Autoresponder } from './tickets/AutoResponder';
+import { AlertsAndNotices } from './tickets/AlertsAndNotices';
+import { TaskSettings } from './tasks/TaskSettings';
+import { TaskAlertsAndNotices } from './tasks/TasksAlertsAndNotices';
+import { AgentSettings } from './agents/AgentSettings';
+import { AgentTemplates } from './agents/AgentTemplates';
+import { UserSettings } from './users/UserSettings';
+import { UserTemplates } from './users/UserTemplates';
+import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
 
-
-export const handleSave = async (
-	data,
-	setLoading,
-	setCircleLoading,
-	settingsData,
-	updateSettings,
-	refreshSettings
-) => {
+export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
 		var updates = [];
-		Object.entries(data).forEach(k => {
+		Object.entries(data).forEach((k) => {
 			console.log(settingsData);
 			var row = settingsData[k[0]];
 			row.value = k[1];
@@ -77,43 +40,29 @@ export const handleSave = async (
 	}
 };
 
-export const StyledSelect = styled(props => (
+export const StyledSelect = styled((props) => (
 	<Select
-	{...props}
-	IconComponent={props => (
-		<ChevronDown
 		{...props}
-		size={17}
-		color="#1B1D1F"
-		/>
-	)}
-	renderValue={item => (
-		<Typography
-		variant="subtitle1"
-		sx={{ fontWeight: 500 }}
-		>
+		IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
+		renderValue={(item) => (
+			<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
 				{props.array ? props.array[item] : item}
 			</Typography>
 		)}
-		/>
-	))({
-		'.MuiOutlinedInput-notchedOutline': {
-			borderRadius: '12px',
-			borderColor: '#E5EFE9',
-		},
-		'&:hover': {
-			'&& fieldset': {
-				borderColor: '#22874E',
-			},
-		},
-	});
-
-const StyledTabs = styled(props => (
-	<Tabs
-		{...props}
-		TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
 	/>
 ))({
+	'.MuiOutlinedInput-notchedOutline': {
+		borderRadius: '12px',
+		borderColor: '#E5EFE9',
+	},
+	'&:hover': {
+		'&& fieldset': {
+			borderColor: '#22874E',
+		},
+	},
+});
+
+const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
 		color: '#22874E',
 	},
@@ -154,8 +103,8 @@ const Header = ({ headers, components }) => {
 				<StyledTabs
 					value={tabValue}
 					onChange={handleTabChange}
-					variant="scrollable"
-					scrollButtons="auto"
+					variant='scrollable'
+					scrollButtons='auto'
 					sx={{
 						position: 'relative',
 						width: '100%',
@@ -171,11 +120,8 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					{headers.map(header => (
-						<Tab
-							label={header.label}
-							sx={{ textTransform: 'none', p: 0, mr: 5 }}
-						/>
+					{headers.map((header) => (
+						<Tab label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}
 				</StyledTabs>
 			</Box>
@@ -188,33 +134,20 @@ const Header = ({ headers, components }) => {
 	);
 };
 
-export const SystemMenu = props => {
-	const { settingsData } = props;
-
+export const SystemMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'General Settings' },
-		{ id: 2, label: 'Date and Time Options' },
+		{ id: 2, label: 'Date & Time Options' },
 		{ id: 3, label: 'System Languages' },
-		{ id: 4, label: 'Attachment Storage and Settings' },
+		{ id: 4, label: 'Attachment Storage & Settings' },
 	];
 
+	const components = [<GeneralSettings {...props} />, <DateAndTime {...props} />, <SystemLanguages {...props} />, <Attachments {...props} />];
 
-	const components = [
-		<GeneralSettings {...props} />,
-		<DateAndTime {...props} />,
-		<SystemLanguages {...props} />,
-		<Attachments {...props} />,
-	];
-
-	return (
-		<Header
-			headers={headers}
-			components={components}
-		/>
-	);
+	return <Header headers={headers} components={components} />;
 };
 
-export const CompanyMenu = props => {
+export const CompanyMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'Basic Information' },
 		// { id: 2, label: 'Site Pages' },
@@ -229,130 +162,65 @@ export const CompanyMenu = props => {
 		// 4: <LoginBackdrop {...props} />
 	];
 
-	return (
-		<Header
-			headers={headers}
-			components={components}
-		/>
-	);
+	return <Header headers={headers} components={components} />;
 };
-
-// const SitePages = () => {
-//     return (
-//         <Box>
-//         <Typography variant='h6'>Site Pages</Typography>
-//         <FormControl fullWidth margin='normal'>
-//             <InputLabel>Landing Page</InputLabel>
-//             <Select
-//                 name='landing_page'
-//                 // value={formState.landingPage}
-//                 // onChange={handleChange}
-//             >
-//                 <MenuItem value='Landing'>Landing</MenuItem>
-//                 <MenuItem value='Home'>Home</MenuItem>
-//             </Select>
-//         </FormControl>
-//         <FormControl fullWidth margin='normal'>
-//             <InputLabel>Offline Page</InputLabel>
-//             <Select
-//                 name='offline_page'
-//                 // value={formState.offlinePage}
-//                 // onChange={handleChange}
-//                 >
-//                 <MenuItem value='Offline'>Offline</MenuItem>
-//                 <MenuItem value='Error'>Error</MenuItem>
-//             </Select>
-//         </FormControl>
-//         <FormControl fullWidth margin='normal'>
-//             <InputLabel>Default Thank-You Page</InputLabel>
-//             <Select
-//                 name='thank_you_page'
-//                 // value={formState.thankYouPage}
-//                 // onChange={handleChange}
-//                 >
-//                 <MenuItem value='Thank You'>Thank You</MenuItem>
-//                 <MenuItem value='Success'>Success</MenuItem>
-//             </Select>
-//         </FormControl>
-//         <Button variant='contained'>
-//                 Save Changes
-//         </Button>
-//     </Box>
-//     )
-// }
-
-// const Logos = () => {
-//     return (
-//         <Box>
-//         <Typography variant='h6'>Company Logos</Typography>
-//         <Grid container spacing={2}>
-//             <Grid item xs={12}>
-//                 <Button variant='contained' component='label'>
-//                     Upload Logo
-//                     <input hidden accept='image/*' type='file' />
-//                 </Button>
-//             </Grid>
-//             {(
-//                 <Grid item xs={12}>
-//                     <Typography>Selected File: </Typography>
-//                 </Grid>
-//             )}
-//         </Grid>
-//     </Box>
-//     )
-// }
-
-// const LoginBackdrop = () => {
-//     return (
-//         <Box>
-//         <Typography variant='h6'>Login Backdrop</Typography>
-//         <Grid container spacing={2}>
-//             <Grid item xs={12}>
-//                 <Button variant='contained' component='label'>
-//                     Upload Backdrop Image
-//                     <input hidden accept='image/*' type='file'/>
-//                 </Button>
-//             </Grid>
-//             {(
-//                 <Grid item xs={12}>
-//                     <Typography>Selected File:</Typography>
-//                 </Grid>
-//             )}
-//         </Grid>
-//     </Box>
-//     )
-// }
 
 export const TicketMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'Settings' },
 		{ id: 2, label: 'Autoresponder' },
-		{ id: 3, label: 'Alerts and Notices' },
-		{ id: 4, label: 'Queues' },
+		{ id: 3, label: 'Alerts & Notices' },
+		// { id: 4, label: 'Queues' },
 	];
 
 	const components = [
 		<TicketSettings {...props} />,
 		<Autoresponder {...props} />,
 		<AlertsAndNotices {...props} />,
-		<Queues {...props} />,
+		// <Queues {...props} />,
 	];
 	return <Header headers={headers} components={components} />;
 };
 
+export const TaskMenu = (props) => {
+	const headers = [
+		{ id: 1, label: 'Settings' },
+		{ id: 2, label: 'Alerts & Notices' },
+	];
 
-export const AgentMenu = props => {
-	return <p>This is a test of Agent Settings</p>;
+	const components = [<TaskSettings {...props} />, <TaskAlertsAndNotices {...props} />];
+
+	return <Header headers={headers} components={components} />;
 };
 
-export const TaskMenu = props => {
-	return <p>This is a test of Task Settings</p>;
+export const AgentMenu = (props) => {
+	const headers = [
+		{ id: 1, label: 'Settings' },
+		{ id: 2, label: 'Templates' },
+	];
+
+	const components = [<AgentSettings {...props} />, <AgentTemplates {...props} />];
+
+	return <Header headers={headers} components={components} />;
 };
 
-export const UserMenu = props => {
-	return <p>This is a test of User Settings</p>;
+export const UserMenu = (props) => {
+	const headers = [
+		{ id: 1, label: 'Settings' },
+		{ id: 2, label: 'Templates' },
+	];
+
+	const components = [<UserSettings {...props} />, <UserTemplates {...props} />];
+
+	return <Header headers={headers} components={components} />;
 };
 
-export const KnowledgebaseMenu = props => {
-	return <p>This is a test of Knowledgebase Settings</p>;
+export const KnowledgebaseMenu = (props) => {
+	const headers = [
+		{ id: 1, label: 'Settings' },
+	];
+
+	const components = [<KnowledgebaseSettings {...props} />];
+
+	return <Header headers={headers} components={components} />;
 };

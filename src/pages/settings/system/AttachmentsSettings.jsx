@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useData } from '../../context/DataContext';
-import { useSettingsBackend } from '../../hooks/useSettingsBackend';
+import { useData } from '../../../context/DataContext';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import {
 	Box,
 	Checkbox,
@@ -10,9 +10,9 @@ import {
 	MenuItem,
 	Typography,
 } from '@mui/material';
-import { handleSave } from './SettingsMenus';
-import { StyledSelect } from './SettingsMenus';
-import { CircularButton } from '../../components/sidebar';
+import { handleSave } from '../SettingsMenus';
+import { StyledSelect } from '../SettingsMenus';
+import { CircularButton } from '../../../components/sidebar';
 
 export const Attachments = props => {
 	const { settingsData } = props;
