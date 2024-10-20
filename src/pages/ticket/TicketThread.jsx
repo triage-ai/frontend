@@ -7,12 +7,17 @@ import {
 	timelineItemClasses,
 	TimelineSeparator,
 } from '@mui/lab';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { Box, IconButton, Typography } from '@mui/material';
-import { Pencil, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
-import { useThreadsBackend } from '../../hooks/useThreadsBackend'
+import { useThreadsBackend } from '../../hooks/useThreadBackend'
+var localizedFormat = require("dayjs/plugin/localizedFormat");
+dayjs.extend(localizedFormat)
+dayjs.extend(utc)
 
 export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const [formData, setFormData] = useState({'subject': '', 'body': '', 'type': 'A', 'editor': '', 'recipients': ''});
@@ -40,6 +45,27 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				alert('Error while creating thread entry')
 				console.log(err)
 			});
+	}
+
+	function getEventText(item) {
+		var newValue = item.new_val
+		var prevValue = item.prev_val
+
+		if (item.field === 'due_date') {
+			newValue = newValue ? dayjs.utc(newValue).local().format('lll') : null
+			prevValue = prevValue ? dayjs.utc(prevValue).local().format('lll') : null
+		}
+
+		if (item.type === 'A') {
+			return `set to ${newValue}`
+		}
+		else if (item.type === 'R') {
+			return `unset from ${prevValue}`
+		}
+		else {
+			return `updated from ${prevValue} to ${newValue}`
+		}
+
 	}
 
 	useEffect(() => {
@@ -167,16 +193,16 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 						</TimelineSeparator>
 						<TimelineContent paddingTop={0}>
 							<Box>
-								{item.field_updated && (
+								{item.field && (
 									<Typography
 										variant="subtitle2"
 										fontWeight={600}
 										color="#1B1D1F"
 									>
 										<span style={{ textTransform: 'capitalize' }}>
-											{item.field_updated.replace('_', ' ')}
+											{item.field.replace('_id', '').replace('_', ' ')}
 										</span>{' '}
-										updated from {item.previous_value} to {item.updated_value}
+										{getEventText(item)}
 									</Typography>
 								)}
 
@@ -184,7 +210,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 									variant="caption"
 									fontWeight={500}
 								>
-									<span className="text-muted">By</span> {item.owner}
+									<span className="text-muted">By</span> {item.owner} <span className="text-muted">at {dayjs.utc(item.created).local().format('lll')}</span>
 								</Typography>
 							</Box>
 						</TimelineContent>

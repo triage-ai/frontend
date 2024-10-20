@@ -33,12 +33,15 @@ import {
 } from 'lucide-react';
 import { Fragment, useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useModelBackend } from '../hooks/useModelBackend';
 import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
 import SubMenuHook from '../assets/submenu-hook.svg';
 import { drawerWidth } from './sidebar';
 
-export const CustomTextField = styled(TextField)({
+export const CustomTextField = styled((props) => {
+	return <TextField
+		{...props}
+	/>
+})({
 	m: 0,
 	width: '100%',
 	'& fieldset': { border: 'none' },

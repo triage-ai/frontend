@@ -2,17 +2,17 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
-import { useSlaBackend } from '../../hooks/useSlaBackend';
+import { useSLABackend } from '../../hooks/useSLABackend';
 import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
-import { useDepartmentsBackend } from '../../hooks/useDepartmentsBackend';
+import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
 
 export const AddDepartment = ({ handleClose }) => {
-	const { getAllSlas } = useSlaBackend();
+	const { getAllSLAs } = useSLABackend();
 	const { getAllSchedules } = useScheduleBackend();
-	const { createDepartment } = useDepartmentsBackend();
+	const { createDepartment } = useDepartmentBackend();
 	const { refreshDepartments } = useData();
 
 	const sendNotification = useNotification();
@@ -31,7 +31,7 @@ export const AddDepartment = ({ handleClose }) => {
 	const [isFormValid, setIsFormValid] = useState(false);
 
 	useEffect(() => {
-		getAllSlas()
+		getAllSLAs()
 			.then(slas => {
 				const slaData = slas.data;
 				const formattedSlas = slaData.map(sla => {

@@ -2,14 +2,13 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export const useTicketsBackend = () => {
+export const useTicketBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
 	const getTicketsbyAdvancedSearch = async (adv_search) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` }
 		};
-		console.log(adv_search)
 		const page = adv_search.page
 		const size = adv_search.size
 		const payload = {'filters': adv_search.filters, 'sorts': adv_search.sorts}
@@ -47,7 +46,7 @@ export const useTicketsBackend = () => {
 		};
 
 		return await axios.put(
-			process.env.REACT_APP_BACKEND_URL + 'ticket/put/' + ticket_id,
+			process.env.REACT_APP_BACKEND_URL + 'ticket/update/' + ticket_id,
 			ticketInfo,
 			config
 		);

@@ -3,7 +3,7 @@ import { useSetAuthCookie } from './useSetAuthCookie';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export const useAgentsBackend = () => {
+export const useAgentBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllAgents = async () => {
@@ -13,6 +13,14 @@ export const useAgentsBackend = () => {
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
 	};
+
+	const getAgentBySearch = async (input) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `agent/search/${input}`, config);
+	}
 
 	const createAgent = async agentInfo => {
 		const config = {
@@ -46,5 +54,5 @@ export const useAgentsBackend = () => {
 		);
 	};
 
-	return { getAllAgents, createAgent, updateAgent, removeAgent };
+	return { getAllAgents, getAgentBySearch, createAgent, updateAgent, removeAgent };
 };

@@ -24,7 +24,7 @@ import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
-import { useQueuesBackend } from '../../hooks/useQueuesBackend';
+import { useQueuesBackend } from '../../hooks/useQueueBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQueriesForElement } from '@testing-library/react';
@@ -72,7 +72,6 @@ export const Tickets = () => {
 	}, [ticketList, ticketId]);
 
 	useEffect(() => {
-		console.log(tickets)
 		if (priorities.length > 0 && tickets) {
 			const mappedTicketsPriority = tickets.map(ticket => ({
 				...ticket,
@@ -98,7 +97,6 @@ export const Tickets = () => {
 				res.data.map(entry => {
 					entry.config = JSON.parse(entry.config)
 				})
-				console.log(res.data)
 				setQueues(res.data)
 			})
 			.catch(err => {
@@ -125,7 +123,7 @@ export const Tickets = () => {
 		(newOpen, ticket = null) =>
 			() => {
 				if (newOpen) {
-					navigate('ticket-modal/' + ticket.ticket_id);
+					navigate('/tickets/' + ticket.ticket_id);
 				} else {
 					navigate('/tickets');
 				}
@@ -192,7 +190,7 @@ export const Tickets = () => {
 					>
 						<Select
 							displayEmpty
-							value={queues.length === 0 ? '   ' : queues[queueIdx]}
+							value={queues.length ? queues[queueIdx] : ''}
 							onChange={handleQueueChange}
 							renderValue={item => (
 								<Box

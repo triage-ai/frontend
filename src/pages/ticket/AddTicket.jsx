@@ -17,8 +17,8 @@ import { CustomFilledInput } from '../../components/custom-input';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { Check, Eye, EyeOff } from 'lucide-react';
-import { useRolesBackend } from '../../hooks/useRolesBackend';
-import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { useRolesBackend } from '../../hooks/useRoleBackend';
+import { useAgentBackend } from '../../hooks/useAgentsBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
 
@@ -87,7 +87,7 @@ const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddTicket = ({ handleTicketCreated, handleAgentEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
-	const { createAgent, updateAgent } = useAgentsBackend();
+	const { createAgent, updateAgent } = useAgentBackend();
 
 	const [roles, setRoles] = useState([]);
 

@@ -58,13 +58,13 @@ import { Transition } from '../../components/sidebar';
 import { SearchTextField } from '../agent/Agents';
 import { useProrityBackend } from '../../hooks/usePriorityBackend';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTicketsBackend } from '../../hooks/useTicketsBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useStatusBackend } from '../../hooks/useStatusBackend';
 import { CustomFilledInput } from '../../components/custom-input';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
-import { useRolesBackend } from '../../hooks/useRolesBackend';
-import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { useRolesBackend } from '../../hooks/useRoleBackend';
+import { useAgentBackend } from '../../hooks/useAgentsBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
 
@@ -238,7 +238,7 @@ export const UserDashboard = () => {
 		(newOpen, ticket = null) =>
 		() => {
 			if (newOpen) {
-				navigate('ticket-modal/' + ticket.ticket_id);
+				navigate('/tickets/' + ticket.ticket_id);
 			} else {
 				navigate('/tickets');
 			}
@@ -468,7 +468,7 @@ const IconBox = styled(Box)(() => ({
 
 export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
 	const { getPriorityColor } = useProrityBackend();
-	const { getTicketById, updateTicket } = useTicketsBackend();
+	const { getTicketById, updateTicket } = useTicketBackend();
 	const { getAllStatuses } = useStatusBackend();
 
 	const [ticket, setTicket] = useState(null);
@@ -1171,7 +1171,7 @@ const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddTicket = ({ handleTicketCreated, handleAgentEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
-	const { createAgent, updateAgent } = useAgentsBackend();
+	const { createAgent, updateAgent } = useAgentBackend();
 
 	const [roles, setRoles] = useState([]);
 

@@ -21,13 +21,13 @@ import {
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { Ellipsis, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { useAgentBackend } from '../../hooks/useAgentsBackend';
 import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddAgent } from './AddAgent';
 import { DeleteAgent } from './DeleteAgent';
-import { useDepartmentsBackend } from '../../hooks/useDepartmentsBackend';
+import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -58,7 +58,7 @@ export const SearchTextField = styled('input')({
 
 export const Agents = () => {
 	const { agents, refreshAgents } = useData();
-	const { getAllDepartments } = useDepartmentsBackend();
+	const { getAllDepartments } = useDepartmentBackend();
 
 	const [departments, setDepartments] = useState([]);
 	const [selectedAgent, setSelectedAgent] = useState({});

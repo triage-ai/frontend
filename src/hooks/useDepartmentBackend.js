@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export const useDepartmentsBackend = () => {
+export const useDepartmentBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
 	const getAllDepartments = async () => {
