@@ -3,7 +3,7 @@ import { MessageCircle, MessageSquareText, NotepadText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { TicketDetail } from './TicketDetail';
 import { TicketThread } from './TicketThread';
-import { useTicketsBackend } from '../../hooks/useTicketsBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
 
 const CircularTab = styled(Tab)(() => ({
 	width: '44px',
@@ -48,7 +48,7 @@ function TabPanel(props) {
 }
 
 export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
-	const { getTicketById } = useTicketsBackend();
+	const { getTicketById } = useTicketBackend();
 
 	const [ticket, setTicket] = useState(null);
 	const [value, setValue] = useState(0);
@@ -60,17 +60,17 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 	function preProcessTicket(ticket) {
 		if (ticket.thread && ticket.thread.events) {
 			ticket.thread.events.forEach(event => {
-				// Parse the event data (assuming it's JSON)
 				let eventData = JSON.parse(event.data);
 
-				// Loop through each key in the event data
-				for (let key in eventData) {
-					if (eventData.hasOwnProperty(key)) {
-						event.field_updated = key;
-						event.previous_value = eventData[key][0];
-						event.updated_value = eventData[key][1];
-					}
+				event.field = eventData.field
+				event.prev_val = eventData.prev_val
+				event.new_val = eventData.new_val
+
+				if (eventData.hasOwnProperty('new_id')) {
+					event.prev_id = eventData.prev_id
+					event.new_id = eventData.new_id
 				}
+
 			});
 
 		}

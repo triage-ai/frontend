@@ -18,7 +18,6 @@ import React, { forwardRef, useContext, useEffect, useRef, useState } from 'reac
 import { SidebarItems } from './sidebar-items';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStatusBackend } from '../hooks/useStatusBackend';
-import { useModelBackend } from '../hooks/useModelBackend';
 import { AppBarHeight } from './layout';
 import { useTheme } from '@emotion/react';
 import { AddAgent } from '../pages/agent/AddAgent';
@@ -106,7 +105,6 @@ export const Sidebar = ({
 	const [progressBarPercent, setProgressBarPercent] = useState(0);
 	const navigate = useNavigate();
 	const { getTaskStatus } = useStatusBackend();
-	const { getDevCategories } = useModelBackend();
 
 	const [process, setProcess] = useState(0);
 	const [finishedProcessing, setFinishedProcessing] = useState(0);

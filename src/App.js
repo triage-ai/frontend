@@ -5,7 +5,6 @@ import { useContext, useState } from 'react';
 import { AgentSignIn } from './pages/auth/agent-sign-in';
 import { UserSignIn } from './pages/auth/user-sign-in';
 import { Landing } from './pages/landing/landing';
-import { Route as RouteComponent } from './pages/route/route';
 import { CookiesProvider } from 'react-cookie';
 import { AgentDashboard } from './pages/dashboard/agent-dashboard';
 import { AuthContext } from './context/AuthContext';
@@ -117,7 +116,7 @@ function App() {
 							}
 						/>
 						<Route
-							path="tickets/ticket-modal/:ticketId"
+							path="tickets/:ticketId"
 							element={
 								<ProtectedRoute>
 									<Tickets />

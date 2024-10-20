@@ -1,16 +1,16 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
-import { useAgentsBackend } from '../hooks/useAgentsBackend';
-import { useTicketsBackend } from '../hooks/useTicketsBackend';
-import { useDepartmentsBackend } from '../hooks/useDepartmentsBackend';
-import { useRolesBackend } from '../hooks/useRolesBackend';
+import { useAgentBackend } from '../hooks/useAgentsBackend';
+import { useTicketBackend } from '../hooks/useTicketBackend';
+import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
+import { useRolesBackend } from '../hooks/useRoleBackend';
 import { useSettingsBackend } from '../hooks/useSettingsBackend';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-	const { getAllAgents } = useAgentsBackend();
-	const { getTicketsbyAdvancedSearch } = useTicketsBackend();
-	const { getAllDepartments } = useDepartmentsBackend();
+	const { getAllAgents } = useAgentBackend();
+	const { getTicketsbyAdvancedSearch } = useTicketBackend();
+	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllRoles } = useRolesBackend();
 	const { getAllSettings} = useSettingsBackend();
 

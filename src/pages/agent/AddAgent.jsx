@@ -25,8 +25,8 @@ import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { Check, Eye, EyeOff, X } from 'lucide-react';
-import { useRolesBackend } from '../../hooks/useRolesBackend';
-import { useAgentsBackend } from '../../hooks/useAgentsBackend';
+import { useRolesBackend } from '../../hooks/useRoleBackend';
+import { useAgentBackend } from '../../hooks/useAgentsBackend';
 import { AddDepartment } from '../department/AddDepartment';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
@@ -96,7 +96,7 @@ const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
-	const { createAgent, updateAgent } = useAgentsBackend();
+	const { createAgent, updateAgent } = useAgentBackend();
 
 	const [roles, setRoles] = useState([]);
 
