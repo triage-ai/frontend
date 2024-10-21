@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import { useData } from '../../context/DataContext';
-import { useSettingsBackend } from '../../hooks/useSettingsBackend';
+import { useData } from '../../../context/DataContext';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import {
 	Box,
-	Button,
 	Checkbox,
 	CircularProgress,
 	FormControl,
 	FormControlLabel,
 	MenuItem,
-	Select,
-	Stack,
 	Typography,
 } from '@mui/material';
-import { handleSave } from './SettingsMenus';
-import { StyledSelect } from './GeneralSettings';
-import { CircularButton } from '../../components/sidebar';
+import { handleSave } from '../SettingsMenus';
+import { StyledSelect } from '../SettingsMenus';
+import { CircularButton } from '../../../components/sidebar';
 
 export const Attachments = props => {
 	const { settingsData } = props;
@@ -68,7 +65,7 @@ export const Attachments = props => {
 					value={formState.store_attachments}
 					onChange={handleChange}
 				>
-					<MenuItem value="database">In the database</MenuItem>
+					<MenuItem value="Database">Database</MenuItem>
 				</StyledSelect>
 			</FormControl>
 

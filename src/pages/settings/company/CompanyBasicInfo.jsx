@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useSettingsBackend } from '../../hooks/useSettingsBackend';
-import { useData } from '../../context/DataContext';
-import { Box, Button, CircularProgress, Stack, TextField, Typography } from '@mui/material';
-import { handleSave } from './SettingsMenus';
-import { CustomFilledInput } from '../../components/custom-input';
-import { CircularButton } from '../../components/sidebar';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
+import { useData } from '../../../context/DataContext';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { handleSave } from '../SettingsMenus';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { CircularButton } from '../../../components/sidebar';
 
 export const BasicInformation = props => {
 	const { settingsData } = props;
