@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
-import { Ellipsis, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
+import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useAgentBackend } from '../../hooks/useAgentsBackend';
 import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
@@ -28,6 +28,8 @@ import { Transition } from '../../components/sidebar';
 import { AddAgent } from './AddAgent';
 import { DeleteAgent } from './DeleteAgent';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
+import { useGroupBackend } from '../../hooks/useGroupBackend';
+import TablePagination from '@mui/material/TablePagination';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -57,26 +59,66 @@ export const SearchTextField = styled('input')({
 });
 
 export const Agents = () => {
-	const { agents, refreshAgents } = useData();
 	const { getAllDepartments } = useDepartmentBackend();
-
+	const { getAllGroups } = useGroupBackend();
+	const { getAllAgentsByDeptAndGroup } = useAgentBackend();
+	const [page, setPage] = useState(0)
+	const [size, setSize] = useState(10)
+	const [totalAgents, setTotalAgents] = useState(0);
+	const [agents, setAgents] = useState([])
 	const [departments, setDepartments] = useState([]);
+	const [groups, setGroups] = useState([])
+	const [dept, setDept] = useState(-1);
+	const [group, setGroup] = useState(-1);
 	const [selectedAgent, setSelectedAgent] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
 
 	useEffect(() => {
-		refreshAgents();
+		refreshAgents()
 
 		getAllDepartments()
-			.then(depts => {
-				setDepartments(depts.data);
+			.then(res => {
+				setDepartments(res.data);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+		getAllGroups()
+			.then(res => {
+				setGroups(res.data);
 			})
 			.catch(err => {
 				console.error(err);
 			});
 	}, []);
+
+	useEffect(() => {
+		refreshAgents()
+	}, [dept, group, page, size])
+
+	const handleChangePage = (e) => {
+		setPage(e.target.value)
+	}
+
+	const handleChangeRowsPerPage = (e) => {
+		setSize(e.target.value)
+	}
+
+	const refreshAgents = () => {
+		// const dept_id = departments[dept] ?? null
+		// const group_id = groups[group] ?? null
+
+		getAllAgentsByDeptAndGroup(departments[dept]?.dept_id ?? null, groups[group]?.gropu_id ?? null, 1, 10)
+			.then(res => {
+				setAgents(res.data.items)
+				setTotalAgents(res.data.total)
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}
 
 	const handleDialogOpen = (agent, button) => {
 		setSelectedAgent(agent);
@@ -106,6 +148,14 @@ export const Agents = () => {
 		handleDeleteDialogClose();
 		refreshAgents();
 	};
+
+	const handleDeptChange = (e) => {
+		setDept(e.target.value)
+	}
+
+	const handleGroupChange = (e) => {
+		setGroup(e.target.value)
+	}
 
 	return (
 		<Layout
@@ -147,65 +197,111 @@ export const Agents = () => {
 						</Box>
 					</Box>
 
-					{/* <TextField
-						size="small"
-						defaultValue={''}
-						select
+					<FormControl
+						sx={{ minWidth: 200 }}
+					>
+						<Select
+							displayEmpty
+							size='small'
+							value={dept}
+							onChange={handleDeptChange}
+							renderValue={item => (
+								<Box
+									display={'flex'}
+									alignItems={'center'}
+								>
+									<Typography
+										variant="subtitle2"
+										fontWeight={600}
+										sx={{ color: '#1B1D1F' }}
+									>
+										{item === -1 ? 'All Departments' : departments[item].name}
+									</Typography>
+								</Box>
+							)}
+							IconComponent={props => (
+								<ChevronDown
+									{...props}
+									size={17}
+									color="#1B1D1F"
+								/>
+							)}
+							sx={{
+								'.MuiOutlinedInput-notchedOutline': {
+									borderRadius: '8px',
+									borderColor: '#E5EFE9',
+								},
+							}}
+						>
+							<MenuItem
+								key={-1}
+								value={-1}
+							>
+								<Typography variant="subtitle2">All Departments</Typography>
+							</MenuItem>
+							{departments.map((x, y) => (
+								<MenuItem
+									key={y}
+									value={y}
+								>
+									<Typography variant="subtitle2">{x.name}</Typography>
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					
+					<FormControl
+						sx={{ minWidth: 200 }}
+					>
+					<Select
+						displayEmpty
+						size='small'
+						value={group}
+						onChange={handleGroupChange}
+						renderValue={item => (
+							<Box
+								display={'flex'}
+								alignItems={'center'}
+							>
+								<Typography
+									variant="subtitle2"
+									fontWeight={600}
+									sx={{ color: '#1B1D1F' }}
+								>
+									{item === -1 ? 'All Groups' : groups[item].name}
+								</Typography>
+							</Box>
+						)}
+						IconComponent={props => (
+							<ChevronDown
+								{...props}
+								size={17}
+								color="#1B1D1F"
+							/>
+						)}
 						sx={{
-							width: '20%',
-							ml: 1,
-							'& fieldset': {
-								border: '1.5px solid #E5EFE9',
-								borderRadius: '12px',
-							},
-							'& .MuiSelect-select': {
-								fontSize: '0.9375rem',
-								fontWeight: 500,
-								fontFamily:
-									"Mont, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-							},
-							// '& .MuiSelect-select span::before': {
-							// 	content: "'-- Select --'",
-							// 	color: '#575757',
-							// 	opacity: 1,
-							// 	fontSize: '0.9375rem',
-							// 	fontWeight: 500,
-							// 	fontFamily:
-							// 		"Mont, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-							// },
-							'& .MuiInputBase-root': {
-								color: '#000',
-								minHeight: '42px',
-
-								'&:hover': {
-									'& fieldset': {
-										borderColor: '#22874E',
-									},
-								},
-
-								'&.Mui-focused': {
-									'& fieldset': {
-										borderColor: '#22874E',
-									},
-								},
+							'.MuiOutlinedInput-notchedOutline': {
+								borderRadius: '8px',
+								borderColor: '#E5EFE9',
 							},
 						}}
-						//   value={country}
-						//   onChange={(e) => setCountry(e.target.value)}
 					>
-						<MenuItem value="">
-							<Typography variant="subtitle2">- Choose department -</Typography>
+						<MenuItem
+							key={-1}
+							value={-1}
+						>
+							<Typography variant="subtitle2">All Groups</Typography>
 						</MenuItem>
-
-						{departments.map(option => (
+						{groups.map((x, y) => (
 							<MenuItem
-								key={option.dept_id}
-								value={option.dept_id}
+								key={y}
+								value={y}
 							>
-								{option.name}
+								<Typography variant="subtitle2">{x.name}</Typography>
 							</MenuItem>
 						))}
-					</TextField> */}
+					</Select>
+					</FormControl>
 				</Box>
 
 				<Table>
@@ -300,6 +396,16 @@ export const Agents = () => {
 						))}
 					</TableBody>
 				</Table>
+				<Box>
+				<TablePagination
+					component="div"
+					count={totalAgents}
+					page={page}
+					onPageChange={handleChangePage}
+					rowsPerPage={size}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
+				</Box>
 			</WhiteContainer>
 
 			{buttonClicked === 'edit' && (

@@ -14,6 +14,24 @@ export const useAgentBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
 	};
 
+	const getAllAgentsByDeptAndGroup = async (dept_id, group_id, page, size) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		console.log(dept_id)
+
+		var url = `agent/get/?page=${page}&size=${size}&`
+		if (dept_id) {
+			url += `dept_id=${dept_id}&`
+		}
+		if (group_id) {
+			url += `group_id=${group_id}`
+		}
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + url, config);
+	};
+
 	const getAgentBySearch = async (input) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -49,10 +67,9 @@ export const useAgentBackend = () => {
 
 		return await axios.delete(
 			process.env.REACT_APP_BACKEND_URL + 'agent/delete/' + agentInfo.agent_id,
-			{},
 			config
 		);
 	};
 
-	return { getAllAgents, getAgentBySearch, createAgent, updateAgent, removeAgent };
+	return { getAllAgents, getAllAgentsByDeptAndGroup, getAgentBySearch, createAgent, updateAgent, removeAgent };
 };

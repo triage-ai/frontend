@@ -4,6 +4,7 @@ import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
 import { useRolesBackend } from '../hooks/useRoleBackend';
 import { useSettingsBackend } from '../hooks/useSettingsBackend';
+import { NotebookPen } from 'lucide-react';
 
 const DataContext = createContext();
 
