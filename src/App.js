@@ -13,6 +13,7 @@ import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
 import { UserDashboard } from './pages/dashboard/user-dashboard';
 import { Settings } from './pages/settings/Settings';
+import { Manage } from './pages/manage/Manage'
 import {
 	SystemMenu,
 	CompanyMenu,
@@ -89,7 +90,7 @@ function App() {
 						/>
 						<Route
 							path="agent/login"
-							element={agentAuthState.isAuth ? <Navigate to="/agents" /> : <AgentSignIn />}
+							element={agentAuthState.isAuth ? <Navigate to="/tickets" /> : <AgentSignIn />}
 						/>
 						<Route
 							path="user/login"
@@ -98,14 +99,6 @@ function App() {
 						<Route
 							path="dashboard"
 							element={<AgentDashboard />}
-						/>
-						<Route
-							path="agents"
-							element={
-								<ProtectedRoute>
-									<Agents />
-								</ProtectedRoute>
-							}
 						/>
 						<Route
 							path="tickets"
@@ -184,6 +177,22 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<Settings Menu={KnowledgebaseMenu} />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="manage/"
+							element={
+								<ProtectedRoute>
+									<Manage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/agents'
+							element={
+								<ProtectedRoute>
+									<Agents />
 								</ProtectedRoute>
 							}
 						/>

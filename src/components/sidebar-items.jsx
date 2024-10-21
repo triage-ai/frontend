@@ -22,6 +22,7 @@ import {
 	Ticket,
 	ToyBrick,
 	Settings,
+	BriefcaseBusiness,
 	Lightbulb,
 	UsersRound,
 	ClipboardList,
@@ -30,6 +31,20 @@ import {
 	Star,
 	ChevronUp,
 	ChevronDown,
+	AlarmClock,
+	Filter,
+	Calendar,
+	GitFork,
+	SquareUserRound,
+	Users,
+	UserRound,
+	CircleAlert,
+	TicketCheck,
+	MessageCircleQuestion,
+	Files,
+	KeyRound,
+	Notebook,
+	NotebookText,
 } from 'lucide-react';
 import { Fragment, useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -135,27 +150,18 @@ const menuItems = [
 		icon: (
 			<PanelLeft
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
 			/>
 		),
 	},
 
-	{ subheader: 'PEOPLE' },
-	{
-		title: 'Agents',
-		icon: (
-			<Headset
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
+	// { subheader: 'PEOPLE' },
 	{
 		title: 'Tickets',
 		icon: (
 			<Ticket
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
 			/>
 		),
 	},
@@ -164,51 +170,79 @@ const menuItems = [
 		icon: (
 			<Settings
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
+			/>
+		),
+	},
+	{
+		title: 'Manage',
+		icon: (
+			<BriefcaseBusiness
+				size={20}
+			// strokeWidth={2}
 			/>
 		),
 	},
 
-	{ subheader: 'PREVIOUS' },
-	{
-		title: 'Build',
-		icon: (
-			<Blocks
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Fine-tune',
-		icon: (
-			<SlidersHorizontal
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Playground',
-		icon: (
-			<ToyBrick
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
-	{
-		title: 'Route',
-		icon: (
-			<Route
-				size={20}
-				// strokeWidth={2}
-			/>
-		),
-	},
 ];
 
-const subMenuItems = [
+const manageSubmenuItems = [
+	{
+		title: 'Agents',
+		icon: <Headset size={20} />,
+	},
+	{
+		title: 'Users',
+		icon: <UserRound size={20} />,
+	},
+	{
+		title: 'Queues',
+		icon: <Filter size={20} />,
+	},
+	{
+		title: 'SLA',
+		icon: <AlarmClock size={20} />,
+	},
+	{
+		title: 'Schedules',
+		icon: <Calendar size={20} />,
+	},
+	{
+		title: 'Departments',
+		icon: <SquareUserRound size={20} />,
+	},
+	{
+		title: 'Groups',
+		icon: <Users size={20} />,
+	},
+	{
+		title: 'Priorities',
+		icon: <CircleAlert size={20} />,
+	},
+	{
+		title: 'Statuses',
+		icon: <TicketCheck size={20} />,
+	},
+	{
+		title: 'Topics',
+		icon: <MessageCircleQuestion size={20} />,
+	},
+	{
+		title: 'Forms',
+		icon: <Files size={20} />,
+	},
+	{
+		title: 'Roles',
+		icon: <KeyRound size={20} />,
+	},
+	{
+		title: 'Templates',
+		icon: <NotebookText size={20} />,
+	},
+
+];
+
+const settingsSubmenuItems = [
 	{
 		title: 'System',
 		icon: <MonitorCog size={20} />,
@@ -231,7 +265,7 @@ const subMenuItems = [
 	},
 	{
 		title: 'Users',
-		icon: <UsersRound size={20} />,
+		icon: <UserRound size={20} />,
 	},
 	{
 		title: 'Knowledgebase',
@@ -246,16 +280,16 @@ export const SidebarItems = () => {
 	const [drawerTop, setDrawerTop] = useState(0); // State to store top position of the drawer
 	const settingsRef = useRef(null); // Ref to the 'Settings' menu item
 	const [settingsOpen, setSettingsOpen] = useState(false);
+	const [manageOpen, setManageOpen] = useState(false);
 
 	const handleSettingsClick = () => {
-		setSettingsOpen(!settingsOpen);
-
-		// if (path.split('/')[1] === 'settings') {
-		// 	setSettingsOpen(true);
-		// } else {
-		// 	setSettingsOpen(!settingsOpen);
-		// }
+		setSettingsOpen(p => !p);
 	};
+
+	const handleManageClick = () => {
+		setManageOpen(p => !p);
+	};
+
 
 	let location = useLocation();
 
@@ -325,7 +359,7 @@ export const SidebarItems = () => {
 											disablePadding
 											sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}
 										>
-											{item.title !== 'Settings' && (
+											{item.title !== 'Settings' && item.title !== 'Manage' && (
 												<StyledListItemBtn
 													component={Link}
 													to={'/' + item.title.toLowerCase()}
@@ -337,6 +371,86 @@ export const SidebarItems = () => {
 
 													<MenuItemTitle variant="subtitle2">{item.title}</MenuItemTitle>
 												</StyledListItemBtn>
+											)}
+
+											{item.title === 'Manage' && (
+												<>
+													<StyledListItemBtn
+														onClick={handleManageClick}
+														selected={!manageOpen && path.split('/')[1] === 'manage'}
+														disableRipple
+														sx={{ justifyContent: 'space-between' }}
+													>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																justifyContent: 'flex-start',
+															}}
+														>
+															<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+															<MenuItemTitle variant="subtitle2">{item.title}</MenuItemTitle>
+														</Box>
+														{manageOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+													</StyledListItemBtn>
+
+													<Collapse
+														in={manageOpen}
+														timeout="auto"
+														unmountOnExit
+													>
+														<List
+															sx={{
+																p: 0,
+																mt: 0.3,
+																pl: 4.6,
+																':before': {
+																	content: '""',
+																	position: 'absolute',
+																	top: 0,
+																	left: '24px',
+																	bottom: '32px',
+																	width: '2px',
+																	borderRadius: '2px',
+																	background: '#EFEFEF',
+																},
+															}}
+															dense={true}
+														>
+															{manageSubmenuItems.map((item, index) => (
+																<ListItem
+																	key={index}
+																	disablePadding
+																	sx={{
+																		display: 'block',
+																		mt: index !== 0 ? 0.2 : 0,
+																		':before': {
+																			content: '""',
+																			position: 'absolute',
+																			top: '12px',
+																			left: '-13px',
+																			width: '12px',
+																			height: '12px',
+																			background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
+																		},
+																	}}
+																>
+																	<StyledListItemBtn
+																		component={Link}
+																		to={'/manage/' + item.title.toLowerCase()}
+																		selected={path.split('/')[2] === item.title.toLowerCase()}
+																		sx={{ pl: 1 }}
+																		disableRipple
+																	>
+																		<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+
+																		<MenuItemTitle variant="subtitle2">{item.title}</MenuItemTitle>
+																	</StyledListItemBtn>
+																</ListItem>
+															))}
+														</List>
+													</Collapse>
+												</>
 											)}
 
 											{item.title === 'Settings' && (
@@ -383,7 +497,7 @@ export const SidebarItems = () => {
 															}}
 															dense={true}
 														>
-															{subMenuItems.map((item, index) => (
+															{settingsSubmenuItems.map((item, index) => (
 																<ListItem
 																	key={index}
 																	disablePadding

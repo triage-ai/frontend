@@ -46,7 +46,7 @@ export const Settings = ({ Menu }) => {
 				icon: <Settings2 size={20} />,
 			}}
 		>
-			{Object.keys(settings).length === 0 ? <p>loading...</p> : <Menu settingsData={settings} />}
+			{Object.keys(settings).length === 0 ? <></> : <Menu settingsData={settings} />}
 		</Layout>
 	);
 };
