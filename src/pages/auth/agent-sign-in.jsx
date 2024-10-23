@@ -106,7 +106,7 @@ export const AgentSignIn = () => {
 					};
 					setAgentData(authInfo);
 					setLoading(false);
-					navigate('/agents');
+					navigate('/tickets');
 				})
 				.catch(error => {
 					const errorCode = error.code;

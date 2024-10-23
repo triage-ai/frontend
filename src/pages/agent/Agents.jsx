@@ -21,7 +21,7 @@ import {
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useAgentBackend } from '../../hooks/useAgentsBackend';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
@@ -110,7 +110,7 @@ export const Agents = () => {
 		// const dept_id = departments[dept] ?? null
 		// const group_id = groups[group] ?? null
 
-		getAllAgentsByDeptAndGroup(departments[dept]?.dept_id ?? null, groups[group]?.gropu_id ?? null, 1, 10)
+		getAllAgentsByDeptAndGroup(departments[dept]?.dept_id ?? null, groups[group]?.group_id ?? null, 1, 10)
 			.then(res => {
 				setAgents(res.data.items)
 				setTotalAgents(res.data.total)

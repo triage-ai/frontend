@@ -56,7 +56,7 @@ import { WhiteContainer } from '../../components/white-container';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { SearchTextField } from '../agent/Agents';
-import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useStatusBackend } from '../../hooks/useStatusBackend';
@@ -64,7 +64,7 @@ import { CustomFilledInput } from '../../components/custom-input';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { useRolesBackend } from '../../hooks/useRoleBackend';
-import { useAgentBackend } from '../../hooks/useAgentsBackend';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
 
@@ -178,7 +178,7 @@ export const UserDashboard = () => {
 	const { ticketId } = useParams();
 
 	const { tickets, refreshTickets } = useData();
-	const { getAllPriorities } = useProrityBackend();
+	const { getAllPriorities } = usePriorityBackend();
 
 	const [selectedAgent, setSelectedAgent] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
@@ -467,7 +467,7 @@ const IconBox = styled(Box)(() => ({
 }));
 
 export const TicketDetail = ({ ticketInfo, closeDrawer }) => {
-	const { getPriorityColor } = useProrityBackend();
+	const { getPriorityColor } = usePriorityBackend();
 	const { getTicketById, updateTicket } = useTicketBackend();
 	const { getAllStatuses } = useStatusBackend();
 

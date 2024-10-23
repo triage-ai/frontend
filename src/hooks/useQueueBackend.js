@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export const useQueuesBackend = () => {
+export const useQueueBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
 	// This will also return the default queues

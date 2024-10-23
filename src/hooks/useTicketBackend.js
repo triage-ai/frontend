@@ -28,6 +28,14 @@ export const useTicketBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/id/${id}`, config);
 	};
 
+	const getTicketForms = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'ticket/form/', config);
+	}
+
 	const createTicket = async ticketInfo => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -40,17 +48,17 @@ export const useTicketBackend = () => {
 		);
 	};
 
-	const updateTicket = async (ticket_id, ticketInfo) => {
+	const updateTicket = async (ticketInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
 		return await axios.put(
-			process.env.REACT_APP_BACKEND_URL + 'ticket/update/' + ticket_id,
+			process.env.REACT_APP_BACKEND_URL + 'ticket/update/' + ticketInfo.ticket_id,
 			ticketInfo,
 			config
 		);
 	};
 
-	return { getTicketsbyAdvancedSearch, getTicketById, createTicket, updateTicket };
+	return { getTicketsbyAdvancedSearch, getTicketById, getTicketForms, createTicket, updateTicket };
 };

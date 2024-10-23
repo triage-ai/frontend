@@ -12,6 +12,7 @@ import {
 	TableBody,
 	TableCell,
 	TableHead,
+	TablePagination,
 	TableRow,
 	Typography,
 } from '@mui/material';
@@ -23,7 +24,7 @@ import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
 import { SearchTextField } from '../agent/Agents';
-import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useQueuesBackend } from '../../hooks/useQueueBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -33,32 +34,45 @@ export const Tickets = () => {
 	const navigate = useNavigate();
 	const { ticketId } = useParams();
 
-	const { tickets, refreshTickets } = useData();
-	const { getAllPriorities } = useProrityBackend();
-	const { getQueuesForAgent } = useQueuesBackend();
+	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } = useData();
+	const { getAllPriorities } = usePriorityBackend();
 
-	const [queueIdx, setQueueIdx] = useState(0);
-	const [page, setPage] = useState(1);
+	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
-	const [queues, setQueues] = useState([]);
-	const [selectedAgent, setSelectedAgent] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [priorities, setPriorities] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('');
 	const [ticketList, setTicketList] = useState([]);
 	const [openDetail, setOpenDetail] = useState(false);
-	const [selectedTicket, setSelectedTicket] = useState(false);
+	const [selectedTicket, setSelectedTicket] = useState({});
 
 	useEffect(() => {
 		getPriorityList();
-		getQueueList();
+		refreshQueues();
 	}, []);
 
 	useEffect(() => {
 		if (queues.length != 0) {
-			refreshTickets({...queues[queueIdx].config, 'size': size, 'page': page})
+			refreshTickets(size, page+1)
 		}
-	}, [queues, queueIdx])
+	}, [page, size, queues, queueIdx])
+
+	const handleTicketEdited = () => {
+		handleDialogClose();
+	};
+
+	const handleTicketCreated = () => {
+		handleDialogClose();
+	};
+
+	const handleChangePage = (e, newValue) => {
+		setPage(newValue)
+	}
+
+	const handleChangeRowsPerPage = (e) => {
+		setSize(e.target.value)
+		setPage(0)
+	}
 
 	useEffect(() => {
 		if (ticketList.length > 0 && ticketId) {
@@ -91,31 +105,21 @@ export const Tickets = () => {
 			});
 	};
 
-	const getQueueList = () => {
-		getQueuesForAgent()
-			.then(res => {
-				res.data.map(entry => {
-					entry.config = JSON.parse(entry.config)
-				})
-				setQueues(res.data)
-			})
-			.catch(err => {
-				console.error(err);
-			});
-	}
-
-	const handleDialogOpen = (event, agent) => {
+	const handleDialogOpen = (event, ticket) => {
 		event.stopPropagation();
 
-		setSelectedAgent(agent);
+		setSelectedTicket(ticket);
 		setOpenDialog(true);
 	};
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
+		refreshTickets(size, page+1)
 	};
 
 	const handleQueueChange = (e) => {
+		setPage(0)
+		setSize(10)
 		setQueueIdx(e.target.value.queue_id - 1)
 	}
 
@@ -341,6 +345,14 @@ export const Tickets = () => {
 						))}
 					</TableBody>
 				</Table>
+				<TablePagination
+					component="div"
+					count={totalTickets}
+					page={page}
+					onPageChange={handleChangePage}
+					rowsPerPage={size}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 			</WhiteContainer>
 
 			<Dialog
@@ -383,8 +395,9 @@ export const Tickets = () => {
 					</IconButton>
 
 					<AddTicket
-						// handleAgentEdited={handleAgentEdited}
-						editAgent={selectedAgent}
+						handleTicketCreated={handleTicketCreated}
+						handleTicketEdited={handleTicketEdited}
+						editTicket={selectedTicket}
 					/>
 				</Box>
 			</Dialog>
