@@ -303,6 +303,16 @@ export const SidebarItems = () => {
 		}
 	}, [location, setPath]);
 
+	useEffect(() => {
+		setPath(location.pathname);
+
+		if (location.pathname.split('/')[1] !== 'manage') {
+			setManageOpen(false);
+		} else {
+			setManageOpen(true);
+		}
+	}, [location, setPath]);
+
 	const activeRoute = route => {
 		return route === path.replace('/', '');
 	};
@@ -364,7 +374,7 @@ export const SidebarItems = () => {
 													component={Link}
 													to={'/' + item.title.toLowerCase()}
 													selected={activeRoute(item.title.toLowerCase())}
-													disabled={item.title !== 'Agents' && item.title !== 'Tickets'}
+													disabled={item.title !== 'Dashboard' && item.title !== 'Tickets' }
 													disableRipple
 												>
 													<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
@@ -438,7 +448,7 @@ export const SidebarItems = () => {
 																	<StyledListItemBtn
 																		component={Link}
 																		to={'/manage/' + item.title.toLowerCase()}
-																		selected={path.split('/')[2] === item.title.toLowerCase()}
+																		selected={path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'manage'}
 																		sx={{ pl: 1 }}
 																		disableRipple
 																	>
@@ -518,7 +528,7 @@ export const SidebarItems = () => {
 																	<StyledListItemBtn
 																		component={Link}
 																		to={'/settings/' + item.title.toLowerCase()}
-																		selected={path.split('/')[2] === item.title.toLowerCase()}
+																		selected={path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'settings'}
 																		sx={{ pl: 1 }}
 																		disableRipple
 																	>

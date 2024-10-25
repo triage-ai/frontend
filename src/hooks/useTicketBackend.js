@@ -51,6 +51,23 @@ export const useTicketBackend = () => {
 			config
 		);
 	};
+	
+	const getTicketBetweenDates = async (start_date, end_date) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	return { getTicketsbyAdvancedSearch, getTicketById, createTicket, updateTicket };
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/dates?start=${start_date}&end=${end_date}`, config);
+	};
+
+	const getDashboardStats = async (start_date, end_date, category) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/${category}/dates?start=${start_date}&end=${end_date}`, config);
+	};
+
+	return { getTicketsbyAdvancedSearch, getTicketById, createTicket, updateTicket, getTicketBetweenDates, getDashboardStats };
+
 };
