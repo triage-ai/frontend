@@ -1,4 +1,4 @@
-import { Box, Button, MenuItem, TextField, Typography, alpha, styled } from '@mui/material';
+import { Box, Button, MenuItem, TextField, Typography, alpha, styled, Autocomplete, Popper, Paper } from '@mui/material';
 import { useEffect } from 'react';
 
 const CustomInput = styled(props => (
@@ -6,6 +6,34 @@ const CustomInput = styled(props => (
 		InputProps={{
 			disableUnderline: true,
 		}}
+		{...props}
+	/>
+))(({ theme }) => ({
+	'& .MuiFilledInput-root': {
+		overflow: 'hidden',
+		borderRadius: 12,
+		backgroundColor: 'transparent',
+		border: '1.5px solid #E5EFE9',
+		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
+		fontSize: '0.9375rem',
+		fontWeight: 500,
+		textAlign: 'left',
+		'&:hover': {
+			backgroundColor: 'transparent',
+			borderColor: '#22874E',
+		},
+		'&.Mui-focused': {
+			backgroundColor: 'transparent',
+			borderColor: '#22874E',
+		},
+	},
+	'& label.Mui-focused': {
+		color: '#545555',
+	},
+}));
+
+const CustomMultibox = styled((props) => (
+	<Autocomplete
 		{...props}
 	/>
 ))(({ theme }) => ({
@@ -101,5 +129,56 @@ export const CustomSelect = ({
 				</Box>
 			)}
 		</CustomInput>
+	);
+};
+
+export const CustomAutocomplete = ({
+	label,
+	options,
+	halfWidth,
+	addNewButton,
+	handleAddBtnClick,
+	getOptionLabel,
+	onInputChange,
+	renderOption,
+	value,
+	name,
+	onChange,
+	size,
+	...props
+}) => {
+	const { mt, mb, ...otherProps } = props;
+
+	return (
+		<CustomMultibox
+			{...otherProps}
+			label={label}
+			disablePortal
+			options={options}
+			value={value}
+			mb={mb}
+			getOptionLabel={getOptionLabel}
+			type="text"
+			name={name}
+			size={size}
+			onInputChange={onInputChange}
+			filterOptions={(x) => x}
+			onChange={onChange}
+			// sx={{
+			// 	width: 250,
+			// 	m: 1,
+			// 	'& .MuiInputBase-root': {
+			// 		fontWeight: 600,
+			// 	},
+			// 	'.MuiOutlinedInput-notchedOutline': {
+			// 		borderRadius: '8px',
+			// 		borderColor: '#E5EFE9',
+			// 	},
+			// }}
+			PopperComponent={(props) => (<Popper {...props} style={{ maxWidth: 400 }} placement='bottom-start' />)}
+			renderOption={renderOption}
+			renderInput={(props) => (<TextField {...props} slotProps={{ style: { fontWeight: 600 } }} />)}
+		/>
+
 	);
 };

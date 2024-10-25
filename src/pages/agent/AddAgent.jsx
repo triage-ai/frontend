@@ -26,7 +26,7 @@ import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { Check, Eye, EyeOff, X } from 'lucide-react';
 import { useRolesBackend } from '../../hooks/useRoleBackend';
-import { useAgentBackend } from '../../hooks/useAgentsBackend';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { AddDepartment } from '../department/AddDepartment';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';

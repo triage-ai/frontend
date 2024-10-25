@@ -21,8 +21,8 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { useAgentBackend } from '../../hooks/useAgentsBackend';
-import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useStatusBackend } from '../../hooks/useStatusBackend';
 import { useSLABackend } from '../../hooks/useSLABackend';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
@@ -100,7 +100,7 @@ export const EditTicket = ({ ticket, updateCurrentTicket }) => {
 
     const { updateTicket } = useTicketBackend();
     const { getAgentBySearch } = useAgentBackend();
-    const { getAllPriorities } = useProrityBackend();
+    const { getAllPriorities } = usePriorityBackend();
     const { getAllStatuses } = useStatusBackend();
     const { getAllSLAs } = useSLABackend();
     const { getAllDepartments } = useDepartmentBackend();

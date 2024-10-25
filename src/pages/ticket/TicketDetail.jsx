@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { EditTicket } from './EditTicket';
 import { useEffect, useState } from 'react';
-import { useProrityBackend } from '../../hooks/usePriorityBackend';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useStatusBackend } from '../../hooks/useStatusBackend';
 
@@ -43,7 +43,7 @@ const IconBox = styled(Box)(() => ({
 }));
 
 export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
-	const { getPriorityColor } = useProrityBackend();
+	const { getPriorityColor } = usePriorityBackend();
 	const { updateTicket } = useTicketBackend();
 	const { getAllStatuses } = useStatusBackend();
 
@@ -164,7 +164,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 							<IconButton
 								sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }}
 								aria-label="edit"
-								onClick={handleEditMode}
+								onClick={() => {}}
 							>
 								<Pencil
 									size={20}
