@@ -14,34 +14,16 @@ import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
-import { useThreadsBackend } from '../../hooks/useThreadBackend'
-import { RichTextEditor } from '../../components/rich-text-editor';
-import { useEditor } from "@tiptap/react";
-import { LinkBubbleMenu, LinkBubbleMenuHandler } from "mui-tiptap";
-import Link from '@tiptap/extension-link'
-import StarterKit from "@tiptap/starter-kit";
-
+import { useThreadsBackend } from '../../hooks/useThreadBackend';
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat)
 dayjs.extend(utc)
 
-export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
-	const [formData, setFormData] = useState({ 'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': '' });
+export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
+	const [formData, setFormData] = useState({'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': ''});
 	const [postDisabled, setPostDisabled] = useState(true)
-	const { createThreadEntry } = useThreadsBackend();
-	const editor = useEditor({
-        extensions: [
-			StarterKit,
-			Link.configure({
-				openOnClick: false,
-				autolink: true,
-				defaultProtocol: 'https',
-		  }),
-		  LinkBubbleMenuHandler
-		],
-        content: "",
-    });
-	
+	const { createThreadEntryForUser } = useThreadsBackend();
+
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 		setFormData(prevFormData => ({
@@ -51,14 +33,14 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	}
 
 	const handleSubmit = () => {
-		// console.log(editor.getHTML()) for rich text editor
 		const newThreadEntry = { ...formData, 'thread_id': ticket.thread.thread_id }
 		var updatedTicket = { ...ticket }
-		createThreadEntry(newThreadEntry)
+		createThreadEntryForUser(newThreadEntry)
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data)
 				updateCurrentTicket(updatedTicket)
-				setFormData({ 'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': '' })
+                console.log(updatedTicket)
+				setFormData({'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': ''})
 			})
 			.catch(err => {
 				alert('Error while creating thread entry')
@@ -88,8 +70,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	}
 
 	useEffect(() => {
-		setPostDisabled(formData.body === '')
-	}, [formData])
+		setPostDisabled(formData.subject === '' || formData.body === '')
+	},[formData])
 
 
 	return (
@@ -154,7 +136,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 			>
 				{ticket.thread.events_and_entries.map(item => item.entry_id ? (
 					<TimelineItem
-						key={"entry" + item.entry_id}
+						key={"entry"+item.entry_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -202,7 +184,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 					</TimelineItem>
 				) : (
 					<TimelineItem
-						key={"event" + item.event_id}
+						key={"event"+item.event_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -255,11 +237,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 								borderWidth={1}
 								mb={1}
 							/>
-							{/* <RichTextEditor 
-								editor={editor}
-							>
-								<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
-							</RichTextEditor> */}
 
 							<CircularButton
 								sx={{ py: 2, px: 6 }}

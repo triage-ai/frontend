@@ -15,11 +15,8 @@ export const useFormBackend = () => {
 	// };
 
 	const getFormById = async (input) => {
-		const config = {
-			headers: { Authorization: `Bearer ${agentAuthState.token}` },
-		};
 
-		return await axios.get(process.env.REACT_APP_BACKEND_URL + `form/id/${input}`, config);
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `form/id/${input}`);
 	}
 
 	// const createAgent = async agentInfo => {

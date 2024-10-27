@@ -104,7 +104,7 @@ export const UserSignIn = () => {
 					};
 					setUserData(authInfo);
 					setLoading(false);
-					navigate('/user/dashboard');
+					navigate('/user/tickets');
 				})
 				.catch(error => {
 					const errorCode = error.code;

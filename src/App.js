@@ -9,9 +9,10 @@ import { CookiesProvider } from 'react-cookie';
 import { AgentDashboard } from './pages/dashboard/agent-dashboard';
 import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/protected-route';
+import UserProtectedRoute from './components/user-protected-route';
 import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
-import { UserDashboard } from './pages/dashboard/user-dashboard';
+import { UserTickets } from './pages/dashboard/UserTickets';
 import { Settings } from './pages/settings/Settings';
 import { Manage } from './pages/manage/Manage'
 import {
@@ -117,11 +118,19 @@ function App() {
 							}
 						/>
 						<Route
-							path="user/tickets/"
+							path="user/tickets/:ticketId"
 							element={
-								<ProtectedRoute>
-									<UserDashboard />
-								</ProtectedRoute>
+								<UserProtectedRoute>
+									<UserTickets />
+								</UserProtectedRoute>
+							}
+						/>
+						<Route
+							path="user/tickets"
+							element={
+								<UserProtectedRoute>
+									<UserTickets />
+								</UserProtectedRoute>
 							}
 						/>
 						<Route

@@ -58,7 +58,6 @@ export const useRouteBackend = () => {
 			}
 		}
 
-		debugger;
 		return await axios.post(
 			'https://demo-docker-3jtvhz75ca-uk.a.run.app/route/modify/' + routeType + '/' + activeModel,
 			dataObj,

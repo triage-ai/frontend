@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useQueueBackend = () => {
-	const { agentAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
 	// This will also return the default queues
 	const getQueuesForAgent = async () => {
@@ -12,6 +12,16 @@ export const useQueueBackend = () => {
 		};
 		return await axios.get(
 			process.env.REACT_APP_BACKEND_URL + `queue/get`,
+			config
+		);
+	}
+
+	const getQueuesForUser = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${userAuthState.token}` }
+		};
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + `queue/get/user`,
 			config
 		);
 	}
@@ -63,5 +73,5 @@ export const useQueueBackend = () => {
 	// 	);
 	// };
 
-	return { getQueuesForAgent };
+	return { getQueuesForAgent, getQueuesForUser };
 };

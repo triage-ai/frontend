@@ -6,6 +6,7 @@ import {
 	MenuItem,
 	Select,
 	styled,
+	Chip,
 	Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -24,7 +25,6 @@ import {
 	User,
 	X,
 } from 'lucide-react';
-import { EditTicket } from './EditTicket';
 import { useEffect, useState } from 'react';
 import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
@@ -50,6 +50,18 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const [statusList, setStatusList] = useState([]);
 	const [editing, setEditing] = useState(false)
 
+	function createData(name, calories, fat, carbs, protein) {
+		return { name, calories, fat, carbs, protein };
+	}
+
+	const rows = [
+		createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+		createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+		createData('Eclair', 262, 16.0, 24, 6.0),
+		createData('Cupcake', 305, 3.7, 67, 4.3),
+		createData('Gingerbread', 356, 16.0, 49, 3.9),
+	];
+
 	const handleStatusChange = e => {
 		const statusUpdate = {
 			status_id: statusList.find(x => x.name === e.target.value).status_id,
@@ -71,16 +83,16 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				setStatusList(data);
 			})
 			.catch(err => alert('Could not get status list'));
-			// eslint-disable-next-line
+		// eslint-disable-next-line
 	}, []);
 
 	const getPriorityIcon = priority => {
-		switch (priority) {
+		switch (priority.priority) {
 			case 'low':
 				return (
 					<BadgeAlert
 						size={20}
-						color={getPriorityColor(priority)}
+						color={priority.priority_color}
 					/>
 				);
 
@@ -88,15 +100,16 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				return (
 					<CircleAlert
 						size={20}
-						color={getPriorityColor(priority)}
+						color={priority.priority_color}
+						backgroundColor="#000000"
 					/>
 				);
 
-			case 'hight':
+			case 'high':
 				return (
 					<OctagonAlert
 						size={20}
-						color={getPriorityColor(priority)}
+						color={priority.priority_color}
 					/>
 				);
 
@@ -104,7 +117,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				return (
 					<TriangleAlert
 						size={20}
-						color={getPriorityColor(priority)}
+						color={priority.priority_color}
 					/>
 				);
 
@@ -112,7 +125,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				return (
 					<BadgeAlert
 						size={20}
-						color={getPriorityColor(priority)}
+						color={priority.priority_color}
 					/>
 				);
 		}
@@ -150,11 +163,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 							>
 								•
 							</Typography>
-							{getPriorityIcon(ticket.priority.priority)}
+							{getPriorityIcon(ticket.priority)}
 							<Typography
 								variant="overline"
 								ml={0.5}
-								sx={{ color: getPriorityColor(ticket.priority.priority) }}
+								sx={{ color: ticket.priority.color }}
 							>
 								{ticket.priority.priority_desc} priority
 							</Typography>
@@ -164,7 +177,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 							<IconButton
 								sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }}
 								aria-label="edit"
-								onClick={() => {}}
+								onClick={() => { }}
 							>
 								<Pencil
 									size={20}
@@ -191,304 +204,297 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 						</Box>
 					</Box>
 
-					{editing ?
-						<EditTicket
-							ticket={ticket}
-							updateCurrentTicket={updateCurrentTicket}
-						/>
-						:
-						(<>
+					<Box
+						position={'relative'}
+						mb={12}
+					>
+						<Box
+							display={'flex'}
+							alignItems={'center'}
+							justifyContent={'space-between'}
+							bgcolor={'#fff'}
+							position={'relative'}
+							zIndex={1}
+							sx={{ p: '20px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
+						>
 							<Box
-								position={'relative'}
-								mb={12}
+								display={'flex'}
+								flexDirection={'column'}
 							>
-								<Box
-									display={'flex'}
-									alignItems={'center'}
-									justifyContent={'space-between'}
-									bgcolor={'#fff'}
-									position={'relative'}
-									zIndex={1}
-									sx={{ p: '20px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
+								<Typography
+									variant="caption"
+									mb={'6px'}
+									className="text-muted"
 								>
-									<Box
-										display={'flex'}
-										flexDirection={'column'}
-									>
-										<Typography
-											variant="caption"
-											mb={'6px'}
-											className="text-muted"
-										>
-											Ticket Title
-										</Typography>
+									Ticket Title
+								</Typography>
 
-										<Typography
-											variant="h6"
-											fontWeight={600}
-											lineHeight={1}
-										>
-											{ticket.title}
-										</Typography>
-									</Box>
-
-									<Box
-										display={'flex'}
-										alignItems={'center'}
-									>
-										<Typography
-											variant="caption"
-											className="text-muted"
-											fontWeight={600}
-										>
-											Status
-										</Typography>
-											
-										<FormControl
-											fullWidth
-											sx={{ m: 1, minWidth: 120 }}
-											size="small"
-										>
-											<Select
-												displayEmpty
-												value={ticket.status?.name || ''}
-												onChange={handleStatusChange}
-												renderValue={item => (
-													<Box
-														display={'flex'}
-														alignItems={'center'}
-													>
-														<Box
-															width={'6px'}
-															height={'6px'}
-															borderRadius={'6px'}
-															marginRight={1}
-															sx={{ backgroundColor: '#D9D9D9' }}
-														/>
-
-														<Typography
-															variant="subtitle2"
-															fontWeight={600}
-															sx={{ color: '#1B1D1F' }}
-														>
-															{item}
-														</Typography>
-													</Box>
-												)}
-												sx={{
-													'.MuiOutlinedInput-notchedOutline': {
-														borderRadius: '8px',
-														borderColor: '#E5EFE9',
-													},
-												}}
-												IconComponent={props => (
-													<ChevronDown
-														{...props}
-														size={17}
-														color="#1B1D1F"
-													/>
-												)}
-											>
-												{statusList.map(status => (
-													<MenuItem
-														key={status.status_id}
-														value={status.name}
-													>
-														<Typography variant="subtitle2">{status.name}</Typography>
-													</MenuItem>
-												))}
-											</Select>
-										</FormControl>
-									</Box>
-								</Box>
-
-								<Box
-									width={'100%'}
-									height={'100%'}
-									display={'flex'}
-									alignItems={'flex-end'}
-									justifyContent={'space-between'}
-									position={'absolute'}
-									top={'60%'}
-									bgcolor={'#FCFEFD'}
-									sx={{ p: '16px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
+								<Typography
+									variant="h6"
+									fontWeight={600}
+									lineHeight={1}
 								>
-									<Box
-										display={'flex'}
-										alignItems={'center'}
-									>
-										<FileText
-											color="#6E7772"
-											strokeWidth={1.5}
-										/>
-										<Typography
-											variant="subtitle2"
-											ml={1}
-											mb={'-4px'}
-										>
-											{ticket.description}
-										</Typography>
-									</Box>
-
-									<Button
-										variant="text"
-										sx={{ color: '#22874E', marginBottom: '-7px' }}
-									>
-										<Typography
-											variant="subtitle2"
-											color={'#22874E'}
-											textTransform={'none'}
-											fontWeight={600}
-										>
-											Edit
-										</Typography>
-									</Button>
-								</Box>
+									{ticket.title}
+								</Typography>
 							</Box>
 
-							<Grid
-								container
-								mb={'36px'}
-							>
-								<Grid size={{ xs: 4 }}>
-									<Box
-										display={'flex'}
-										alignItems={'flex-start'}
-									>
-										<IconBox>
-											<CalendarClock size={18} />
-										</IconBox>
-
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
-										>
-											<Typography
-												variant="overline"
-												className="text-muted"
-												sx={{ opacity: 0.7 }}
-											>
-												Due date
-											</Typography>
-											<Typography
-												variant="subtitle2"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.due_date
-													? new Date(ticket.due_date)
-														.toLocaleDateString('en-US', {
-															day: '2-digit',
-															month: 'short',
-															year: 'numeric',
-														})
-														.replace(',', ' ')
-													: 'Not set'}
-											</Typography>
-										</Box>
-									</Box>
-								</Grid>
-
-								<Grid size={{ xs: 4 }}>
-									<Box
-										display={'flex'}
-										alignItems={'flex-start'}
-									>
-										<IconBox>
-											<Network size={18} />
-										</IconBox>
-
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
-										>
-											<Typography
-												variant="overline"
-												className="text-muted"
-												sx={{ opacity: 0.7 }}
-											>
-												Department
-											</Typography>
-											<Typography
-												variant="subtitle2"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.dept.name}
-											</Typography>
-										</Box>
-									</Box>
-								</Grid>
-
-								<Grid size={{ xs: 4 }}>
-									<Box
-										display={'flex'}
-										alignItems={'flex-start'}
-									>
-										<IconBox>
-											<User size={18} />
-										</IconBox>
-
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
-										>
-											<Typography
-												variant="overline"
-												className="text-muted"
-												sx={{ opacity: 0.7 }}
-											>
-												User
-											</Typography>
-											<Typography
-												variant="subtitle2"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.user.name}
-											</Typography>
-										</Box>
-									</Box>
-								</Grid>
-							</Grid>
-
 							<Box
-								mx={'-28px'}
-								px={'28px'}
-								py={'20px'}
-								mb={'28px'}
-								borderTop={'1px solid #E5EFE9'}
-								borderBottom={'1px solid #E5EFE9'}
 								display={'flex'}
 								alignItems={'center'}
-								justifyContent={'space-between'}
 							>
+								<Typography
+									variant="caption"
+									className="text-muted"
+									fontWeight={600}
+								>
+									Status
+								</Typography>
+
+								<FormControl
+									fullWidth
+									sx={{ m: 1, minWidth: 120 }}
+									size="small"
+								>
+									<Select
+										displayEmpty
+										value={ticket.status?.name || ''}
+										onChange={handleStatusChange}
+										renderValue={item => (
+											<Box
+												display={'flex'}
+												alignItems={'center'}
+											>
+												<Box
+													width={'6px'}
+													height={'6px'}
+													borderRadius={'6px'}
+													marginRight={1}
+													sx={{ backgroundColor: '#D9D9D9' }}
+												/>
+
+												<Typography
+													variant="subtitle2"
+													fontWeight={600}
+													sx={{ color: '#1B1D1F' }}
+												>
+													{item}
+												</Typography>
+											</Box>
+										)}
+										sx={{
+											'.MuiOutlinedInput-notchedOutline': {
+												borderRadius: '8px',
+												borderColor: '#E5EFE9',
+											},
+										}}
+										IconComponent={props => (
+											<ChevronDown
+												{...props}
+												size={17}
+												color="#1B1D1F"
+											/>
+										)}
+									>
+										{statusList.map(status => (
+											<MenuItem
+												key={status.status_id}
+												value={status.name}
+											>
+												<Typography variant="subtitle2">{status.name}</Typography>
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Box>
+						</Box>
+
+						<Box
+							width={'100%'}
+							height={'100%'}
+							display={'flex'}
+							alignItems={'flex-end'}
+							justifyContent={'space-between'}
+							position={'absolute'}
+							top={'60%'}
+							bgcolor={'#FCFEFD'}
+							sx={{ p: '16px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
+						>
+							<Box
+								display={'flex'}
+								alignItems={'center'}
+							>
+								<FileText
+									color="#6E7772"
+									strokeWidth={1.5}
+								/>
+								<Typography
+									variant="subtitle2"
+									ml={1}
+									mb={'-4px'}
+								>
+									{ticket.description}
+								</Typography>
+							</Box>
+
+							<Button
+								variant="text"
+								sx={{ color: '#22874E', marginBottom: '-7px' }}
+							>
+								<Typography
+									variant="subtitle2"
+									color={'#22874E'}
+									textTransform={'none'}
+									fontWeight={600}
+								>
+									Edit
+								</Typography>
+							</Button>
+						</Box>
+					</Box>
+
+					<Grid
+						container
+						mb={'36px'}
+					>
+						<Grid size={{ xs: 4 }}>
+							<Box
+								display={'flex'}
+								alignItems={'flex-start'}
+							>
+								<IconBox>
+									<CalendarClock size={18} />
+								</IconBox>
+
 								<Box
 									display={'flex'}
-									alignItems={'center'}
+									flexDirection={'column'}
+									alignItems={'flex-start'}
 								>
 									<Typography
-										variant="subtitle1"
-										fontWeight={600}
+										variant="overline"
 										className="text-muted"
-										mr={1}
+										sx={{ opacity: 0.7 }}
 									>
-										Agent
+										Due date
 									</Typography>
-
 									<Typography
-										variant="subtitle1"
+										variant="subtitle2"
+										color={'#1B1D1F'}
 										fontWeight={600}
-										fontSize={'1.0625rem'}
 									>
-										{ticket.agent ? ticket.agent.name : 'Not assigned'}
+										{ticket.due_date
+											? new Date(ticket.due_date)
+												.toLocaleDateString('en-US', {
+													day: '2-digit',
+													month: 'short',
+													year: 'numeric',
+												})
+												.replace(',', ' ')
+											: 'Not set'}
 									</Typography>
 								</Box>
+							</Box>
+						</Grid>
 
-								{/* {editingAgent ? (
+						<Grid size={{ xs: 4 }}>
+							<Box
+								display={'flex'}
+								alignItems={'flex-start'}
+							>
+								<IconBox>
+									<Network size={18} />
+								</IconBox>
+
+								<Box
+									display={'flex'}
+									flexDirection={'column'}
+									alignItems={'flex-start'}
+								>
+									<Typography
+										variant="overline"
+										className="text-muted"
+										sx={{ opacity: 0.7 }}
+									>
+										Department
+									</Typography>
+									<Typography
+										variant="subtitle2"
+										color={'#1B1D1F'}
+										fontWeight={600}
+									>
+										{ticket.dept.name}
+									</Typography>
+								</Box>
+							</Box>
+						</Grid>
+
+						<Grid size={{ xs: 4 }}>
+							<Box
+								display={'flex'}
+								alignItems={'flex-start'}
+							>
+								<IconBox>
+									<User size={18} />
+								</IconBox>
+
+								<Box
+									display={'flex'}
+									flexDirection={'column'}
+									alignItems={'flex-start'}
+								>
+									<Typography
+										variant="overline"
+										className="text-muted"
+										sx={{ opacity: 0.7 }}
+									>
+										User
+									</Typography>
+									<Typography
+										variant="subtitle2"
+										color={'#1B1D1F'}
+										fontWeight={600}
+									>
+										{ticket.user.name}
+									</Typography>
+								</Box>
+							</Box>
+						</Grid>
+					</Grid>
+
+					<Box
+						mx={'-28px'}
+						px={'28px'}
+						py={'20px'}
+						mb={'28px'}
+						borderTop={'1px solid #E5EFE9'}
+						borderBottom={'1px solid #E5EFE9'}
+						display={'flex'}
+						alignItems={'center'}
+						justifyContent={'space-between'}
+					>
+						<Box
+							display={'flex'}
+							alignItems={'center'}
+						>
+							<Typography
+								variant="subtitle1"
+								fontWeight={600}
+								className="text-muted"
+								mr={1}
+							>
+								Agent
+							</Typography>
+
+							<Typography
+								variant="subtitle1"
+								fontWeight={600}
+								fontSize={'1.0625rem'}
+							>
+								{ticket.agent ? ticket.agent.firstname + ticket.agent.lastname : 'Not assigned'}
+							</Typography>
+						</Box>
+
+						{/* {editingAgent ? (
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>
 										<IconButton
 											sx={{ border: '1px solid #E5EFE9', borderRadius: '8px', mx: 2, p:0.5 }}
@@ -536,117 +542,141 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 									</Button>
 								)
 								} */}
-							</Box>
+					</Box>
 
-							<Box>
-								<Typography
-									variant="subtitle1"
-									fontWeight={700}
-									mb={'21px'}
+					<Box>
+						<Typography
+							variant="subtitle1"
+							fontWeight={700}
+							mb={'21px'}
+						>
+							Extra information
+						</Typography>
+
+						<Grid container>
+							<Grid size={{ xs: 6 }}>
+								<Box
+									display={'flex'}
+									flexDirection={'column'}
+									alignItems={'flex-start'}
+									sx={{pb: 3}}
 								>
-									Extra information
-								</Typography>
+									<Typography
+										variant="overline"
+										className="text-muted"
+										sx={{ opacity: 0.7 }}
+									>
+										SLA
+									</Typography>
+									<Typography
+										variant="subtitle1"
+										color={'#1B1D1F'}
+										fontWeight={600}
+									>
+										{ticket.sla.name}
+									</Typography>
+								</Box>
+								{ticket?.form_entry?.form?.fields?.map((field, idx) => (
+                                            <Box
+                                                display={'flex'}
+                                                flexDirection={'column'}
+                                                alignItems={'flex-start'}
+												key={idx}
+                                                sx={{pb: 3}}
+                                            >
+                                                <Typography
+                                                    variant="overline"
+                                                    className="text-muted"
+                                                    sx={{ opacity: 0.7 }}
+                                                >
+                                                    {field.label}
+                                                </Typography>
+                                                <Typography
+                                                    variant="subtitle1"
+                                                    color={'#1B1D1F'}
+                                                    fontWeight={600}
+                                                >
+                                                    {ticket?.form_entry?.values[idx]?.value ?? ''}
+                                                </Typography>
+                                            </Box>
+                                        ))}
+							</Grid>
 
-								<Grid container>
-									<Grid size={{ xs: 6 }}>
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
+							<Grid size={{ xs: 6 }}>
+								<Box
+									display={'flex'}
+									flexDirection={'column'}
+									alignItems={'flex-start'}
+								>
+									<Typography
+										variant="overline"
+										className="text-muted"
+										sx={{ opacity: 0.7 }}
+									>
+										Topic
+									</Typography>
+									<Typography
+										variant="subtitle1"
+										color={'#1B1D1F'}
+										fontWeight={600}
+									>
+										{ticket.topic.topic}
+									</Typography>
+								</Box>
+								
+							</Grid>
+
+							{ticket.group && (
+								<Grid size={{ xs: 6 }}>
+									<Box
+										display={'flex'}
+										flexDirection={'column'}
+										alignItems={'flex-start'}
+									>
+										<Typography
+											variant="overline"
+											className="text-muted"
+											sx={{ opacity: 0.7 }}
 										>
-											<Typography
-												variant="overline"
-												className="text-muted"
-												sx={{ opacity: 0.7 }}
-											>
-												SLA
-											</Typography>
-											<Typography
-												variant="subtitle1"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.sla.name}
-											</Typography>
-										</Box>
-									</Grid>
-
-									<Grid size={{ xs: 6 }}>
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
+											Group
+										</Typography>
+										<Typography
+											variant="subtitle1"
+											color={'#1B1D1F'}
+											fontWeight={600}
 										>
-											<Typography
-												variant="overline"
-												className="text-muted"
-												sx={{ opacity: 0.7 }}
-											>
-												Topic
-											</Typography>
-											<Typography
-												variant="subtitle1"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.topic.topic}
-											</Typography>
-										</Box>
-									</Grid>
-
-									{ticket.group && (
-										<Grid size={{ xs: 6 }}>
-											<Box
-												display={'flex'}
-												flexDirection={'column'}
-												alignItems={'flex-start'}
-											>
-												<Typography
-													variant="overline"
-													className="text-muted"
-													sx={{ opacity: 0.7 }}
-												>
-													Group
-												</Typography>
-												<Typography
-													variant="subtitle1"
-													color={'#1B1D1F'}
-													fontWeight={600}
-												>
-													{ticket.group.name}
-												</Typography>
-											</Box>
-										</Grid>
-									)}
-
-									{ticket.category && (
-										<Grid size={{ xs: 6 }}>
-											<Box
-												display={'flex'}
-												flexDirection={'column'}
-												alignItems={'flex-start'}
-											>
-												<Typography
-													variant="overline"
-													className="text-muted"
-													sx={{ opacity: 0.7 }}
-												>
-													Category
-												</Typography>
-												<Typography
-													variant="subtitle1"
-													color={'#1B1D1F'}
-													fontWeight={600}
-												>
-													{ticket.category.name}
-												</Typography>
-											</Box>
-										</Grid>
-									)}
+											{ticket.group.name}
+										</Typography>
+									</Box>
 								</Grid>
-							</Box>
-						</>)
-					}
+							)}
+
+							{ticket.category && (
+								<Grid size={{ xs: 6 }}>
+									<Box
+										display={'flex'}
+										flexDirection={'column'}
+										alignItems={'flex-start'}
+									>
+										<Typography
+											variant="overline"
+											className="text-muted"
+											sx={{ opacity: 0.7 }}
+										>
+											Category
+										</Typography>
+										<Typography
+											variant="subtitle1"
+											color={'#1B1D1F'}
+											fontWeight={600}
+										>
+											{ticket.category.name}
+										</Typography>
+									</Box>
+								</Grid>
+							)}
+						</Grid>
+					</Box>
 
 					<Typography
 						variant="caption"

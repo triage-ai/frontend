@@ -142,10 +142,11 @@ export const AddTicket = ({ handleTicketCreated, handleTicketEdited, editTicket 
 				value: formValues[item.name]
 			})
 		}
+		
 		return {
 			ticket_id: formData.ticket_id,
-			agent_id: formData.agent?.agent_id,
-			user_id: formData.user?.user_id,
+			agent_id: formData.agent?.agent_id ?? null,
+			user_id: formData.user?.user_id ?? null,
 			description: formData.description,
 			title: formData.title,
 			dept_id: formData.dept_id ? formData.dept_id : null,
@@ -224,15 +225,15 @@ export const AddTicket = ({ handleTicketCreated, handleTicketEdited, editTicket 
 	return (
 		<>
 			<Typography
-				variant="h1"
-				sx={{ mb: 1.5 }}
-			>
-				Add new ticket
-			</Typography>
+                variant="h1"
+                sx={{ mb: 1.5 }}
+            >
+                {editTicket ? 'Edit ticket' : 'Add new ticket'}
+            </Typography>
 
-			<Typography variant="subtitle2">
-				We will gather essential details about the new ticket. Please fill out the following information.
-			</Typography>
+            <Typography variant="subtitle2">
+                {editTicket ? 'Edit ticket information.' : 'We will gather essential details about the new ticket. Please fill out the following information.'}
+            </Typography>
 
 
 			<Box

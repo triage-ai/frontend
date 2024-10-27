@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useThreadsBackend = () => {
-	const { agentAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
     const createThreadEntry = async threadInfo => {
         const config = {
@@ -17,7 +17,19 @@ export const useThreadsBackend = () => {
         );
     }
 
-    return { createThreadEntry };
+	const createThreadEntryForUser = async threadInfo => {
+        const config = {
+			headers: { Authorization: `Bearer ${userAuthState.token}` },
+		};
+        threadInfo.user_id = userAuthState.userId
+        return await axios.post(
+            process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user',
+            threadInfo,
+            config
+        );
+    }
+
+    return { createThreadEntry, createThreadEntryForUser };
 
 	// const getAllOpenTickets = async () => {
 	// 	const config = {
