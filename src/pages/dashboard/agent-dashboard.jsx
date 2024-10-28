@@ -1,17 +1,9 @@
-import {
-	Box,
-	Tab,
-	Tabs,
-	MenuItem,
-	Stack,
-	Typography,
-	styled,
-} from '@mui/material';
+import { Box, Tab, Tabs, MenuItem, Stack, Typography, styled, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Settings2, Table } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { useState, useEffect } from 'react';
@@ -19,10 +11,7 @@ import { StyledSelect } from '../settings/SettingsMenus';
 import { CircularButton } from '../../components/sidebar';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useData } from '../../context/DataContext';
-import { Transition } from '../../components/sidebar';
-import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
-
 
 const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
@@ -97,7 +86,7 @@ const Header = ({ headers, components }) => {
 };
 
 const calculateNewDate = (date, period) => {
-	date = dayjs(date)
+	date = dayjs(date);
 	switch (period) {
 		case 'Up to today':
 			return dayjs().format('MM-DD-YYYY');
@@ -113,8 +102,6 @@ const calculateNewDate = (date, period) => {
 			return date;
 	}
 };
-
-
 
 export const AgentDashboard = () => {
 	const headers = [{ id: 1, label: 'Dashboard' }];
@@ -142,13 +129,21 @@ const Dashboard = () => {
 	const [timeData, setTimeData] = useState([]);
 	const [tabValue, setTabValue] = useState(0);
 	const [ypoints, setypoints] = useState({ y1: [], y2: [], y3: [] });
-	const headers = [{ id: 1, label: 'Department' }, { id: 2, label: 'Topics'}, { id: 3, label: 'Agent'}]
-	const components = [<Department selectedDate={selectedDate} selectedPeriod={selectedPeriod}/>, <Topics selectedDate={selectedDate} selectedPeriod={selectedPeriod}/>, <Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod}/>]
 
-	const { departments, topics } = useData()
-	console.log(departments)
-	console.log(topics)
-	
+
+	const { refreshDepartments, departments, refreshTopics, topics, refreshAgents, agents } = useData();
+	useEffect(() => {
+		refreshDepartments();
+		refreshTopics();
+		refreshAgents();
+	}, []);
+
+	const components = [
+		<Department selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={departments} />,
+		<Topics selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={topics} />,
+		<Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={agents} />,
+	];
+
 	const handleDateChange = (newDate) => {
 		setSelectedDate(newDate);
 	};
@@ -158,13 +153,13 @@ const Dashboard = () => {
 	};
 
 	const handleTabChange = (event, newValue) => {
-		setTabValue(newValue)
-	}
+		setTabValue(newValue);
+	};
 
 	const handleRefresh = async () => {
 		try {
-			var start_date = selectedDate
-			var end_date = calculateNewDate(start_date, selectedPeriod)
+			var start_date = selectedDate;
+			var end_date = calculateNewDate(start_date, selectedPeriod);
 			var points = [];
 			var y1 = [];
 			var y2 = [];
@@ -180,7 +175,6 @@ const Dashboard = () => {
 			});
 			setTimeData([...points]);
 			setypoints({ y1: y1, y2: y2, y3: y3 });
-
 		} catch (err) {
 			console.error('Error with retrieving the information', err);
 		}
@@ -189,14 +183,12 @@ const Dashboard = () => {
 		handleRefresh();
 	}, []);
 
-	const valueFormatter = (date) => (
+	const valueFormatter = (date) =>
 		date.toLocaleDateString('en-US', {
 			month: '2-digit',
 			day: '2-digit',
 			year: '2-digit',
-		})
-	);
-
+		});
 
 	const xAxisCommon = {
 		data: timeData,
@@ -237,8 +229,7 @@ const Dashboard = () => {
 			</Typography>
 
 			<Box sx={{ maxWidth: 800 }}>
-				{
-					timeData.length ? ( 
+				{timeData.length ? (
 					<LineChart
 						xAxis={[
 							{
@@ -252,19 +243,20 @@ const Dashboard = () => {
 							{
 								id: 'linearAxis',
 								scaleType: 'linear',
-							}
+							},
 						]}
 						height={300}
 						bottomAxis='bottomAxis'
-						leftAxis="linearAxis"
+						leftAxis='linearAxis'
 						series={[
 							{ curve: 'linear', yAxisId: 'linearAxis', label: 'Created', data: ypoints.y1 },
 							// { curve: 'linear', , yAxisId: 'linearAxis', label: 'Updated', data: ypoints.y2 },
 							// { curve: 'linear', yAxisId: 'linearAxis', label: 'Overdue', data: ypoints.y3 },
 						]}
 					/>
-				) : (<p>No Results Found</p>)
-				}
+				) : (
+					<p>No Results Found</p>
+				)}
 			</Box>
 
 			<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
@@ -277,44 +269,233 @@ const Dashboard = () => {
 					<Tab label='Topics' />
 					<Tab label='Agent' />
 				</StyledTabs>
-				
+
 				<Box sx={{ padding: 2 }}>{components[tabValue]}</Box>
 			</Box>
-			
-
 		</Box>
 	);
 };
 
+const Department = ({ selectedPeriod, selectedDate, category }) => {
+	const { getDashboardStats } = useTicketBackend();
+	const [dashboardData, setDashboardData] = useState([]);
 
-const Department = ({selectedPeriod, selectedDate}) => {
-	const { getDashboardStats } = useTicketBackend()
-	const [dashboardData, setDashboardData] = useState([])
 
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
-		const asyncFn = async () => { 
-			let data = await getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'department')
-			setDashboardData(data) 
-		}
-		asyncFn()
-		// console.log(dashboardData)
-	}, []);
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'department')
+		.then((res) => { 
+			res.data.map(department => {
+				if(category.length) {
+					let new_cat = category.find(cat => cat.dept_id === department.category_id)
+					department.category_name = new_cat.name
+				}
+			})
+			setDashboardData(res.data)
+			console.log(res.data)
+		})
+	}, [category]);
 
+
+
+	return (
+		<Box>
+			{ (dashboardData.length && category.length) ? (
+				<Table>
+					<TableHead>
+						<TableRow
+							sx={{
+								background: '#F1F4F2',
+								'& .MuiTypography-overline': {
+									color: '#545555',
+								},
+							}}
+						>
+							<TableCell>
+								<Typography variant="overline">Department</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Created</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Updated</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Overdue</Typography>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{dashboardData.map(departmentInfo => (
+							<TableRow
+								sx={{
+									'&:last-child td, &:last-child th': { border: 0 },
+									'& .MuiTableCell-root': {
+										color: '#1B1D1F',
+										fontWeight: 500,
+										letterSpacing: '-0.02em',
+									},
+								}}
+							>
+								<TableCell>{departmentInfo.category_name}</TableCell>
+								<TableCell>{departmentInfo.created}</TableCell>
+								<TableCell>{departmentInfo.updated}</TableCell>
+								<TableCell>{departmentInfo.overdue}</TableCell>
+							</TableRow>
+							))}
+					</TableBody>
+				</Table> 
+			) : (
+				<p>Loading...</p>
+			)}
+		</Box>
+	)
+};
+
+const Topics = ({ selectedPeriod, selectedDate, category }) => {
+	const { getDashboardStats } = useTicketBackend();
+	const [dashboardData, setDashboardData] = useState([]);
+
+
+	useEffect(() => {
+		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'topics')
+		.then((res) => { 
+			res.data.map(department => {
+				if(category.length) {
+					let new_cat = category.find(cat => cat.topic_id === department.category_id)
+					department.category_name = new_cat.topic
+				}
+			})
+			setDashboardData(res.data)
+			console.log(res.data)
+		})
+	}, [category]);
 	
 	return (
-		<p>Department</p>
-	)
-}
+		<Box>
+			{ (dashboardData.length && category.length) ? (
+				<Table>
+					<TableHead>
+						<TableRow
+							sx={{
+								background: '#F1F4F2',
+								'& .MuiTypography-overline': {
+									color: '#545555',
+								},
+							}}
+						>
+							<TableCell>
+								<Typography variant="overline">Topic</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Created</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Updated</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Overdue</Typography>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{dashboardData.map(departmentInfo => (
+							<TableRow
+								sx={{
+									'&:last-child td, &:last-child th': { border: 0 },
+									'& .MuiTableCell-root': {
+										color: '#1B1D1F',
+										fontWeight: 500,
+										letterSpacing: '-0.02em',
+									},
+								}}
+							>
+								<TableCell>{departmentInfo.category_name}</TableCell>
+								<TableCell>{departmentInfo.created}</TableCell>
+								<TableCell>{departmentInfo.updated}</TableCell>
+								<TableCell>{departmentInfo.overdue}</TableCell>
+							</TableRow>
+							))}
+					</TableBody>
+				</Table> 
+			) : (
+				<p>Loading...</p>
+			)}
+		</Box>
+	);
+};
 
-const Topics = ({selectedPeriod, selectedDate}) => {
-	return (
-		<p>Topics</p>
-	)
-}
+const Agent = ({ selectedPeriod, selectedDate, category }) => {
+	const { getDashboardStats } = useTicketBackend();
+	const [dashboardData, setDashboardData] = useState([]);
 
-const Agent = ({selectedPeriod, selectedDate}) => {
+
+	useEffect(() => {
+		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'agent')
+		.then((res) => { 
+			res.data.map(department => {
+				if(category.items.length) {
+					let new_cat = category.items.find(cat => cat.agent_id === department.category_id)
+					department.category_name = new_cat.firstname + " " + new_cat.lastname
+				}
+			})
+			setDashboardData(res.data)
+			console.log(res.data)
+		})
+	}, [category]);
+
 	return (
-		<p>Agent</p>
-	)
-}
+		<Box>
+			{ (dashboardData.length && category.items.length) ? (
+				<Table>
+					<TableHead>
+						<TableRow
+							sx={{
+								background: '#F1F4F2',
+								'& .MuiTypography-overline': {
+									color: '#545555',
+								},
+							}}
+						>
+							<TableCell>
+								<Typography variant="overline">Agent Name</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Created</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Updated</Typography>
+							</TableCell>
+							<TableCell>
+								<Typography variant="overline">Overdue</Typography>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{dashboardData.map(departmentInfo => (
+							<TableRow
+								sx={{
+									'&:last-child td, &:last-child th': { border: 0 },
+									'& .MuiTableCell-root': {
+										color: '#1B1D1F',
+										fontWeight: 500,
+										letterSpacing: '-0.02em',
+									},
+								}}
+							>
+								<TableCell>{departmentInfo.category_name}</TableCell>
+								<TableCell>{departmentInfo.created}</TableCell>
+								<TableCell>{departmentInfo.updated}</TableCell>
+								<TableCell>{departmentInfo.overdue}</TableCell>
+							</TableRow>
+							))}
+					</TableBody>
+				</Table> 
+			) : (
+				<p>Loading...</p>
+			)}
+		</Box>
+	);
+};
