@@ -132,7 +132,15 @@ export const AgentSignIn = () => {
 	};
 
 	return (
-		<Box sx={{ width: '100%', display: 'flex', alignItems: 'center', backgroundColor: '#FCFCFC' }}>
+		<Box
+			sx={{
+				width: '100%',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				backgroundColor: '#FCFCFC',
+			}}
+		>
 			<Grid
 				container
 				spacing={{ xs: 6, md: 8, lg: 2 }}

@@ -52,18 +52,24 @@ export const Tickets = () => {
 	}, []);
 
 	useEffect(() => {
-		if (queues.length != 0) {
-			refreshTickets(size, page+1)
-		}
+		getTicketList();
 	}, [page, size, queues, queueIdx])
 
 	const handleTicketEdited = () => {
 		handleDialogClose();
+		getTicketList();
 	};
 
 	const handleTicketCreated = () => {
 		handleDialogClose();
+		getTicketList();
 	};
+
+	const getTicketList = () => {
+		if (queues.length != 0) {
+			refreshTickets(size, page+1)
+		}
+	}
 
 	const handleChangePage = (e, newValue) => {
 		setPage(newValue)
