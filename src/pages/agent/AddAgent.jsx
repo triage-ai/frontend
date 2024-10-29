@@ -268,11 +268,11 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 				variant="h1"
 				sx={{ mb: 1.5 }}
 			>
-				{editTicket ? 'Edit agent' : 'Add new agent'}
+				{editAgent ? 'Edit agent' : 'Add new agent'}
 			</Typography>
 
 			<Typography variant="subtitle2">
-				{editTicket ? 'Edit the details for this agent' : 'We will gather essential details about the new agent. Complete the following steps to ensure accurate setup and access.'}
+				{editAgent ? 'Edit the details for this agent' : 'We will gather essential details about the new agent. Complete the following steps to ensure accurate setup and access.'}
 			</Typography>
 
 			<Stepper
