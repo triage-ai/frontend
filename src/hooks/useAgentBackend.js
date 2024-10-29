@@ -19,8 +19,6 @@ export const useAgentBackend = () => {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
-		console.log(dept_id)
-
 		var url = `agent/get/?page=${page}&size=${size}&`
 		if (dept_id) {
 			url += `dept_id=${dept_id}&`
@@ -71,5 +69,16 @@ export const useAgentBackend = () => {
 		);
 	};
 
-	return { getAllAgents, getAllAgentsByDeptAndGroup, getAgentBySearch, createAgent, updateAgent, removeAgent };
+	const getPermissions = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + 'agent/permissions/',
+			config
+		);
+	};
+
+	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent };
 };

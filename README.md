@@ -1,3 +1,14 @@
+# Starting the frontend
+
+For development, first create a .env file on top level of the repo with these contents:
+
+```bash
+REACT_APP_BACKEND_URL=backend_url_here
+GENERATE_SOURCEMAP=false
+```
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
