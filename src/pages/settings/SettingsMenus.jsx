@@ -21,9 +21,20 @@ import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
+		data = {
+			...data,
+			default_status_id: data.status_id.toString(),
+			default_priority_id: data.priority_id.toString(),
+			default_sla_id: data.sla_id.toString(),
+			default_topic_id: data.topic_id.toString()
+		};
+		delete data.status_id;
+		delete data.priority_id;
+		delete data.sla_id;
+		delete data.topic_id;
+
 		var updates = [];
 		Object.entries(data).forEach((k) => {
-			console.log(settingsData);
 			var row = settingsData[k[0]];
 			row.value = k[1];
 			updates.push(row);

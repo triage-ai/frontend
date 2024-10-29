@@ -144,8 +144,6 @@ export const useTicketBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/${category}/dates?start=${start_date}&end=${end_date}`, config);
 	};
 
-	return { getTicketsbyAdvancedSearch, getTicketById, getTicketForms, createTicket, updateTicket, getTicketBetweenDates, getDashboardStats };
-
 
 	return {
 		getTicketsbyAdvancedSearch,
@@ -157,5 +155,7 @@ export const useTicketBackend = () => {
 		createTicketForUser,
 		updateTicket,
 		updateTicketForUser,
+		getTicketBetweenDates,
+		getDashboardStats
 	};
 };
