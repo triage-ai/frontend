@@ -30,6 +30,7 @@ import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { AddDepartment } from '../department/AddDepartment';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
+import { TransferList } from '../../components/transfer-list';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -96,9 +97,12 @@ const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
-	const { createAgent, updateAgent } = useAgentBackend();
+	const { createAgent, updateAgent, getPermissions } = useAgentBackend();
 
 	const [roles, setRoles] = useState([]);
+
+	const [permissions, setPermissions] = useState([]);
+	const [allPermissions, setAllPermissions] = useState([])
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [isNextDisabled, setIsNextDisabled] = useState(true);
@@ -130,7 +134,36 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 			.catch(err => {
 				console.error(err);
 			});
+		getPermissions()
+			.then(res => {
+				setAllPermissions(res.data)
+			})
+			.catch(err => {
+				console.error(err);
+			});
 	}, []);
+
+	const permissionsFromString = (jsonString) => {
+		var list;
+		try {
+			list = JSON.parse(jsonString)
+		} catch (err) {
+			return []
+		}
+		return Object.keys(list).map(name => {
+			console.log(name)
+			const match = allPermissions.find(item => item.name === name);
+			console.log(match)
+			return match ? { name: match.name, label: match.label } : null;
+		}).filter(Boolean);
+	}
+
+	useEffect(() => {
+		if (allPermissions.length > 0 && editAgent) {
+			console.log(permissionsFromString(editAgent.permissions))
+			setPermissions(permissionsFromString(editAgent.permissions))
+		}
+	}, [allPermissions]);
 
 	useEffect(() => {
 		if (editAgent) {
@@ -204,15 +237,24 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 		setShowPassword(show => !show);
 	};
 
+	const formatPermissions = () => {
+		const obj = permissions.reduce((acc, item) => {
+			acc[item.name] = 1;
+			return acc;
+		}, {})
+		console.log(obj)
+		return JSON.stringify(obj);
+	}
+
 	const handleAction = () => {
 		if (editAgent) {
-			updateAgent(formData)
+			updateAgent({ ...formData, permissions: formatPermissions() })
 				.then(res => {
 					handleAgentEdited();
 				})
 				.catch(err => console.error(err));
 		} else {
-			createAgent(formData)
+			createAgent({ ...formData, permissions: formatPermissions() })
 				.then(res => {
 					handleAgentCreated();
 				})
@@ -226,12 +268,11 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 				variant="h1"
 				sx={{ mb: 1.5 }}
 			>
-				Add new agent
+				{editAgent ? 'Edit agent' : 'Add new agent'}
 			</Typography>
 
 			<Typography variant="subtitle2">
-				We will gather essential details about the new agent. Complete the following steps to ensure
-				accurate setup and access.
+				{editAgent ? 'Edit the details for this agent' : 'We will gather essential details about the new agent. Complete the following steps to ensure accurate setup and access.'}
 			</Typography>
 
 			<Stepper
@@ -408,6 +449,20 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 					<RoleSelect
 						handleInputChange={handleInputChange}
 						value={formData.role_id}
+					/>
+
+					<Typography
+						variant="h4"
+						sx={{ fontWeight: 600, mb: 2 }}
+					>
+						Agent level permissions
+					</Typography>
+
+					<TransferList
+						right={permissions}
+						setRight={setPermissions}
+						allItems={allPermissions}
+						formatter={(item) => item.label}
 					/>
 
 					{/* <CustomSelect
