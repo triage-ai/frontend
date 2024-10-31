@@ -47,7 +47,7 @@ function TabPanel(props) {
 	);
 }
 
-export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
+export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer }) => {
 	const { getTicketById } = useTicketBackend();
 
 	const [ticket, setTicket] = useState(null);
@@ -56,44 +56,42 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 	function datetime_sort(a, b) {
 		return new Date(a.created).getTime() - new Date(b.created).getTime();
 	}
-	
+
 	function preProcessTicket(ticket) {
 		if (ticket.thread && ticket.thread.events) {
 			ticket.thread.events.forEach(event => {
 				let eventData = JSON.parse(event.data);
 
-				event.field = eventData.field
-				event.prev_val = eventData.prev_val
-				event.new_val = eventData.new_val
+				event.field = eventData.field;
+				event.prev_val = eventData.prev_val;
+				event.new_val = eventData.new_val;
 
 				if (eventData.hasOwnProperty('new_id')) {
-					event.prev_id = eventData.prev_id
-					event.new_id = eventData.new_id
+					event.prev_id = eventData.prev_id;
+					event.new_id = eventData.new_id;
 				}
-
 			});
-
 		}
 		if (ticket.thread) {
-			var events_and_entries = ticket.thread.entries.concat(ticket.thread.events)
-			ticket.thread.events_and_entries = events_and_entries.sort(datetime_sort)
+			var events_and_entries = ticket.thread.entries.concat(ticket.thread.events);
+			ticket.thread.events_and_entries = events_and_entries.sort(datetime_sort);
 		}
-		return ticket
+		return ticket;
 	}
 
 	useEffect(() => {
 		if (ticketInfo) {
 			getTicketById(ticketInfo.ticket_id)
-			.then(response => response.data)
-			.then(ticket => {
-				ticket = preProcessTicket(ticket)
-				setTicket(ticket);
-			});
+				.then(response => response.data)
+				.then(ticket => {
+					ticket = preProcessTicket(ticket);
+					setTicket(ticket);
+				});
 		}
 	}, [ticketInfo]);
 
 	const updateTicket = newTicket => {
-		newTicket = preProcessTicket(newTicket)
+		newTicket = preProcessTicket(newTicket);
 		setTicket(newTicket);
 	};
 
@@ -144,6 +142,7 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 						ticket={ticket}
 						closeDrawer={closeDrawer}
 						updateCurrentTicket={updateTicket}
+						openEdit={openEdit}
 					/>
 				</TabPanel>
 				<TabPanel

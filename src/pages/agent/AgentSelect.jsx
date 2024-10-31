@@ -5,25 +5,22 @@ import { X } from 'lucide-react';
 // import { AddAgent } from './AddAgent';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 
-export const AgentSelect = ({ handleInputChange, value }) => {
-
-    const { getAgentBySearch } = useAgentBackend()
-    const [agentOptions, setAgentOptions] = useState([])
+export const AgentSelect = ({ handleInputChange, value, ...props }) => {
+	const { getAgentBySearch } = useAgentBackend();
+	const [agentOptions, setAgentOptions] = useState([]);
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
-	useEffect(() => {
-        
-	}, []);
+	const { mt, mb, ...otherProps } = props;
 
-    const handleAgentSearchChange = (e) => {
-        if (e?.target?.value) {
-            getAgentBySearch(e.target.value)
-                .then((res) => {
-                    setAgentOptions(res.data)
-                })
-                .catch(err => alert('Agent search failed'));
-        }
-    }
+	const handleAgentSearchChange = e => {
+		if (e?.target?.value) {
+			getAgentBySearch(e.target.value)
+				.then(res => {
+					setAgentOptions(res.data);
+				})
+				.catch(err => alert('Agent search failed'));
+		}
+	};
 
 	const openDialog = () => {
 		setOpenCreateDialog(true);
@@ -38,20 +35,25 @@ export const AgentSelect = ({ handleInputChange, value }) => {
 			<CustomAutocomplete
 				label="Agent"
 				onChange={handleInputChange}
-                onInputChange={handleAgentSearchChange}
+				onInputChange={handleAgentSearchChange}
 				name="agent"
-                value={value}
+				value={value}
 				mb={2}
 				fullWidth
 				addNewButton
 				handleAddBtnClick={openDialog}
 				options={agentOptions}
-                getOptionLabel={item => item ? item.firstname + ' ' + item.lastname : ''}
-                renderOption={(props, item) => (
-                    <li {...props} key={item.email} >
-                        {item.firstname + " " + item.lastname}&nbsp;<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
-                    </li>
-                )}
+				getOptionLabel={item => (item ? item.firstname + ' ' + item.lastname : '')}
+				sx={{ marginBottom: mb }}
+				renderOption={(props, item) => (
+					<li
+						{...props}
+						key={item.email}
+					>
+						{item.firstname + ' ' + item.lastname}&nbsp;
+						<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
+					</li>
+				)}
 			/>
 
 			<Dialog
