@@ -6,11 +6,13 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { Settings2 } from 'lucide-react';
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { StyledSelect } from '../settings/SettingsMenus';
 import { CircularButton } from '../../components/sidebar';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useData } from '../../context/DataContext';
+import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs';
 
 const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
@@ -115,6 +117,7 @@ export const AgentDashboard = () => {
 			buttonInfo={{
 				label: 'Edit Dashboard',
 				icon: <Settings2 size={20} />,
+				hidden: true
 			}}
 		>
 			<Header headers={headers} components={components} />
@@ -131,17 +134,16 @@ const Dashboard = () => {
 	const [ypoints, setypoints] = useState({ y1: [], y2: [], y3: [] });
 
 
-	const { refreshDepartments, departments, refreshTopics, topics, refreshAgents, agents } = useData();
+	const { refreshDepartments, departments, refreshTopics, topics } = useData();
 	useEffect(() => {
 		refreshDepartments();
 		refreshTopics();
-		refreshAgents();
 	}, []);
 
 	const components = [
 		<Department selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={departments} />,
 		<Topics selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={topics} />,
-		<Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={agents} />,
+		<Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod} />,
 	];
 
 	const handleDateChange = (newDate) => {
@@ -300,54 +302,50 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 
 	return (
 		<Box>
-			{ (dashboardData.length && category.length) ? (
-				<Table>
-					<TableHead>
+			<Table>
+				<TableHead>
+					<TableRow
+						sx={{
+							background: '#F1F4F2',
+							'& .MuiTypography-overline': {
+								color: '#545555',
+							},
+						}}
+					>
+						<TableCell>
+							<Typography variant="overline">Department</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Created</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Updated</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Overdue</Typography>
+						</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{dashboardData.map(departmentInfo => (
 						<TableRow
 							sx={{
-								background: '#F1F4F2',
-								'& .MuiTypography-overline': {
-									color: '#545555',
+								'&:last-child td, &:last-child th': { border: 0 },
+								'& .MuiTableCell-root': {
+									color: '#1B1D1F',
+									fontWeight: 500,
+									letterSpacing: '-0.02em',
 								},
 							}}
 						>
-							<TableCell>
-								<Typography variant="overline">Department</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Created</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Updated</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Overdue</Typography>
-							</TableCell>
+							<TableCell>{departmentInfo.category_name}</TableCell>
+							<TableCell>{departmentInfo.created}</TableCell>
+							<TableCell>{departmentInfo.updated}</TableCell>
+							<TableCell>{departmentInfo.overdue}</TableCell>
 						</TableRow>
-					</TableHead>
-					<TableBody>
-						{dashboardData.map(departmentInfo => (
-							<TableRow
-								sx={{
-									'&:last-child td, &:last-child th': { border: 0 },
-									'& .MuiTableCell-root': {
-										color: '#1B1D1F',
-										fontWeight: 500,
-										letterSpacing: '-0.02em',
-									},
-								}}
-							>
-								<TableCell>{departmentInfo.category_name}</TableCell>
-								<TableCell>{departmentInfo.created}</TableCell>
-								<TableCell>{departmentInfo.updated}</TableCell>
-								<TableCell>{departmentInfo.overdue}</TableCell>
-							</TableRow>
-							))}
-					</TableBody>
-				</Table> 
-			) : (
-				<p>Loading...</p>
-			)}
+						))}
+				</TableBody>
+			</Table> 
 		</Box>
 	)
 };
@@ -370,132 +368,127 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 			setDashboardData(res.data)
 			console.log(res.data)
 		})
-	}, [category]);
+	}, []);
 	
 	return (
 		<Box>
-			{ (dashboardData.length && category.length) ? (
-				<Table>
-					<TableHead>
+			<Table>
+				<TableHead>
+					<TableRow
+						sx={{
+							background: '#F1F4F2',
+							'& .MuiTypography-overline': {
+								color: '#545555',
+							},
+						}}
+					>
+						<TableCell>
+							<Typography variant="overline">Topic</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Created</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Updated</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Overdue</Typography>
+						</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{dashboardData.map(categoryInfo => (
 						<TableRow
 							sx={{
-								background: '#F1F4F2',
-								'& .MuiTypography-overline': {
-									color: '#545555',
+								'&:last-child td, &:last-child th': { border: 0 },
+								'& .MuiTableCell-root': {
+									color: '#1B1D1F',
+									fontWeight: 500,
+									letterSpacing: '-0.02em',
 								},
 							}}
 						>
-							<TableCell>
-								<Typography variant="overline">Topic</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Created</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Updated</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Overdue</Typography>
-							</TableCell>
+							<TableCell>{categoryInfo.category_name}</TableCell>
+							<TableCell>{categoryInfo.created}</TableCell>
+							<TableCell>{categoryInfo.updated}</TableCell>
+							<TableCell>{categoryInfo.overdue}</TableCell>
 						</TableRow>
-					</TableHead>
-					<TableBody>
-						{dashboardData.map(departmentInfo => (
-							<TableRow
-								sx={{
-									'&:last-child td, &:last-child th': { border: 0 },
-									'& .MuiTableCell-root': {
-										color: '#1B1D1F',
-										fontWeight: 500,
-										letterSpacing: '-0.02em',
-									},
-								}}
-							>
-								<TableCell>{departmentInfo.category_name}</TableCell>
-								<TableCell>{departmentInfo.created}</TableCell>
-								<TableCell>{departmentInfo.updated}</TableCell>
-								<TableCell>{departmentInfo.overdue}</TableCell>
-							</TableRow>
-							))}
-					</TableBody>
-				</Table> 
-			) : (
-				<p>Loading...</p>
-			)}
+						))}
+				</TableBody>
+			</Table> 
 		</Box>
 	);
 };
 
-const Agent = ({ selectedPeriod, selectedDate, category }) => {
+const Agent = ({ selectedPeriod, selectedDate }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
+	const { agentAuthState } = useContext(AuthContext)
+	const { getAgentById } = useAgentBackend()
+	const category = getAgentById(agentAuthState.agent_id)
 
 
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
 		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'agent')
 		.then((res) => { 
-			res.data.map(department => {
+			res.data.map(agent => {
 				if(category.items.length) {
-					let new_cat = category.items.find(cat => cat.agent_id === department.category_id)
-					department.category_name = new_cat.firstname + " " + new_cat.lastname
+					let new_cat = category.items.find(cat => cat.agent_id === agent.category_id)
+					agent.category_name = new_cat.firstname + " " + new_cat.lastname
 				}
 			})
 			setDashboardData(res.data)
 			console.log(res.data)
 		})
-	}, [category]);
+	}, []);
 
 	return (
 		<Box>
-			{ (dashboardData.length && category.items.length) ? (
-				<Table>
-					<TableHead>
+			<Table>
+				<TableHead>
+					<TableRow
+						sx={{
+							background: '#F1F4F2',
+							'& .MuiTypography-overline': {
+								color: '#545555',
+							},
+						}}
+					>
+						<TableCell>
+							<Typography variant="overline">Agent Name</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Created</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Updated</Typography>
+						</TableCell>
+						<TableCell>
+							<Typography variant="overline">Overdue</Typography>
+						</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{dashboardData.map(agentInfo => (
 						<TableRow
 							sx={{
-								background: '#F1F4F2',
-								'& .MuiTypography-overline': {
-									color: '#545555',
+								'&:last-child td, &:last-child th': { border: 0 },
+								'& .MuiTableCell-root': {
+									color: '#1B1D1F',
+									fontWeight: 500,
+									letterSpacing: '-0.02em',
 								},
 							}}
 						>
-							<TableCell>
-								<Typography variant="overline">Agent Name</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Created</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Updated</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Overdue</Typography>
-							</TableCell>
+							<TableCell>{agentInfo.category_name}</TableCell>
+							<TableCell>{agentInfo.created}</TableCell>
+							<TableCell>{agentInfo.updated}</TableCell>
+							<TableCell>{agentInfo.overdue}</TableCell>
 						</TableRow>
-					</TableHead>
-					<TableBody>
-						{dashboardData.map(departmentInfo => (
-							<TableRow
-								sx={{
-									'&:last-child td, &:last-child th': { border: 0 },
-									'& .MuiTableCell-root': {
-										color: '#1B1D1F',
-										fontWeight: 500,
-										letterSpacing: '-0.02em',
-									},
-								}}
-							>
-								<TableCell>{departmentInfo.category_name}</TableCell>
-								<TableCell>{departmentInfo.created}</TableCell>
-								<TableCell>{departmentInfo.updated}</TableCell>
-								<TableCell>{departmentInfo.overdue}</TableCell>
-							</TableRow>
-							))}
-					</TableBody>
-				</Table> 
-			) : (
-				<p>Loading...</p>
-			)}
+						))}
+				</TableBody>
+			</Table> 
 		</Box>
 	);
 };

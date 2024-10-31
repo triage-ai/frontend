@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
 import { useAgentBackend } from '../hooks/useAgentBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
@@ -13,14 +13,15 @@ import { useQueueBackend } from '../hooks/useQueueBackend';
 
 
 import { NotebookPen } from 'lucide-react';
+import { AuthContext } from './AuthContext';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-	const { getAllAgents } = useAgentBackend();
+	const { getAllAgents, getAgentById } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllRoles } = useRolesBackend();
+	const { getAllRoles, getRoleById } = useRolesBackend();
 	const { getAllSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();
@@ -56,6 +57,8 @@ export const DataProvider = ({ children }) => {
 
 	const [queues, setQueues] = useState([])
 	const [queueIdx, setQueueIdx] = useState([])
+
+
 
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
@@ -241,7 +244,7 @@ export const DataProvider = ({ children }) => {
 				queueIdx,
 				setQueueIdx,
 				refreshQueues,
-				totalTickets
+				totalTickets,
 			}}
 		>
 			{children}

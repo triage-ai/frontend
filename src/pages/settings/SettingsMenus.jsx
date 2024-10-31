@@ -8,7 +8,6 @@ import { SystemLanguages } from './system/SystemLanguages';
 import { Attachments } from './system/AttachmentsSettings';
 import { BasicInformation } from './company/CompanyBasicInfo';
 import { TicketSettings } from './tickets/TicketSettings';
-import { Queues } from './tickets/Queues';
 import { Autoresponder } from './tickets/AutoResponder';
 import { AlertsAndNotices } from './tickets/AlertsAndNotices';
 import { TaskSettings } from './tasks/TaskSettings';
@@ -73,7 +72,7 @@ export const StyledSelect = styled((props) => (
 	},
 });
 
-const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
+export const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
 		color: '#22874E',
 	},

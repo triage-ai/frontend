@@ -16,6 +16,9 @@ import { StatusSelect } from '../../status/StatusSelect';
 import { SLASelect } from '../../sla/SLASelect';
 import { TopicSelect } from '../../topic/TopicSelect';
 
+const storedAuthState = localStorage.getItem('agentAuthState');
+
+
 export const TicketSettings = (props) => {
 	const { settingsData } = props;
 	const [loading, setLoading] = useState(true);

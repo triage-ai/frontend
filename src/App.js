@@ -24,6 +24,7 @@ import {
 	UserMenu,
 	KnowledgebaseMenu,
 } from './pages/settings/SettingsMenus';
+import { Profile } from './pages/profile/AgentProfile';
 
 const theme = createTheme({
 	palette: {
@@ -136,7 +137,7 @@ function App() {
 						<Route
 							path="settings/system"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={SystemMenu} />
 								</ProtectedRoute>
 							}
@@ -144,7 +145,7 @@ function App() {
 						<Route
 							path="settings/company"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={CompanyMenu} />
 								</ProtectedRoute>
 							}
@@ -152,7 +153,7 @@ function App() {
 						<Route
 							path="settings/tickets"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={TicketMenu} />
 								</ProtectedRoute>
 							}
@@ -160,7 +161,7 @@ function App() {
 						<Route
 							path="settings/tasks"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={TaskMenu} />
 								</ProtectedRoute>
 							}
@@ -168,7 +169,7 @@ function App() {
 						<Route
 							path="settings/agents"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={AgentMenu} />
 								</ProtectedRoute>
 							}
@@ -176,7 +177,7 @@ function App() {
 						<Route
 							path="settings/users"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={UserMenu} />
 								</ProtectedRoute>
 							}
@@ -184,27 +185,35 @@ function App() {
 						<Route
 							path="settings/knowledgebase"
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={KnowledgebaseMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="manage/"
-							element={
-								<ProtectedRoute>
-									<Manage />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
 							path='manage/agents'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requirePermission={'agent.view'}>
 									<Agents />
 								</ProtectedRoute>
 							}
 						/>
+						<Route
+							path='profile'
+							element={
+								<ProtectedRoute>
+									<Profile />
+								</ProtectedRoute>
+							}
+						/>
+						{/* <Route
+							path='manage/users'
+							element={
+								<ProtectedRoute requirePermission={'user.view'}>
+									<Users />
+								</ProtectedRoute>
+							}
+						/> */}
 					</Routes>
 				</div>
 			</CookiesProvider>

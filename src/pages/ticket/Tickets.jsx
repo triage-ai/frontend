@@ -19,7 +19,7 @@ import {
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { ChevronDown, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
 import { AddTicket } from './AddTicket';
@@ -29,12 +29,14 @@ import { useQueuesBackend } from '../../hooks/useQueueBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQueriesForElement } from '@testing-library/react';
+import { AuthContext } from '../../context/AuthContext';
 
 export const Tickets = () => {
 	const navigate = useNavigate();
 	const { ticketId } = useParams();
 
 	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } = useData();
+	const { permissions } = useContext(AuthContext);
 	const { getAllPriorities } = usePriorityBackend();
 
 	const [page, setPage] = useState(0);
@@ -45,6 +47,7 @@ export const Tickets = () => {
 	const [ticketList, setTicketList] = useState([]);
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
+
 
 	useEffect(() => {
 		getPriorityList();
@@ -66,7 +69,7 @@ export const Tickets = () => {
 	};
 
 	const getTicketList = () => {
-		if (queues.length != 0) {
+		if (queues.length !== 0) {
 			refreshTickets(size, page+1)
 		}
 	}
@@ -140,7 +143,7 @@ export const Tickets = () => {
 				setOpenDetail(newOpen);
 				setSelectedTicket(ticket);
 			};
-
+			// console.log(permissions)
 	return (
 		<Layout
 			title={'Ticket List'}
@@ -148,6 +151,7 @@ export const Tickets = () => {
 			buttonInfo={{
 				label: 'Add new ticket',
 				icon: <TicketPlus size={20} />,
+				hidden: permissions.hasOwnProperty('ticket.create')
 			}}
 		>
 			<WhiteContainer noPadding>
@@ -338,13 +342,13 @@ export const Tickets = () => {
 										// spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										<IconButton onClick={event => handleDialogOpen(event, ticket)}>
+										{ permissions.hasOwnProperty('ticket.edit') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
 											<Pencil size={18} />
-										</IconButton>
+										</IconButton> }
 
-										<IconButton onClick={event => handleDialogOpen(event, ticket)}>
+										{ permissions.hasOwnProperty('ticket.delete') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
 											<Trash2 size={18} />
-										</IconButton>
+										</IconButton> }
 									</Stack>
 								</TableCell>
 							</TableRow>

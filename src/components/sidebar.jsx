@@ -289,13 +289,13 @@ export const Sidebar = ({
 
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 
-						<CircularButton
+						{buttonInfo.hidden && <CircularButton
 							sx={{ mr: 1 }}
 							onClick={handleClickDialogOpen}
 						>
 							{buttonInfo.icon}
 							{buttonInfo.label}
-						</CircularButton>
+						</CircularButton>}
 
 						<IconButton
 							aria-label="logout"

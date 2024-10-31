@@ -1,9 +1,10 @@
 import { Box, Fab, styled, Tab, Tabs, Typography } from '@mui/material';
 import { MessageCircle, MessageSquareText, NotepadText } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { TicketDetail } from './TicketDetail';
 import { TicketThread } from './TicketThread';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { AuthContext } from '../../context/AuthContext';
 
 const CircularTab = styled(Tab)(() => ({
 	width: '44px',
@@ -52,6 +53,7 @@ export const TicketDetailContainer = ({ ticketInfo, closeDrawer }) => {
 
 	const [ticket, setTicket] = useState(null);
 	const [value, setValue] = useState(0);
+	const { permissions } = useContext(AuthContext)
 
 	function datetime_sort(a, b) {
 		return new Date(a.created).getTime() - new Date(b.created).getTime();
