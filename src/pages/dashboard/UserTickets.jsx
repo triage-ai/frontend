@@ -37,9 +37,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getQueriesForElement } from '@testing-library/react';
 import { AppBarHeight } from '../../components/layout';
 import { AuthContext } from '../../context/AuthContext';
-import { UserTicketDetailContainer } from './UserTicketDetailContainer'
-import { UserAddTicket } from './UserAddTicket'
-
+import { UserTicketDetailContainer } from './UserTicketDetailContainer';
+import { UserAddTicket } from './UserAddTicket';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer - 1,
@@ -70,11 +69,11 @@ export const UserTickets = () => {
 	const navigate = useNavigate();
 	const { ticketId } = useParams();
 	// const { getAllPriorities } = usePriorityBackend();
-	const { getQueuesForUser } = useQueueBackend()
+	const { getQueuesForUser } = useQueueBackend();
 	const { getTicketsbyAdvancedSearchForUser } = useTicketBackend();
 
-	const [ticketList, setTicketList] = useState([])
-	const [totalTickets, setTotalTickets] = useState(0)
+	const [ticketList, setTicketList] = useState([]);
+	const [totalTickets, setTotalTickets] = useState(0);
 
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
@@ -89,33 +88,31 @@ export const UserTickets = () => {
 	const { userLogout } = useContext(AuthContext);
 
 	const drawerWidth = 250;
-	const appBarTitle = 'Ticket List'
-	const appBarSubtitle = 'View your tickets'
+	const appBarTitle = 'Ticket List';
+	const appBarSubtitle = 'View your tickets';
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 
-
 	useEffect(() => {
 		// getPriorityList();
 		// refreshQueues();
-		getQueueList()
+		getQueueList();
 	}, []);
-
 
 	const getQueueList = () => {
 		getQueuesForUser()
 			.then(res => {
 				res.data.map(entry => {
-					entry.config = JSON.parse(entry.config)
-				})
-				setQueues(res.data)
-				setQueueIdx(0)
+					entry.config = JSON.parse(entry.config);
+				});
+				setQueues(res.data);
+				setQueueIdx(0);
 			})
 			.catch(err => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDrawerClose = () => {
 		setIsClosing(true);
@@ -134,7 +131,7 @@ export const UserTickets = () => {
 
 	useEffect(() => {
 		getTicketList();
-	}, [page, size, queues, queueIdx])
+	}, [page, size, queues, queueIdx]);
 
 	const handleTicketEdited = () => {
 		handleDialogClose();
@@ -148,22 +145,25 @@ export const UserTickets = () => {
 
 	const getTicketList = () => {
 		if (queues.length != 0) {
-			getTicketsbyAdvancedSearchForUser({ ...queues[queueIdx].config, 'size': size, 'page': page + 1 })
-				.then((res) => {
-					setTicketList(res.data.items)
-					setTotalTickets(res.data.total)
-				})
+			getTicketsbyAdvancedSearchForUser({
+				...queues[queueIdx].config,
+				size: size,
+				page: page + 1,
+			}).then(res => {
+				setTicketList(res.data.items);
+				setTotalTickets(res.data.total);
+			});
 		}
-	}
+	};
 
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
-	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+	const handleChangeRowsPerPage = e => {
+		setSize(e.target.value);
+		setPage(0);
+	};
 
 	useEffect(() => {
 		if (ticketList.length > 0 && ticketId) {
@@ -208,11 +208,11 @@ export const UserTickets = () => {
 		// getTicketList(size, page + 1)
 	};
 
-	const handleQueueChange = (e) => {
-		setPage(0)
-		setSize(10)
-		setQueueIdx(e.target.value)
-	}
+	const handleQueueChange = e => {
+		setPage(0);
+		setSize(10);
+		setQueueIdx(e.target.value);
+	};
 
 	const authLogout = async () => {
 		userLogout();
@@ -221,23 +221,20 @@ export const UserTickets = () => {
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
-			() => {
-				if (newOpen) {
-					navigate('/user/tickets/' + ticket.ticket_id);
-				} else {
-					navigate('/user/tickets');
-				}
-				setOpenDetail(newOpen);
-				setSelectedTicket(ticket);
-			};
+		() => {
+			if (newOpen) {
+				navigate('/user/tickets/' + ticket.ticket_id);
+			} else {
+				navigate('/user/tickets');
+			}
+			setOpenDetail(newOpen);
+			setSelectedTicket(ticket);
+		};
 
 	return (
-
 		<Box sx={{ display: 'flex', background: '#FFF' }}>
 			<CssBaseline />
-			<AppBar
-				position="fixed"
-			>
+			<AppBar position="fixed">
 				<Box
 					sx={{
 						height: AppBarHeight,
@@ -248,9 +245,7 @@ export const UserTickets = () => {
 						px: { xs: 2, md: 5 },
 					}}
 				>
-					<Box
-						sx={{ display: 'flex', alignItems: 'flex-start' }}
-					>
+					<Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
 						<IconButton
 							color="inherit"
 							aria-label="open drawer"
@@ -279,7 +274,6 @@ export const UserTickets = () => {
 					</Box>
 
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
-
 						<CircularButton
 							sx={{ mr: 1 }}
 							onClick={handleDialogOpen}
@@ -308,11 +302,19 @@ export const UserTickets = () => {
 						height: `calc(100% - ${AppBarHeight})`,
 						px: { xs: 2, md: 5 },
 						zIndex: '4',
-						position: 'relative'
+						position: 'relative',
 					}}
 				>
 					<WhiteContainer noPadding>
-						<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								py: 1.75,
+								px: 2.25,
+							}}
+						>
 							<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 								<SearchTextField
 									type="text"
@@ -341,74 +343,74 @@ export const UserTickets = () => {
 									/>
 								</Box>
 							</Box>
-						</Box>
 
-						<Box
-							display={'flex'}
-							alignItems={'center'}
-							sx={{ px: 2.25 }}
-						>
-							<Typography
-								variant="caption"
-								className="text-muted"
-								fontWeight={600}
+							<Box
+								display={'flex'}
+								alignItems={'center'}
+								sx={{ px: 2.25 }}
 							>
-								Queue
-							</Typography>
-							<FormControl
-								sx={{ m: 1, minWidth: 120 }}
-								size="small"
-							>
-								<Select
-									displayEmpty
-									value={queues.length ? queueIdx : ''}
-									onChange={handleQueueChange}
-									renderValue={item => (
-										<Box
-											display={'flex'}
-											alignItems={'center'}
-										>
-											<Box
-												width={'6px'}
-												height={'6px'}
-												borderRadius={'6px'}
-												marginRight={1}
-												sx={{ backgroundColor: '#D9D9D9' }}
-											/>
-
-											<Typography
-												variant="subtitle2"
-												fontWeight={600}
-												sx={{ color: '#1B1D1F' }}
-											>
-												{item !== '' ? queues[item].title : ''}
-											</Typography>
-										</Box>
-									)}
-									sx={{
-										'.MuiOutlinedInput-notchedOutline': {
-											borderRadius: '8px',
-											borderColor: '#E5EFE9',
-										},
-									}}
-									IconComponent={props => (
-										<ChevronDown
-											{...props}
-											size={17}
-											color="#1B1D1F"
-										/>
-									)}
+								<Typography
+									variant="caption"
+									className="text-muted"
+									fontWeight={600}
 								>
-									{queues.map((queue, idx) => (
-										<MenuItem
-											key={queue.queue_id}
-											value={idx}
-										>
-											<Typography variant="subtitle2">{queue.title}</Typography>
-										</MenuItem>
-									))}
-								</Select>
-							</FormControl>
+									Queue
+								</Typography>
+								<FormControl
+									sx={{ m: 1, minWidth: 120 }}
+									size="small"
+								>
+									<Select
+										displayEmpty
+										value={queues.length ? queueIdx : ''}
+										onChange={handleQueueChange}
+										renderValue={item => (
+											<Box
+												display={'flex'}
+												alignItems={'center'}
+											>
+												<Box
+													width={'6px'}
+													height={'6px'}
+													borderRadius={'6px'}
+													marginRight={1}
+													sx={{ backgroundColor: '#D9D9D9' }}
+												/>
+
+												<Typography
+													variant="subtitle2"
+													fontWeight={600}
+													sx={{ color: '#1B1D1F' }}
+												>
+													{item !== '' ? queues[item].title : ''}
+												</Typography>
+											</Box>
+										)}
+										sx={{
+											'.MuiOutlinedInput-notchedOutline': {
+												borderRadius: '8px',
+												borderColor: '#E5EFE9',
+											},
+										}}
+										IconComponent={props => (
+											<ChevronDown
+												{...props}
+												size={17}
+												color="#1B1D1F"
+											/>
+										)}
+									>
+										{queues.map((queue, idx) => (
+											<MenuItem
+												key={queue.queue_id}
+												value={idx}
+											>
+												<Typography variant="subtitle2">{queue.title}</Typography>
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Box>
 						</Box>
 
 						<Table>
@@ -557,10 +559,10 @@ export const UserTickets = () => {
 							</IconButton>
 
 							<UserAddTicket
-						handleTicketCreated={handleTicketCreated}
-						handleTicketEdited={handleTicketEdited}
-						editTicket={selectedTicket}
-					/>
+								handleTicketCreated={handleTicketCreated}
+								handleTicketEdited={handleTicketEdited}
+								editTicket={selectedTicket}
+							/>
 						</Box>
 					</Dialog>
 
@@ -581,6 +583,7 @@ export const UserTickets = () => {
 					>
 						<UserTicketDetailContainer
 							ticketInfo={selectedTicket}
+							openEdit={handleDialogOpen}
 							closeDrawer={toggleDetailDrawer(false)}
 						/>
 					</Drawer>

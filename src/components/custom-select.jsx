@@ -1,4 +1,15 @@
-import { Box, Button, MenuItem, TextField, Typography, alpha, styled, Autocomplete, Popper, Paper } from '@mui/material';
+import {
+	Box,
+	Button,
+	MenuItem,
+	TextField,
+	Typography,
+	alpha,
+	styled,
+	Autocomplete,
+	Popper,
+	Paper,
+} from '@mui/material';
 import { useEffect } from 'react';
 
 const CustomInput = styled(props => (
@@ -32,12 +43,8 @@ const CustomInput = styled(props => (
 	},
 }));
 
-const CustomMultibox = styled((props) => (
-	<Autocomplete
-		{...props}
-	/>
-))(({ theme }) => ({
-	'& .MuiFilledInput-root': {
+const CustomMultibox = styled(props => <Autocomplete {...props} />)(({ theme }) => ({
+	'& fieldset': {
 		overflow: 'hidden',
 		borderRadius: 12,
 		backgroundColor: 'transparent',
@@ -162,7 +169,7 @@ export const CustomAutocomplete = ({
 			name={name}
 			size={size}
 			onInputChange={onInputChange}
-			filterOptions={(x) => x}
+			filterOptions={x => x}
 			onChange={onChange}
 			// sx={{
 			// 	width: 250,
@@ -175,10 +182,20 @@ export const CustomAutocomplete = ({
 			// 		borderColor: '#E5EFE9',
 			// 	},
 			// }}
-			PopperComponent={(props) => (<Popper {...props} style={{ maxWidth: 400 }} placement='bottom-start' />)}
+			PopperComponent={props => (
+				<Popper
+					{...props}
+					style={{ maxWidth: 400 }}
+					placement="bottom-start"
+				/>
+			)}
 			renderOption={renderOption}
-			renderInput={(props) => (<TextField {...props} slotProps={{ style: { fontWeight: 600 } }} />)}
+			renderInput={props => (
+				<TextField
+					{...props}
+					slotProps={{ style: { fontWeight: 600 } }}
+				/>
+			)}
 		/>
-
 	);
 };
