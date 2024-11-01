@@ -34,7 +34,8 @@ export const Tickets = () => {
 	const navigate = useNavigate();
 	const { ticketId } = useParams();
 
-	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } = useData();
+	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } =
+		useData();
 	const { getAllPriorities } = usePriorityBackend();
 
 	const [page, setPage] = useState(0);
@@ -53,7 +54,7 @@ export const Tickets = () => {
 
 	useEffect(() => {
 		getTicketList();
-	}, [page, size, queues, queueIdx])
+	}, [page, size, queues, queueIdx]);
 
 	const handleTicketEdited = () => {
 		handleDialogClose();
@@ -67,18 +68,18 @@ export const Tickets = () => {
 
 	const getTicketList = () => {
 		if (queues.length != 0) {
-			refreshTickets(size, page+1)
+			refreshTickets(size, page + 1);
 		}
-	}
+	};
 
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
-	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+	const handleChangeRowsPerPage = e => {
+		setSize(e.target.value);
+		setPage(0);
+	};
 
 	useEffect(() => {
 		if (ticketList.length > 0 && ticketId) {
@@ -120,26 +121,26 @@ export const Tickets = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
-		refreshTickets(size, page+1)
+		refreshTickets(size, page + 1);
 	};
 
-	const handleQueueChange = (e) => {
-		setPage(0)
-		setSize(10)
-		setQueueIdx(e.target.value.queue_id - 1)
-	}
+	const handleQueueChange = e => {
+		setPage(0);
+		setSize(10);
+		setQueueIdx(e.target.value.queue_id - 1);
+	};
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
-			() => {
-				if (newOpen) {
-					navigate('/tickets/' + ticket.ticket_id);
-				} else {
-					navigate('/tickets');
-				}
-				setOpenDetail(newOpen);
-				setSelectedTicket(ticket);
-			};
+		() => {
+			if (newOpen) {
+				navigate('/tickets/' + ticket.ticket_id);
+			} else {
+				navigate('/tickets');
+			}
+			setOpenDetail(newOpen);
+			setSelectedTicket(ticket);
+		};
 
 	return (
 		<Layout
@@ -153,7 +154,15 @@ export const Tickets = () => {
 			refreshResource={refreshTickets}
 		>
 			<WhiteContainer noPadding>
-				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						py: 1.75,
+						px: 2.25,
+					}}
+				>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							type="text"
@@ -182,74 +191,74 @@ export const Tickets = () => {
 							/>
 						</Box>
 					</Box>
-				</Box>
 
-				<Box
-					display={'flex'}
-					alignItems={'center'}
-					sx = {{ px: 2.25 }}
-				>
-					<Typography
-						variant="caption"
-						className="text-muted"
-						fontWeight={600}
+					<Box
+						display={'flex'}
+						alignItems={'center'}
+						sx={{ px: 2.25 }}
 					>
-						Queue
-					</Typography>
-					<FormControl
-						sx={{ m: 1, minWidth: 120 }}
-						size="small"
-					>
-						<Select
-							displayEmpty
-							value={queues.length ? queues[queueIdx] : ''}
-							onChange={handleQueueChange}
-							renderValue={item => (
-								<Box
-									display={'flex'}
-									alignItems={'center'}
-								>
-									<Box
-										width={'6px'}
-										height={'6px'}
-										borderRadius={'6px'}
-										marginRight={1}
-										sx={{ backgroundColor: '#D9D9D9' }}
-									/>
-
-									<Typography
-										variant="subtitle2"
-										fontWeight={600}
-										sx={{ color: '#1B1D1F' }}
-									>
-										{item.title}
-									</Typography>
-								</Box>
-							)}
-							sx={{
-								'.MuiOutlinedInput-notchedOutline': {
-									borderRadius: '8px',
-									borderColor: '#E5EFE9',
-								},
-							}}
-							IconComponent={props => (
-								<ChevronDown
-									{...props}
-									size={17}
-									color="#1B1D1F"
-								/>
-							)}
+						<Typography
+							variant="caption"
+							className="text-muted"
+							fontWeight={600}
 						>
-							{queues.map((queue, idx) => (
-								<MenuItem
-									key={queue.queue_id}
-									value={queue}
-								>
-									<Typography variant="subtitle2">{queue.title}</Typography>
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
+							Queue
+						</Typography>
+						<FormControl
+							sx={{ m: 1, minWidth: 120 }}
+							size="small"
+						>
+							<Select
+								displayEmpty
+								value={queues.length ? queues[queueIdx] : ''}
+								onChange={handleQueueChange}
+								renderValue={item => (
+									<Box
+										display={'flex'}
+										alignItems={'center'}
+									>
+										<Box
+											width={'6px'}
+											height={'6px'}
+											borderRadius={'6px'}
+											marginRight={1}
+											sx={{ backgroundColor: '#D9D9D9' }}
+										/>
+
+										<Typography
+											variant="subtitle2"
+											fontWeight={600}
+											sx={{ color: '#1B1D1F' }}
+										>
+											{item.title}
+										</Typography>
+									</Box>
+								)}
+								sx={{
+									'.MuiOutlinedInput-notchedOutline': {
+										borderRadius: '8px',
+										borderColor: '#E5EFE9',
+									},
+								}}
+								IconComponent={props => (
+									<ChevronDown
+										{...props}
+										size={17}
+										color="#1B1D1F"
+									/>
+								)}
+							>
+								{queues.map((queue, idx) => (
+									<MenuItem
+										key={queue.queue_id}
+										value={queue}
+									>
+										<Typography variant="subtitle2">{queue.title}</Typography>
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
 				</Box>
 
 				<Table>
@@ -427,6 +436,7 @@ export const Tickets = () => {
 			>
 				<TicketDetailContainer
 					ticketInfo={selectedTicket}
+					openEdit={handleDialogOpen}
 					closeDrawer={toggleDetailDrawer(false)}
 				/>
 			</Drawer>
