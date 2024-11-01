@@ -14,6 +14,14 @@ export const useUserBackend = () => {
 	// 	return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
 	// };
 
+	const getAllUsersBySearch = async (input, page, size) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `user?name=${input}&page=${page}&size=${size}`, config);
+	}
+
 	const getUserBySearch = async (input) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -22,36 +30,36 @@ export const useUserBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `user/search/${input}`, config);
 	}
 
-	// const createAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const createUser = async userInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.post(process.env.REACT_APP_BACKEND_URL + 'agent/create', agentInfo, config);
-	// };
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'user/create', userInfo, config);
+	};
 
-	// const updateAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const updateUser = async userInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.put(
-	// 		process.env.REACT_APP_BACKEND_URL + 'agent/put/' + agentInfo.agent_id,
-	// 		agentInfo,
-	// 		config
-	// 	);
-	// };
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'user/put/' + userInfo.user_id,
+			userInfo,
+			config
+		);
+	};
 
-	// const removeAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const removeUser = async userInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.delete(
-	// 		process.env.REACT_APP_BACKEND_URL + 'agent/delete/' + agentInfo.agent_id,
-	// 		config
-	// 	);
-	// };
+		return await axios.delete(
+			process.env.REACT_APP_BACKEND_URL + 'user/delete/' + userInfo.user_id,
+			config
+		);
+	};
 
-	return { getUserBySearch };
+	return { createUser, updateUser, getAllUsersBySearch, getUserBySearch, removeUser };
 };

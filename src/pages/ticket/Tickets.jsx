@@ -149,6 +149,8 @@ export const Tickets = () => {
 				label: 'Add new ticket',
 				icon: <TicketPlus size={20} />,
 			}}
+			AddResource={AddTicket}
+			refreshResource={refreshTickets}
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
@@ -401,8 +403,8 @@ export const Tickets = () => {
 					</IconButton>
 
 					<AddTicket
-						handleTicketCreated={handleTicketCreated}
-						handleTicketEdited={handleTicketEdited}
+						handleCreated={handleTicketCreated}
+						handleEdited={handleTicketEdited}
 						editTicket={selectedTicket}
 					/>
 				</Box>

@@ -10,9 +10,8 @@ import { useGroupBackend } from '../hooks/useGroupBackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { useQueueBackend } from '../hooks/useQueueBackend';
-
-
 import { NotebookPen } from 'lucide-react';
+import { useScheduleBackend } from '../hooks/useScheduleBackend';
 
 const DataContext = createContext();
 
@@ -28,6 +27,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllStatuses } = useStatusBackend();
 	const { getAllTopics } = useTopicBackend();
 	const { getQueuesForAgent } = useQueueBackend();
+	const { getAllSchedules } = useScheduleBackend();
 
 	const [agents, setAgents] = useState([]);
 	const [tickets, setTickets] = useState([]);
@@ -57,6 +57,9 @@ export const DataProvider = ({ children }) => {
 	const [queues, setQueues] = useState([])
 	const [queueIdx, setQueueIdx] = useState([])
 
+	const [schedules, setSchedules] = useState([])
+	const [formattedSchedules, setFormattedSchedules] = useState([])
+
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
 			setAgents(agentList.data);
@@ -64,11 +67,11 @@ export const DataProvider = ({ children }) => {
 	}, [getAllAgents]);
 
 	const refreshTickets = useCallback((size = 10, page = 1) => {
-			getTicketsbyAdvancedSearch({...queues[queueIdx].config, 'size': size, 'page': page}).then(ticketList => {
-				const { items, total } = ticketList.data;
-				setTotalTickets(total)
-				setTickets(items);
-			});
+		getTicketsbyAdvancedSearch({ ...queues[queueIdx].config, 'size': size, 'page': page }).then(ticketList => {
+			const { items, total } = ticketList.data;
+			setTotalTickets(total)
+			setTickets(items);
+		});
 	}, [getTicketsbyAdvancedSearch]);
 
 	const refreshSettings = useCallback(() => {
@@ -206,6 +209,25 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getQueuesForAgent]);
 
+	const refreshSchedules = useCallback(() => {
+		getAllSchedules()
+			.then(schedules => {
+				const schedulesData = schedules.data;
+				const formattedSchedules = schedulesData.map(schedule => {
+					return {
+						value: schedule.schedule_id,
+						label: schedule.name,
+						sublabel: schedule.description.charAt(0).toUpperCase() + schedule.description.slice(1),
+					};
+				});
+				setSchedules(schedulesData)
+				setFormattedSchedules(formattedSchedules);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}, [getAllSchedules]);
+
 
 	return (
 		<DataContext.Provider
@@ -241,7 +263,10 @@ export const DataProvider = ({ children }) => {
 				queueIdx,
 				setQueueIdx,
 				refreshQueues,
-				totalTickets
+				totalTickets,
+				refreshSchedules,
+				schedules,
+				formattedSchedules
 			}}
 		>
 			{children}

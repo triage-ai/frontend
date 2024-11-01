@@ -15,15 +15,15 @@ const DrawerContentContainer = styled(Box)(() => ({
 	background: '#f1f4f2',
 }));
 
-export const Layout = ({ children, title, subtitle, buttonInfo, taskId, process }) => {
+export const Layout = ({ children, title, subtitle, buttonInfo, AddResource, refreshResource }) => {
 	return (
 		<Box sx={{ display: 'flex', background: '#FFF' }}>
 			<Sidebar
 				appBarTitle={title}
 				appBarSubtitle={subtitle}
-				taskId={taskId}
-				processParam={process}
 				buttonInfo={buttonInfo}
+				AddResource={AddResource}
+				refreshResource={refreshResource}
 			/>
 			<DrawerContentContainer>
 				<DrawerHeader />

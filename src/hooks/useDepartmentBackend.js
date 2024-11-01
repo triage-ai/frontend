@@ -13,6 +13,14 @@ export const useDepartmentBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'department/get', config);
 	};
 
+	const getAllDepartmentsJoined = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'department/', config);
+	};
+
 	const createDepartment = async departmentInfo => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -25,5 +33,28 @@ export const useDepartmentBackend = () => {
 		);
 	};
 
-	return { getAllDepartments, createDepartment };
+	const updateDepartment = async deptInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'department/put/' + deptInfo.dept_id,
+			deptInfo,
+			config
+		);
+	};
+
+	const removeDepartment = async deptInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.delete(
+			process.env.REACT_APP_BACKEND_URL + 'department/delete/' + deptInfo.dept_id,
+			config
+		);
+	};
+
+	return { getAllDepartments, getAllDepartmentsJoined, createDepartment, updateDepartment, removeDepartment };
 };

@@ -24,6 +24,9 @@ import {
 	UserMenu,
 	KnowledgebaseMenu,
 } from './pages/settings/SettingsMenus';
+import { Users } from './pages/user/Users';
+import { Departments } from './pages/department/Departments';
+import { Groups } from './pages/group/Groups';
 
 const theme = createTheme({
 	palette: {
@@ -190,18 +193,58 @@ function App() {
 							}
 						/>
 						<Route
-							path="manage/"
-							element={
-								<ProtectedRoute>
-									<Manage />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
 							path='manage/agents'
 							element={
 								<ProtectedRoute>
 									<Agents />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/users'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/queues'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/slas'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/schedules'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/departments'
+							element={
+								<ProtectedRoute>
+									<Departments />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/groups'
+							element={
+								<ProtectedRoute>
+									<Groups />
 								</ProtectedRoute>
 							}
 						/>
