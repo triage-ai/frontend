@@ -17,20 +17,27 @@ import { AgentTemplates } from './agents/AgentTemplates';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
 import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
+import { Emails } from '../email/emails/Emails';
+import { EmailSettings } from '../email/EmailSettings';
+import { EmailBanlist } from '../email/EmailBanlist';
+import { EmailTemplates } from '../email/templates/EmailTemplates';
+import { EmailDiagnostic } from '../email/EmailDiagnostic';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
-		data = {
-			...data,
-			default_status_id: data.status_id.toString(),
-			default_priority_id: data.priority_id.toString(),
-			default_sla_id: data.sla_id.toString(),
-			default_topic_id: data.topic_id.toString()
-		};
-		delete data.status_id;
-		delete data.priority_id;
-		delete data.sla_id;
-		delete data.topic_id;
+		if (data.hasOwnProperty('status_id') || data.hasOwnProperty('priority_id') || data.hasOwnProperty('sla_id') || data.hasOwnProperty('topic_id')) {
+			data = {
+				...data,
+				default_status_id: data.status_id.toString(),
+				default_priority_id: data.priority_id.toString(),
+				default_sla_id: data.sla_id.toString(),
+				default_topic_id: data.topic_id.toString(),
+			};
+			delete data.status_id;
+			delete data.priority_id;
+			delete data.sla_id;
+			delete data.topic_id;
+		}
 
 		var updates = [];
 		Object.entries(data).forEach((k) => {
@@ -226,9 +233,7 @@ export const UserMenu = (props) => {
 };
 
 export const KnowledgebaseMenu = (props) => {
-	const headers = [
-		{ id: 1, label: 'Settings' },
-	];
+	const headers = [{ id: 1, label: 'Settings' }];
 
 	const components = [<KnowledgebaseSettings {...props} />];
 

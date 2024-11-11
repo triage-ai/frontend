@@ -26,7 +26,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 	const [statusList, setStatusList] = useState([]);
 	const [editing, setEditing] = useState(false);
-	const { permissions } = useContext(AuthContext);;
+	const { permissions } = useContext(AuthContext);
 
 	function createData(name, calories, fat, carbs, protein) {
 		return { name, calories, fat, carbs, protein };
@@ -45,14 +45,14 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 			status_id: statusList.find((x) => x.name === e.target.value).status_id,
 		};
 		updateTicket(ticket.ticket_id, statusUpdate)
-			.then(res => {
+			.then((res) => {
 				updateCurrentTicket(res.data);
 			})
 			.catch((err) => alert('Error while updating ticket status'));
 	};
 
 	const handleEditMode = () => {
-		setEditing(prevState => !prevState);
+		setEditing((prevState) => !prevState);
 	};
 
 	useEffect(() => {
@@ -120,20 +120,9 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						<Box sx={{ display: 'flex', alignItems: 'center' }}>
 							{permissions.hasOwnProperty('ticket.edit') && (
 								<>
-									<IconButton sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }} aria-label='edit' onClick={() => {}}>
-										<Pencil size={20} color='#6E7772' />
+									<IconButton sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }} aria-label='edit' onClick={(event) => openEditModal(event, ticket)}>
+										<Pencil size={20} color='#6E7772' onClick={() => {}} />
 									</IconButton>
-							<IconButton
-								sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }}
-								aria-label="edit"
-								onClick={() => {}}
-							>
-								<Pencil
-									size={20}
-									color="#6E7772"
-									onClick={event => openEditModal(event, ticket)}
-								/>
-							</IconButton>
 
 									<Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={2.25} mr={1} />
 								</>
@@ -245,12 +234,12 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.due_date
 											? new Date(ticket.due_date)
-														.toLocaleDateString('en-US', {
-															day: '2-digit',
-															month: 'short',
-															year: 'numeric',
-														})
-														.replace(',', ' ')
+													.toLocaleDateString('en-US', {
+														day: '2-digit',
+														month: 'short',
+														year: 'numeric',
+													})
+													.replace(',', ' ')
 											: 'Not set'}
 									</Typography>
 								</Box>
@@ -370,7 +359,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 						<Grid container>
 							<Grid size={{ xs: 6 }}>
-								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} sx={{  pb: 3  }}>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} sx={{ pb: 3 }}>
 									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										SLA
 									</Typography>
@@ -379,25 +368,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									</Typography>
 								</Box>
 								{ticket?.form_entry?.form?.fields?.map((field, idx) => (
-									<Box
-										display={'flex'}
-										flexDirection={'column'}
-										alignItems={'flex-start'}
-										key={idx}
-										sx={{ pb: 3 }}
-									>
-										<Typography
-											variant="overline"
-											className="text-muted"
-											sx={{ opacity: 0.7 }}
-										>
+									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} key={idx} sx={{ pb: 3 }}>
+										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 											{field.label}
 										</Typography>
-										<Typography
-											variant="subtitle1"
-											color={'#1B1D1F'}
-											fontWeight={600}
-										>
+										<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 											{ticket?.form_entry?.values[idx]?.value ?? ''}
 										</Typography>
 									</Box>
@@ -454,7 +429,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						alignItems={'center'}
 						justifyContent={'center'}
 						gap={0.25}
-							// sx={{ transform: 'translateX(-50%)' }}
+						// sx={{ transform: 'translateX(-50%)' }}
 					>
 						<Info size={16} strokeWidth={1.25} /> Created {ticket.created} • Last updated {ticket.updated}
 					</Typography>

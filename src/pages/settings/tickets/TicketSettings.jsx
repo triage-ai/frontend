@@ -187,19 +187,14 @@ export const TicketSettings = (props) => {
 				</Typography>
 				<StyledSelect name='default_ticket_queue' value={formState.default_ticket_queue} onChange={handleChange} sx={{ width: 350 }}>
 					<MenuItem value='Open'>Open</MenuItem>
-					<MenuItem value='Open / Open'>Open / Open</MenuItem>
-					<MenuItem value='My Tickets / Assigned to Me'>My Tickets / Assigned to Me</MenuItem>
-					<MenuItem value='Closed / Today'>Closed / Today</MenuItem>
-					<MenuItem value='Open / Answered'>Open / Answered</MenuItem>
-					<MenuItem value='My Tickets / Assigned to Teams'>My Tickets / Assigned to Teams</MenuItem>
-					<MenuItem value='Closed / Yesterday'>Closed / Yesterday</MenuItem>
-					<MenuItem value='Open / Overdue'>Open / Overdue</MenuItem>
-					<MenuItem value='My Tickets'>My Tickets</MenuItem>
-					<MenuItem value='Closed / This Week'>Closed / This Week</MenuItem>
 					<MenuItem value='Closed'>Closed</MenuItem>
-					<MenuItem value='Closed / This Month'>Closed / This Month</MenuItem>
-					<MenuItem value='Closed / This Quarter'>Closed / This Quarter</MenuItem>
-					<MenuItem value='Closed / This Year'>Closed / This Year</MenuItem>
+					<MenuItem value='Unanswered'>Unanswered</MenuItem>
+					<MenuItem value='Overdue'>Overdue</MenuItem>
+					<MenuItem value='My Tickets'>My Tickets</MenuItem>
+					<MenuItem value='Today'>Today</MenuItem>
+					<MenuItem value='This Week'>This Week</MenuItem>
+					<MenuItem value='This Month'>This Month</MenuItem>
+					<MenuItem value='This Year'>This Year</MenuItem>
 				</StyledSelect>
 
 				<Stack>

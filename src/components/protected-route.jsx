@@ -14,8 +14,6 @@ const ProtectedRoute = ({ children, requireAdmin, requirePermission }) => {
 		return <Navigate to="/" />;
 	}
 
-	console.log(requirePermission)
-	console.log(permissions)
 
 	if (requirePermission !== undefined && !permissions.hasOwnProperty(requirePermission)) {
 		return <Navigate to="/" />;

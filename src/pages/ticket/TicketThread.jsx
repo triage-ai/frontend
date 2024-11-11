@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
-import { RichTextEditor } from '../../components/rich-text-editor';
+import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { useEditor } from '@tiptap/react';
 import { LinkBubbleMenu, LinkBubbleMenuHandler } from 'mui-tiptap';
 import Link from '@tiptap/extension-link';

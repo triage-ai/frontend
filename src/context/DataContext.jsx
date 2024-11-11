@@ -10,6 +10,7 @@ import { useGroupBackend } from '../hooks/useGroupBackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { useQueueBackend } from '../hooks/useQueueBackend';
+import { useTemplateBackend } from '../hooks/useTemplateBackend';
 
 
 import { NotebookPen } from 'lucide-react';
@@ -29,6 +30,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllStatuses } = useStatusBackend();
 	const { getAllTopics } = useTopicBackend();
 	const { getQueuesForAgent } = useQueueBackend();
+	const { getAllTemplates } = useTemplateBackend();
 
 	const [agents, setAgents] = useState([]);
 	const [tickets, setTickets] = useState([]);
@@ -58,7 +60,7 @@ export const DataProvider = ({ children }) => {
 	const [queues, setQueues] = useState([])
 	const [queueIdx, setQueueIdx] = useState([])
 
-
+	const [templates, setTemplates] = useState([])
 
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
@@ -209,6 +211,12 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getQueuesForAgent]);
 
+	const refreshTemplates = useCallback(() => {
+		getAllTemplates().then(templateList => {
+			setTemplates(templateList.data);
+		});
+	}, [getAllTemplates]);
+
 
 	return (
 		<DataContext.Provider
@@ -217,6 +225,8 @@ export const DataProvider = ({ children }) => {
 				refreshAgents,
 				tickets,
 				refreshTickets,
+				templates,
+				refreshTemplates,
 				departments,
 				formattedDepartments,
 				refreshDepartments,

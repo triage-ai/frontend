@@ -46,6 +46,12 @@ import {
 	Notebook,
 	NotebookText,
 	CircleUserRound,
+	Mail,
+	MailX,
+	LayoutTemplate,
+	Wrench,
+	Mails,
+	MailPlus,
 } from 'lucide-react';
 import { Fragment, useEffect, useState, useRef, useContext, act } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -176,6 +182,14 @@ export const getMenuItems = (adminStatus) => [
 						/>
 					),
 				},
+				{
+					title: 'Email',
+					icon: (
+						<Mail
+							size={20}
+						/>
+					),
+				},
 		  ]
 		: []),
 	{
@@ -299,6 +313,29 @@ const settingsSubmenuItems = [
 	},
 ];
 
+const emailSubmenuItems = [
+	{
+		title: 'Emails',
+		icon: <Mails size={20} />,
+	},
+	{
+		title: 'Settings',
+		icon: <SlidersHorizontal size={20} />,
+	},
+	{
+		title: 'Banlist',
+		icon: <MailX size={20} />,
+	},
+	{
+		title: 'Templates',
+		icon: <MailPlus size={20} />,
+	},
+	{
+		title: 'Diagnostic',
+		icon: <Wrench size={20} />,
+	},
+]
+
 // const urlCheck = new RegExp('')
 
 export const SidebarItems = () => {
@@ -307,6 +344,7 @@ export const SidebarItems = () => {
 	const settingsRef = useRef(null); // Ref to the 'Settings' menu item
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const [manageOpen, setManageOpen] = useState(false);
+	const [emailOpen, setEmailOpen] = useState(false);
 	const { agentAuthState, permissions } = useContext(AuthContext);
 
 	const menuItems = getMenuItems(agentAuthState.isAdmin);
@@ -318,6 +356,10 @@ export const SidebarItems = () => {
 
 	const handleManageClick = () => {
 		setManageOpen((p) => !p);
+	};
+
+	const handleEmailClick = () => {
+		setEmailOpen((p) => !p);
 	};
 
 	let location = useLocation();
@@ -339,6 +381,16 @@ export const SidebarItems = () => {
 			setManageOpen(false);
 		} else {
 			setManageOpen(true);
+		}
+	}, [location, setPath]);
+
+	useEffect(() => {
+		setPath(location.pathname);
+
+		if (location.pathname.split('/')[1] !== 'email') {
+			setEmailOpen(false);
+		} else {
+			setEmailOpen(true);
 		}
 	}, [location, setPath]);
 
@@ -385,7 +437,7 @@ export const SidebarItems = () => {
 
 									{!item?.subheader && (
 										<ListItem disablePadding sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}>
-											{item.title !== 'Settings' && item.title !== 'Manage' && item.title !== 'Profile' && (
+											{item.title !== 'Settings' && item.title !== 'Manage' && item.title !== 'Profile' && item.title !== 'Email' && (
 												<StyledListItemBtn
 													component={Link}
 													to={'/' + item.title.toLowerCase()}
@@ -541,6 +593,82 @@ export const SidebarItems = () => {
 																		selected={
 																			path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'settings'
 																		}
+																		sx={{ pl: 1 }}
+																		disableRipple
+																	>
+																		<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+
+																		<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+																	</StyledListItemBtn>
+																</ListItem>
+															))}
+														</List>
+													</Collapse>
+												</>
+											)}
+
+											{item.title === 'Email' && (
+												<>
+													<StyledListItemBtn
+														onClick={handleEmailClick}
+														selected={!emailOpen && path.split('/')[1] === 'email'}
+														disableRipple
+														sx={{ justifyContent: 'space-between' }}
+													>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																justifyContent: 'flex-start',
+															}}
+														>
+															<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+															<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+														</Box>
+														{emailOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+													</StyledListItemBtn>
+
+													<Collapse in={emailOpen} timeout='auto' unmountOnExit>
+														<List
+															sx={{
+																p: 0,
+																mt: 0.3,
+																pl: 4.6,
+																':before': {
+																	content: '""',
+																	position: 'absolute',
+																	top: 0,
+																	left: '24px',
+																	bottom: '32px',
+																	width: '2px',
+																	borderRadius: '2px',
+																	background: '#EFEFEF',
+																},
+															}}
+															dense={true}
+														>
+															{emailSubmenuItems.map((item, index) => (
+																<ListItem
+																	key={index}
+																	disablePadding
+																	sx={{
+																		display: 'block',
+																		mt: index !== 0 ? 0.2 : 0,
+																		':before': {
+																			content: '""',
+																			position: 'absolute',
+																			top: '12px',
+																			left: '-13px',
+																			width: '12px',
+																			height: '12px',
+																			background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
+																		},
+																	}}
+																>
+																	<StyledListItemBtn
+																		component={Link}
+																		to={item.title === 'Emails' ? '/email' : '/email/' + item.title.toLowerCase()}
+																		selected={path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'}
 																		sx={{ pl: 1 }}
 																		disableRipple
 																	>

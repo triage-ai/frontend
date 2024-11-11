@@ -163,16 +163,10 @@ export const GeneralSettings = (props) => {
 
 				<FormControl>
 					<StyledSelect name='default_page_size' value={formState.default_page_size} onChange={handleChange} sx={{ width: 80 }}>
-						<MenuItem value='5'>5</MenuItem>
 						<MenuItem value='10'>10</MenuItem>
-						<MenuItem value='15'>15</MenuItem>
-						<MenuItem value='20'>20</MenuItem>
 						<MenuItem value='25'>25</MenuItem>
-						<MenuItem value='30'>30</MenuItem>
-						<MenuItem value='35'>35</MenuItem>
-						<MenuItem value='40'>40</MenuItem>
-						<MenuItem value='45'>45</MenuItem>
 						<MenuItem value='50'>50</MenuItem>
+						<MenuItem value='100'>100</MenuItem>
 					</StyledSelect>
 				</FormControl>
 			</Stack>

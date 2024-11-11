@@ -117,7 +117,7 @@ export const AgentDashboard = () => {
 			buttonInfo={{
 				label: 'Edit Dashboard',
 				icon: <Settings2 size={20} />,
-				hidden: true
+				hidden: false,
 			}}
 		>
 			<Header headers={headers} components={components} />
@@ -132,7 +132,6 @@ const Dashboard = () => {
 	const [timeData, setTimeData] = useState([]);
 	const [tabValue, setTabValue] = useState(0);
 	const [ypoints, setypoints] = useState({ y1: [], y2: [], y3: [] });
-
 
 	const { refreshDepartments, departments, refreshTopics, topics } = useData();
 	useEffect(() => {
@@ -282,23 +281,19 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
 
-
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
-		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'department')
-		.then((res) => { 
-			res.data.map(department => {
-				if(category.length) {
-					let new_cat = category.find(cat => cat.dept_id === department.category_id)
-					department.category_name = new_cat.name
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'department').then((res) => {
+			res.data.map((department) => {
+				if (category.length) {
+					let new_cat = category.find((cat) => cat.dept_id === department.category_id);
+					department.category_name = new_cat.name;
 				}
-			})
-			setDashboardData(res.data)
-			console.log(res.data)
-		})
-	}, [category]);
-
-
+			});
+			setDashboardData(res.data);
+			console.log(res.data);
+		});
+	}, []);
 
 	return (
 		<Box>
@@ -313,21 +308,21 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 						}}
 					>
 						<TableCell>
-							<Typography variant="overline">Department</Typography>
+							<Typography variant='overline'>Department</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Created</Typography>
+							<Typography variant='overline'>Created</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Updated</Typography>
+							<Typography variant='overline'>Updated</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Overdue</Typography>
+							<Typography variant='overline'>Overdue</Typography>
 						</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map(departmentInfo => (
+					{dashboardData.map((departmentInfo) => (
 						<TableRow
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
@@ -343,33 +338,31 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 							<TableCell>{departmentInfo.updated}</TableCell>
 							<TableCell>{departmentInfo.overdue}</TableCell>
 						</TableRow>
-						))}
+					))}
 				</TableBody>
-			</Table> 
+			</Table>
 		</Box>
-	)
+	);
 };
 
 const Topics = ({ selectedPeriod, selectedDate, category }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
 
-
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
-		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'topics')
-		.then((res) => { 
-			res.data.map(department => {
-				if(category.length) {
-					let new_cat = category.find(cat => cat.topic_id === department.category_id)
-					department.category_name = new_cat.topic
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'topics').then((res) => {
+			res.data.map((department) => {
+				if (category.length) {
+					let new_cat = category.find((cat) => cat.topic_id === department.category_id);
+					department.category_name = new_cat.topic;
 				}
-			})
-			setDashboardData(res.data)
-			console.log(res.data)
-		})
+			});
+			setDashboardData(res.data);
+			console.log(res.data);
+		});
 	}, []);
-	
+
 	return (
 		<Box>
 			<Table>
@@ -383,21 +376,21 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 						}}
 					>
 						<TableCell>
-							<Typography variant="overline">Topic</Typography>
+							<Typography variant='overline'>Topic</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Created</Typography>
+							<Typography variant='overline'>Created</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Updated</Typography>
+							<Typography variant='overline'>Updated</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Overdue</Typography>
+							<Typography variant='overline'>Overdue</Typography>
 						</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map(categoryInfo => (
+					{dashboardData.map((categoryInfo) => (
 						<TableRow
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
@@ -413,9 +406,9 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 							<TableCell>{categoryInfo.updated}</TableCell>
 							<TableCell>{categoryInfo.overdue}</TableCell>
 						</TableRow>
-						))}
+					))}
 				</TableBody>
-			</Table> 
+			</Table>
 		</Box>
 	);
 };
@@ -423,25 +416,19 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 const Agent = ({ selectedPeriod, selectedDate }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
-	const { agentAuthState } = useContext(AuthContext)
-	const { getAgentById } = useAgentBackend()
-	const category = getAgentById(agentAuthState.agent_id)
-
+	const { agentAuthState } = useContext(AuthContext);
+	const { getAgentById } = useAgentBackend();
+	const [agent, setAgent] = useState([]);
 
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
-		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'agent')
-		.then((res) => { 
-			res.data.map(agent => {
-				if(category.items.length) {
-					let new_cat = category.items.find(cat => cat.agent_id === agent.category_id)
-					agent.category_name = new_cat.firstname + " " + new_cat.lastname
-				}
-			})
-			setDashboardData(res.data)
-			console.log(res.data)
-		})
-	}, []);
+		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'agent').then(res => {
+			setDashboardData(res.data);
+			getAgentById(agentAuthState.agent_id).then(agentData => {
+				setAgent(agentData.data);
+			});
+		});
+	}, [])
 
 	return (
 		<Box>
@@ -456,21 +443,21 @@ const Agent = ({ selectedPeriod, selectedDate }) => {
 						}}
 					>
 						<TableCell>
-							<Typography variant="overline">Agent Name</Typography>
+							<Typography variant='overline'>Agent Name</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Created</Typography>
+							<Typography variant='overline'>Created</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Updated</Typography>
+							<Typography variant='overline'>Updated</Typography>
 						</TableCell>
 						<TableCell>
-							<Typography variant="overline">Overdue</Typography>
+							<Typography variant='overline'>Overdue</Typography>
 						</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map(agentInfo => (
+					{dashboardData.map((agentInfo) => (
 						<TableRow
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
@@ -481,14 +468,14 @@ const Agent = ({ selectedPeriod, selectedDate }) => {
 								},
 							}}
 						>
-							<TableCell>{agentInfo.category_name}</TableCell>
+							<TableCell>{agent.firstname + " " + agent.lastname}</TableCell>
 							<TableCell>{agentInfo.created}</TableCell>
 							<TableCell>{agentInfo.updated}</TableCell>
 							<TableCell>{agentInfo.overdue}</TableCell>
 						</TableRow>
-						))}
+					))}
 				</TableBody>
-			</Table> 
+			</Table>
 		</Box>
 	);
 };
