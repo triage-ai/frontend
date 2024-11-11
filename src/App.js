@@ -22,6 +22,9 @@ import { EmailSettings } from './pages/email/EmailSettings';
 import { EmailBanlist } from './pages/email/EmailBanlist';
 import { EmailTemplates } from './pages/email/templates/EmailTemplates';
 import { EmailDiagnostic } from './pages/email/EmailDiagnostic';
+import { Users } from './pages/user/Users';
+import { Departments } from './pages/department/Departments';
+import { Groups } from './pages/group/Groups';
 
 const theme = createTheme({
 	palette: {
@@ -230,10 +233,10 @@ function App() {
 						/>
 
 						<Route
-							path='manage/agents'
+							path='manage/groups'
 							element={
 								<ProtectedRoute requirePermission={'agent.view'}>
-									<Agents />
+									<Groups />
 								</ProtectedRoute>
 							}
 						/>
@@ -245,14 +248,54 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
-						{/* <Route
+						<Route
 							path='manage/users'
 							element={
-								<ProtectedRoute requirePermission={'user.view'}>
+								<ProtectedRoute>
 									<Users />
 								</ProtectedRoute>
 							}
-						/> */}
+						/>
+						<Route
+							path='manage/queues'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/slas'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/schedules'
+							element={
+								<ProtectedRoute>
+									<Users />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/departments'
+							element={
+								<ProtectedRoute>
+									<Departments />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/groups'
+							element={
+								<ProtectedRoute>
+									<Groups />
+								</ProtectedRoute>
+							}
+						/>
 					</Routes>
 				</div>
 			</CookiesProvider>

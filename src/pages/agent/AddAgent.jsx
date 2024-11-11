@@ -95,7 +95,7 @@ function QontoStepIcon(props) {
 
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
-export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) => {
+export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	const { getAllRoles } = useRolesBackend();
 	const { createAgent, updateAgent, getPermissions } = useAgentBackend();
 
@@ -250,13 +250,13 @@ export const AddAgent = ({ handleAgentCreated, handleAgentEdited, editAgent }) =
 		if (editAgent) {
 			updateAgent({ ...formData, permissions: formatPermissions() })
 				.then(res => {
-					handleAgentEdited();
+					handleEdited();
 				})
 				.catch(err => console.error(err));
 		} else {
 			createAgent({ ...formData, permissions: formatPermissions() })
 				.then(res => {
-					handleAgentCreated();
+					handleCreated();
 				})
 				.catch(err => console.error(err));
 		}

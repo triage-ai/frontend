@@ -154,6 +154,8 @@ export const Tickets = () => {
 				icon: <TicketPlus size={20} />,
 				hidden: permissions.hasOwnProperty('ticket.create')
 			}}
+			AddResource={AddTicket}
+			refreshResource={refreshTickets}
 		>
 			<WhiteContainer noPadding>
 				<Box
@@ -414,8 +416,8 @@ export const Tickets = () => {
 					</IconButton>
 
 					<AddTicket
-						handleTicketCreated={handleTicketCreated}
-						handleTicketEdited={handleTicketEdited}
+						handleCreated={handleTicketCreated}
+						handleEdited={handleTicketEdited}
 						editTicket={selectedTicket}
 					/>
 				</Box>

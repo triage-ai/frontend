@@ -8,18 +8,19 @@ import { CustomFilledInput } from '../../components/custom-input';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
+import { AgentSelect } from '../agent/AgentSelect';
+import { SLASelect } from '../sla/SLASelect';
+import { ScheduleSelect } from '../schedule/ScheduleSelect';
 
-export const AddDepartment = ({ handleClose }) => {
-	const { getAllSLAs } = useSLABackend();
-	const { getAllSchedules } = useScheduleBackend();
-	const { createDepartment } = useDepartmentBackend();
-	const { refreshDepartments } = useData();
+export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) => {
+	const { createDepartment, updateDepartment } = useDepartmentBackend();
 
 	const sendNotification = useNotification();
 
-	const [slas, setSlas] = useState([]);
-	const [schedules, setSchedules] = useState([]);
-	const [departmentData, setDepartmentData] = useState({
+	const [manager, setManager] = useState(null);
+	const [isFormValid, setIsFormValid] = useState(false)
+
+	const [formData, setFormData] = useState({
 		sla_id: '',
 		schedule_id: '',
 		email_id: '',
@@ -28,124 +29,125 @@ export const AddDepartment = ({ handleClose }) => {
 		signature: '',
 	});
 
-	const [isFormValid, setIsFormValid] = useState(false);
+	const validateForm = () => {
+        return formData.name !== ''
+    }
+
 
 	useEffect(() => {
-		getAllSLAs()
-			.then(slas => {
-				const slaData = slas.data;
-				const formattedSlas = slaData.map(sla => {
-					return { value: sla.sla_id, label: sla.name };
-				});
-				setSlas(formattedSlas);
-			})
-			.catch(err => {
-				console.error(err);
-			});
+		if (editDepartment) {
+			setFormData(editDepartment)
+			setManager(editDepartment.manager)
+		}
 
-		getAllSchedules()
-			.then(schedules => {
-				const schedulesData = schedules.data;
-				const formattedSchedules = schedulesData.map(schedule => {
-					return {
-						value: schedule.schedule_id,
-						label: schedule.name,
-						sublabel: schedule.description.charAt(0).toUpperCase() + schedule.description.slice(1),
-					};
-				});
-				setSchedules(formattedSchedules);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-	}, []);
+	}, [editDepartment]);
+
+	const prepareFormData = () => {
+		const {sla_id, schedule_id, email_id, manager_id, name, signature} =  formData
+		return {
+			sla_id: sla_id === '' ? null : sla_id,
+			schedule_id: schedule_id === '' ? null : schedule_id,
+			email_id: email_id === '' ? null : email_id,
+			manager_id: manager_id === '' ? null : manager_id,
+			name: name,
+			signature: signature === '' ? null : signature,
+			...(editDepartment && {dept_id: formData.dept_id})
+		}
+	}
 
 	useEffect(() => {
-		const { name, sla_id, schedule_id, manager_id, email_id, signature } = departmentData;
-		const isValid =
-			name !== '' &&
-			sla_id !== '' &&
-			schedule_id !== '' &&
-			manager_id !== '' &&
-			email_id !== '' &&
-			signature !== '';
-
-		setIsFormValid(isValid);
-	}, [departmentData]);
+		setIsFormValid(validateForm())
+	}, [formData]);
 
 	const handleInputChange = e => {
 		const { name, value } = e.target;
-		setDepartmentData(prevFormData => ({
+		setFormData(prevFormData => ({
 			...prevFormData,
 			[name]: value,
 		}));
 	};
 
-	const addDepartment = () => {
-		createDepartment(departmentData)
-			.then(res => {
-				refreshDepartments();
-				handleClose();
-				sendNotification({ msg: 'Department created successfully', variant: 'success' });
-			})
-			.catch(err => console.error(err));
+	const handleManagerChange = (e, newValue) => {
+		setManager(newValue)
+		setFormData(p => ({ ...p, manager_id: newValue?.agent_id ?? '' }))
+	}
+
+	const handleAction = () => {
+		if (editDepartment) {
+			updateDepartment(prepareFormData(formData))
+				.then(res => {
+					handleEdited();
+				})
+				.catch(err => console.error(err));
+		} else {
+			createDepartment(prepareFormData(formData))
+				.then(res => {
+					handleCreated();
+				})
+				.catch(err => console.error(err));
+		}
 	};
 
 	return (
-		<Box sx={{ px: 4 }}>
+		<>
 			<Typography
-				variant="body1"
-				sx={{ color: '#545555', mb: 3 }}
+				variant="h1"
+				sx={{ mb: 1.5 }}
 			>
-				Provide the necessary information to create a new department.
+				{editDepartment ? 'Edit department' : 'Add new department'}
 			</Typography>
 
-			<Stack
-				spacing={1.5}
-				sx={{ alignItems: 'center' }}
+			<Typography variant="subtitle2">
+				{editDepartment ? 'Edit the details for this department' : 'We will gather essential details about the new department. Complete the following steps to ensure accurate setup and access.'}
+			</Typography>
+
+			<Box
+				sx={{
+					background: '#FFF',
+					m: 4,
+					p: 4,
+					pt: 3,
+					borderRadius: '12px',
+					textAlign: 'left',
+				}}
 			>
+				<Typography
+					variant="h4"
+					sx={{ fontWeight: 600, mb: 2 }}
+				>
+					Department information
+				</Typography>
+
 				<CustomFilledInput
 					label="Name"
 					onChange={handleInputChange}
-					value={departmentData.name}
+					value={formData.name}
 					name="name"
 					mb={2}
 					fullWidth
 				/>
 
-				<CustomSelect
-					label="SLA"
-					onChange={handleInputChange}
-					value={departmentData.sla_id}
-					name="sla_id"
-					mb={2}
-					fullWidth
-					options={slas}
+				<SLASelect
+					handleInputChange={handleInputChange}
+					value={formData.sla_id}
 				/>
 
-				<CustomSelect
-					label="Schedule"
-					onChange={handleInputChange}
-					value={departmentData.schedule_id}
-					name="schedule_id"
-					mb={2}
-					fullWidth
-					options={schedules}
+				<ScheduleSelect
+					handleInputChange={handleInputChange}
+					value={formData.schedule_id}
 				/>
 
-				<CustomFilledInput
-					label="Manager Id"
-					onChange={handleInputChange}
-					value={departmentData.manager_id}
-					name="manager_id"
+				<AgentSelect
+					name='manager'
+					handleInputChange={handleManagerChange}
+					value={manager ?? ''}
 					mb={2}
-					fullWidth
 				/>
 
 				<CustomFilledInput
 					label="Email"
 					onChange={handleInputChange}
-					value={departmentData.email_id}
+					value={formData.email_id}
 					name="email_id"
 					mb={2}
 					fullWidth
@@ -154,44 +156,28 @@ export const AddDepartment = ({ handleClose }) => {
 				<CustomFilledInput
 					label="Signature"
 					onChange={handleInputChange}
-					value={departmentData.signature}
+					value={formData.signature}
 					name="signature"
 					fullWidth
 					multiline
 					rows={3}
 				/>
-			</Stack>
+
+			</Box>
 
 			<Stack
-				direction={'row'}
+				direction="row"
 				spacing={1.5}
-				sx={{ justifyContent: 'center', mt: 3.5, mb: 2 }}
+				sx={{ justifyContent: 'center' }}
 			>
 				<CircularButton
-					sx={{
-						background: 'transparent',
-						color: '#22874E',
-						fontWeight: 600,
-						border: '1.5px solid #22874E',
-						py: 2,
-						px: 4,
-						'&:hover': {
-							background: '#FFF',
-						},
-					}}
-					onClick={handleClose}
-				>
-					Cancel
-				</CircularButton>
-
-				<CircularButton
 					sx={{ py: 2, px: 6 }}
-					onClick={addDepartment}
+					onClick={handleAction}
 					disabled={!isFormValid}
 				>
-					Create department
+					{editDepartment ? 'Edit' : 'Create'} department
 				</CircularButton>
 			</Stack>
-		</Box>
+		</>
 	);
 };

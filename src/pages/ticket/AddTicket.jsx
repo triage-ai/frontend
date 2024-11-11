@@ -26,7 +26,7 @@ import { useFormBackend } from '../../hooks/useFormBackend'
 
 dayjs.extend(utc)
 
-export const AddTicket = ({ handleTicketCreated, handleTicketEdited, editTicket }) => {
+export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 	const { createAgent, updateAgent } = useAgentBackend();
 	const { createTicket, updateTicket, getTicketForms } = useTicketBackend();
 	const { getFormById } = useFormBackend();
@@ -210,13 +210,13 @@ export const AddTicket = ({ handleTicketCreated, handleTicketEdited, editTicket 
 		if (editTicket) {
 			updateTicket(prepareEditTicketFormData(formData))
 				.then(res => {
-					handleTicketEdited();
+					handleEdited();
 				})
 				.catch(err => console.error(err));
 		} else {
 			createTicket(prepareNewTicketFormData(formData))
 				.then(res => {
-					handleTicketCreated();
+					handleCreated();
 				})
 				.catch(err => console.error(err));
 		}

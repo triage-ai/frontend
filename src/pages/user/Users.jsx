@@ -21,17 +21,15 @@ import {
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
+import { useUserBackend } from '../../hooks/useUserBackend';
 import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
-import { AddAgent } from './AddAgent';
-import { DeleteAgent } from './DeleteAgent';
+import { AddUser } from './AddUser';
+import { DeleteUser } from './DeleteUser';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import TablePagination from '@mui/material/TablePagination';
-import { AuthContext } from '../../context/AuthContext';
-import { AddTicket } from '../ticket/AddTicket';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -60,46 +58,21 @@ export const SearchTextField = styled('input')({
 	},
 });
 
-export const Agents = () => {
-	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllGroups } = useGroupBackend();
-	const { getAllAgentsByDeptAndGroup } = useAgentBackend();
+export const Users = () => {
+	const { getAllUsersBySearch } = useUserBackend();
 	const [page, setPage] = useState(0)
 	const [size, setSize] = useState(10)
-	const [totalAgents, setTotalAgents] = useState(0);
-	const [agents, setAgents] = useState([])
-	const [departments, setDepartments] = useState([]);
-	const [groups, setGroups] = useState([])
-	const [dept, setDept] = useState(-1);
-	const [group, setGroup] = useState(-1);
-	const [selectedAgent, setSelectedAgent] = useState({});
+	const [totalUsers, setTotalUsers] = useState(0);
+	const [users, setUsers] = useState([])
+	const [selectedUser, setSelectedUser] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-	const { agentAuthState } = useContext(AuthContext);
+    const [search, setSearch] = useState('');
 
 	useEffect(() => {
-		refreshAgents()
-
-		getAllDepartments()
-			.then(res => {
-				setDepartments(res.data);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-		getAllGroups()
-			.then(res => {
-				setGroups(res.data);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-	}, []);
-
-	useEffect(() => {
-		refreshAgents()
-	}, [dept, group, page, size])
+        refreshUsers()
+    }, [page, size]);
 
 	const handleChangePage = (e, newValue) => {
 		setPage(newValue)
@@ -109,20 +82,30 @@ export const Agents = () => {
 		setSize(e.target.value)
 	}
 
-	const refreshAgents = () => {
+    const handleSearchChange = (e) => {
+        setSearch(e.target.value)
+    }
 
-		getAllAgentsByDeptAndGroup(departments[dept]?.dept_id ?? null, groups[group]?.group_id ?? null, page + 1, size)
+    const handleSearch = (e) => {
+        if (e.key === "Enter") {
+            refreshUsers()
+        }
+    }
+
+	const refreshUsers = () => {
+
+		getAllUsersBySearch(search, page + 1, size)
 			.then(res => {
-				setAgents(res.data.items)
-				setTotalAgents(res.data.total)
+				setUsers(res.data.items)
+				setTotalUsers(res.data.total)
 			})
 			.catch(err => {
 				console.error(err);
 			});
 	}
 
-	const handleDialogOpen = (agent, button) => {
-		setSelectedAgent(agent);
+	const handleDialogOpen = (user, button) => {
+		setSelectedUser(user);
 		setButtonClicked(button);
 
 		if (button === 'edit') {
@@ -136,9 +119,9 @@ export const Agents = () => {
 		setOpenDialog(false);
 	};
 
-	const handleAgentEdited = () => {
+	const handleEdited = () => {
 		handleDialogClose();
-		refreshAgents();
+		refreshUsers();
 	};
 
 	const handleDeleteDialogClose = () => {
@@ -147,28 +130,19 @@ export const Agents = () => {
 
 	const handleDelete = () => {
 		handleDeleteDialogClose();
-		refreshAgents();
+		refreshUsers();
 	};
-
-	const handleDeptChange = (e) => {
-		setDept(e.target.value)
-	}
-
-	const handleGroupChange = (e) => {
-		setGroup(e.target.value)
-	}
 
 	return (
 		<Layout
-			title={'Agent List'}
-			subtitle={'View your agents and add new ones'}
+			title={'User List'}
+			subtitle={'View your users and add new ones'}
 			buttonInfo={{
-				label: 'Add new agent',
+				label: 'Add new user',
 				icon: <UserRoundPlus size={20} />,
-				hidden: agentAuthState.isAdmin,
 			}}
-			AddResource={AddAgent}
-			refreshResource={refreshAgents}
+            AddResource={AddUser}
+            refreshResource={refreshUsers}
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
@@ -178,7 +152,8 @@ export const Agents = () => {
 							label="Search"
 							variant="filled"
 							placeholder="Search"
-							disabled
+                            onKeyDown={handleSearch}
+                            onChange={handleSearchChange}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -196,116 +171,10 @@ export const Agents = () => {
 						>
 							<Search
 								size={20}
-								color="#575757"
 							/>
 						</Box>
 					</Box>
 
-					<FormControl
-						sx={{ minWidth: 200 }}
-					>
-						<Select
-							displayEmpty
-							size='small'
-							value={dept}
-							onChange={handleDeptChange}
-							renderValue={item => (
-								<Box
-									display={'flex'}
-									alignItems={'center'}
-								>
-									<Typography
-										variant="subtitle2"
-										fontWeight={600}
-										sx={{ color: '#1B1D1F' }}
-									>
-										{item === -1 ? 'All Departments' : departments[item].name}
-									</Typography>
-								</Box>
-							)}
-							IconComponent={props => (
-								<ChevronDown
-									{...props}
-									size={17}
-									color="#1B1D1F"
-								/>
-							)}
-							sx={{
-								'.MuiOutlinedInput-notchedOutline': {
-									borderRadius: '8px',
-									borderColor: '#E5EFE9',
-								},
-							}}
-						>
-							<MenuItem
-								key={-1}
-								value={-1}
-							>
-								<Typography variant="subtitle2">All Departments</Typography>
-							</MenuItem>
-							{departments.map((x, y) => (
-								<MenuItem
-									key={y}
-									value={y}
-								>
-									<Typography variant="subtitle2">{x.name}</Typography>
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-					
-					<FormControl
-						sx={{ minWidth: 200 }}
-					>
-					<Select
-						displayEmpty
-						size='small'
-						value={group}
-						onChange={handleGroupChange}
-						renderValue={item => (
-							<Box
-								display={'flex'}
-								alignItems={'center'}
-							>
-								<Typography
-									variant="subtitle2"
-									fontWeight={600}
-									sx={{ color: '#1B1D1F' }}
-								>
-									{item === -1 ? 'All Groups' : groups[item].name}
-								</Typography>
-							</Box>
-						)}
-						IconComponent={props => (
-							<ChevronDown
-								{...props}
-								size={17}
-								color="#1B1D1F"
-							/>
-						)}
-						sx={{
-							'.MuiOutlinedInput-notchedOutline': {
-								borderRadius: '8px',
-								borderColor: '#E5EFE9',
-							},
-						}}
-					>
-						<MenuItem
-							key={-1}
-							value={-1}
-						>
-							<Typography variant="subtitle2">All Groups</Typography>
-						</MenuItem>
-						{groups.map((x, y) => (
-							<MenuItem
-								key={y}
-								value={y}
-							>
-								<Typography variant="subtitle2">{x.name}</Typography>
-							</MenuItem>
-						))}
-					</Select>
-					</FormControl>
 				</Box>
 
 				<Table>
@@ -322,16 +191,13 @@ export const Agents = () => {
 								<Typography variant="overline">Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Username</Typography>
+								<Typography variant="overline">Status</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Department</Typography>
+								<Typography variant="overline">Created</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Email</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Phone</Typography>
+								<Typography variant="overline">Updated</Typography>
 							</TableCell>
 							<TableCell align="right">
 								<Typography variant="overline"></Typography>
@@ -339,9 +205,9 @@ export const Agents = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{agents.map(agent => (
+						{users.map(user => (
 							<TableRow
-								key={agent.agent_id}
+								key={user.user_id}
 								sx={{
 									'&:last-child td, &:last-child th': { border: 0 },
 									'& .MuiTableCell-root': {
@@ -351,16 +217,10 @@ export const Agents = () => {
 									},
 								}}
 							>
-								<TableCell
-									component="th"
-									scope="row"
-								>
-									{agent.firstname + ' ' + agent.lastname}
-								</TableCell>
-								<TableCell>{agent.username}</TableCell>
-								<TableCell>{agent.department.name}</TableCell>
-								<TableCell>{agent.email}</TableCell>
-								<TableCell>{agent.phone}</TableCell>
+								<TableCell>{user.name}</TableCell>
+								<TableCell>NA</TableCell>
+								<TableCell>{user.created}</TableCell>
+								<TableCell>{user.updated}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"
@@ -371,29 +231,29 @@ export const Agents = () => {
 										spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										{agentAuthState.isAdmin && <IconButton
+										<IconButton
 											sx={{
 												'&:hover': {
 													background: '#f3f6fa',
 													color: '#105293',
 												},
 											}}
-											onClick={() => handleDialogOpen(agent, 'edit')}
+											onClick={() => handleDialogOpen(user, 'edit')}
 										>
 											<Pencil size={18} />
-										</IconButton>}
+										</IconButton>
 
-										{agentAuthState.isAdmin && <IconButton
+										<IconButton
 											sx={{
 												'&:hover': {
 													background: '#faf3f3',
 													color: '#921010',
 												},
 											}}
-											onClick={() => handleDialogOpen(agent, 'delete')}
+											onClick={() => handleDialogOpen(user, 'delete')}
 										>
 											<Trash2 size={18} />
-										</IconButton>}
+										</IconButton>
 									</Stack>
 								</TableCell>
 							</TableRow>
@@ -403,7 +263,7 @@ export const Agents = () => {
 				<Box>
 				<TablePagination
 					component="div"
-					count={totalAgents}
+					count={totalUsers}
 					page={page}
 					onPageChange={handleChangePage}
 					rowsPerPage={size}
@@ -452,9 +312,9 @@ export const Agents = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddAgent
-							handleEdited={handleAgentEdited}
-							editAgent={selectedAgent}
+						<AddUser
+							handleEdited={handleEdited}
+							editUser={selectedUser}
 						/>
 					</Box>
 				</Dialog>
@@ -494,8 +354,8 @@ export const Agents = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteAgent
-							editAgent={selectedAgent}
+						<DeleteUser
+							editUser={selectedUser}
 							handleDelete={handleDelete}
 							handleClose={handleDeleteDialogClose}
 						/>

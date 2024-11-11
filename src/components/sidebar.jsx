@@ -89,103 +89,21 @@ export const Sidebar = ({
 	appBarTitle,
 	appBarSubtitle,
 	buttonInfo,
-	taskId,
-	processParam,
-	finishedParam,
+	AddResource,
+	refreshResource
 }) => {
-	const { refreshAgents, refreshTickets } = useData();
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
-	const [activeModel, setActiveModel] = useState(sessionStorage.getItem('activeModel'));
-	const [activeModelEnv, setActiveModelEnv] = useState(sessionStorage.getItem('activeModelEnv'));
 	const initialTime = 10; // in seconds
 	const [timeLeft, setTimeLeft] = useState(initialTime);
-
-	const [progressBarPercent, setProgressBarPercent] = useState(0);
 	const navigate = useNavigate();
-	const { getTaskStatus } = useStatusBackend();
 
-	const [process, setProcess] = useState(0);
-	const [finishedProcessing, setFinishedProcessing] = useState(0);
-
-	const timerId = useRef();
-
-	const location = useLocation();
-	// const { handleLogout } = useSetAuthCookie();
 	const { agentLogout } = useContext(AuthContext);
 
 	const theme = useTheme();
 	const [openDialog, setOpenDialog] = useState(false);
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-	useEffect(() => {
-		setProcess(processParam);
-
-		if (processParam === 'test') {
-			setFinishedProcessing(finishedParam);
-		}
-	}, [processParam, finishedParam]);
-
-	useEffect(() => {
-		setProgressBarPercent(0);
-		setTimeLeft(initialTime);
-		setProcess('');
-	}, [location]);
-
-	useEffect(() => {
-		window.addEventListener('storage', () => {
-			setActiveModel(sessionStorage.getItem('activeModel'));
-			setActiveModelEnv(sessionStorage.getItem('activeModelEnv'));
-		});
-	}, []);
-
-	useEffect(() => {
-		if (taskId !== 0 && taskId) {
-			if (initialTime) {
-				timerId.current = window.setInterval(() => {
-					setTimeLeft(prevProgress => prevProgress - 1);
-				}, 1000);
-
-				return () => {
-					clearInterval(timerId.current);
-				};
-			}
-		}
-	}, [taskId]);
-
-	useEffect(() => {
-		if (initialTime) {
-			if (progressBarPercent < 100) {
-				let updateProgressPercent = Math.round(((initialTime - timeLeft) / initialTime) * 100);
-				setProgressBarPercent(updateProgressPercent);
-			}
-
-			if (timeLeft === 1 && timerId.current) {
-				clearInterval(timerId.current);
-				getStatus();
-				return;
-			}
-		}
-	}, [timeLeft]);
-
-	const getStatus = () => {
-		const interval = window.setInterval(() => {
-			getTaskStatus(taskId).then(res => {
-				// MUST REMOVE THIS BECAUSE IT'S JUST SIMULATING
-				if ((process === 'fine-tune' || process === 'build') && res.data.state === 'PENDING') {
-					clearInterval(interval);
-					setTimeLeft(0);
-				} else if (res.data.state !== 'PENDING') {
-					clearInterval(interval);
-					setTimeLeft(0);
-				} else if (res.data.state === 'FAILURE') {
-					clearInterval(interval);
-					setTimeLeft(0);
-				}
-			});
-		}, 1000);
-	};
 
 	const handleDrawerClose = () => {
 		setIsClosing(true);
@@ -207,18 +125,6 @@ export const Sidebar = ({
 		navigate('/', { replace: true });
 	};
 
-	const getProcessNumber = () => {
-		if (progressBarPercent <= 20) {
-			return 1;
-		} else if (progressBarPercent <= 50) {
-			return 2;
-		} else if (progressBarPercent <= 70) {
-			return 3;
-		} else if (progressBarPercent <= 100) {
-			return 4;
-		}
-	};
-
 	const handleClickDialogOpen = () => {
 		setOpenDialog(true);
 	};
@@ -227,15 +133,10 @@ export const Sidebar = ({
 		setOpenDialog(false);
 	};
 
-	const handleAgentCreated = () => {
-		handleDialogClose();
-		refreshAgents();
-	};
-
-	const handleTicketCreated = () => {
-		handleDialogClose();
-		refreshTickets();
-	};
+	const handleCreated = () => {
+		handleDialogClose()
+		refreshResource()
+	}
 
 	return (
 		<Box sx={{ display: 'flex' }}>
@@ -425,12 +326,7 @@ export const Sidebar = ({
 						<X size={20} />
 					</IconButton>
 
-					{appBarTitle.toLowerCase().includes('agent list') && (
-						<AddAgent handleAgentCreated={handleAgentCreated} />
-					)}
-					{appBarTitle.toLowerCase().includes('ticket list') && (
-						<AddTicket handleTicketCreated={handleTicketCreated} />
-					)}
+					<AddResource handleCreated={handleCreated} />
 				</Box>
 
 				{/* <h1>{"Use Google's location service?"}</h1>
