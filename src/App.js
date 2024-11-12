@@ -233,14 +233,6 @@ function App() {
 						/>
 
 						<Route
-							path='manage/groups'
-							element={
-								<ProtectedRoute requirePermission={'agent.view'}>
-									<Groups />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
 							path='profile'
 							element={
 								<ProtectedRoute>
@@ -248,6 +240,25 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
+						<Route
+							path='manage/agents'
+							element={
+								<ProtectedRoute requirePermission={'agent.view'}>
+									<Agents />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='manage/groups'
+							element={
+								<ProtectedRoute requirePermission={'agent.view'}>
+									<Groups />
+								</ProtectedRoute>
+							}
+						/>
+
 						<Route
 							path='manage/users'
 							element={
@@ -256,6 +267,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/queues'
 							element={
@@ -264,6 +276,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/slas'
 							element={
@@ -272,6 +285,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/schedules'
 							element={
@@ -280,6 +294,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/departments'
 							element={
@@ -288,6 +303,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/groups'
 							element={

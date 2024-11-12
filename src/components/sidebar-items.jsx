@@ -274,10 +274,6 @@ export const getManageSubmenuItems = (permissions, adminStatus) => [
 					title: 'Roles',
 					icon: <KeyRound size={20} />,
 				},
-				{
-					title: 'Templates',
-					icon: <NotebookText size={20} />,
-				},
 		  ]
 		: []),
 ];
