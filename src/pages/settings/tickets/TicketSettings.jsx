@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import { Box, Checkbox, CircularProgress, FormControlLabel, MenuItem, Stack, Typography } from '@mui/material';
@@ -11,6 +11,13 @@ import { StyledSelect } from '../SettingsMenus';
 import { CircularButton } from '../../../components/sidebar';
 import { CircleHelp } from 'lucide-react';
 import { styled } from '@mui/material/styles';
+import { PrioritySelect } from '../../priority/PrioritySelect';
+import { StatusSelect } from '../../status/StatusSelect';
+import { SLASelect } from '../../sla/SLASelect';
+import { TopicSelect } from '../../topic/TopicSelect';
+
+const storedAuthState = localStorage.getItem('agentAuthState');
+
 
 export const TicketSettings = (props) => {
 	const { settingsData } = props;
@@ -22,10 +29,10 @@ export const TicketSettings = (props) => {
 		default_ticket_number_format: settingsData.default_ticket_number_format.value,
 		default_ticket_number_sequence: settingsData.default_ticket_number_sequence.value,
 		top_level_ticket_counts: settingsData.top_level_ticket_counts.value,
-		default_status: settingsData.default_status.value,
-		default_priority: settingsData.default_priority.value,
-		default_sla: settingsData.default_sla.value,
-		default_help_topic: settingsData.default_help_topic.value,
+		status_id: settingsData.default_status_id.value,
+		priority_id: settingsData.default_priority_id.value,
+		sla_id: settingsData.default_sla_id.value,
+		topic_id: settingsData.default_topic_id.value,
 		lock_semantics: settingsData.lock_semantics.value,
 		default_ticket_queue: settingsData.default_ticket_queue.value,
 		max_open_tickets: settingsData.max_open_tickets.value,
@@ -38,17 +45,15 @@ export const TicketSettings = (props) => {
 	});
 
 	const handleChange = (entry) => {
-		console.log(entry);
-		setFormState({
+		setFormState(formState => ({
 			...formState,
 			[entry.target.name]: entry.target.value,
-		});
+		}));
 
 		setLoading(false);
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event);
 
 		setFormState({
 			...formState,
@@ -125,41 +130,48 @@ export const TicketSettings = (props) => {
 					/>
 				</Stack>
 
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
-					Default Status
-				</Typography>
-				<StyledSelect name='default_status' value={formState.default_status} onChange={handleChange} sx={{ width: 350 }}>
-					<MenuItem value='Open'>Open</MenuItem>
-				</StyledSelect>
+				<Stack sx={{ width: 200 }}>
+					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+						Default Status
+					</Typography>
+					<StatusSelect
+						handleInputChange={handleChange}
+						value={formState.status_id}
+						sx={{ width: 200 }}
+					/>
+				</Stack>
 
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
-					Default Priority
-				</Typography>
-				<StyledSelect name='default_priority' value={formState.default_priority} onChange={handleChange} sx={{ width: 350 }}>
-					<MenuItem value='Low'>Low</MenuItem>
-					<MenuItem value='Normal'>Normal</MenuItem>
-					<MenuItem value='High'>High</MenuItem>
-					<MenuItem value='Emergency'>Emergency</MenuItem>
-				</StyledSelect>
+				<Stack sx={{ width: 200 }}>
+					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+						Default Priority
+					</Typography>
+					<PrioritySelect
+						handleInputChange={handleChange}
+						value={formState.priority_id}
+						sx={{ width: 200 }}
+					/>
+				</Stack>
 
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
-					Default SLA
-				</Typography>
-				<StyledSelect name='default_sla' value={formState.default_sla} onChange={handleChange} sx={{ width: 350 }}>
-					<MenuItem value='None'>None</MenuItem>
-					<MenuItem value='Default'>Default SLA (18 Hours - Active)</MenuItem>
-				</StyledSelect>
+				<Stack sx={{ width: 200 }}>
+					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+						Default SLA
+					</Typography>
+					<SLASelect
+						handleInputChange={handleChange}
+						value={formState.sla_id}
+					/>
+				</Stack>
 
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
-					Default Help Topic
-				</Typography>
-				<StyledSelect name='default_help_topic' value={formState.default_help_topic} onChange={handleChange} sx={{ width: 350 }}>
-					<MenuItem value='None'>None</MenuItem>
-					<MenuItem value='Feedback'>Feedback</MenuItem>
-					<MenuItem value='General Inquiry'>General Inquiry</MenuItem>
-					<MenuItem value='Report a Problem'>Report a Problem</MenuItem>
-					<MenuItem value='Report a Problem / Access Issue'>Report a Problem / Access Issue</MenuItem>
-				</StyledSelect>
+				<Stack sx={{ width: 200 }}>
+					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+						Default Help Topic
+					</Typography>
+					<TopicSelect
+						handleInputChange={handleChange}
+						value={formState.topic_id}
+						sx={{ width: 200 }}
+					/>
+				</Stack>
 
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Lock Semantics
@@ -175,19 +187,14 @@ export const TicketSettings = (props) => {
 				</Typography>
 				<StyledSelect name='default_ticket_queue' value={formState.default_ticket_queue} onChange={handleChange} sx={{ width: 350 }}>
 					<MenuItem value='Open'>Open</MenuItem>
-					<MenuItem value='Open / Open'>Open / Open</MenuItem>
-					<MenuItem value='My Tickets / Assigned to Me'>My Tickets / Assigned to Me</MenuItem>
-					<MenuItem value='Closed / Today'>Closed / Today</MenuItem>
-					<MenuItem value='Open / Answered'>Open / Answered</MenuItem>
-					<MenuItem value='My Tickets / Assigned to Teams'>My Tickets / Assigned to Teams</MenuItem>
-					<MenuItem value='Closed / Yesterday'>Closed / Yesterday</MenuItem>
-					<MenuItem value='Open / Overdue'>Open / Overdue</MenuItem>
-					<MenuItem value='My Tickets'>My Tickets</MenuItem>
-					<MenuItem value='Closed / This Week'>Closed / This Week</MenuItem>
 					<MenuItem value='Closed'>Closed</MenuItem>
-					<MenuItem value='Closed / This Month'>Closed / This Month</MenuItem>
-					<MenuItem value='Closed / This Quarter'>Closed / This Quarter</MenuItem>
-					<MenuItem value='Closed / This Year'>Closed / This Year</MenuItem>
+					<MenuItem value='Unanswered'>Unanswered</MenuItem>
+					<MenuItem value='Overdue'>Overdue</MenuItem>
+					<MenuItem value='My Tickets'>My Tickets</MenuItem>
+					<MenuItem value='Today'>Today</MenuItem>
+					<MenuItem value='This Week'>This Week</MenuItem>
+					<MenuItem value='This Month'>This Month</MenuItem>
+					<MenuItem value='This Year'>This Year</MenuItem>
 				</StyledSelect>
 
 				<Stack>

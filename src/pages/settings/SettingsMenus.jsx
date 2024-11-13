@@ -8,7 +8,6 @@ import { SystemLanguages } from './system/SystemLanguages';
 import { Attachments } from './system/AttachmentsSettings';
 import { BasicInformation } from './company/CompanyBasicInfo';
 import { TicketSettings } from './tickets/TicketSettings';
-import { Queues } from './tickets/Queues';
 import { Autoresponder } from './tickets/AutoResponder';
 import { AlertsAndNotices } from './tickets/AlertsAndNotices';
 import { TaskSettings } from './tasks/TaskSettings';
@@ -18,12 +17,30 @@ import { AgentTemplates } from './agents/AgentTemplates';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
 import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
+import { Emails } from '../email/emails/Emails';
+import { EmailSettings } from '../email/EmailSettings';
+import { EmailBanlist } from '../email/EmailBanlist';
+import { EmailTemplates } from '../email/templates/EmailTemplates';
+import { EmailDiagnostic } from '../email/EmailDiagnostic';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
+		if (data.hasOwnProperty('status_id') || data.hasOwnProperty('priority_id') || data.hasOwnProperty('sla_id') || data.hasOwnProperty('topic_id')) {
+			data = {
+				...data,
+				default_status_id: data.status_id.toString(),
+				default_priority_id: data.priority_id.toString(),
+				default_sla_id: data.sla_id.toString(),
+				default_topic_id: data.topic_id.toString(),
+			};
+			delete data.status_id;
+			delete data.priority_id;
+			delete data.sla_id;
+			delete data.topic_id;
+		}
+
 		var updates = [];
 		Object.entries(data).forEach((k) => {
-			console.log(settingsData);
 			var row = settingsData[k[0]];
 			row.value = k[1];
 			updates.push(row);
@@ -62,7 +79,7 @@ export const StyledSelect = styled((props) => (
 	},
 });
 
-const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
+export const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
 		color: '#22874E',
 	},
@@ -216,9 +233,7 @@ export const UserMenu = (props) => {
 };
 
 export const KnowledgebaseMenu = (props) => {
-	const headers = [
-		{ id: 1, label: 'Settings' },
-	];
+	const headers = [{ id: 1, label: 'Settings' }];
 
 	const components = [<KnowledgebaseSettings {...props} />];
 

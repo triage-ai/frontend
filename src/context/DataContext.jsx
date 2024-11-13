@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
 import { useAgentBackend } from '../hooks/useAgentBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
@@ -11,16 +11,18 @@ import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { useQueueBackend } from '../hooks/useQueueBackend';
 import { useFormBackend } from '../hooks/useFormBackend';
+import { useTemplateBackend } from '../hooks/useTemplateBackend';
 import { NotebookPen } from 'lucide-react';
+import { AuthContext } from './AuthContext';
 import { useScheduleBackend } from '../hooks/useScheduleBackend';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-	const { getAllAgents } = useAgentBackend();
+	const { getAllAgents, getAgentById } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllRoles } = useRoleBackend();
+	const { getAllRoles, getRoleById } = useRolesBackend();
 	const { getAllSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();
@@ -28,6 +30,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllStatuses } = useStatusBackend();
 	const { getAllTopics } = useTopicBackend();
 	const { getQueuesForAgent } = useQueueBackend();
+	const { getAllTemplates } = useTemplateBackend();
 	const { getAllSchedules } = useScheduleBackend();
 	const { getAllForms } = useFormBackend();
 
@@ -58,6 +61,8 @@ export const DataProvider = ({ children }) => {
 
 	const [queues, setQueues] = useState([])
 	const [queueIdx, setQueueIdx] = useState([])
+
+	const [templates, setTemplates] = useState([])
 
 	const [schedules, setSchedules] = useState([])
 	const [formattedSchedules, setFormattedSchedules] = useState([])
@@ -214,6 +219,12 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getQueuesForAgent]);
 
+	const refreshTemplates = useCallback(() => {
+		getAllTemplates().then(templateList => {
+			setTemplates(templateList.data);
+		});
+	}, [getAllTemplates]);
+
 	const refreshSchedules = useCallback(() => {
 		getAllSchedules()
 			.then(schedules => {
@@ -257,6 +268,8 @@ export const DataProvider = ({ children }) => {
 				refreshAgents,
 				tickets,
 				refreshTickets,
+				templates,
+				refreshTemplates,
 				departments,
 				formattedDepartments,
 				refreshDepartments,
