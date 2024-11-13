@@ -38,6 +38,14 @@ export const useAgentBackend = () => {
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `agent/search/${input}`, config);
 	}
 
+	const getAgentById = async (id) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `agent/id/${id}`, config);
+	}
+
 	const createAgent = async agentInfo => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -80,5 +88,5 @@ export const useAgentBackend = () => {
 		);
 	};
 
-	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent };
+	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent, getAgentById };
 };

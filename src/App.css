@@ -121,6 +121,11 @@ p {
 	color: #61dafb;
 }
 
+.App-rich-text-field {
+	min-height: 300px;
+	/* max-width: 100%; */
+}
+
 .MuiMenu-paper {
 	border-radius: 12px !important;
 	box-shadow: rgba(15, 20, 25, 0.15) 0px 0px 12px 0px !important;

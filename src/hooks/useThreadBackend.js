@@ -5,31 +5,23 @@ import { AuthContext } from '../context/AuthContext';
 export const useThreadsBackend = () => {
 	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
-    const createThreadEntry = async threadInfo => {
-        const config = {
+	const createThreadEntry = async (threadInfo) => {
+		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
-        threadInfo.agent_id = agentAuthState.agentId
-        return await axios.post(
-            process.env.REACT_APP_BACKEND_URL + 'thread_entry/create',
-            threadInfo,
-            config
-        );
-    }
+		threadInfo.agent_id = agentAuthState.agent_id;
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create', threadInfo, config);
+	};
 
-	const createThreadEntryForUser = async threadInfo => {
-        const config = {
+	const createThreadEntryForUser = async (threadInfo) => {
+		const config = {
 			headers: { Authorization: `Bearer ${userAuthState.token}` },
 		};
-        threadInfo.user_id = userAuthState.userId
-        return await axios.post(
-            process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user',
-            threadInfo,
-            config
-        );
-    }
+		threadInfo.user_id = userAuthState.userId;
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user', threadInfo, config);
+	};
 
-    return { createThreadEntry, createThreadEntryForUser };
+	return { createThreadEntry, createThreadEntryForUser };
 
 	// const getAllOpenTickets = async () => {
 	// 	const config = {

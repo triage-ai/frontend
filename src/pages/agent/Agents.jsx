@@ -30,6 +30,7 @@ import { DeleteAgent } from './DeleteAgent';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import TablePagination from '@mui/material/TablePagination';
+import { AuthContext } from '../../context/AuthContext';
 import { AddTicket } from '../ticket/AddTicket';
 
 export const SearchTextField = styled('input')({
@@ -75,6 +76,7 @@ export const Agents = () => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
+	const { agentAuthState } = useContext(AuthContext);
 
 	useEffect(() => {
 		refreshAgents()
@@ -163,6 +165,7 @@ export const Agents = () => {
 			buttonInfo={{
 				label: 'Add new agent',
 				icon: <UserRoundPlus size={20} />,
+				hidden: agentAuthState.isAdmin,
 			}}
 			AddResource={AddAgent}
 			refreshResource={refreshAgents}
@@ -368,7 +371,7 @@ export const Agents = () => {
 										spacing={0.5}
 										sx={{ justifyContent: 'flex-end' }}
 									>
-										<IconButton
+										{agentAuthState.isAdmin && <IconButton
 											sx={{
 												'&:hover': {
 													background: '#f3f6fa',
@@ -378,9 +381,9 @@ export const Agents = () => {
 											onClick={() => handleDialogOpen(agent, 'edit')}
 										>
 											<Pencil size={18} />
-										</IconButton>
+										</IconButton>}
 
-										<IconButton
+										{agentAuthState.isAdmin && <IconButton
 											sx={{
 												'&:hover': {
 													background: '#faf3f3',
@@ -390,7 +393,7 @@ export const Agents = () => {
 											onClick={() => handleDialogOpen(agent, 'delete')}
 										>
 											<Trash2 size={18} />
-										</IconButton>
+										</IconButton>}
 									</Stack>
 								</TableCell>
 							</TableRow>

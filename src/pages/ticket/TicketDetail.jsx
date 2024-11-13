@@ -1,33 +1,11 @@
-import {
-	Box,
-	Button,
-	FormControl,
-	IconButton,
-	MenuItem,
-	Select,
-	styled,
-	Chip,
-	Typography,
-} from '@mui/material';
+import { Box, Button, FormControl, IconButton, MenuItem, Select, styled, Chip, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {
-	BadgeAlert,
-	CalendarClock,
-	ChevronDown,
-	CircleAlert,
-	FileText,
-	Info,
-	Network,
-	OctagonAlert,
-	Pencil,
-	TriangleAlert,
-	User,
-	X,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { BadgeAlert, CalendarClock, ChevronDown, CircleAlert, FileText, Info, Network, OctagonAlert, Pencil, TriangleAlert, User, X } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
 import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useStatusBackend } from '../../hooks/useStatusBackend';
+import { AuthContext } from '../../context/AuthContext';
 
 const IconBox = styled(Box)(() => ({
 	height: '35px',
@@ -48,6 +26,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 	const [statusList, setStatusList] = useState([]);
 	const [editing, setEditing] = useState(false);
+	const { permissions } = useContext(AuthContext);
 
 	function createData(name, calories, fat, carbs, protein) {
 		return { name, calories, fat, carbs, protein };
@@ -61,19 +40,19 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 		createData('Gingerbread', 356, 16.0, 49, 3.9),
 	];
 
-	const handleStatusChange = e => {
+	const handleStatusChange = (e) => {
 		const statusUpdate = {
-			status_id: statusList.find(x => x.name === e.target.value).status_id,
+			status_id: statusList.find((x) => x.name === e.target.value).status_id,
 		};
 		updateTicket(ticket.ticket_id, statusUpdate)
-			.then(res => {
+			.then((res) => {
 				updateCurrentTicket(res.data);
 			})
-			.catch(err => alert('Error while updating ticket status'));
+			.catch((err) => alert('Error while updating ticket status'));
 	};
 
 	const handleEditMode = () => {
-		setEditing(prevState => !prevState);
+		setEditing((prevState) => !prevState);
 	};
 
 	useEffect(() => {
@@ -81,7 +60,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 			.then(({ data }) => {
 				setStatusList(data);
 			})
-			.catch(err => alert('Could not get status list'));
+			.catch((err) => alert('Could not get status list'));
 		// eslint-disable-next-line
 	}, []);
 
@@ -90,48 +69,22 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 		openEdit(event, ticket);
 	};
 
-	const getPriorityIcon = priority => {
+	const getPriorityIcon = (priority) => {
 		switch (priority.priority) {
 			case 'low':
-				return (
-					<BadgeAlert
-						size={20}
-						color={priority.priority_color}
-					/>
-				);
+				return <BadgeAlert size={20} color={priority.priority_color} />;
 
 			case 'normal':
-				return (
-					<CircleAlert
-						size={20}
-						color={priority.priority_color}
-						backgroundColor="#000000"
-					/>
-				);
+				return <CircleAlert size={20} color={priority.priority_color} backgroundColor='#000000' />;
 
 			case 'high':
-				return (
-					<OctagonAlert
-						size={20}
-						color={priority.priority_color}
-					/>
-				);
+				return <OctagonAlert size={20} color={priority.priority_color} />;
 
 			case 'emergency':
-				return (
-					<TriangleAlert
-						size={20}
-						color={priority.priority_color}
-					/>
-				);
+				return <TriangleAlert size={20} color={priority.priority_color} />;
 
 			default:
-				return (
-					<BadgeAlert
-						size={20}
-						color={priority.priority_color}
-					/>
-				);
+				return <BadgeAlert size={20} color={priority.priority_color} />;
 		}
 	};
 
@@ -149,70 +102,39 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						}}
 					>
 						<Box sx={{ display: 'flex', alignItems: 'center' }}>
-							<Typography
-								variant="subtitle2"
-								mr={0.5}
-							>
+							<Typography variant='subtitle2' mr={0.5}>
 								Ticket number
 							</Typography>
-							<Typography
-								variant="h6"
-								fontWeight={600}
-							>
+							<Typography variant='h6' fontWeight={600}>
 								#{ticket.number}
 							</Typography>
-							<Typography
-								variant="h6"
-								mx={1}
-							>
+							<Typography variant='h6' mx={1}>
 								•
 							</Typography>
 							{getPriorityIcon(ticket.priority)}
-							<Typography
-								variant="overline"
-								ml={0.5}
-								sx={{ color: ticket.priority.color }}
-							>
+							<Typography variant='overline' ml={0.5} sx={{ color: ticket.priority.color }}>
 								{ticket.priority.priority_desc} priority
 							</Typography>
 						</Box>
 
 						<Box sx={{ display: 'flex', alignItems: 'center' }}>
-							<IconButton
-								sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }}
-								aria-label="edit"
-								onClick={() => {}}
-							>
-								<Pencil
-									size={20}
-									color="#6E7772"
-									onClick={event => openEditModal(event, ticket)}
-								/>
-							</IconButton>
+							{permissions.hasOwnProperty('ticket.edit') && (
+								<>
+									<IconButton sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }} aria-label='edit' onClick={(event) => openEditModal(event, ticket)}>
+										<Pencil size={20} color='#6E7772' onClick={() => {}} />
+									</IconButton>
 
-							<Box
-								sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }}
-								ml={2.25}
-								mr={1}
-							/>
+									<Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={2.25} mr={1} />
+								</>
+							)}
 
-							<IconButton
-								sx={{ borderRadius: '8px' }}
-								aria-label="edit"
-								onClick={closeDrawer}
-							>
-								<X
-									color="#6E7772"
-									strokeWidth={1.5}
-								/>
+							<IconButton sx={{ borderRadius: '8px' }} aria-label='edit' onClick={closeDrawer}>
+								<X color='#6E7772' strokeWidth={1.5} />
 							</IconButton>
 						</Box>
 					</Box>
 
-					<Box
-						position={'relative'}
-						mb={12}
-					>
+					<Box position={'relative'} mb={12}>
 						<Box
 							display={'flex'}
 							alignItems={'center'}
@@ -222,66 +144,32 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 							zIndex={1}
 							sx={{ p: '20px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
 						>
-							<Box
-								display={'flex'}
-								flexDirection={'column'}
-							>
-								<Typography
-									variant="caption"
-									mb={'6px'}
-									className="text-muted"
-								>
+							<Box display={'flex'} flexDirection={'column'}>
+								<Typography variant='caption' mb={'6px'} className='text-muted'>
 									Ticket Title
 								</Typography>
 
-								<Typography
-									variant="h6"
-									fontWeight={600}
-									lineHeight={1}
-								>
+								<Typography variant='h6' fontWeight={600} lineHeight={1}>
 									{ticket.title}
 								</Typography>
 							</Box>
 
-							<Box
-								display={'flex'}
-								alignItems={'center'}
-							>
-								<Typography
-									variant="caption"
-									className="text-muted"
-									fontWeight={600}
-								>
+							<Box display={'flex'} alignItems={'center'}>
+								<Typography variant='caption' className='text-muted' fontWeight={600}>
 									Status
 								</Typography>
 
-								<FormControl
-									fullWidth
-									sx={{ m: 1, minWidth: 120 }}
-									size="small"
-								>
+								<FormControl fullWidth sx={{ m: 1, minWidth: 120 }} size='small'>
 									<Select
 										displayEmpty
 										value={ticket.status?.name || ''}
 										onChange={handleStatusChange}
-										renderValue={item => (
-											<Box
-												display={'flex'}
-												alignItems={'center'}
-											>
-												<Box
-													width={'6px'}
-													height={'6px'}
-													borderRadius={'6px'}
-													marginRight={1}
-													sx={{ backgroundColor: '#D9D9D9' }}
-												/>
+										disabled={!permissions.hasOwnProperty('ticket.edit')}
+										renderValue={(item) => (
+											<Box display={'flex'} alignItems={'center'}>
+												<Box width={'6px'} height={'6px'} borderRadius={'6px'} marginRight={1} sx={{ backgroundColor: '#D9D9D9' }} />
 
-												<Typography
-													variant="subtitle2"
-													fontWeight={600}
-													sx={{ color: '#1B1D1F' }}
-												>
+												<Typography variant='subtitle2' fontWeight={600} sx={{ color: '#1B1D1F' }}>
 													{item}
 												</Typography>
 											</Box>
@@ -292,20 +180,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 												borderColor: '#E5EFE9',
 											},
 										}}
-										IconComponent={props => (
-											<ChevronDown
-												{...props}
-												size={17}
-												color="#1B1D1F"
-											/>
-										)}
+										IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
 									>
-										{statusList.map(status => (
-											<MenuItem
-												key={status.status_id}
-												value={status.name}
-											>
-												<Typography variant="subtitle2">{status.name}</Typography>
+										{statusList.map((status) => (
+											<MenuItem key={status.status_id} value={status.name}>
+												<Typography variant='subtitle2'>{status.name}</Typography>
 											</MenuItem>
 										))}
 									</Select>
@@ -324,69 +203,35 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 							bgcolor={'#FCFEFD'}
 							sx={{ p: '16px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
 						>
-							<Box
-								display={'flex'}
-								alignItems={'center'}
-							>
-								<FileText
-									color="#6E7772"
-									strokeWidth={1.5}
-								/>
-								<Typography
-									variant="subtitle2"
-									ml={1}
-									mb={'-4px'}
-								>
+							<Box display={'flex'} alignItems={'center'}>
+								<FileText color='#6E7772' strokeWidth={1.5} />
+								<Typography variant='subtitle2' ml={1} mb={'-4px'}>
 									{ticket.description}
 								</Typography>
 							</Box>
 
-							<Button
-								variant="text"
-								sx={{ color: '#22874E', marginBottom: '-7px' }}
-							>
-								<Typography
-									variant="subtitle2"
-									color={'#22874E'}
-									textTransform={'none'}
-									fontWeight={600}
-								>
-									Edit
-								</Typography>
-							</Button>
+							{permissions.hasOwnProperty('ticket.edit') && (
+								<Button variant='text' sx={{ color: '#22874E', marginBottom: '-7px' }}>
+									<Typography variant='subtitle2' color={'#22874E'} textTransform={'none'} fontWeight={600}>
+										Edit
+									</Typography>
+								</Button>
+							)}
 						</Box>
 					</Box>
 
-					<Grid
-						container
-						mb={'36px'}
-					>
+					<Grid container mb={'36px'}>
 						<Grid size={{ xs: 4 }}>
-							<Box
-								display={'flex'}
-								alignItems={'flex-start'}
-							>
+							<Box display={'flex'} alignItems={'flex-start'}>
 								<IconBox>
 									<CalendarClock size={18} />
 								</IconBox>
 
-								<Box
-									display={'flex'}
-									flexDirection={'column'}
-									alignItems={'flex-start'}
-								>
-									<Typography
-										variant="overline"
-										className="text-muted"
-										sx={{ opacity: 0.7 }}
-									>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										Due date
 									</Typography>
-									<Typography
-										variant="subtitle2"
-										color={'#1B1D1F'}
-										fontWeight={600}
-									>
+									<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.due_date
 											? new Date(ticket.due_date)
 													.toLocaleDateString('en-US', {
@@ -402,31 +247,16 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						</Grid>
 
 						<Grid size={{ xs: 4 }}>
-							<Box
-								display={'flex'}
-								alignItems={'flex-start'}
-							>
+							<Box display={'flex'} alignItems={'flex-start'}>
 								<IconBox>
 									<Network size={18} />
 								</IconBox>
 
-								<Box
-									display={'flex'}
-									flexDirection={'column'}
-									alignItems={'flex-start'}
-								>
-									<Typography
-										variant="overline"
-										className="text-muted"
-										sx={{ opacity: 0.7 }}
-									>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										Department
 									</Typography>
-									<Typography
-										variant="subtitle2"
-										color={'#1B1D1F'}
-										fontWeight={600}
-									>
+									<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.dept.name}
 									</Typography>
 								</Box>
@@ -434,31 +264,16 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						</Grid>
 
 						<Grid size={{ xs: 4 }}>
-							<Box
-								display={'flex'}
-								alignItems={'flex-start'}
-							>
+							<Box display={'flex'} alignItems={'flex-start'}>
 								<IconBox>
 									<User size={18} />
 								</IconBox>
 
-								<Box
-									display={'flex'}
-									flexDirection={'column'}
-									alignItems={'flex-start'}
-								>
-									<Typography
-										variant="overline"
-										className="text-muted"
-										sx={{ opacity: 0.7 }}
-									>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										User
 									</Typography>
-									<Typography
-										variant="subtitle2"
-										color={'#1B1D1F'}
-										fontWeight={600}
-									>
+									<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.user.name}
 									</Typography>
 								</Box>
@@ -477,25 +292,13 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						alignItems={'center'}
 						justifyContent={'space-between'}
 					>
-						<Box
-							display={'flex'}
-							alignItems={'center'}
-						>
-							<Typography
-								variant="subtitle1"
-								fontWeight={600}
-								className="text-muted"
-								mr={1}
-							>
+						<Box display={'flex'} alignItems={'center'}>
+							<Typography variant='subtitle1' fontWeight={600} className='text-muted' mr={1}>
 								Agent
 							</Typography>
 
-							<Typography
-								variant="subtitle1"
-								fontWeight={600}
-								fontSize={'1.0625rem'}
-							>
-								{ticket.agent ? ticket.agent.firstname + ticket.agent.lastname : 'Not assigned'}
+							<Typography variant='subtitle1' fontWeight={600} fontSize={'1.0625rem'}>
+								{ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : 'Not assigned'}
 							</Typography>
 						</Box>
 
@@ -550,57 +353,26 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 					</Box>
 
 					<Box>
-						<Typography
-							variant="subtitle1"
-							fontWeight={700}
-							mb={'21px'}
-						>
+						<Typography variant='subtitle1' fontWeight={700} mb={'21px'}>
 							Extra information
 						</Typography>
 
 						<Grid container>
 							<Grid size={{ xs: 6 }}>
-								<Box
-									display={'flex'}
-									flexDirection={'column'}
-									alignItems={'flex-start'}
-									sx={{ pb: 3 }}
-								>
-									<Typography
-										variant="overline"
-										className="text-muted"
-										sx={{ opacity: 0.7 }}
-									>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} sx={{ pb: 3 }}>
+									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										SLA
 									</Typography>
-									<Typography
-										variant="subtitle1"
-										color={'#1B1D1F'}
-										fontWeight={600}
-									>
+									<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.sla.name}
 									</Typography>
 								</Box>
 								{ticket?.form_entry?.form?.fields?.map((field, idx) => (
-									<Box
-										display={'flex'}
-										flexDirection={'column'}
-										alignItems={'flex-start'}
-										key={idx}
-										sx={{ pb: 3 }}
-									>
-										<Typography
-											variant="overline"
-											className="text-muted"
-											sx={{ opacity: 0.7 }}
-										>
+									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} key={idx} sx={{ pb: 3 }}>
+										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 											{field.label}
 										</Typography>
-										<Typography
-											variant="subtitle1"
-											color={'#1B1D1F'}
-											fontWeight={600}
-										>
+										<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 											{ticket?.form_entry?.values[idx]?.value ?? ''}
 										</Typography>
 									</Box>
@@ -608,23 +380,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 							</Grid>
 
 							<Grid size={{ xs: 6 }}>
-								<Box
-									display={'flex'}
-									flexDirection={'column'}
-									alignItems={'flex-start'}
-								>
-									<Typography
-										variant="overline"
-										className="text-muted"
-										sx={{ opacity: 0.7 }}
-									>
+								<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										Topic
 									</Typography>
-									<Typography
-										variant="subtitle1"
-										color={'#1B1D1F'}
-										fontWeight={600}
-									>
+									<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 										{ticket.topic.topic}
 									</Typography>
 								</Box>
@@ -632,23 +392,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 							{ticket.group && (
 								<Grid size={{ xs: 6 }}>
-									<Box
-										display={'flex'}
-										flexDirection={'column'}
-										alignItems={'flex-start'}
-									>
-										<Typography
-											variant="overline"
-											className="text-muted"
-											sx={{ opacity: 0.7 }}
-										>
+									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 											Group
 										</Typography>
-										<Typography
-											variant="subtitle1"
-											color={'#1B1D1F'}
-											fontWeight={600}
-										>
+										<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 											{ticket.group.name}
 										</Typography>
 									</Box>
@@ -657,23 +405,11 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 							{ticket.category && (
 								<Grid size={{ xs: 6 }}>
-									<Box
-										display={'flex'}
-										flexDirection={'column'}
-										alignItems={'flex-start'}
-									>
-										<Typography
-											variant="overline"
-											className="text-muted"
-											sx={{ opacity: 0.7 }}
-										>
+									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 											Category
 										</Typography>
-										<Typography
-											variant="subtitle1"
-											color={'#1B1D1F'}
-											fontWeight={600}
-										>
+										<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
 											{ticket.category.name}
 										</Typography>
 									</Box>
@@ -683,8 +419,8 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 					</Box>
 
 					<Typography
-						variant="caption"
-						className="text-muted"
+						variant='caption'
+						className='text-muted'
 						width={'100%'}
 						position={'absolute'}
 						bottom={12}
@@ -695,11 +431,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						gap={0.25}
 						// sx={{ transform: 'translateX(-50%)' }}
 					>
-						<Info
-							size={16}
-							strokeWidth={1.25}
-						/>{' '}
-						Created {ticket.created} • Last updated {ticket.updated}
+						<Info size={16} strokeWidth={1.25} /> Created {ticket.created} • Last updated {ticket.updated}
 					</Typography>
 				</>
 			)}

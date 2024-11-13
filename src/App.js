@@ -14,16 +14,14 @@ import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
 import { UserTickets } from './pages/dashboard/UserTickets';
 import { Settings } from './pages/settings/Settings';
-import { Manage } from './pages/manage/Manage'
-import {
-	SystemMenu,
-	CompanyMenu,
-	TicketMenu,
-	TaskMenu,
-	AgentMenu,
-	UserMenu,
-	KnowledgebaseMenu,
-} from './pages/settings/SettingsMenus';
+import { Manage } from './pages/manage/Manage';
+import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
+import { Profile } from './pages/profile/AgentProfile';
+import { Emails } from './pages/email/emails/Emails';
+import { EmailSettings } from './pages/email/EmailSettings';
+import { EmailBanlist } from './pages/email/EmailBanlist';
+import { EmailTemplates } from './pages/email/templates/EmailTemplates';
+import { EmailDiagnostic } from './pages/email/EmailDiagnostic';
 import { Users } from './pages/user/Users';
 import { Departments } from './pages/department/Departments';
 import { Groups } from './pages/group/Groups';
@@ -85,27 +83,14 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CookiesProvider defaultSetOptions={{ path: '/' }}>
-				<div className="App">
+				<div className='App'>
 					<Routes>
+						<Route path='/' exact element={<Landing />} />
+						<Route path='agent/login' element={agentAuthState.isAuth ? <Navigate to='/tickets' /> : <AgentSignIn />} />
+						<Route path='user/login' element={userAuthState.isAuth ? <Navigate to='/user/tickets' /> : <UserSignIn />} />
+						<Route path='dashboard' element={<AgentDashboard />} />
 						<Route
-							path="/"
-							exact
-							element={<Landing />}
-						/>
-						<Route
-							path="agent/login"
-							element={agentAuthState.isAuth ? <Navigate to="/tickets" /> : <AgentSignIn />}
-						/>
-						<Route
-							path="user/login"
-							element={userAuthState.isAuth ? <Navigate to="/user/tickets" /> : <UserSignIn />}
-						/>
-						<Route
-							path="dashboard"
-							element={<AgentDashboard />}
-						/>
-						<Route
-							path="tickets"
+							path='tickets'
 							element={
 								<ProtectedRoute>
 									<Tickets />
@@ -113,7 +98,7 @@ function App() {
 							}
 						/>
 						<Route
-							path="tickets/:ticketId"
+							path='tickets/:ticketId'
 							element={
 								<ProtectedRoute>
 									<Tickets />
@@ -121,7 +106,7 @@ function App() {
 							}
 						/>
 						<Route
-							path="user/tickets/:ticketId"
+							path='user/tickets/:ticketId'
 							element={
 								<UserProtectedRoute>
 									<UserTickets />
@@ -129,7 +114,7 @@ function App() {
 							}
 						/>
 						<Route
-							path="user/tickets"
+							path='user/tickets'
 							element={
 								<UserProtectedRoute>
 									<UserTickets />
@@ -137,69 +122,143 @@ function App() {
 							}
 						/>
 						<Route
-							path="settings/system"
+							path='settings/system'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={SystemMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/company"
+							path='settings/company'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={CompanyMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/tickets"
+							path='settings/tickets'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={TicketMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/tasks"
+							path='settings/tasks'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={TaskMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/agents"
+							path='settings/agents'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={AgentMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/users"
+							path='settings/users'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={UserMenu} />
 								</ProtectedRoute>
 							}
 						/>
 						<Route
-							path="settings/knowledgebase"
+							path='settings/knowledgebase'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requireAdmin>
 									<Settings Menu={KnowledgebaseMenu} />
 								</ProtectedRoute>
 							}
 						/>
+
+						<Route
+							path='email/emails'
+							element={
+								<ProtectedRoute requireAdmin>
+									<Emails />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='email/settings'
+							element={
+								<ProtectedRoute requireAdmin>
+									<EmailSettings />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='email/banlist'
+							element={
+								<ProtectedRoute requireAdmin>
+									<EmailBanlist />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='email/templates'
+							element={
+								<ProtectedRoute requireAdmin>
+									<EmailTemplates />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='email/templates/:templateId'
+							element={
+								<ProtectedRoute requireAdmin>
+									<EmailTemplates />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='email/diagnostic'
+							element={
+								<ProtectedRoute requireAdmin>
+									<EmailDiagnostic />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path='profile'
+							element={
+								<ProtectedRoute>
+									<Profile />
+								</ProtectedRoute>
+							}
+						/>
+
 						<Route
 							path='manage/agents'
 							element={
-								<ProtectedRoute>
+								<ProtectedRoute requirePermission={'agent.view'}>
 									<Agents />
 								</ProtectedRoute>
 							}
 						/>
+
+						<Route
+							path='manage/groups'
+							element={
+								<ProtectedRoute requirePermission={'agent.view'}>
+									<Groups />
+								</ProtectedRoute>
+							}
+						/>
+
 						<Route
 							path='manage/users'
 							element={
@@ -208,6 +267,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/queues'
 							element={
@@ -216,6 +276,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/slas'
 							element={
@@ -224,6 +285,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/schedules'
 							element={
@@ -232,6 +294,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/departments'
 							element={
@@ -240,6 +303,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
+
 						<Route
 							path='manage/groups'
 							element={
