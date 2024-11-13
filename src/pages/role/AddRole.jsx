@@ -1,123 +1,201 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Checkbox, deprecatedPropType, RoleControlLabel, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
+import { useSLABackend } from '../../hooks/useSLABackend';
+import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
-import { useRolesBackend } from '../../hooks/useRoleBackend';
+import { useRoleBackend } from '../../hooks/useRoleBackend';
 import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
+import { AgentSelect } from '../agent/AgentSelect';
+import { SLASelect } from '../sla/SLASelect';
+import { ScheduleSelect } from '../schedule/ScheduleSelect';
+import { RoleSelect } from '../role/RoleSelect';
+import { StatusSelect } from '../status/StatusSelect';
+import { PrioritySelect } from '../priority/PrioritySelect';
+import { GroupSelect } from '../group/GroupSelect';
+import { DepartmentSelect } from '../department/DepartmentSelect';
+import CustomDataGrid from '../../components/data-grid';
+import { TransferList } from '../../components/transfer-list';
 
-export const AddRole = ({ handleClose }) => {
-	const { createRole } = useRolesBackend();
-	const { refreshRoles } = useData();
+export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
+	const { createRole, updateRole, getRolePermissions } = useRoleBackend();
 
-	const sendNotification = useNotification();
+	const [isFormValid, setIsFormValid] = useState(false)
 
-	const [roleData, setRoleData] = useState({
+	const [permissions, setPermissions] = useState([]);
+	const [allPermissions, setAllPermissions] = useState([])
+
+	const [formData, setFormData] = useState({
 		name: '',
-		permissions: '{}',
 		notes: '',
 	});
 
-	const [isFormValid, setIsFormValid] = useState(false);
+	const validateRole = () => {
+		return formData.name !== ''
+	}
 
 	useEffect(() => {
-		const { name, permissions, notes } = roleData;
-		const isValid = name !== '' && notes !== '';
-		setIsFormValid(isValid);
-	}, [roleData]);
+		if (editRole) {
+			setFormData(editRole)
+		}
+	}, [editRole]);
+
+	const prepareFormData = () => {
+		const { name, notes } = formData
+		return {
+			name: name,
+			notes: notes,
+			...(editRole && { role_id: formData.role_id })
+		}
+	}
+
+	useEffect(() => {
+		getRolePermissions()
+			.then(res => {
+				setAllPermissions(res.data)
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}, [])
+
+	const permissionsFromString = (jsonString) => {
+		var list;
+		try {
+			list = JSON.parse(jsonString)
+		} catch (err) {
+			return []
+		}
+		return Object.keys(list).map(name => {
+			const match = allPermissions.find(item => item.name === name);
+			return match ? { name: match.name, label: match.label } : null;
+		}).filter(Boolean);
+	}
+
+	useEffect(() => {
+		if (allPermissions.length > 0 && editRole) {
+			setPermissions(permissionsFromString(editRole.permissions))
+		}
+	}, [allPermissions]);
+
+	const formatPermissions = () => {
+		const obj = permissions.reduce((acc, item) => {
+			acc[item.name] = 1;
+			return acc;
+		}, {})
+		return JSON.stringify(obj);
+	}
+
+	useEffect(() => {
+		setIsFormValid(validateRole())
+	}, [formData]);
 
 	const handleInputChange = e => {
 		const { name, value } = e.target;
-		setRoleData(prevFormData => ({
+		setFormData(prevFormData => ({
 			...prevFormData,
 			[name]: value,
 		}));
 	};
 
-	const addRole = () => {
-		createRole(roleData)
-			.then(res => {
-				refreshRoles();
-				handleClose();
-				sendNotification({ msg: 'Role created successfully', variant: 'success' });
-			})
-			.catch(err => console.error(err));
+	const handleAction = () => {
+		const data = {...prepareFormData(formData), permissions: formatPermissions()}
+		if (editRole) {
+			updateRole(data)
+				.then(res => {
+					handleEdited();
+				})
+				.catch(err => console.error(err));
+		} else {
+			createRole(data)
+				.then(res => {
+					handleCreated();
+				})
+				.catch(err => console.error(err));
+		}
 	};
 
 	return (
-		<Box sx={{ px: 4 }}>
+		<>
 			<Typography
-				variant="body1"
-				sx={{ color: '#545555', mb: 3 }}
+				variant="h1"
+				sx={{ mb: 1.5 }}
 			>
-				Provide the necessary information to create a new role.
+				{editRole ? 'Edit role' : 'Add new role'}
 			</Typography>
 
-			<Stack
-				// spacing={1.5}
-				sx={{ alignItems: 'center' }}
+			<Typography variant="subtitle2">
+				{editRole ? 'Edit the details for this role' : 'We will gather essential details about the new role. Complete the following steps to ensure accurate setup and access.'}
+			</Typography>
+
+			<Box
+				sx={{
+					background: '#FFF',
+					m: 4,
+					p: 4,
+					pt: 3,
+					borderRadius: '12px',
+					textAlign: 'left',
+				}}
 			>
+				<Typography
+					variant="h4"
+					sx={{ fontWeight: 600, mb: 2 }}
+				>
+					Role inroleation
+				</Typography>
+
 				<CustomFilledInput
 					label="Name"
 					onChange={handleInputChange}
-					value={roleData.name}
+					value={formData.name}
 					name="name"
 					mb={2}
 					fullWidth
 				/>
 
-				{/* <CustomSelect
-					label="SLA"
-					onChange={handleInputChange}
-					value={roleData.sla_id}
-					name="sla_id"
-					mb={2}
-					fullWidth
-					options={slas}
-				/> */}
-
 				<CustomFilledInput
 					label="Notes"
 					onChange={handleInputChange}
-					value={roleData.notes}
+					value={formData.notes}
 					name="notes"
+					mb={2}
 					fullWidth
-					multiline
 					rows={3}
 				/>
-			</Stack>
+
+				<Typography
+					variant="h4"
+					sx={{ fontWeight: 600, mb: 2 }}
+				>
+					Permissions
+				</Typography>
+
+				<TransferList
+					right={permissions}
+					setRight={setPermissions}
+					allItems={allPermissions}
+					formatter={(item) => item.label}
+				/>
+
+
+			</Box>
 
 			<Stack
-				direction={'row'}
-				// spacing={1.5}
-				sx={{ justifyContent: 'center', mt: 3.5, mb: 2 }}
+				direction="row"
+				spacing={1.5}
+				sx={{ justifyContent: 'center' }}
 			>
 				<CircularButton
-					sx={{
-						background: 'transparent',
-						color: '#22874E',
-						fontWeight: 600,
-						border: '1.5px solid #22874E',
-						py: 2,
-						px: 4,
-						'&:hover': {
-							background: '#FFF',
-						},
-					}}
-					onClick={handleClose}
-				>
-					Cancel
-				</CircularButton>
-
-				<CircularButton
 					sx={{ py: 2, px: 6 }}
-					onClick={addRole}
+					onClick={handleAction}
 					disabled={!isFormValid}
 				>
-					Create role
+					{editRole ? 'Edit' : 'Create'} role
 				</CircularButton>
 			</Stack>
-		</Box>
+		</>
 	);
 };

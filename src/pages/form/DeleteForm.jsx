@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
-import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
+import { useFormBackend } from '../../hooks/useFormBackend';
 
-export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) => {
-	const { removeDepartment } = useDepartmentBackend();
+export const DeleteForm = ({ editForm, handleDelete, handleClose }) => {
+	const { removeForm } = useFormBackend();
 
-	const deleteDepartment = () => {
-		removeDepartment(editDepartment)
+	const deleteForm = () => {
+		removeForm(editForm)
 			.then(res => {
 				handleDelete();
 			})
@@ -19,14 +19,14 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the Department {editDepartment.firstname + ' ' + editDepartment.lastname}?
+				Are you sure you want to delete the form {editForm.firstname + ' ' + editForm.lastname}?
 			</Typography>
 
 			<Typography
 				variant="body1"
 				sx={{ color: '#545555', mb: 5 }}
 			>
-				This will remove the Department from your Departments table. You can always add another Department later
+				This will remove the form from your forms table. You can always add another form later
 				on.
 			</Typography>
 
@@ -44,7 +44,7 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 							background: '#b82828',
 						},
 					}}
-					onClick={deleteDepartment}
+					onClick={deleteForm}
 				>
 					Yes, delete
 				</CircularButton>

@@ -37,17 +37,18 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
 
     const [isFormValid, setIsFormValid] = useState(false)
     const [formData, setFormData] = useState({
-        name: '',
+        firstname: '',
+        lastname: '',
         email: ''
     });
 
     const validateForm = () => {
-        return formData.name !== '' && formData.email !== ''
+        return formData.firstname !== '' && formData.lastname !== '' && formData.email !== ''
     }
 
     useEffect(() => {
         const isValid = validateForm();
-		setIsFormValid(isValid);
+        setIsFormValid(isValid);
     }, [formData]);
 
     useEffect(() => {
@@ -57,12 +58,12 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
     }, [editUser]);
 
     const handleInputChange = e => {
-		const { name, value } = e.target;
-		setFormData(prevFormData => ({
-			...prevFormData,
-			[name]: value,
-		}));
-	};
+        const { name, value } = e.target;
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
 
 
     const handleAction = () => {
@@ -113,24 +114,34 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
                     User information
                 </Typography>
 
-                <CustomFilledInput
-                    label="Full Name"
-                    onChange={handleInputChange}
-                    value={formData.name}
-                    name="name"
-                    mb={2}
-                    halfWidth
-                    mr={'2%'}
-                />
+                    <CustomFilledInput
+                        label="First name"
+                        onChange={handleInputChange}
+                        value={formData.firstname}
+                        name="firstname"
+                        mb={2}
+                        halfWidth
+                        mr={'2%'}
+                    />
 
-                <CustomFilledInput
-                    label="Email"
-                    onChange={handleInputChange}
-                    value={formData.email}
-                    name="email"
-                    mb={2}
-                    halfWidth
-                />
+                    <CustomFilledInput
+                        label="Last name"
+                        onChange={handleInputChange}
+                        value={formData.lastname}
+                        name="lastname"
+                        mb={2}
+                        halfWidth
+                        mr={'2%'}
+                    />
+
+                    <CustomFilledInput
+                        label="Email"
+                        onChange={handleInputChange}
+                        value={formData.email}
+                        name="email"
+                        mb={2}
+                        halfWidth
+                    />
 
             </Box>
 

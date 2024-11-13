@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useCallback } from 'react';
 import { useAgentBackend } from '../hooks/useAgentBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
-import { useRolesBackend } from '../hooks/useRoleBackend';
+import { useRoleBackend } from '../hooks/useRoleBackend';
 import { useSettingsBackend } from '../hooks/useSettingsBackend';
 import { useSLABackend } from '../hooks/useSLABackend';
 import { usePriorityBackend } from '../hooks/usePriorityBackend';
@@ -10,6 +10,7 @@ import { useGroupBackend } from '../hooks/useGroupBackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { useQueueBackend } from '../hooks/useQueueBackend';
+import { useFormBackend } from '../hooks/useFormBackend';
 import { NotebookPen } from 'lucide-react';
 import { useScheduleBackend } from '../hooks/useScheduleBackend';
 
@@ -19,7 +20,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllAgents } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllRoles } = useRolesBackend();
+	const { getAllRoles } = useRoleBackend();
 	const { getAllSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();
@@ -28,6 +29,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllTopics } = useTopicBackend();
 	const { getQueuesForAgent } = useQueueBackend();
 	const { getAllSchedules } = useScheduleBackend();
+	const { getAllForms } = useFormBackend();
 
 	const [agents, setAgents] = useState([]);
 	const [tickets, setTickets] = useState([]);
@@ -59,6 +61,9 @@ export const DataProvider = ({ children }) => {
 
 	const [schedules, setSchedules] = useState([])
 	const [formattedSchedules, setFormattedSchedules] = useState([])
+
+	const [forms, setForms] = useState([])
+	const [formattedForms, setFormattedForms] = useState([])
 
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
@@ -228,6 +233,22 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getAllSchedules]);
 
+	const refreshForms = useCallback(() => {
+		getAllForms()
+			.then(form => {
+				const formData = form.data;
+				const formattedForms = formData.map(form => {
+					return { value: form.form_id, label: form.title };
+				});
+
+				setForms(formData);
+				setFormattedForms(formattedForms);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}, [getAllForms]);
+
 
 	return (
 		<DataContext.Provider
@@ -266,7 +287,10 @@ export const DataProvider = ({ children }) => {
 				totalTickets,
 				refreshSchedules,
 				schedules,
-				formattedSchedules
+				formattedSchedules,
+				forms,
+				formattedForms,
+				refreshForms
 			}}
 		>
 			{children}

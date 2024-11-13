@@ -195,34 +195,34 @@ const manageSubmenuItems = [
 		title: 'Users',
 		icon: <UserRound size={20} />,
 	},
-	{
-		title: 'Queues',
-		icon: <Filter size={20} />,
-	},
-	{
-		title: 'SLA',
-		icon: <AlarmClock size={20} />,
-	},
-	{
-		title: 'Schedules',
-		icon: <Calendar size={20} />,
-	},
+	// {
+	// 	title: 'Queues',
+	// 	icon: <Filter size={20} />,
+	// },
+	// {
+	// 	title: 'SLA',
+	// 	icon: <AlarmClock size={20} />,
+	// },
+	// {
+	// 	title: 'Schedules',
+	// 	icon: <Calendar size={20} />,
+	// },
 	{
 		title: 'Departments',
 		icon: <SquareUserRound size={20} />,
 	},
-	{
-		title: 'Groups',
-		icon: <Users size={20} />,
-	},
-	{
-		title: 'Priorities',
-		icon: <CircleAlert size={20} />,
-	},
-	{
-		title: 'Statuses',
-		icon: <TicketCheck size={20} />,
-	},
+	// {
+	// 	title: 'Groups',
+	// 	icon: <Users size={20} />,
+	// },
+	// {
+	// 	title: 'Priorities',
+	// 	icon: <CircleAlert size={20} />,
+	// },
+	// {
+	// 	title: 'Statuses',
+	// 	icon: <TicketCheck size={20} />,
+	// },
 	{
 		title: 'Topics',
 		icon: <MessageCircleQuestion size={20} />,
@@ -235,10 +235,10 @@ const manageSubmenuItems = [
 		title: 'Roles',
 		icon: <KeyRound size={20} />,
 	},
-	{
-		title: 'Templates',
-		icon: <NotebookText size={20} />,
-	},
+	// {
+	// 	title: 'Templates',
+	// 	icon: <NotebookText size={20} />,
+	// },
 
 ];
 

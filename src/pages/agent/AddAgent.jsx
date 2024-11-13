@@ -25,7 +25,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { Check, Eye, EyeOff, X } from 'lucide-react';
-import { useRolesBackend } from '../../hooks/useRoleBackend';
+import { useRoleBackend } from '../../hooks/useRoleBackend';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { AddDepartment } from '../department/AddDepartment';
 import { DepartmentSelect } from '../department/DepartmentSelect';
@@ -96,7 +96,7 @@ function QontoStepIcon(props) {
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
-	const { getAllRoles } = useRolesBackend();
+	const { getAllRoles } = useRoleBackend();
 	const { createAgent, updateAgent, getPermissions } = useAgentBackend();
 
 	const [roles, setRoles] = useState([]);
@@ -151,16 +151,13 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 			return []
 		}
 		return Object.keys(list).map(name => {
-			console.log(name)
 			const match = allPermissions.find(item => item.name === name);
-			console.log(match)
 			return match ? { name: match.name, label: match.label } : null;
 		}).filter(Boolean);
 	}
 
 	useEffect(() => {
 		if (allPermissions.length > 0 && editAgent) {
-			console.log(permissionsFromString(editAgent.permissions))
 			setPermissions(permissionsFromString(editAgent.permissions))
 		}
 	}, [allPermissions]);
@@ -242,7 +239,6 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 			acc[item.name] = 1;
 			return acc;
 		}, {})
-		console.log(obj)
 		return JSON.stringify(obj);
 	}
 

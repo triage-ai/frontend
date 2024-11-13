@@ -318,7 +318,7 @@ export const UserTicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, ope
 										color={'#1B1D1F'}
 										fontWeight={600}
 									>
-										{ticket.user.name}
+										{ticket.user.firstname + ' ' + ticket.user.lastname}
 									</Typography>
 								</Box>
 							</Box>

@@ -24,6 +24,9 @@ export const RichTextEditor = ({editor, children}) => {
 
         <RichTextEditorProvider editor={editor}>
             <RichTextField
+                RichTextContentProps={{
+                    className:'App-rich-text-field'
+                }}
                 controls={
                     <MenuControlsContainer>
                         {/* <MenuSelectHeading /> */}

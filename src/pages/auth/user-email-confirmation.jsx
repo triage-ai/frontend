@@ -2,21 +2,22 @@ import logo from '../../assets/logo-white.svg';
 import logoBlack from '../../assets/logo-black.svg';
 import AppIcon from '../../assets/app-icon-black.png';
 import '../../App.css';
-import React, { useContext, useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
 	Box,
 	Button,
 	CircularProgress,
 	InputAdornment,
+	Link,
 	TextField,
 	Typography,
 	styled,
 } from '@mui/material';
-import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Activity, CheckCircle, Lock, Mail, Split, Tag } from 'lucide-react';
+import { useUserBackend } from '../../hooks/useUserBackend';
 import Grid from '@mui/material/Grid2';
-
+import { useNavigate } from 'react-router-dom';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -71,10 +72,29 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const Landing = () => {
-	const [loading, setLoading] = useState(false);
+export const UserEmailConfirmation = () => {
+
+	const { token } = useParams()
+
+	const { user_id } = useParams()
+	const { confirmToken } = useUserBackend()
+
+	const [loading, setLoading] = useState(true)
+	const [status, setStatus] = useState(0)
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		confirmToken(token)
+			.then(res => {
+				setLoading(false)
+				setStatus(1)
+			})
+			.catch(err => {
+				setLoading(false)
+				console.error(err)
+			})
+	}, [])
 
 	return (
 		<Box
@@ -139,6 +159,57 @@ export const Landing = () => {
 							>
 								Experience the future of customer support with Triage.ai
 							</Typography>
+
+							{/* <Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '22px',
+									// textAlign: 'left',
+									fontSize: '0.875rem',
+									color: '#7A8087',
+								}}
+							>
+								<div>
+									<span style={{ display: 'inline-block', fontWeight: '600' }}>
+										Build, Fine-Tune, Test, and Deploy your own ticket classification system in a few
+										clicks!
+									</span>
+								</div>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Auto-labels tickets
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Ensures accurate ticket assignment
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Pinpoints areas experiencing a surge in ticket volume
+									</span>
+								</Box>
+							</Box> */}
 
 							<Grid
 								container
@@ -240,7 +311,7 @@ export const Landing = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header">
+						<header className="App-header-wide">
 							<Box
 								sx={{
 									width: '100%',
@@ -278,168 +349,39 @@ export const Landing = () => {
 								</Typography> */}
 							</Box>
 
-							<img
+							{/* <img
 								src={AppIcon}
 								className="App-logo"
 								// style={{ width: '0px' }}
 								alt="logo"
-							/>
+							/> */}
 
-							{/* <h1
-								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
-								}}
-							>
-								Sign in
-							</h1> */}
+							{/* <CheckCircle size={60} color='#34b233' /> */}
 
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign in with a provider
-							</p>
-
-							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
-								<ProviderButton onClick={loginWithSAML}>
-									<img
-										src={microsoftIcon}
-										alt="Microsoft Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Microsoft
-									</span>
-								</ProviderButton>
-
-								<ProviderButton>
-									<img
-										src={googleIcon}
-										alt="Google Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Google
-									</span>
-								</ProviderButton>
-							</Box>
-
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
-
-							{/* <span
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: '32px',
-									marginBottom: '25px',
-								}}
-							>
-								Or continue with email and password
-							</span> */}
-
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Landing Page
-							</p> */}
-
-							<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
+							{loading ? <CircularProgress
+								size={80}
+								thickness={5}
+								sx={{ color: '#9A9FA5' }}
+							/> :
+								<h5
+									style={{
+										// fontSize: '0.95rem',
 										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
+										color: '#1B1D1F',
+										letterSpacing: '-0.01em',
+										lineHeight: 1.2,
+										marginTop: '20px',
+										marginBottom: 0,
+										textAlign: 'center',
 									}}
-									onClick={() => navigate('user/login')}
 								>
-									User Sign in
-								</Button>
-								<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
-										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										marginBottom: '28px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
-									}}
-									onClick={() => navigate('agent/login')}
-								>
-									Agent Sign in
-								</Button>
+									{status === 0 ? 'Unable to confirm email' : 'You have successfully confirmed your account!'}
+								</h5>}
 
-								
+								{!loading && status === 1 &&
+									<Link component='button' onClick={() => navigate('/user/login')}>Sign in</Link>
+								}
 
-							{/* <Typography
-								variant="caption"
-								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
-							>
-								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
-							</Typography> */}
 						</header>
 					</div>
 				</Grid>

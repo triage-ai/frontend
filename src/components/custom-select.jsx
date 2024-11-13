@@ -12,10 +12,13 @@ import {
 } from '@mui/material';
 import { useEffect } from 'react';
 
-const CustomInput = styled(props => (
+export const CustomInput = styled(props => (
 	<TextField
-		InputProps={{
-			disableUnderline: true,
+		slotProps={{
+			input: {
+				disableUnderline: true,
+				...props.InputProps
+			}
 		}}
 		{...props}
 	/>
@@ -159,7 +162,6 @@ export const CustomAutocomplete = ({
 	return (
 		<CustomMultibox
 			{...otherProps}
-			label={label}
 			disablePortal
 			options={options}
 			value={value}
@@ -191,9 +193,10 @@ export const CustomAutocomplete = ({
 			)}
 			renderOption={renderOption}
 			renderInput={props => (
-				<TextField
+				<CustomInput
 					{...props}
-					slotProps={{ style: { fontWeight: 600 } }}
+					label={label}
+					variant='filled'
 				/>
 			)}
 		/>

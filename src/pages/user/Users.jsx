@@ -30,6 +30,7 @@ import { DeleteUser } from './DeleteUser';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import TablePagination from '@mui/material/TablePagination';
+import formatDate from '../../functions/date-formatter';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -217,10 +218,10 @@ export const Users = () => {
 									},
 								}}
 							>
-								<TableCell>{user.name}</TableCell>
-								<TableCell>NA</TableCell>
-								<TableCell>{user.created}</TableCell>
-								<TableCell>{user.updated}</TableCell>
+								<TableCell>{user.firstname + ' ' + user.lastname}</TableCell>
+								<TableCell>{user.status === 0 ? 'Complete' : user.status === 1 ? 'Pending' : 'Guest'}</TableCell>
+								<TableCell>{formatDate(user.created, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{formatDate(user.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"

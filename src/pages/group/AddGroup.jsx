@@ -1,7 +1,7 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, Autocomplete, TextField, Popper, styled } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { CustomSelect } from '../../components/custom-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { useSLABackend } from '../../hooks/useSLABackend';
 import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -12,6 +12,9 @@ import { AgentSelect } from '../agent/AgentSelect';
 import { SLASelect } from '../sla/SLASelect';
 import { ScheduleSelect } from '../schedule/ScheduleSelect';
 import CustomDataGrid from '../../components/data-grid';
+import { useGridApiContext } from '@mui/x-data-grid';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
 export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 	const { createGroup, updateGroup } = useGroupBackend();
@@ -33,12 +36,21 @@ export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 		{
 			field: "name",
 			headerName: "Name",
-			width: 180,
+			width: 300,
 			editable: true,
+			"isValid" : (value) => false,
+			renderCell: obj => {
+				const { value } = obj
+				return value ? value.firstname + ' ' + value.lastname : ''
+			},
 			renderEditCell: (params) => {
+				return <CustomEditAutoCompleteComponent {...params} />
+			},
+			preProcessEditCellProps: async (params) => {
 				console.log(params)
-				return <AgentSelect/>
-			}
+				const hasError = params.props.value === null ? 'Please enter an agent' : null
+				return { ...params.props, error: hasError };
+			},
 		}
 	]
 
@@ -117,7 +129,6 @@ export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 					m: 4,
 					p: 4,
 					pt: 3,
-					borderRadius: '12px',
 					textAlign: 'left',
 				}}
 			>
@@ -186,3 +197,108 @@ export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 	);
 };
 
+const CustomEditAutoCompleteComponent = (props) => {
+	const { id, value, field, hasFocus, error } = props;
+	const apiRef = useGridApiContext();
+	const ref = useRef();
+
+	// useLayoutEffect(() => {
+	// 	if (hasFocus) {
+	// 		ref.current.focus();
+	// 	}
+	// }, [hasFocus]);
+
+	const handleValueChange = (event, newValue) => {
+		apiRef.current.setEditCellValue({ id, field, value: newValue });
+	};
+
+	return (
+		<StyledTooltip open={!!error} title={error} placement="top">
+			<CustomAgentSelect {...props} value={value ?? ''} handleInputChange={handleValueChange} />
+		</StyledTooltip>
+	)
+}
+
+const CustomAgentSelect = ({ handleInputChange, value, ...props }) => {
+	const { getAgentBySearch } = useAgentBackend();
+	const [agentOptions, setAgentOptions] = useState([]);
+	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
+
+	const handleAgentSearchChange = e => {
+		if (e?.target?.value) {
+			getAgentBySearch(e.target.value)
+				.then(res => {
+					setAgentOptions(res.data);
+				})
+				.catch(err => alert('Agent search failed'));
+		}
+	};
+
+	const openDialog = () => {
+		setOpenCreateDialog(true);
+	};
+
+	const handleClose = () => {
+		setOpenCreateDialog(false);
+	};
+
+	return (
+		<Autocomplete
+			fullWidth
+			name="agent"
+			label="Agent"
+			filterOptions={x => x}
+			options={agentOptions}
+			value={value}
+			onInputChange={handleAgentSearchChange}
+			onChange={handleInputChange}
+			getOptionLabel={item => (item ? item.firstname + ' ' + item.lastname : '')}
+			renderInput={(params) => <TextField {...params} />}
+			sx={{
+				"&.Mui-focused fieldset": {
+					border: "none",
+				},
+				"&:hover fieldset": {
+					border: "none",
+				},
+				'& fieldset': { borderRadius: 0, p: 0, m: 0, border: "none" },
+				'& .MuiFilledInput-root': {
+					overflow: 'hidden',
+					backgroundColor: 'transparent',
+					fontSize: '0.9375rem',
+					fontWeight: 500,
+					textAlign: 'left',
+				},
+			}}
+			PopperComponent={props => (
+				<Popper
+					{...props}
+					style={{ maxWidth: 400 }}
+					placement="bottom-start"
+				/>
+			)}
+			renderOption={(props, item) => (
+				<li
+					{...props}
+					key={item.email}
+				>
+					{item.firstname + ' ' + item.lastname}&nbsp;
+					<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
+				</li>
+			)}
+		/>
+	);
+
+};
+
+
+const StyledTooltip = styled(({ className, ...props }) => (
+	<Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+	[`& .${tooltipClasses.tooltip}`]: {
+		backgroundColor: theme.palette.error.main,
+		color: theme.palette.error.contrastText,
+	},
+}));

@@ -8,7 +8,7 @@ import { useEffect, useState, useContext } from 'react';
 import { CircularButton } from '../../components/sidebar';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { TopicSelect } from '../topic/TopicSelect'
-import { FormInput } from '../forms/FormInput';
+import { FormInput } from '../form/FormInput';
 import { useFormBackend } from '../../hooks/useFormBackend'
 import { AuthContext } from '../../context/AuthContext';
 

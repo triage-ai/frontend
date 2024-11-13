@@ -21,13 +21,12 @@ import {
 import { Layout } from '../../components/layout';
 import { WhiteContainer } from '../../components/white-container';
 import { ChevronDown, Pencil, Search, Trash2, SquareUserRound, X, Plus } from 'lucide-react';
-import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useContext, useEffect, useState } from 'react';
 import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
-import { AddDepartment } from './AddDepartment';
-import { DeleteDepartment } from './DeleteDepartment';
-import { useGroupBackend } from '../../hooks/useGroupBackend';
+import { AddForm } from './AddForm';
+import { DeleteForm } from './DeleteForm';
+import { useFormBackend } from '../../hooks/useFormBackend';
 import TablePagination from '@mui/material/TablePagination';
 import formatDate from '../../functions/date-formatter';
 
@@ -58,27 +57,23 @@ export const SearchTextField = styled('input')({
 	},
 });
 
-export const Departments = () => {
-	const { getAllDepartmentsJoined, updateDepartment, removeDepartment } = useDepartmentBackend();
+export const Forms = () => {
+	const { getAllForms, updateForm, removeForm } = useFormBackend();
 	const [page, setPage] = useState(0)
 	const [size, setSize] = useState(10)
-	const [totalDepartments, setTotalDepartments] = useState(0);
-	const [departments, setDepartments] = useState([]);
-	const [selectedDepartment, setSelectedDepartment] = useState({});
+	const [totalForms, setTotalForms] = useState(0);
+	const [forms, setForms] = useState([]);
+	const [selectedForm, setSelectedForm] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
     const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshDepartments()
+        refreshForms()
     }, []);
 	
 	const handleChangePage = (e, newValue) => {
-		console.log('page', e.target.value)
-		console.log('size', size)
-		console.log(departments.slice(page ? page*size - 1 : page*size, page*size + size))
-		console.log(departments.length)
 		setPage(newValue)
 	}
 
@@ -87,30 +82,20 @@ export const Departments = () => {
 		setPage(0)
 	}
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value)
-    }
+	const refreshForms = () => {
 
-    const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            refreshDepartments()
-        }
-    }
-
-	const refreshDepartments = () => {
-
-		getAllDepartmentsJoined(search, page + 1, size)
+		getAllForms(search, page + 1, size)
 			.then(res => {
-				setDepartments(res.data)
-				setTotalDepartments(res.data.length)
+				setForms(res.data)
+				setTotalForms(res.data.length)
 			})
 			.catch(err => {
 				console.error(err);
 			});
 	}
 
-	const handleDialogOpen = (department, button) => {
-		setSelectedDepartment(department);
+	const handleDialogOpen = (form, button) => {
+		setSelectedForm(form);
 		setButtonClicked(button);
 
 		if (button === 'edit') {
@@ -122,11 +107,12 @@ export const Departments = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
+        refreshForms()
 	};
 
 	const handleEdited = () => {
 		handleDialogClose();
-		refreshDepartments();
+		refreshForms();
 	};
 
 	const handleDeleteDialogClose = () => {
@@ -135,19 +121,19 @@ export const Departments = () => {
 
 	const handleDelete = () => {
 		handleDeleteDialogClose();
-		refreshDepartments();
+		refreshForms();
 	};
 
 	return (
 		<Layout
-			title={'Department List'}
-			subtitle={'View your departments and add new ones'}
+			title={'Form List'}
+			subtitle={'View your forms and add new ones'}
 			buttonInfo={{
-				label: 'Add new department',
+				label: 'Add new form',
 				icon: <Plus size={20} />,
 			}}
-            AddResource={AddDepartment}
-			refreshResource={refreshDepartments}
+            AddResource={AddForm}
+			refreshResource={refreshForms}
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
@@ -158,8 +144,6 @@ export const Departments = () => {
 							label="Search"
 							variant="filled"
 							placeholder="Search"
-                            onKeyDown={handleSearch}
-                            onChange={handleSearchChange}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -194,18 +178,12 @@ export const Departments = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant="overline">Title</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Agents</Typography>
+								<Typography variant="overline">Updated</Typography>
 							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Email Address</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Manager</Typography>
-							</TableCell>
-							<TableCell>
+                            <TableCell>
 								<Typography variant="overline">Created</Typography>
 							</TableCell>
 							<TableCell align="right">
@@ -214,9 +192,9 @@ export const Departments = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{departments.slice(page*size, page*size + size).map(department => (
+						{forms.slice(page*size, page*size + size).map(form => (
 							<TableRow
-								key={department.dept_id}
+								key={form.form_id}
 								sx={{
 									'&:last-child td, &:last-child th': { border: 0 },
 									'& .MuiTableCell-root': {
@@ -226,11 +204,9 @@ export const Departments = () => {
 									},
 								}}
 							>
-								<TableCell>{department.name}</TableCell>
-								<TableCell>{department.agent_count}</TableCell>
-								<TableCell>{department.email_id}</TableCell>
-								<TableCell>{department.manager_id ? department.manager?.firstname + ' ' +department.manager?.lastname : ''}</TableCell>
-								<TableCell>{formatDate(department.created, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{form.title}</TableCell>
+                                <TableCell>{formatDate(form.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{formatDate(form.created, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"
@@ -248,7 +224,7 @@ export const Departments = () => {
 													color: '#105293',
 												},
 											}}
-											onClick={() => handleDialogOpen(department, 'edit')}
+											onClick={() => handleDialogOpen(form, 'edit')}
 										>
 											<Pencil size={18} />
 										</IconButton>
@@ -260,7 +236,7 @@ export const Departments = () => {
 													color: '#921010',
 												},
 											}}
-											onClick={() => handleDialogOpen(department, 'delete')}
+											onClick={() => handleDialogOpen(form, 'delete')}
 										>
 											<Trash2 size={18} />
 										</IconButton>
@@ -273,7 +249,7 @@ export const Departments = () => {
 				<Box>
 				<TablePagination
 					component="div"
-					count={totalDepartments}
+					count={totalForms}
 					page={page}
 					onPageChange={handleChangePage}
 					rowsPerPage={size}
@@ -322,9 +298,9 @@ export const Departments = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddDepartment
+						<AddForm
 							handleEdited={handleEdited}
-							editDepartment={selectedDepartment}
+							editForm={selectedForm}
 						/>
 					</Box>
 				</Dialog>
@@ -364,8 +340,8 @@ export const Departments = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteDepartment
-							editDepartment={selectedDepartment}
+						<DeleteForm
+							editForm={selectedForm}
 							handleDelete={handleDelete}
 							handleClose={handleDeleteDialogClose}
 						/>

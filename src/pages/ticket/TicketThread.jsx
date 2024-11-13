@@ -20,6 +20,7 @@ import { useEditor } from "@tiptap/react";
 import { LinkBubbleMenu, LinkBubbleMenuHandler } from "mui-tiptap";
 import Link from '@tiptap/extension-link'
 import StarterKit from "@tiptap/starter-kit";
+import formatDate from '../../functions/date-formatter';
 
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat)
@@ -71,8 +72,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 		var prevValue = item.prev_val
 
 		if (item.field === 'due_date') {
-			newValue = newValue ? dayjs.utc(newValue).local().format('lll') : null
-			prevValue = prevValue ? dayjs.utc(prevValue).local().format('lll') : null
+			newValue = newValue ? formatDate(newValue, 'lll') : null
+			prevValue = prevValue ? formatDate(prevValue, 'lll') : null
 		}
 
 		if (item.type === 'A') {
@@ -255,11 +256,13 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 								borderWidth={1}
 								mb={1}
 							/>
-							{/* <RichTextEditor 
-								editor={editor}
-							>
-								<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
-							</RichTextEditor> */}
+							{/* <Box>
+								<RichTextEditor 
+									editor={editor}
+								>
+									<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
+								</RichTextEditor>
+							</Box> */}
 
 							<CircularButton
 								sx={{ py: 2, px: 6 }}
