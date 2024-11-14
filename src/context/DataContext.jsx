@@ -23,7 +23,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllAgents, getAgentById } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllRoles, getRoleById } = useRolesBackend();
+	const { getAllRoles, getRoleById } = useRoleBackend();
 	const { getAllSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();

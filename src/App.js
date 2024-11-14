@@ -14,15 +14,6 @@ import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
 import { UserTickets } from './pages/dashboard/UserTickets';
 import { Settings } from './pages/settings/Settings';
-import {
-	SystemMenu,
-	CompanyMenu,
-	TicketMenu,
-	TaskMenu,
-	AgentMenu,
-	UserMenu,
-	KnowledgebaseMenu,
-} from './pages/settings/SettingsMenus';
 import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
 import { Profile } from './pages/profile/AgentProfile';
 import { Emails } from './pages/email/emails/Emails';
