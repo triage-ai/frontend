@@ -12,7 +12,7 @@ import {
 import MuiAppBar from '@mui/material/AppBar';
 import { LogOut, Menu, X } from 'lucide-react';
 import React, { forwardRef, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { AppBarHeight } from './layout';
 import { SidebarItems } from './sidebar-items';
@@ -94,7 +94,7 @@ export const Sidebar = () => {
 		setIsClosing(false);
 	};
 
-	return (
+	return ( <>
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
 			<Box
@@ -143,8 +143,11 @@ export const Sidebar = () => {
 				>
 					<SidebarItems />
 				</Drawer>
+
 			</Box>
 
 		</Box>
+		<Outlet/>
+		</>
 	);
 };

@@ -1,7 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 import { useContext } from "react";
 import { CookiesProvider } from "react-cookie";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import ProtectedRoute from "./components/protected-route";
 import UserProtectedRoute from "./components/user-protected-route";
@@ -114,30 +114,7 @@ function App() {
 		<ThemeProvider theme={theme}>
 			<CookiesProvider defaultSetOptions={{ path: "/" }}>
 				<div className="App">
-					<Sidebar />
 					<Routes>
-						<Route path="/" exact element={<Landing />} />
-						<Route
-							path="agent/login"
-							element={
-								agentAuthState.isAuth ? (
-									<Navigate to="/tickets" />
-								) : (
-									<AgentSignIn />
-								)
-							}
-						/>
-						<Route
-							path="user/login"
-							element={
-								userAuthState.isAuth ? (
-									<Navigate to="/user/tickets" />
-								) : (
-									<UserSignIn />
-								)
-							}
-						/>
-						<Route path="dashboard" element={<AgentDashboard />} />
 						<Route path="/" exact element={<Landing />} />
 						<Route
 							path="agent/login"
@@ -180,31 +157,14 @@ function App() {
 							path="confirm_email/:token"
 							element={<UserEmailConfirmation />}
 						/>
-						<Route path="dashboard" element={<AgentDashboard />} />
 						<Route
-							path="tickets"
-							element={
-								<ProtectedRoute>
-									<Tickets />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="tickets/:ticketId"
-							element={
-								<ProtectedRoute>
-									<Tickets />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="user/tickets/:ticketId"
-							element={
-								<UserProtectedRoute>
-									<UserTickets />
-								</UserProtectedRoute>
-							}
-						/>
+								path="user/tickets/:ticketId"
+								element={
+									<UserProtectedRoute>
+										<UserTickets />
+									</UserProtectedRoute>
+								}
+							/>
 						<Route
 							path="user/tickets"
 							element={
@@ -213,225 +173,248 @@ function App() {
 								</UserProtectedRoute>
 							}
 						/>
-						<Route
-							path="settings/system"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={SystemMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/company"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={CompanyMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/tickets"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={TicketMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/tasks"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={TaskMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/agents"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={AgentMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/users"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={UserMenu} />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="settings/knowledgebase"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Settings Menu={KnowledgebaseMenu} />
-								</ProtectedRoute>
-							}
-						/>
+						<Route element={<Sidebar/>}>
+							<Route
+								path="dashboard"
+								element={<AgentDashboard />}
+							/>
+							<Route
+								path="tickets"
+								element={
+									<ProtectedRoute>
+										<Tickets />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="tickets/:ticketId"
+								element={
+									<ProtectedRoute>
+										<Tickets />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/system"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={SystemMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/company"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={CompanyMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/tickets"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={TicketMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/tasks"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={TaskMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/agents"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={AgentMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/users"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={UserMenu} />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="settings/knowledgebase"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Settings Menu={KnowledgebaseMenu} />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/emails"
-							element={
-								<ProtectedRoute requireAdmin>
-									<Emails />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/emails"
+								element={
+									<ProtectedRoute requireAdmin>
+										<Emails />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/settings"
-							element={
-								<ProtectedRoute requireAdmin>
-									<EmailSettings />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/settings"
+								element={
+									<ProtectedRoute requireAdmin>
+										<EmailSettings />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/banlist"
-							element={
-								<ProtectedRoute requireAdmin>
-									<EmailBanlist />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/banlist"
+								element={
+									<ProtectedRoute requireAdmin>
+										<EmailBanlist />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/templates"
-							element={
-								<ProtectedRoute requireAdmin>
-									<EmailTemplates />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/templates"
+								element={
+									<ProtectedRoute requireAdmin>
+										<EmailTemplates />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/templates/:templateId"
-							element={
-								<ProtectedRoute requireAdmin>
-									<EmailTemplates />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/templates/:templateId"
+								element={
+									<ProtectedRoute requireAdmin>
+										<EmailTemplates />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="email/diagnostic"
-							element={
-								<ProtectedRoute requireAdmin>
-									<EmailDiagnostic />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="email/diagnostic"
+								element={
+									<ProtectedRoute requireAdmin>
+										<EmailDiagnostic />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="profile"
-							element={
-								<ProtectedRoute>
-									<Profile />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="profile"
+								element={
+									<ProtectedRoute>
+										<Profile />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/agents"
-							element={
-								<ProtectedRoute
-									requirePermission={"agent.view"}
-								>
-									<Agents />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/agents"
+								element={
+									<ProtectedRoute
+										requirePermission={"agent.view"}
+									>
+										<Agents />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/groups"
-							element={
-								<ProtectedRoute
-									requirePermission={"agent.view"}
-								>
-									<Groups />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/groups"
+								element={
+									<ProtectedRoute
+										requirePermission={"agent.view"}
+									>
+										<Groups />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/users"
-							element={
-								<ProtectedRoute>
-									<Users />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/users"
+								element={
+									<ProtectedRoute>
+										<Users />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/queues"
-							element={
-								<ProtectedRoute>
-									<Users />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/queues"
+								element={
+									<ProtectedRoute>
+										<Users />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/slas"
-							element={
-								<ProtectedRoute>
-									<Users />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/slas"
+								element={
+									<ProtectedRoute>
+										<Users />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/schedules"
-							element={
-								<ProtectedRoute>
-									<Users />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/schedules"
+								element={
+									<ProtectedRoute>
+										<Users />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/departments"
-							element={
-								<ProtectedRoute>
-									<Departments />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/departments"
+								element={
+									<ProtectedRoute>
+										<Departments />
+									</ProtectedRoute>
+								}
+							/>
 
-						<Route
-							path="manage/groups"
-							element={
-								<ProtectedRoute>
-									<Groups />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="manage/topics"
-							element={
-								<ProtectedRoute>
-									<Topics />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="manage/forms"
-							element={
-								<ProtectedRoute>
-									<Forms />
-								</ProtectedRoute>
-							}
-						/>
-						<Route
-							path="manage/roles"
-							element={
-								<ProtectedRoute>
-									<Roles />
-								</ProtectedRoute>
-							}
-						/>
+							<Route
+								path="manage/groups"
+								element={
+									<ProtectedRoute>
+										<Groups />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="manage/topics"
+								element={
+									<ProtectedRoute>
+										<Topics />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="manage/forms"
+								element={
+									<ProtectedRoute>
+										<Forms />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="manage/roles"
+								element={
+									<ProtectedRoute>
+										<Roles />
+									</ProtectedRoute>
+								}
+							/>
+						</Route>
+
 					</Routes>
 				</div>
 			</CookiesProvider>
