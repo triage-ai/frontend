@@ -1,36 +1,24 @@
 import {
-	Box,
-	Button,
-	Checkbox,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	FormControlLabel,
+	Box, Checkbox, FormControlLabel,
 	IconButton,
 	InputAdornment,
 	Stack,
 	Step,
 	StepConnector,
 	StepLabel,
-	Stepper,
-	TextField,
-	Typography,
+	Stepper, Typography,
 	stepConnectorClasses,
-	styled,
+	styled
 } from '@mui/material';
-import { CustomFilledInput } from '../../components/custom-input';
-import { CustomSelect } from '../../components/custom-select';
+import { Check, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
-import { Check, Eye, EyeOff, X } from 'lucide-react';
-import { useRoleBackend } from '../../hooks/useRoleBackend';
+import { TransferList } from '../../components/transfer-list';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
-import { AddDepartment } from '../department/AddDepartment';
+import { useRoleBackend } from '../../hooks/useRoleBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
-import { TransferList } from '../../components/transfer-list';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {

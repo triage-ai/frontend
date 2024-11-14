@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { CustomAutocomplete } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
+import { useState } from 'react';
+import { CustomAutocomplete } from '../../components/custom-select';
 // import { AddAgent } from './AddAgent';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 
@@ -67,7 +67,6 @@ export const AgentSelect = ({ handleInputChange, value, ...props }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

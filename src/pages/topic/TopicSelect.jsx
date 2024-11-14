@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-import { AddTopic } from './AddTopic';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
+import { AddTopic } from './AddTopic';
 
 export const TopicSelect = ({ handleInputChange, value }) => {
 	const { formattedTopics, refreshTopics } = useData();
@@ -45,7 +45,6 @@ export const TopicSelect = ({ handleInputChange, value }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

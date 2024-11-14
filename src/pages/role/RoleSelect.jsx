@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-import { AddRole } from './AddRole';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
+import { AddRole } from './AddRole';
 
 export const RoleSelect = ({ handleInputChange, value }) => {
 	const { formattedRoles, refreshRoles } = useData();

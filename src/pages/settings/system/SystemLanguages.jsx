@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { useData } from '../../../context/DataContext';
-import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import {
 	Box,
 	CircularProgress,
@@ -8,9 +5,11 @@ import {
 	MenuItem,
 	Typography,
 } from '@mui/material';
-import { handleSave } from '../SettingsMenus';
-import { StyledSelect } from '../SettingsMenus';
+import { useState } from 'react';
 import { CircularButton } from '../../../components/sidebar';
+import { useData } from '../../../context/DataContext';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 export const SystemLanguages = props => {
 	const { settingsData } = props;
@@ -24,7 +23,6 @@ export const SystemLanguages = props => {
 	});
 
 	const handleChange = entry => {
-		console.log(entry);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,

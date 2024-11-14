@@ -1,16 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
-import { useSLABackend } from '../../hooks/useSLABackend';
-import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
+import { CircularButton } from '../../components/sidebar';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
-import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
 import { AgentSelect } from '../agent/AgentSelect';
-import { SLASelect } from '../sla/SLASelect';
 import { ScheduleSelect } from '../schedule/ScheduleSelect';
+import { SLASelect } from '../sla/SLASelect';
 
 export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) => {
 	const { createDepartment, updateDepartment } = useDepartmentBackend();

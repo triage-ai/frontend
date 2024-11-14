@@ -1,11 +1,10 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
+import { CircularButton } from '../../components/sidebar';
 import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 
 export const AddPriority = ({ handleClose }) => {
 	const { createPriority } = usePriorityBackend();

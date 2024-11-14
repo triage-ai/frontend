@@ -1,23 +1,19 @@
-import logo from '../../assets/logo-white.svg';
-import logoBlack from '../../assets/logo-black.svg';
-import AppIcon from '../../assets/app-icon-black.png';
-import '../../App.css';
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import {
 	Box,
 	Button,
 	CircularProgress,
-	InputAdornment,
-	Link,
-	TextField,
+	InputAdornment, TextField,
 	Typography,
-	styled,
+	styled
 } from '@mui/material';
-import { Activity, CheckCircle, Lock, Mail, Split, Tag } from 'lucide-react';
-import { useUserBackend } from '../../hooks/useUserBackend';
 import Grid from '@mui/material/Grid2';
-import { useNavigate } from 'react-router-dom';
+import { Activity, Lock, Split, Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import '../../App.css';
+import logoBlack from '../../assets/logo-black.svg';
+import logo from '../../assets/logo-white.svg';
+import { useUserBackend } from '../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',

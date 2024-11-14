@@ -41,7 +41,6 @@ export const useTemplateBackend = () => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
-		console.log(templateInfo)
 		return await axios.put(
 			process.env.REACT_APP_BACKEND_URL +
 				"template/put/" +

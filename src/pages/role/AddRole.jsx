@@ -1,23 +1,9 @@
-import { Box, Checkbox, deprecatedPropType, RoleControlLabel, Stack, Typography } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
+import { Box, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useSLABackend } from '../../hooks/useSLABackend';
-import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
-import { useRoleBackend } from '../../hooks/useRoleBackend';
-import { useData } from '../../context/DataContext';
-import { useNotification } from '../../hooks/useNotification';
-import { AgentSelect } from '../agent/AgentSelect';
-import { SLASelect } from '../sla/SLASelect';
-import { ScheduleSelect } from '../schedule/ScheduleSelect';
-import { RoleSelect } from '../role/RoleSelect';
-import { StatusSelect } from '../status/StatusSelect';
-import { PrioritySelect } from '../priority/PrioritySelect';
-import { GroupSelect } from '../group/GroupSelect';
-import { DepartmentSelect } from '../department/DepartmentSelect';
-import CustomDataGrid from '../../components/data-grid';
+import { CircularButton } from '../../components/sidebar';
 import { TransferList } from '../../components/transfer-list';
+import { useRoleBackend } from '../../hooks/useRoleBackend';
 
 export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
 	const { createRole, updateRole, getRolePermissions } = useRoleBackend();

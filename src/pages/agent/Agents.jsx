@@ -2,17 +2,14 @@ import {
 	Box,
 	Dialog,
 	FormControl,
-	IconButton,
-	MenuItem,
+	IconButton, MenuItem,
 	Select,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
-	TableRow,
-	Typography,
-	styled,
+	TableRow, Typography, styled
 } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';

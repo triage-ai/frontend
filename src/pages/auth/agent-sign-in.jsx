@@ -1,15 +1,15 @@
-import logo from '../../assets/logo-white.svg';
-import logoBlack from '../../assets/logo-black.svg';
-import AppIcon from '../../assets/app-icon-black.png';
-import '../../App.css';
 import React, { useContext, useState } from 'react';
+import '../../App.css';
+import AppIcon from '../../assets/app-icon-black.png';
+import logoBlack from '../../assets/logo-black.svg';
+import logo from '../../assets/logo-white.svg';
 
 import { Box, Button, CircularProgress, InputAdornment, TextField, Typography, styled } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
 import { AuthContext } from '../../context/AuthContext';
-import Grid from '@mui/material/Grid2';
+import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -85,10 +85,8 @@ export const AgentSignIn = () => {
 			agentSignInEmailAndPassword(email, password)
 				// signInWithEmailAndPassword(auth, email, password)
 				.then((userCredential) => {
-					// console.log(userCredential.data);
 					// getApiToken(userCredential);
 					const agentData = userCredential.data;
-					console.log(agentData);
 
 					const authInfo = {
 						isAuth: true,

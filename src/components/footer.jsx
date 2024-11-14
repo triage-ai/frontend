@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import { CheckCheck, Plus } from 'lucide-react';
+import { CheckCheck } from 'lucide-react';
 
 const drawerWidth = 90;
 

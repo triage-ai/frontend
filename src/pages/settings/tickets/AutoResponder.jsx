@@ -1,9 +1,9 @@
+import { Box, Checkbox, CircularProgress, FormControlLabel, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
+import { CircularButton } from '../../../components/sidebar';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { Box, Checkbox, CircularProgress, FormControlLabel, Stack, Typography } from '@mui/material';
 import { handleSave } from '../SettingsMenus';
-import { CircularButton } from '../../../components/sidebar';
 
 export const Autoresponder = (props) => {
 	const { settingsData } = props;
@@ -20,7 +20,6 @@ export const Autoresponder = (props) => {
 	});
 
 	const handleChange = (entry) => {
-		console.log(formState);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,
@@ -30,8 +29,6 @@ export const Autoresponder = (props) => {
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event);
-
 		setFormState({
 			...formState,
 			[event.target.name]: event.target.checked ? 'on' : 'off',

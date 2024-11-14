@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-import { AddPriority } from './AddPriority';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
+import { AddPriority } from './AddPriority';
 
 export const PrioritySelect = ({ handleInputChange, value }) => {
 	const { formattedPriorities, refreshPriorities } = useData();
@@ -45,7 +45,6 @@ export const PrioritySelect = ({ handleInputChange, value }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

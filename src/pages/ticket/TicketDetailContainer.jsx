@@ -1,10 +1,10 @@
-import { Box, Fab, styled, Tab, Tabs, Typography } from '@mui/material';
-import { MessageCircle, MessageSquareText, NotepadText } from 'lucide-react';
-import { useEffect, useState, useContext } from 'react';
+import { Box, styled, Tab, Tabs } from '@mui/material';
+import { MessageSquareText, NotepadText } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { TicketDetail } from './TicketDetail';
 import { TicketThread } from './TicketThread';
-import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { AuthContext } from '../../context/AuthContext';
 
 const CircularTab = styled(Tab)(() => ({
 	width: '44px',

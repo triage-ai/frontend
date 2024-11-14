@@ -1,19 +1,18 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
+import { Box, IconButton, Typography } from '@mui/material';
+import Link from '@tiptap/extension-link';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { Box, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
+import { LinkBubbleMenuHandler } from 'mui-tiptap';
 import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
-import { useThreadsBackend } from '../../hooks/useThreadBackend';
-import { RichTextEditorBox } from '../../components/rich-text-editor';
-import { useEditor } from '@tiptap/react';
-import { LinkBubbleMenu, LinkBubbleMenuHandler } from 'mui-tiptap';
-import Link from '@tiptap/extension-link';
-import StarterKit from '@tiptap/starter-kit';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
+import { useThreadsBackend } from '../../hooks/useThreadBackend';
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -46,7 +45,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	};
 
 	const handleSubmit = () => {
-		// console.log(editor.getHTML()) for rich text editor
 		const newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
 		var updatedTicket = { ...ticket };
 		createThreadEntry(newThreadEntry)
@@ -57,7 +55,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 			})
 			.catch((err) => {
 				alert('Error while creating thread entry');
-				console.log(err);
+				console.error(err);
 			});
 	};
 

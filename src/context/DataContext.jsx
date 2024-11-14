@@ -1,26 +1,24 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import { useAgentBackend } from '../hooks/useAgentBackend';
-import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
+import { useFormBackend } from '../hooks/useFormBackend';
+import { useGroupBackend } from '../hooks/useGroupBackend';
+import { usePriorityBackend } from '../hooks/usePriorityBackend';
+import { useQueueBackend } from '../hooks/useQueueBackend';
 import { useRoleBackend } from '../hooks/useRoleBackend';
+import { useScheduleBackend } from '../hooks/useScheduleBackend';
 import { useSettingsBackend } from '../hooks/useSettingsBackend';
 import { useSLABackend } from '../hooks/useSLABackend';
-import { usePriorityBackend } from '../hooks/usePriorityBackend';
-import { useGroupBackend } from '../hooks/useGroupBackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
-import { useTopicBackend } from '../hooks/useTopicBackend';
-import { useQueueBackend } from '../hooks/useQueueBackend';
-import { useFormBackend } from '../hooks/useFormBackend';
 import { useTemplateBackend } from '../hooks/useTemplateBackend';
 import { useEmailBackend } from '../hooks/useEmailBackend';
-import { NotebookPen } from 'lucide-react';
-import { AuthContext } from './AuthContext';
-import { useScheduleBackend } from '../hooks/useScheduleBackend';
+import { useTicketBackend } from '../hooks/useTicketBackend';
+import { useTopicBackend } from '../hooks/useTopicBackend';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-	const { getAllAgents, getAgentById } = useAgentBackend();
+	const { getAllAgents } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllRoles, getRoleById } = useRoleBackend();

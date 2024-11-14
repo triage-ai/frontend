@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-import { AddSchedule } from './AddSchedule';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 
 export const ScheduleSelect = ({ handleInputChange, value }) => {
@@ -45,7 +44,6 @@ export const ScheduleSelect = ({ handleInputChange, value }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

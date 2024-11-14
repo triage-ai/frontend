@@ -1,29 +1,21 @@
+import { useTheme } from '@emotion/react';
 import {
 	Box,
-	Button,
-	CircularProgress,
-	CssBaseline,
+	Button, CssBaseline,
 	Dialog,
 	Drawer,
 	IconButton,
 	Slide,
-	Typography,
-	circularProgressClasses,
-	styled,
-	useMediaQuery,
+	Typography, styled,
+	useMediaQuery
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { CheckCircle, LogOut, Menu, X } from 'lucide-react';
-import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react';
-import { SidebarItems } from './sidebar-items';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useStatusBackend } from '../hooks/useStatusBackend';
-import { AppBarHeight } from './layout';
-import { useTheme } from '@emotion/react';
-import { AddAgent } from '../pages/agent/AddAgent';
+import { LogOut, Menu, X } from 'lucide-react';
+import React, { forwardRef, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { useData } from '../context/DataContext';
-import { AddTicket } from '../pages/ticket/AddTicket';
+import { AppBarHeight } from './layout';
+import { SidebarItems } from './sidebar-items';
 
 export const drawerWidth = 250;
 
@@ -190,7 +182,7 @@ export const Sidebar = ({
 
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 
-						{buttonInfo.hidden && <CircularButton
+						{buttonInfo.hidden !== false && <CircularButton
 							sx={{ mr: 1 }}
 							onClick={handleClickDialogOpen}
 						>

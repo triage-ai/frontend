@@ -3,24 +3,24 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { CustomFilledInput } from '../../components/custom-input';
-import { useEffect, useState } from 'react';
-import { CircularButton } from '../../components/sidebar';
-import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
-import { DepartmentSelect } from '../department/DepartmentSelect';
-import { UserSelect } from '../user/UserSelect';
-import { AgentSelect } from '../agent/AgentSelect';
-import { SLASelect } from '../sla/SLASelect';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { StatusSelect } from '../status/StatusSelect';
-import { PrioritySelect } from '../priority/PrioritySelect';
-import { GroupSelect } from '../group/GroupSelect';
-import { TopicSelect } from '../topic/TopicSelect'
-import { FormInput } from '../form/FormInput';
-import { useFormBackend } from '../../hooks/useFormBackend'
+import { useEffect, useState } from 'react';
+import { CustomFilledInput } from '../../components/custom-input';
 import { CustomDateTimePicker } from '../../components/date-time-picker';
+import { CircularButton } from '../../components/sidebar';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
+import { useFormBackend } from '../../hooks/useFormBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { AgentSelect } from '../agent/AgentSelect';
+import { DepartmentSelect } from '../department/DepartmentSelect';
+import { FormInput } from '../form/FormInput';
+import { GroupSelect } from '../group/GroupSelect';
+import { PrioritySelect } from '../priority/PrioritySelect';
+import { SLASelect } from '../sla/SLASelect';
+import { StatusSelect } from '../status/StatusSelect';
+import { TopicSelect } from '../topic/TopicSelect';
+import { UserSelect } from '../user/UserSelect';
 
 dayjs.extend(utc)
 
@@ -54,7 +54,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 			.then(res => {
 				setForms(res.data)
 			})
-			.catch(err => console.log(err))
+			.catch(err => console.error(err))
 	}, [])
 
 	useEffect(() => {
@@ -71,7 +71,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					.then((res) => {
 						setFormFields(res.data.fields)
 						var values = {}
-						editTicket.form_entry.values.map(value => {
+						editTicket.form_entry.values.forEach(value => {
 							const field = res.data.fields.find((field) => field.field_id === value.field_id)
 							if (field) {
 								values[field.name] = value.value
@@ -86,9 +86,9 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 
 	const setupForm = (topic_id) => {
 		const values = {}
-		const form = forms.find((form) => form.topic_id == topic_id)?.form
+		const form = forms.find((form) => form.topic_id === topic_id)?.form
 
-		form?.fields?.map((field) => {
+		form?.fields?.forEach((field) => {
 			values[field.name] = ''
 		})
 		setFormValues(values)
@@ -342,7 +342,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 				/>
 
 				<CustomDateTimePicker
-					defaultValue={editTicket.due_date}
+					defaultValue={editTicket?.due_date}
 					onChange={handleDueDateChange}
 				/>
 

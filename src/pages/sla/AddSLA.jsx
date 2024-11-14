@@ -1,11 +1,10 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
-import { useSLABackend } from '../../hooks/useSLABackend';
+import { CircularButton } from '../../components/sidebar';
 import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
+import { useSLABackend } from '../../hooks/useSLABackend';
 
 export const AddSLA = ({ handleClose }) => {
 	const { createSLA } = useSLABackend();

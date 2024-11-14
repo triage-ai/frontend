@@ -1,34 +1,22 @@
 import {
 	Box,
-	Dialog,
-	FormControl,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	MenuItem,
-	Select,
-	Stack,
+	Dialog, IconButton, Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
-	TableRow,
-	TextField,
-	Typography,
-	inputLabelClasses,
-	styled,
+	TableRow, Typography, styled
 } from '@mui/material';
+import TablePagination from '@mui/material/TablePagination';
+import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Layout } from '../../components/layout';
-import { WhiteContainer } from '../../components/white-container';
-import { ChevronDown, Pencil, Search, Trash2, SquareUserRound, X, Plus } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
-import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
+import { WhiteContainer } from '../../components/white-container';
+import formatDate from '../../functions/date-formatter';
+import { useFormBackend } from '../../hooks/useFormBackend';
 import { AddForm } from './AddForm';
 import { DeleteForm } from './DeleteForm';
-import { useFormBackend } from '../../hooks/useFormBackend';
-import TablePagination from '@mui/material/TablePagination';
-import formatDate from '../../functions/date-formatter';
 
 export const SearchTextField = styled('input')({
 	width: '100%',

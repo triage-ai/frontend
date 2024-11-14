@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { useData } from './DataContext';
 import axios from 'axios';
+import React, { createContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
@@ -98,4 +97,5 @@ const getAgentById = async (agentAuthState) => {
 	return await axios.get(process.env.REACT_APP_BACKEND_URL + `agent/id/${agentAuthState.agent_id}`, config);
 };
 
-export { AuthProvider, AuthContext };
+export { AuthContext, AuthProvider };
+
