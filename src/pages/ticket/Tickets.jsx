@@ -7,10 +7,12 @@ import {
 	IconButton,
 	MenuItem,
 	Select,
+	Skeleton,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
+	TableContainer,
 	TableHead,
 	TablePagination,
 	TableRow,
@@ -29,6 +31,7 @@ import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { SearchTextField } from '../agent/Agents';
 import { AddTicket } from './AddTicket';
 import { TicketDetailContainer } from './TicketDetailContainer';
+import { TableRowsLoader } from '../../components/table-loader';
 
 export const Tickets = () => {
 	const navigate = useNavigate();
@@ -46,6 +49,7 @@ export const Tickets = () => {
 	const [selectedStatus, setSelectedStatus] = useState('');
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
+	const [loading, setLoading] = useState(true)
 
 
 	useEffect(() => {
@@ -66,9 +70,11 @@ export const Tickets = () => {
 		getTicketList();
 	};
 
-	const getTicketList = () => {
+	const getTicketList = async () => {
 		if (queues.length !== 0) {
-			refreshTickets(size, page+1)
+			setLoading(true)
+			await refreshTickets(size, page + 1)
+			setLoading(false)
 		}
 	};
 
@@ -112,15 +118,15 @@ export const Tickets = () => {
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
-		() => {
-			if (newOpen) {
-				navigate('/tickets/' + ticket.ticket_id);
-			} else {
-				navigate('/tickets');
-			}
-			setOpenDetail(newOpen);
-			setSelectedTicket(ticket);
-		};
+			() => {
+				if (newOpen) {
+					navigate('/tickets/' + ticket.ticket_id);
+				} else {
+					navigate('/tickets');
+				}
+				setOpenDetail(newOpen);
+				setSelectedTicket(ticket);
+			};
 
 	return (
 		<Layout
@@ -229,7 +235,7 @@ export const Tickets = () => {
 									/>
 								)}
 							>
-								{queues.map((queue, idx) => (
+								{queues.map((queue) => (
 									<MenuItem
 										key={queue.queue_id}
 										value={queue}
@@ -241,116 +247,125 @@ export const Tickets = () => {
 						</FormControl>
 					</Box>
 				</Box>
-
-				<Table>
-					<TableHead>
-						<TableRow
-							sx={{
-								background: '#F1F4F2',
-								'& .MuiTypography-overline': {
-									color: '#545555',
-								},
-							}}
-						>
-							<TableCell>
-								<Typography variant="overline">Title</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Number</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Last updated</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">Priority</Typography>
-							</TableCell>
-							<TableCell>
-								<Typography variant="overline">From</Typography>
-							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
-							</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{tickets.map(ticket => (
+				<TableContainer>
+					<Table>
+						<TableHead>
 							<TableRow
-								key={ticket.ticket_id}
-								onClick={toggleDetailDrawer(true, ticket)}
 								sx={{
-									'&:last-child td, &:last-child th': { border: 0 },
-									'& .MuiTableCell-root': {
-										color: '#1B1D1F',
-										fontWeight: 500,
-										letterSpacing: '-0.02em',
-									},
-									'&:hover': {
-										background: '#f9fbfa',
-										cursor: 'pointer',
+									background: '#F1F4F2',
+									'& .MuiTypography-overline': {
+										color: '#545555',
 									},
 								}}
 							>
-								<TableCell
-									component="th"
-									scope="row"
-									sx={{ maxWidth: '200px' }}
-								>
-									{ticket.title}
-									<Typography
-										variant="subtitle2"
-										sx={{
-											fontSize: '0.75rem',
-											lineHeight: 1.2,
-											overflow: 'hidden',
-											textOverflow: 'ellipsis',
-											display: '-webkit-box',
-											WebkitBoxOrient: 'vertical',
-											WebkitLineClamp: 2,
-										}}
-									>
-										{ticket.description}
-									</Typography>
-								</TableCell>
-								<TableCell>{ticket.number}</TableCell>
-								<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>
-									<Chip
-										label={ticket.priority.priority_desc}
-										sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
-									/>
+									<Typography variant="overline">Title</Typography>
 								</TableCell>
-								<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										// spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
-										{ permissions.hasOwnProperty('ticket.edit') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
-											<Pencil size={18} />
-										</IconButton> }
-
-										{ permissions.hasOwnProperty('ticket.delete') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
-											<Trash2 size={18} />
-										</IconButton> }
-									</Stack>
+								<TableCell>
+									<Typography variant="overline">Number</Typography>
+								</TableCell>
+								<TableCell>
+									<Typography variant="overline">Last updated</Typography>
+								</TableCell>
+								<TableCell>
+									<Typography variant="overline">Priority</Typography>
+								</TableCell>
+								<TableCell>
+									<Typography variant="overline">From</Typography>
+								</TableCell>
+								<TableCell align="right">
+									<Typography variant="overline"></Typography>
 								</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-				<TablePagination
-					component="div"
-					count={totalTickets}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+						</TableHead>
+						<TableBody>
+							{loading ?
+								<TableRowsLoader
+									rowsNum={10}
+									colNum={5}
+								/>
+								:
+									tickets.map(ticket => (
+										<TableRow
+											key={ticket.ticket_id}
+											onClick={toggleDetailDrawer(true, ticket)}
+											sx={{
+												'&:last-child td, &:last-child th': { border: 0 },
+												'& .MuiTableCell-root': {
+													color: '#1B1D1F',
+													fontWeight: 500,
+													letterSpacing: '-0.02em',
+												},
+												'&:hover': {
+													background: '#f9fbfa',
+													cursor: 'pointer',
+												},
+											}}
+										>
+											<TableCell
+												component="th"
+												scope="row"
+												sx={{ maxWidth: '200px' }}
+											>
+												{ticket.title}
+												<Typography
+													variant="subtitle2"
+													sx={{
+														fontSize: '0.75rem',
+														lineHeight: 1.2,
+														overflow: 'hidden',
+														textOverflow: 'ellipsis',
+														display: '-webkit-box',
+														WebkitBoxOrient: 'vertical',
+														WebkitLineClamp: 2,
+													}}
+												>
+													{ticket.description}
+												</Typography>
+											</TableCell>
+											<TableCell>{ticket.number}</TableCell>
+											<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+											<TableCell>
+												<Chip
+													label={ticket.priority.priority_desc}
+													sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+												/>
+											</TableCell>
+											<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell>
+											<TableCell
+												component="th"
+												scope="row"
+												align="right"
+											>
+												<Stack
+													direction="row"
+													// spacing={0.5}
+													sx={{ justifyContent: 'flex-end' }}
+												>
+													{permissions.hasOwnProperty('ticket.edit') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
+														<Pencil size={18} />
+													</IconButton>}
+
+													{permissions.hasOwnProperty('ticket.delete') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
+														<Trash2 size={18} />
+													</IconButton>}
+												</Stack>
+											</TableCell>
+										</TableRow>
+									))
+							}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component="div"
+						count={totalTickets}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
+				</TableContainer>
+
 			</WhiteContainer>
 
 			<Dialog

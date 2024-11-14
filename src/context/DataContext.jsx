@@ -74,8 +74,8 @@ export const DataProvider = ({ children }) => {
 		});
 	}, [getAllAgents]);
 
-	const refreshTickets = useCallback((size = 10, page = 1) => {
-		getTicketsbyAdvancedSearch({ ...queues[queueIdx].config, 'size': size, 'page': page }).then(ticketList => {
+	const refreshTickets = useCallback(async (size = 10, page = 1) => {
+		await getTicketsbyAdvancedSearch({ ...queues[queueIdx].config, 'size': size, 'page': page }).then(ticketList => {
 			const { items, total } = ticketList.data;
 			setTotalTickets(total)
 			setTickets(items);

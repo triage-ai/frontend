@@ -19,7 +19,7 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the Department {editDepartment.firstname + ' ' + editDepartment.lastname}?
+				Are you sure you want to delete the Department {editDepartment.name}?
 			</Typography>
 
 			<Typography

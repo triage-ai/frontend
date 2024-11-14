@@ -4,7 +4,7 @@ import { BadgeAlert, CalendarClock, ChevronDown, CircleAlert, FileText, Info, Ne
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { usePriorityBackend } from '../../hooks/usePriorityBackend';
-import { useStatusBackend } from '../../hooks/useStatusBackend';
+import { useData } from '../../context/DataContext';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 
 const IconBox = styled(Box)(() => ({
@@ -20,20 +20,19 @@ const IconBox = styled(Box)(() => ({
 }));
 
 export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdit }) => {
-	const { getPriorityColor } = usePriorityBackend();
 	const { updateTicket } = useTicketBackend();
-	const { getAllStatuses } = useStatusBackend();
 
-	const [statusList, setStatusList] = useState([]);
-	const [editing, setEditing] = useState(false);
+	const { refreshStatuses, statuses } = useData();
+
 	const { permissions } = useContext(AuthContext);
 
 
 	const handleStatusChange = (e) => {
 		const statusUpdate = {
-			status_id: statusList.find((x) => x.name === e.target.value).status_id,
+			status_id: statuses.find((x) => x.name === e.target.value).status_id,
+			ticket_id: ticket.ticket_id
 		};
-		updateTicket(ticket.ticket_id, statusUpdate)
+		updateTicket(statusUpdate)
 			.then((res) => {
 				updateCurrentTicket(res.data);
 			})
@@ -42,11 +41,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 
 	useEffect(() => {
-		getAllStatuses()
-			.then(({ data }) => {
-				setStatusList(data);
-			})
-			.catch((err) => alert('Could not get status list'));
+		refreshStatuses();
 		// eslint-disable-next-line
 	}, []);
 
@@ -168,7 +163,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 										}}
 										IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
 									>
-										{statusList.map((status) => (
+										{statuses.map((status) => (
 											<MenuItem key={status.status_id} value={status.name}>
 												<Typography variant='subtitle2'>{status.name}</Typography>
 											</MenuItem>

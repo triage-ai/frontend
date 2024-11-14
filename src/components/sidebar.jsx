@@ -77,25 +77,13 @@ export const Transition = forwardRef(function Transition(props, ref) {
 	);
 });
 
-export const Sidebar = ({
-	appBarTitle,
-	appBarSubtitle,
-	buttonInfo,
-	AddResource,
-	refreshResource
-}) => {
+export const Sidebar = () => {
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const initialTime = 10; // in seconds
-	const [timeLeft, setTimeLeft] = useState(initialTime);
-	const navigate = useNavigate();
-
-	const { agentLogout } = useContext(AuthContext);
 
 	const theme = useTheme();
-	const [openDialog, setOpenDialog] = useState(false);
-	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
 	const handleDrawerClose = () => {
 		setIsClosing(true);
@@ -106,110 +94,17 @@ export const Sidebar = ({
 		setIsClosing(false);
 	};
 
-	const handleDrawerToggle = () => {
-		if (!isClosing) {
-			setMobileOpen(!mobileOpen);
-		}
-	};
-
-	const authLogout = async () => {
-		agentLogout();
-		navigate('/', { replace: true });
-	};
-
-	const handleClickDialogOpen = () => {
-		setOpenDialog(true);
-	};
-
-	const handleDialogClose = () => {
-		setOpenDialog(false);
-	};
-
-	const handleCreated = () => {
-		handleDialogClose()
-		refreshResource()
-	}
-
 	return (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
-			<AppBar
-				position="fixed"
-				sx={{
-					width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
-					ml: `${drawerWidth}px`,
-				}}
-			>
-				<Box
-					sx={{
-						height: AppBarHeight,
-						display: 'flex',
-						alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center',
-						justifyContent: 'space-between',
-						py: { xs: 1, md: 3 },
-						px: { xs: 2, md: 5 },
-					}}
-				>
-					<Box
-						sx={{ display: 'flex', alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center' }}
-					>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { md: 'none' } }}
-						>
-							<Menu />
-						</IconButton>
-
-						<Box sx={{ display: 'flex', flexDirection: 'column', color: '#1B1D1F' }}>
-							<Typography variant="h2">{appBarTitle}</Typography>
-							{appBarSubtitle !== '' && (
-								<Typography
-									variant="subtitle2"
-									sx={{
-										letterSpacing: '-0.03em',
-										lineHeight: 1.9,
-										color: '#545555',
-									}}
-								>
-									{appBarSubtitle}
-								</Typography>
-							)}
-						</Box>
-					</Box>
-
-					<Box sx={{ display: 'flex', alignItems: 'center' }}>
-
-						{buttonInfo.hidden !== false && <CircularButton
-							sx={{ mr: 1 }}
-							onClick={handleClickDialogOpen}
-						>
-							{buttonInfo.icon}
-							{buttonInfo.label}
-						</CircularButton>}
-
-						<IconButton
-							aria-label="logout"
-							onClick={authLogout}
-						>
-							<LogOut
-								color="#585858"
-								size={22}
-							/>
-						</IconButton>
-					</Box>
-				</Box>
-			</AppBar>
-
 			<Box
 				component="nav"
-				sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+				sx={{
+					width: { md: drawerWidth },
+					flexShrink: { md: 0 },
+				}}
 				aria-label="mailbox folders"
 			>
-				{/* Drawer used for mobile/small screens */}
-				{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
 				<Drawer
 					variant="temporary"
 					open={mobileOpen}
@@ -219,30 +114,29 @@ export const Sidebar = ({
 						keepMounted: true, // Better open performance on mobile.
 					}}
 					sx={{
-						display: { xs: 'block', md: 'none' },
-						'& .MuiDrawer-paper': {
-							boxSizing: 'border-box',
+						display: { xs: "block", md: "none" },
+						"& .MuiDrawer-paper": {
+							boxSizing: "border-box",
 							width: drawerWidth,
-							alignItems: 'center',
-							backgroundColor: '#FFF',
-							borderRight: '1px solid #F4F4F4',
+							alignItems: "center",
+							backgroundColor: "#FFF",
+							borderRight: "1px solid #F4F4F4",
 						},
 					}}
 				>
 					<SidebarItems />
 				</Drawer>
 
-				{/* Drawer used for laptop/medium screens */}
 				<Drawer
 					variant="permanent"
 					sx={{
-						display: { xs: 'none', md: 'block' },
-						'& .MuiDrawer-paper': {
-							boxSizing: 'border-box',
+						display: { xs: "none", md: "block" },
+						"& .MuiDrawer-paper": {
+							boxSizing: "border-box",
 							width: drawerWidth,
-							alignItems: 'center',
-							backgroundColor: '#FFF',
-							borderRight: '1.5px solid #E5EFE9',
+							alignItems: "center",
+							backgroundColor: "#FFF",
+							borderRight: "1.5px solid #E5EFE9",
 						},
 					}}
 					open
@@ -251,88 +145,6 @@ export const Sidebar = ({
 				</Drawer>
 			</Box>
 
-			<Dialog
-				open={openDialog}
-				TransitionComponent={Transition}
-				onClose={handleDialogClose}
-				// maxWidth={'xl'}
-				// fullWidth
-				// fullScreen={fullScreen}
-				PaperProps={{
-					sx: {
-						width: '100%',
-						maxWidth: 'unset',
-						height: 'calc(100% - 64px)',
-						maxHeight: 'unset',
-						margin: 0,
-						background: '#f1f4f2',
-						borderBottomLeftRadius: 0,
-						borderBottomRightRadius: 0,
-						padding: 2,
-					},
-				}}
-				sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
-			>
-				{/* {!fullScreen && (
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							position: 'absolute',
-							left: 12,
-							top: 12,
-						}}
-					>
-						<IconButton
-							aria-label="close dialog"
-							onClick={handleDialogClose}
-							sx={{
-								background: '#FFF',
-								'&:hover': {
-									background: '#f1f4f2',
-									color: '#000',
-								},
-							}}
-						>
-							<X />
-						</IconButton>
-					</Box>
-				)} */}
-				<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
-					<IconButton
-						aria-label="close dialog"
-						onClick={handleDialogClose}
-						sx={{
-							width: '40px',
-							height: '40px',
-							position: 'fixed',
-							right: '26px',
-							top: 'calc(64px + 26px)',
-							color: '#545555',
-							transition: 'all 0.2s',
-							'&:hover': {
-								color: '#000',
-							},
-						}}
-					>
-						<X size={20} />
-					</IconButton>
-
-					{AddResource && <AddResource handleCreated={handleCreated} />}
-				</Box>
-
-				{/* <h1>{"Use Google's location service?"}</h1>
-				<Box>
-					<h6 id="alert-dialog-slide-description">
-						Let Google help apps determine location. This means sending anonymous location data to
-						Google, even when no apps are running.
-					</h6>
-				</Box>
-				<Box>
-					<Button onClick={handleDialogClose}>Disagree</Button>
-					<Button onClick={handleDialogClose}>Agree</Button>
-				</Box> */}
-			</Dialog>
 		</Box>
 	);
 };
