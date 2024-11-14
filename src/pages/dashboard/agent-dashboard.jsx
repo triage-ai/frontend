@@ -73,8 +73,8 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					{headers.map((header) => (
-						<Tab label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
+					{headers.map((header, Idx) => (
+						<Tab key={Idx} label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}
 				</StyledTabs>
 			</Box>
@@ -293,7 +293,8 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 			setDashboardData(res.data);
 			console.log(res.data);
 		});
-	}, []);
+	}, [category]);
+
 
 	return (
 		<Box>
@@ -324,6 +325,7 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 				<TableBody>
 					{dashboardData.map((departmentInfo) => (
 						<TableRow
+							key={departmentInfo.category_id}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {
@@ -392,6 +394,7 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 				<TableBody>
 					{dashboardData.map((categoryInfo) => (
 						<TableRow
+							key={categoryInfo.category_id}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {
@@ -457,8 +460,9 @@ const Agent = ({ selectedPeriod, selectedDate }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map((agentInfo) => (
+					{dashboardData.map((agentInfo, Idx) => (
 						<TableRow
+							key={Idx}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {

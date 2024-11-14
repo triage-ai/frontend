@@ -74,7 +74,6 @@ const profileSave = async (formData, profileData, updateAgent, refreshAgents, se
 		Object.entries(formData).forEach((update) => {
 			updates[update[0]] = update[1];
 		});
-		console.log(updates);
 		setCircleLoading(true);
 		await updateAgent(updates);
 		setCircleLoading(false);
@@ -88,7 +87,6 @@ const profileSaveSig = async (signature, profileData, updateAgent, refreshAgents
 	try {
 		var updates = { ...profileData };
 		updates['signature'] = signature;
-		console.log(updates);
 		setCircleLoading(true);
 		await updateAgent(updates);
 		setCircleLoading(false);
@@ -102,8 +100,6 @@ const profileSavePref = async (preferences, profileData, updateAgent, refreshAge
 	try {
 		var updates = { ...profileData };
 		updates['preferences'] = preferences;
-		console.log(updates)
-		console.log(updates);
 		setCircleLoading(true);
 		await updateAgent(updates);
 		setCircleLoading(false);

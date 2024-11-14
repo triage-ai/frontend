@@ -1,19 +1,22 @@
-import { MailPlus, Pencil, Trash2 } from 'lucide-react';
-import { Layout } from '../../../components/layout';
-import { WhiteContainer } from '../../../components/white-container';
-import { useState, useEffect } from 'react';
-import { useData } from '../../../context/DataContext';
-import { Table, TableCell, Typography, TableHead, TableRow, Stack, TableBody, IconButton, Drawer } from '@mui/material';
-import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
+import { Box, Dialog, Drawer, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { MailPlus, Pencil, Trash2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Layout } from '../../../components/layout';
+import { Transition } from '../../../components/sidebar';
+import { WhiteContainer } from '../../../components/white-container';
+import { useData } from '../../../context/DataContext';
+import { AddTemplate } from './AddTemplate';
+import { DeleteTemplate } from './DeleteTemplate';
 import { TemplateDetail } from './TemplateDetail';
 
 export const EmailTemplates = () => {
-	const [templateList, setTemplateList] = useState([]);
-	const { templates, refreshTemplates, refreshAgents } = useData();
-	const { getAllTemplates } = useTemplateBackend();
+	const { templates, refreshTemplates } = useData();
 
 	const [openDetail, setOpenDetail] = useState(false);
+	const [openDialog, setOpenDialog] = useState(false);
+	const [buttonClicked, setButtonClicked] = useState('');
+	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const navigate = useNavigate();
 	const { templateId } = useParams();
 
@@ -24,8 +27,10 @@ export const EmailTemplates = () => {
 			const template = {
 				template_id: parseInt(templateId, 10),
 			};
+			console.log(openDetail)
 			setOpenDetail(true);
 			setSelectedTemplate(template);
+			console.log(templateId)
 		}
 	}, [templates, templateId]);
 
@@ -33,17 +38,53 @@ export const EmailTemplates = () => {
 		refreshTemplates();
 	}, []);
 
-
 	const toggleDetailDrawer =
-	(newOpen, template = null) =>
-	() => {
-		if (newOpen) {
-			navigate('/email/templates/' + template.template_id);
-		} else {
-			navigate('/email/templates');
-		}
-		setOpenDetail(newOpen);
+		(newOpen, template = null) =>
+		() => {
+			if (newOpen) {
+				navigate('/email/templates/' + template.template_id);
+			} else {
+				navigate('/email/templates');
+			}
+			setOpenDetail(newOpen);
+			setSelectedTemplate(template);
+			refreshTemplates();
+		};
+
+	const handleDialogOpen = (event, template, button) => {
+		event.stopPropagation();
+
 		setSelectedTemplate(template);
+		setButtonClicked(button);
+
+		if (button === 'edit') {
+			setOpenDialog(true);
+		} else if (button === 'delete') {
+			setOpenDeleteDialog(true);
+		}
+	};
+
+	const handleDialogClose = () => {
+		setOpenDialog(false);
+		refreshTemplates();
+	};
+
+	const handleTemplateEdited = () => {
+		handleDialogClose();
+		refreshTemplates();
+	};
+
+	const handleTemplateCreated = () => {
+		handleDialogClose();
+		refreshTemplates();
+	};
+
+	const handleDeleteDialogClose = () => {
+		setOpenDeleteDialog(false);
+	};
+
+	const handleDelete = () => {
+		handleDeleteDialogClose();
 		refreshTemplates();
 	};
 
@@ -56,6 +97,8 @@ export const EmailTemplates = () => {
 				icon: <MailPlus size={20} />,
 				hidden: true,
 			}}
+			AddResource={AddTemplate}
+			refreshResource={refreshTemplates}
 		>
 			<WhiteContainer noPadding>
 				{templates.length !== 0 && (
@@ -89,7 +132,7 @@ export const EmailTemplates = () => {
 						<TableBody>
 							{templates.map((template) => (
 								<TableRow
-									key={template.ticket_id}
+									key={template.template_id}
 									onClick={toggleDetailDrawer(true, template)}
 									sx={{
 										'&:last-child td, &:last-child th': { border: 0 },
@@ -105,7 +148,7 @@ export const EmailTemplates = () => {
 									}}
 								>
 									<TableCell component='th' scope='row' sx={{ maxWidth: '200px' }}>
-										{template.code_name}
+										{template.template_name}
 									</TableCell>
 									<TableCell>{template.notes}</TableCell>
 									<TableCell>{template.created.replace('T', ' ')}</TableCell>
@@ -116,15 +159,11 @@ export const EmailTemplates = () => {
 											// spacing={0.5}
 											sx={{ justifyContent: 'flex-end' }}
 										>
-											<IconButton
-											// onClick={(event) => handleDialogOpen(event, ticket)}
-											>
+											<IconButton onClick={event => handleDialogOpen(event, template, 'edit')}>
 												<Pencil size={18} />
 											</IconButton>
 
-											<IconButton
-											// onClick={(event) => handleDialogOpen(event, ticket)}
-											>
+											<IconButton onClick={event => handleDialogOpen(event, template, 'delete')}>
 												<Trash2 size={18} />
 											</IconButton>
 										</Stack>
@@ -135,6 +174,90 @@ export const EmailTemplates = () => {
 					</Table>
 				)}
 			</WhiteContainer>
+
+			{buttonClicked === 'edit' && (
+				<Dialog
+					open={openDialog}
+					TransitionComponent={Transition}
+					onClose={handleDialogClose}
+					PaperProps={{
+						sx: {
+							width: '100%',
+							maxWidth: 'unset',
+							height: 'calc(100% - 64px)',
+							maxHeight: 'unset',
+							margin: 0,
+							background: '#f1f4f2',
+							borderBottomLeftRadius: 0,
+							borderBottomRightRadius: 0,
+							padding: 2,
+						},
+					}}
+					sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
+				>
+					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
+						<IconButton
+							aria-label='close dialog'
+							onClick={handleDialogClose}
+							sx={{
+								width: '40px',
+								height: '40px',
+								position: 'fixed',
+								right: '26px',
+								top: 'calc(64px + 26px)',
+								color: '#545555',
+								transition: 'all 0.2s',
+								'&:hover': {
+									color: '#000',
+								},
+							}}
+						>
+							<X size={20} />
+						</IconButton>
+
+						<AddTemplate handleCreated={handleTemplateCreated} handleEdited={handleTemplateEdited} editTemplate={selectedTemplate} />
+					</Box>
+				</Dialog>
+			)}
+
+			{buttonClicked === 'delete' && (
+				<Dialog
+					open={openDeleteDialog}
+					onClose={handleDeleteDialogClose}
+					PaperProps={{
+						sx: {
+							maxWidth: '500px',
+							background: '#f1f4f2',
+							py: 2,
+							px: 3,
+							m: 2,
+							borderRadius: '10px',
+						},
+					}}
+				>
+					<Box sx={{ textAlign: 'center' }}>
+						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
+							<IconButton
+								aria-label='close dialog'
+								onClick={handleDeleteDialogClose}
+								sx={{
+									width: '40px',
+									height: '40px',
+									color: '#545555',
+									transition: 'all 0.2s',
+									'&:hover': {
+										color: '#000',
+									},
+								}}
+							>
+								<X size={20} />
+							</IconButton>
+						</Box>
+
+						<DeleteTemplate editTemplate={selectedTemplate} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+					</Box>
+				</Dialog>
+			)}
 
 			<Drawer
 				open={openDetail}
@@ -151,7 +274,7 @@ export const EmailTemplates = () => {
 					},
 				}}
 			>
-				<TemplateDetail templateInfo={selectedTemplate} closeDrawer={toggleDetailDrawer(false)}/>
+				<TemplateDetail templateInfo={selectedTemplate} openEdit={handleDialogOpen} closeDrawer={toggleDetailDrawer(false)} />
 			</Drawer>
 		</Layout>
 	);

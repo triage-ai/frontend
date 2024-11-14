@@ -326,7 +326,7 @@ export const Sidebar = ({
 						<X size={20} />
 					</IconButton>
 
-					<AddResource handleCreated={handleCreated} />
+					{AddResource && <AddResource handleCreated={handleCreated} />}
 				</Box>
 
 				{/* <h1>{"Use Google's location service?"}</h1>

@@ -11,6 +11,7 @@ import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { useQueueBackend } from '../hooks/useQueueBackend';
 import { useTemplateBackend } from '../hooks/useTemplateBackend';
+import { useEmailBackend } from '../hooks/useEmailBackend';
 import { NotebookPen } from 'lucide-react';
 import { AuthContext } from './AuthContext';
 import { useScheduleBackend } from '../hooks/useScheduleBackend';
@@ -31,6 +32,7 @@ export const DataProvider = ({ children }) => {
 	const { getQueuesForAgent } = useQueueBackend();
 	const { getAllTemplates } = useTemplateBackend();
 	const { getAllSchedules } = useScheduleBackend();
+	const { getAllEmails } = useEmailBackend();
 
 	const [agents, setAgents] = useState([]);
 	const [tickets, setTickets] = useState([]);
@@ -61,6 +63,8 @@ export const DataProvider = ({ children }) => {
 	const [queueIdx, setQueueIdx] = useState([])
 
 	const [templates, setTemplates] = useState([])
+
+	const [emails, setEmails] = useState([])
 
 	const [schedules, setSchedules] = useState([])
 	const [formattedSchedules, setFormattedSchedules] = useState([])
@@ -220,6 +224,12 @@ export const DataProvider = ({ children }) => {
 		});
 	}, [getAllTemplates]);
 
+	const refreshEmails = useCallback(() => {
+		getAllEmails().then(emailList => {
+			setEmails(emailList.data);
+		});
+	}, [getAllTemplates]);
+
 	const refreshSchedules = useCallback(() => {
 		getAllSchedules()
 			.then(schedules => {
@@ -249,6 +259,8 @@ export const DataProvider = ({ children }) => {
 				refreshTickets,
 				templates,
 				refreshTemplates,
+				emails,
+				refreshEmails,
 				departments,
 				formattedDepartments,
 				refreshDepartments,

@@ -8,66 +8,56 @@ import { Check, Pencil, X } from 'lucide-react';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
 
 
-export const TemplateDetail = ({ templateInfo, closeDrawer }) => {
-	const [loading, setLoading] = useState(true);
-	const [editable, setEditable] = useState(true);
-    const { updateTemplate, getTemplateById } = useTemplateBackend();
-	const [formData, setFormData] = useState({
-		code_name: templateInfo?.code_name ,
-		subject: templateInfo?.subject || '',
-		notes: templateInfo?.notes || '',
-		body: templateInfo?.body || '',
-	});
+export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
+    const [template, setTemplate] = useState(null)
+    const { getTemplateById } = useTemplateBackend();
 
-	const handleChange = (entry) => {
-		console.log(formData);
-		setFormData({
-			...formData,
-			[entry.target.name]: entry.target.value,
-		});
 
-		setLoading(false);
+	// const handleChange = (entry) => {
+	// 	console.log(formData);
+	// 	setFormData({
+	// 		...formData,
+	// 		[entry.target.name]: entry.target.value,
+	// 	});
+
+	// 	setLoading(false);
+	// };
+
+	const openEditModal = (event, template) => {
+		closeDrawer();
+		openEdit(template, 'edit');
 	};
 
-	const toggleEdit = () => {
-		setEditable((p) => !p);
-	};
-
-    const editor = useEditor({
-		extensions: [StarterKit],
-		content: formData.body,
-        onUpdate: () => {setLoading(false)}
-	});
-
-    const templateSave = (formData, templateInfo, updateTemplate, setLoading) => {
-        formData['body'] = editor.getHTML();
-        var updates = {...templateInfo}
-        try {
-            Object.entries(formData).forEach((update) => {
-                updates[update[0]] = update[1];
-            });
-            updateTemplate(updates);
-            setLoading(true);
-        } catch (error) {
-            console.error("Error with saving template", error)
-        }
-    }
+    // const templateSave = (formData, templateInfo, updateTemplate, setLoading) => {
+    //     formData['body'] = editor.getHTML();
+    //     var updates = {...templateInfo}
+    //     try {
+    //         Object.entries(formData).forEach((update) => {
+    //             updates[update[0]] = update[1];
+    //         });
+    //         updateTemplate(updates);
+    //         setLoading(true);
+    //     } catch (error) {
+    //         console.error("Error with saving template", error)
+    //     }
+    // }
 
     useEffect(() => {
 		if (templateInfo) {
 			getTemplateById(templateInfo.template_id)
 				.then(response => response.data)
 				.then(template => {
-					setFormData({
-                        code_name: template.code_name ?? '',
-                        subject: template.subject ?? '',
-                        notes: template.notes ?? '',
-                        body: template.body ?? '',
-                    });
+					setTemplate(template);
                     editor.commands.setContent(template.body)
 				})
 		}
 	}, [templateInfo]);
+
+    const editor = useEditor({
+		extensions: [StarterKit],
+		content: template?.body,
+        editable: false,
+	});
 
 
 	return (
@@ -85,16 +75,13 @@ export const TemplateDetail = ({ templateInfo, closeDrawer }) => {
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Stack direction='row'>
-                                {editable ? <Typography variant='h2'>{formData.code_name}</Typography> : <CustomFilledInput label='Template Name' name='code_name' value={formData.code_name} onChange={handleChange}/>}
-                                <IconButton onClick={toggleEdit}>
-                                    <Pencil color='#22874E' size={16} />
-                                </IconButton>
+                                <Typography variant='h2'>{template?.template_name}</Typography>
                             </Stack>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <IconButton onClick={() => templateSave(formData, templateInfo, updateTemplate, setLoading)} disabled={loading}>
-                                <Check color={loading ? '#6E7772': '#22874E'} />
+                            <IconButton onClick={(event) => openEditModal(event, template)}>
+                                <Pencil color='#22874E' size={16} />
                             </IconButton>
 
                             <Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={1} mr={1} />
@@ -111,13 +98,13 @@ export const TemplateDetail = ({ templateInfo, closeDrawer }) => {
                         Email Subject and Body
                     </Typography>
 
-                    <CustomFilledInput label='Subject' name='subject' sx={{ width: 430, pb: 4 }} value={formData.subject} onChange={handleChange} />
+                    <CustomFilledInput label='Subject' name='subject' sx={{ width: 430, pb: 4 }} value={template?.subject} disabled/>
 
                     <Box sx={{ maxWidth: 1000, pb: 4 }}>
                         <RichTextEditorBox editor={editor} />
                     </Box>
 
-                    <CustomFilledInput label='Notes' name='notes' sx={{ width: 430, pb: 4 }} value={formData.notes} onChange={handleChange} />
+                    <CustomFilledInput label='Notes' name='notes' sx={{ width: 430, pb: 4 }} value={template?.notes} disabled/>
 
                     
                     {/* <CircularButton

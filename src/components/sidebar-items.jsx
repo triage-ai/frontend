@@ -663,7 +663,7 @@ export const SidebarItems = () => {
 																>
 																	<StyledListItemBtn
 																		component={Link}
-																		to={item.title === 'Emails' ? '/email' : '/email/' + item.title.toLowerCase()}
+																		to={'/email/' + item.title.toLowerCase()}
 																		selected={path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'}
 																		sx={{ pl: 1 }}
 																		disableRipple
