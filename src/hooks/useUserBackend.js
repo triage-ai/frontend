@@ -14,6 +14,26 @@ export const useUserBackend = () => {
 	// 	return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
 	// };
 
+	const resendConfirmationEmail = async (user_id) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `user/resend/${user_id}`);
+	}
+
+	const confirmToken = async (token) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `user/confirm/${token}`);
+	}
+
+	const sendResetPasswordEmail = async (email) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `user/reset`, {'email': email});
+	}
+
+	const resendResetPasswordEmail = async (user_id) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `user/reset/resend/${user_id}`);
+	}
+
+	const confirmResetPasswordToken = async (token, password) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `user/reset/confirm/${token}`, {'password': password});
+	}
+
 	const getAllUsersBySearch = async (input, page, size) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -36,6 +56,10 @@ export const useUserBackend = () => {
 		};
 
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'user/create', userInfo, config);
+	};
+
+	const registerUser = async userInfo => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'user/register', userInfo);
 	};
 
 	const updateUser = async userInfo => {
@@ -61,5 +85,5 @@ export const useUserBackend = () => {
 		);
 	};
 
-	return { createUser, updateUser, getAllUsersBySearch, getUserBySearch, removeUser };
+	return { createUser, registerUser, confirmToken, confirmResetPasswordToken, resendResetPasswordEmail, resendConfirmationEmail, sendResetPasswordEmail, updateUser, getAllUsersBySearch, getUserBySearch, removeUser };
 };

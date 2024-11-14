@@ -1,26 +1,17 @@
 import { useEffect, useState } from 'react';
-import { CustomAutocomplete } from '../../components/custom-select';
+import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-// import { AddAgent } from './AddAgent';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
+// import { AddForm } from './AddForm';
+import { useData } from '../../context/DataContext';
 
-export const AgentSelect = ({ handleInputChange, value, ...props }) => {
-	const { getAgentBySearch } = useAgentBackend();
-	const [agentOptions, setAgentOptions] = useState([]);
+export const FormSelect = ({ handleInputChange, value }) => {
+	const { formattedForms, refreshForms } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
-	const { mt, mb, ...otherProps } = props;
-
-	const handleAgentSearchChange = e => {
-		if (e?.target?.value) {
-			getAgentBySearch(e.target.value)
-				.then(res => {
-					setAgentOptions(res.data);
-				})
-				.catch(err => alert('Agent search failed'));
-		}
-	};
+	useEffect(() => {
+		refreshForms();
+	}, []);
 
 	const openDialog = () => {
 		setOpenCreateDialog(true);
@@ -32,29 +23,16 @@ export const AgentSelect = ({ handleInputChange, value, ...props }) => {
 
 	return (
 		<>
-			<CustomAutocomplete
-				{...otherProps}
-				label="Agent"
+			<CustomSelect
+				label="Form"
 				onChange={handleInputChange}
-				onInputChange={handleAgentSearchChange}
-				name="agent"
 				value={value}
+				name="form_id"
 				mb={2}
 				fullWidth
 				addNewButton
 				handleAddBtnClick={openDialog}
-				options={agentOptions}
-				getOptionLabel={item => (item ? item.firstname + ' ' + item.lastname : '')}
-				sx={{ marginBottom: mb, borderRadius: 0 }}
-				renderOption={(props, item) => (
-					<li
-						{...props}
-						key={item.email}
-					>
-						{item.firstname + ' ' + item.lastname}&nbsp;
-						<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
-					</li>
-				)}
+				options={formattedForms}
 			/>
 
 			<Dialog
@@ -97,7 +75,7 @@ export const AgentSelect = ({ handleInputChange, value, ...props }) => {
 							variant="h2"
 							sx={{ lineHeight: 1.3, textAlign: 'center' }}
 						>
-							Create new agent
+							Create new form
 						</Typography>
 
 						<IconButton
@@ -117,7 +95,7 @@ export const AgentSelect = ({ handleInputChange, value, ...props }) => {
 						</IconButton>
 					</Box>
 
-					{/* <AddAgent handleClose={handleClose} /> */}
+					{/* <AddForm handleClose={handleClose} /> */}
 				</Box>
 			</Dialog>
 		</>

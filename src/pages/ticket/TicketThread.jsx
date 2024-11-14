@@ -13,6 +13,7 @@ import { LinkBubbleMenu, LinkBubbleMenuHandler } from 'mui-tiptap';
 import Link from '@tiptap/extension-link';
 import StarterKit from '@tiptap/starter-kit';
 import { AuthContext } from '../../context/AuthContext';
+import formatDate from '../../functions/date-formatter';
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -65,8 +66,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 		var prevValue = item.prev_val;
 
 		if (item.field === 'due_date') {
-			newValue = newValue ? dayjs.utc(newValue).local().format('lll') : null;
-			prevValue = prevValue ? dayjs.utc(prevValue).local().format('lll') : null;
+			newValue = newValue ? formatDate(newValue, 'lll') : null
+			prevValue = prevValue ? formatDate(prevValue, 'lll') : null
 		}
 
 		if (item.type === 'A') {

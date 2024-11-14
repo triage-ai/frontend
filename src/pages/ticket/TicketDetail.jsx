@@ -28,17 +28,6 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 	const [editing, setEditing] = useState(false);
 	const { permissions } = useContext(AuthContext);
 
-	function createData(name, calories, fat, carbs, protein) {
-		return { name, calories, fat, carbs, protein };
-	}
-
-	const rows = [
-		createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-		createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-		createData('Eclair', 262, 16.0, 24, 6.0),
-		createData('Cupcake', 305, 3.7, 67, 4.3),
-		createData('Gingerbread', 356, 16.0, 49, 3.9),
-	];
 
 	const handleStatusChange = (e) => {
 		const statusUpdate = {
@@ -51,9 +40,6 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 			.catch((err) => alert('Error while updating ticket status'));
 	};
 
-	const handleEditMode = () => {
-		setEditing((prevState) => !prevState);
-	};
 
 	useEffect(() => {
 		getAllStatuses()
@@ -121,7 +107,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 							{permissions.hasOwnProperty('ticket.edit') && (
 								<>
 									<IconButton sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }} aria-label='edit' onClick={(event) => openEditModal(event, ticket)}>
-										<Pencil size={20} color='#6E7772' onClick={() => {}} />
+										<Pencil size={20} color='#6E7772' />
 									</IconButton>
 
 									<Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={2.25} mr={1} />
@@ -273,8 +259,12 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 										User
 									</Typography>
-									<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
-										{ticket.user.name}
+									<Typography
+										variant="subtitle2"
+										color={'#1B1D1F'}
+										fontWeight={600}
+									>
+										{ticket.user.firstname + ' ' + ticket.user.lastname}
 									</Typography>
 								</Box>
 							</Box>

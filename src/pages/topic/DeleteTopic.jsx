@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
-import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
+import { useTopicBackend } from '../../hooks/useTopicBackend';
 
-export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) => {
-	const { removeDepartment } = useDepartmentBackend();
+export const DeleteTopic = ({ editTopic, handleDelete, handleClose }) => {
+	const { removeTopic } = useTopicBackend();
 
-	const deleteDepartment = () => {
-		removeDepartment(editDepartment)
+	const deleteTopic = () => {
+		removeTopic(editTopic)
 			.then(res => {
 				handleDelete();
 			})
@@ -19,14 +19,14 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the Department {editDepartment.firstname + ' ' + editDepartment.lastname}?
+				Are you sure you want to delete the topic {editTopic.firstname + ' ' + editTopic.lastname}?
 			</Typography>
 
 			<Typography
 				variant="body1"
 				sx={{ color: '#545555', mb: 5 }}
 			>
-				This will remove the Department from your Departments table. You can always add another Department later
+				This will remove the topic from your topics table. You can always add another topic later
 				on.
 			</Typography>
 
@@ -44,7 +44,7 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 							background: '#b82828',
 						},
 					}}
-					onClick={deleteDepartment}
+					onClick={deleteTopic}
 				>
 					Yes, delete
 				</CircularButton>

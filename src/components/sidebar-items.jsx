@@ -230,38 +230,38 @@ export const getManageSubmenuItems = (permissions, adminStatus) => [
 		: []),
 	...(permissions.hasOwnProperty('group.view')
 		? [
-				{
-					title: 'Groups',
-					icon: <Users size={20} />,
-				},
+				// {
+				// 	title: 'Groups',
+				// 	icon: <Users size={20} />,
+				// },
 		  ]
 		: []),
 	...(adminStatus
 		? [
-				{
-					title: 'Queues',
-					icon: <Filter size={20} />,
-				},
-				{
-					title: 'SLA',
-					icon: <AlarmClock size={20} />,
-				},
-				{
-					title: 'Schedules',
-					icon: <Calendar size={20} />,
-				},
+				// {
+				// 	title: 'Queues',
+				// 	icon: <Filter size={20} />,
+				// },
+				// {
+				// 	title: 'SLA',
+				// 	icon: <AlarmClock size={20} />,
+				// },
+				// {
+				// 	title: 'Schedules',
+				// 	icon: <Calendar size={20} />,
+				// },
 				{
 					title: 'Departments',
 					icon: <SquareUserRound size={20} />,
 				},
-				{
-					title: 'Priorities',
-					icon: <CircleAlert size={20} />,
-				},
-				{
-					title: 'Statuses',
-					icon: <TicketCheck size={20} />,
-				},
+				// {
+				// 	title: 'Priorities',
+				// 	icon: <CircleAlert size={20} />,
+				// },
+				// {
+				// 	title: 'Statuses',
+				// 	icon: <TicketCheck size={20} />,
+				// },
 				{
 					title: 'Topics',
 					icon: <MessageCircleQuestion size={20} />,

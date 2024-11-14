@@ -95,7 +95,7 @@ export const ScheduleSelect = ({ handleInputChange, value }) => {
 						</IconButton>
 					</Box>
 
-					<AddSchedule handleClose={handleClose} />
+					{/* <AddSchedule handleClose={handleClose} /> */}
 				</Box>
 			</Dialog>
 		</>

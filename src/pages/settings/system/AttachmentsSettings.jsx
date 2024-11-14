@@ -37,7 +37,6 @@ export const Attachments = props => {
 	};
 
 	const handleCheckBox = event => {
-		console.log(event);
 
 		setFormState({
 			...formState,

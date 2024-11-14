@@ -2,8 +2,8 @@ import logo from '../../assets/logo-white.svg';
 import logoBlack from '../../assets/logo-black.svg';
 import AppIcon from '../../assets/app-icon-black.png';
 import '../../App.css';
-import React, { useContext, useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
 	Box,
 	Button,
@@ -14,11 +14,10 @@ import {
 	Typography,
 	styled,
 } from '@mui/material';
-import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
-import { AuthContext } from '../../context/AuthContext';
+import { Activity, CheckCircle, Lock, Mail, Split, Tag } from 'lucide-react';
+import { useUserBackend } from '../../hooks/useUserBackend';
 import Grid from '@mui/material/Grid2';
+import { useNavigate } from 'react-router-dom';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -73,62 +72,35 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserSignIn = () => {
-	const { setUserData } = useContext(AuthContext);
-	const [loading, setLoading] = useState(false);
+export const UserResetPasswordForm = () => {
+
+	const { token } = useParams()
+
+	const { confirmResetPasswordToken } = useUserBackend()
+
+	const [loading, setLoading] = useState(false)
+	const [status, setStatus] = useState(0)
 
 	const [email, setEmail] = useState('');
 	const [error, setError] = useState(false);
 
-	const [password, setPassword] = useState('');
-	const [passwordError, setPasswordError] = useState(false);
+	const [password, setPassword] = useState('')
+	const [showComplete, setShowComplete] = useState(false)
 
 	const navigate = useNavigate();
-	const { userSignInEmailAndPassword } = useSetAuthCookie();
 
-	const signIn = async e => {
-		e.preventDefault();
-		setLoading(true);
-
-		if (validateEmail(email) && password !== '') {
-			userSignInEmailAndPassword(email, password)
-				// signInWithEmailAndPassword(auth, email, password)
-				.then(userCredential => {
-					// console.log(userCredential.data);
-					// getApiToken(userCredential);
-					const userData = userCredential.data;
-
-					const authInfo = {
-						isAuth: true,
-						userId: userData.user_id,
-						token: userData.token,
-					};
-					setUserData(authInfo);
-					setLoading(false);
-					navigate('/user/tickets');
-				})
-				.catch(error => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					console.error(errorCode, errorMessage);
-					setLoading(false);
-				});
-		} else if (!validateEmail(email)) {
-			setError(true);
-			setLoading(false);
-		} else if (password === '') {
-			setPasswordError(true);
-			setLoading(false);
-		}
-	};
-
-	const validateEmail = email => {
-		return String(email)
-			.toLowerCase()
-			.match(
-				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-			);
-	};
+	const sendResetPassword = () => {
+		setLoading(true)
+		confirmResetPasswordToken(token, password)
+			.then(res => {
+				setLoading(false)
+				setShowComplete(true)
+			})
+			.catch(err => {
+				setLoading(false)
+				console.error(err)
+			})
+	}
 
 	return (
 		<Box
@@ -193,6 +165,57 @@ export const UserSignIn = () => {
 							>
 								Experience the future of customer support with Triage.ai
 							</Typography>
+
+							{/* <Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '22px',
+									// textAlign: 'left',
+									fontSize: '0.875rem',
+									color: '#7A8087',
+								}}
+							>
+								<div>
+									<span style={{ display: 'inline-block', fontWeight: '600' }}>
+										Build, Fine-Tune, Test, and Deploy your own ticket classification system in a few
+										clicks!
+									</span>
+								</div>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Auto-labels tickets
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Ensures accurate ticket assignment
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Pinpoints areas experiencing a surge in ticket volume
+									</span>
+								</Box>
+							</Box> */}
 
 							<Grid
 								container
@@ -332,147 +355,82 @@ export const UserSignIn = () => {
 								</Typography> */}
 							</Box>
 
-							<img
+							{/* <img
 								src={AppIcon}
 								className="App-logo"
 								// style={{ width: '0px' }}
 								alt="logo"
-							/>
+							/> */}
 
-							<h1
-								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
-								}}
-							>
-								User Sign in
-							</h1>
+							{/* <CheckCircle size={60} color='#34b233' /> */}
 
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign in with a provider
-							</p>
-
-							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
-								<ProviderButton onClick={loginWithSAML}>
-									<img
-										src={microsoftIcon}
-										alt="Microsoft Icon"
-									/>
-									<span
+							{showComplete ?
+								<>
+									<h3
 										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
+											fontWeight: 600,
 											color: '#1B1D1F',
-											marginLeft: '8px',
+											letterSpacing: '-0.03em',
+											marginTop: '30px',
 										}}
 									>
-										Microsoft
-									</span>
-								</ProviderButton>
-
-								<ProviderButton>
-									<img
-										src={googleIcon}
-										alt="Google Icon"
-									/>
-									<span
+										Password Reset
+									</h3>
+									<p
 										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
+											fontSize: '0.875rem',
+											fontWeight: 600,
 											color: '#1B1D1F',
-											marginLeft: '8px',
+											letterSpacing: '-0.01em',
+											lineHeight: 1.2,
+											marginTop: 0,
+											marginBottom: '20px',
+											textAlign: 'center',
 										}}
 									>
-										Google
-									</span>
-								</ProviderButton>
-							</Box>
+										Login with your new password
+									</p>
 
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
+								</>
 
-							{/* <span
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: '32px',
-									marginBottom: '25px',
-								}}
-							>
-								Or continue with email and password
-							</span> */}
+								:
+								<>
+									<h3
+										style={{
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.03em',
+											marginTop: '30px',
+										}}
+									>
+										Reset password
+									</h3>
+									<p
+										style={{
+											fontSize: '0.875rem',
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.01em',
+											lineHeight: 1.2,
+											marginTop: 0,
+											marginBottom: '20px',
+											textAlign: 'center',
+										}}
+									>
+										Enter you new password below
+									</p>
 
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign in with email and password
-							</p>
-
-							<form onSubmit={e => signIn(e)}>
-								<CustomTextField
-									label=""
-									id="email"
-									autoComplete="username"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Your email"
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position="start">
-												<Mail color="#575757" />
-											</InputAdornment>
-										),
-									}}
-									value={email}
-									onChange={event => {
-										if (validateEmail(email)) {
-											setError(false);
-										}
-										setEmail(event.target.value);
-									}}
-								/>
-
-								<CustomTextField
+									<CustomTextField
 									label=""
 									id="password"
 									type="password"
 									autoComplete="current-password"
 									sx={{
 										'& .MuiInputBase-root': {
-											border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
+											border: '2px solid transparent',
 										},
 									}}
-									placeholder="Your password"
+									placeholder="New password"
 									InputProps={{
 										startAdornment: (
 											<InputAdornment position="start">
@@ -489,73 +447,48 @@ export const UserSignIn = () => {
 									}}
 								/>
 
-								<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
-										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										marginBottom: '28px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
-									}}
-									type="submit"
-									disabled={loading || !validateEmail(email) || password === ''}
-								>
-									{loading ? (
-										<CircularProgress
-											size={22}
-											thickness={5}
-											sx={{ color: '#FFF' }}
-										/>
-									) : (
-										'Sign in'
-									)}
-								</Button>
-							</form>
-							<p
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: 600,
-								color: '#1B1D1F',
-								letterSpacing: '-0.01em',
-								lineHeight: 1.2,
-								marginTop: 15,
-								textAlign: 'center',
-							}}
-						>
-						<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
-						</p>
-						<p
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: 600,
-								color: '#1B1D1F',
-								letterSpacing: '-0.01em',
-								lineHeight: 1.2,
-								marginTop: 0,
-								marginBottom: '20px',
-								textAlign: 'center',
-							}}
-						>
-							Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
-						</p>
+									<Button
+										sx={{
+											backgroundColor: '#22874E',
+											color: '#FFF',
+											borderRadius: '12px',
+											width: '100%',
+											fontSize: '0.9375rem',
+											fontWeight: 600,
+											lineHeight: 1,
+											textTransform: 'unset',
+											padding: '16.5px 10px',
+											marginTop: '12px',
+											marginBottom: '28px',
+											transition: 'all 0.3s',
+											'&:hover': {
+												backgroundColor: '#29b866',
+											},
+											'&:disabled': {
+												color: 'unset',
+												opacity: 0.4,
+											},
+										}}
+										onClick={() => sendResetPassword()}
+										disabled={loading || password === ''}
+									>
+										{loading ? (
+											<CircularProgress
+												size={22}
+												thickness={5}
+												sx={{ color: '#FFF' }}
+											/>
+										) : (
+											'Reset Password'
+										)}
+									</Button>
+								</>
+							}
+
 						</header>
 					</div>
 				</Grid>
 			</Grid>
-		</Box>
+		</Box >
 	);
 };

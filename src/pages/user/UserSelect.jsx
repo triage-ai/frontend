@@ -44,14 +44,15 @@ export const UserSelect = ({ handleInputChange, value, ...props }) => {
 				addNewButton
 				handleAddBtnClick={openDialog}
 				options={userOptions}
-				getOptionLabel={x => (x ? x.name : '')}
-				sx={{ marginBottom: mb }}
+				getOptionLabel={item => (item ? item.firstname + ' ' + item.lastname : '')}
+				sx={{ marginBottom: mb, borderRadius: 0 }}
 				renderOption={(props, item) => (
 					<li
 						{...props}
 						key={item.email}
 					>
-						{item.name}&nbsp;<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
+						{item.firstname + ' ' + item.lastname}&nbsp;
+						<span style={{ color: 'grey', fontSize: 10 }}>{item.email}</span>
 					</li>
 				)}
 			/>

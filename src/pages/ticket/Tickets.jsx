@@ -29,6 +29,7 @@ import { useQueuesBackend } from '../../hooks/useQueueBackend';
 import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQueriesForElement } from '@testing-library/react';
+import formatDate from '../../functions/date-formatter';
 import { AuthContext } from '../../context/AuthContext';
 
 export const Tickets = () => {
@@ -335,14 +336,14 @@ export const Tickets = () => {
 									</Typography>
 								</TableCell>
 								<TableCell>{ticket.number}</TableCell>
-								<TableCell>{ticket.updated.replace('T', ' ')}</TableCell>
+								<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>
 									<Chip
 										label={ticket.priority.priority_desc}
 										sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
 									/>
 								</TableCell>
-								<TableCell>{ticket.user.name}</TableCell>
+								<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell>
 								<TableCell
 									component="th"
 									scope="row"

@@ -13,17 +13,18 @@ import {
     ChevronRight,
     ChevronLeft
 } from 'lucide-react'
+import { gridRenderContextColumnsSelector } from '@mui/x-data-grid';
 
 
 export const TransferList = ({ right, setRight, allItems, formatter}) => {
     const [checked, setChecked] = React.useState([]);
-    const [left, setLeft] = React.useState(not(allItems, right));
+    const [left, setLeft] = React.useState([]);
     
     React.useEffect(() => {
-        console.log(right)
-        console.log(allItems)
-        console.log(not(allItems, right))
-    },[])
+        if (allItems && right && allItems.length > 0) {
+            setLeft(not(allItems, right))
+        }
+    },[right])
 
     function not(a, b) {
         return a.filter((value) => !b.some(val => formatter(val) === formatter(value)));

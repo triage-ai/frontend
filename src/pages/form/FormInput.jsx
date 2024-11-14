@@ -3,7 +3,6 @@ import { CustomFilledInput } from "../../components/custom-input"
 
 export const FormInput = ({formField, handleInputChange, value}, props) => {
 
-
     return (
             <CustomFilledInput
                 {...props}
@@ -15,7 +14,5 @@ export const FormInput = ({formField, handleInputChange, value}, props) => {
                 mb={2}
             />
     )
-
-
 
 }

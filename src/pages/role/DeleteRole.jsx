@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
-import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
+import { useRoleBackend } from '../../hooks/useRoleBackend';
 
-export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) => {
-	const { removeDepartment } = useDepartmentBackend();
+export const DeleteRole = ({ editRole, handleDelete, handleClose }) => {
+	const { removeRole } = useRoleBackend();
 
-	const deleteDepartment = () => {
-		removeDepartment(editDepartment)
+	const deleteRole = () => {
+		removeRole(editRole)
 			.then(res => {
 				handleDelete();
 			})
@@ -19,14 +19,14 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the Department {editDepartment.firstname + ' ' + editDepartment.lastname}?
+				Are you sure you want to delete the role {editRole.firstname + ' ' + editRole.lastname}?
 			</Typography>
 
 			<Typography
 				variant="body1"
 				sx={{ color: '#545555', mb: 5 }}
 			>
-				This will remove the Department from your Departments table. You can always add another Department later
+				This will remove the role from your roles table. You can always add another role later
 				on.
 			</Typography>
 
@@ -44,7 +44,7 @@ export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) 
 							background: '#b82828',
 						},
 					}}
-					onClick={deleteDepartment}
+					onClick={deleteRole}
 				>
 					Yes, delete
 				</CircularButton>

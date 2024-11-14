@@ -6,49 +6,80 @@ import { AuthContext } from '../context/AuthContext';
 export const useFormBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
-	// const getAllAgents = async () => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const getAllForms = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.get(process.env.REACT_APP_BACKEND_URL + 'agent/get', config);
-	// };
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + 'form/get', config);
+	};
 
 	const getFormById = async (input) => {
 
 		return await axios.get(process.env.REACT_APP_BACKEND_URL + `form/id/${input}`);
 	}
 
-	// const createAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const createForm = async formInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.post(process.env.REACT_APP_BACKEND_URL + 'agent/create', agentInfo, config);
-	// };
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'form/create', formInfo, config);
+	};
 
-	// const updateAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const updateForm = async formInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.put(
-	// 		process.env.REACT_APP_BACKEND_URL + 'agent/put/' + agentInfo.agent_id,
-	// 		agentInfo,
-	// 		config
-	// 	);
-	// };
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'form/put/' + formInfo.form_id,
+			formInfo,
+			config
+		);
+	};
 
-	// const removeAgent = async agentInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+	const removeForm = async formInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// 	return await axios.delete(
-	// 		process.env.REACT_APP_BACKEND_URL + 'agent/delete/' + agentInfo.agent_id,
-	// 		config
-	// 	);
-	// };
+		return await axios.delete(
+			process.env.REACT_APP_BACKEND_URL + 'form/delete/' + formInfo.form_id,
+			config
+		);
+	};
 
-	return { getFormById };
+	const createFormField = async formFieldInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'form_field/create', formFieldInfo, config);
+	};
+
+	const updateFormField = async formFieldInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'form_field/put/' + formFieldInfo.field_id,
+			formFieldInfo,
+			config
+		);
+	};
+
+	const removeFormField = async formFieldInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.delete(
+			process.env.REACT_APP_BACKEND_URL + 'form_field/delete/' + formFieldInfo.field_id,
+			config
+		);
+	};
+
+	return { getAllForms, getFormById, createForm, removeForm, updateForm, createFormField, updateFormField, removeFormField };
 };

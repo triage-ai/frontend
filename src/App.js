@@ -14,7 +14,15 @@ import { Tickets } from './pages/ticket/Tickets';
 import { Agents } from './pages/agent/Agents';
 import { UserTickets } from './pages/dashboard/UserTickets';
 import { Settings } from './pages/settings/Settings';
-import { Manage } from './pages/manage/Manage';
+import {
+	SystemMenu,
+	CompanyMenu,
+	TicketMenu,
+	TaskMenu,
+	AgentMenu,
+	UserMenu,
+	KnowledgebaseMenu,
+} from './pages/settings/SettingsMenus';
 import { SystemMenu, CompanyMenu, TicketMenu, TaskMenu, AgentMenu, UserMenu, KnowledgebaseMenu } from './pages/settings/SettingsMenus';
 import { Profile } from './pages/profile/AgentProfile';
 import { Emails } from './pages/email/emails/Emails';
@@ -25,12 +33,21 @@ import { EmailDiagnostic } from './pages/email/EmailDiagnostic';
 import { Users } from './pages/user/Users';
 import { Departments } from './pages/department/Departments';
 import { Groups } from './pages/group/Groups';
+import { UserSignUp } from './pages/auth/user-sign-up';
+import { UserSignUpConfirmation } from './pages/auth/user-sign-up-confirmation';
+import { UserEmailConfirmation } from './pages/auth/user-email-confirmation';
+import { UserResetPassword } from './pages/auth/user-reset-password';
+import { UserResetPasswordConfirmation } from './pages/auth/user-reset-password-confirmation';
+import { UserResetPasswordForm } from './pages/auth/user-reset-password-form';
+import { Topics } from './pages/topic/Topics';
+import { Forms } from './pages/form/Forms';
+import { Roles } from './pages/role/Roles';
 
 const theme = createTheme({
 	palette: {
 		primary: {
 			main: '#22874E',
-		},
+		}
 	},
 	typography: {
 		fontFamily: ['Mont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
@@ -90,7 +107,48 @@ function App() {
 						<Route path='user/login' element={userAuthState.isAuth ? <Navigate to='/user/tickets' /> : <UserSignIn />} />
 						<Route path='dashboard' element={<AgentDashboard />} />
 						<Route
-							path='tickets'
+							path="/"
+							exact
+							element={<Landing />}
+						/>
+						<Route
+							path="agent/login"
+							element={agentAuthState.isAuth ? <Navigate to="/tickets" /> : <AgentSignIn />}
+						/>
+						<Route
+							path="user/login"
+							element={userAuthState.isAuth ? <Navigate to="/user/tickets" /> : <UserSignIn />}
+						/>
+						<Route
+							path="signup"
+							element={<UserSignUp />}
+						/>
+						<Route
+							path="signup/confirmation/:user_id"
+							element={<UserSignUpConfirmation />}
+						/>
+						<Route
+							path="/reset_password"
+							element={<UserResetPassword />}
+						/>
+						<Route
+							path="/reset_password/confirmation/:user_id"
+							element={<UserResetPasswordConfirmation />}
+						/>
+						<Route
+							path="/reset_password/:token"
+							element={<UserResetPasswordForm />}
+						/>
+						<Route
+							path="confirm_email/:token"
+							element={<UserEmailConfirmation />}
+						/>
+						<Route
+							path="dashboard"
+							element={<AgentDashboard />}
+						/>
+						<Route
+							path="tickets"
 							element={
 								<ProtectedRoute>
 									<Tickets />
@@ -309,6 +367,30 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<Groups />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/topics'
+							element={
+								<ProtectedRoute>
+									<Topics />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/forms'
+							element={
+								<ProtectedRoute>
+									<Forms />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path='manage/roles'
+							element={
+								<ProtectedRoute>
+									<Roles />
 								</ProtectedRoute>
 							}
 						/>

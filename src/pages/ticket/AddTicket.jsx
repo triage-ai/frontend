@@ -14,15 +14,13 @@ import { AgentSelect } from '../agent/AgentSelect';
 import { SLASelect } from '../sla/SLASelect';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { StatusSelect } from '../status/StatusSelect';
 import { PrioritySelect } from '../priority/PrioritySelect';
 import { GroupSelect } from '../group/GroupSelect';
 import { TopicSelect } from '../topic/TopicSelect'
-import { FormInput } from '../forms/FormInput';
+import { FormInput } from '../form/FormInput';
 import { useFormBackend } from '../../hooks/useFormBackend'
+import { CustomDateTimePicker } from '../../components/date-time-picker';
 
 dayjs.extend(utc)
 
@@ -75,7 +73,9 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 						var values = {}
 						editTicket.form_entry.values.map(value => {
 							const field = res.data.fields.find((field) => field.field_id === value.field_id)
-							values[field.name] = value.value
+							if (field) {
+								values[field.name] = value.value
+							}
 						})
 						setFormValues(values)
 				})
@@ -341,25 +341,11 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					value={formData.group_id ?? ''}
 				/>
 
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<DateTimePicker
-						timezone='UTC'
-						defaultValue={formData.due_date ? dayjs(formData.due_date) : null}
-						onChange={handleDueDateChange}
-						slotProps={{ field: { clearable: true } }}
-						sx={{
-							width: 275,
-							m: 1,
-							'& .MuiInputBase-root': {
-								fontWeight: 600,
-							},
-							'.MuiOutlinedInput-notchedOutline': {
-								borderRadius: '8px',
-								borderColor: '#E5EFE9',
-							},
-						}}
-					/>
-				</LocalizationProvider>
+				<CustomDateTimePicker
+					defaultValue={editTicket.due_date}
+					onChange={handleDueDateChange}
+				/>
+
 
 
 			</Box>
