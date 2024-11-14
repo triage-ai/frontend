@@ -7,9 +7,9 @@ import {
 	timelineItemClasses,
 	TimelineSeparator,
 } from '@mui/lab';
+import { Box, IconButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { Box, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -39,12 +39,11 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data)
 				updateCurrentTicket(updatedTicket)
-                console.log(updatedTicket)
 				setFormData({'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': ''})
 			})
 			.catch(err => {
 				alert('Error while creating thread entry')
-				console.log(err)
+				console.error(err)
 			});
 	}
 

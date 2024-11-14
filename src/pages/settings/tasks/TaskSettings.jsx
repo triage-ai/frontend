@@ -1,16 +1,14 @@
+import { Box, CircularProgress, MenuItem, Stack, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { CircleHelp } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { CircularButton } from '../../../components/sidebar';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { Box, Checkbox, CircularProgress, FormControlLabel, MenuItem, Stack, Typography } from '@mui/material';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { CustomTextField } from '../../../components/sidebar-items';
-import { handleSave } from '../SettingsMenus';
-import { CustomFilledInput } from '../../../components/custom-input';
-import { StyledSelect } from '../SettingsMenus';
-import { CircularButton } from '../../../components/sidebar';
-import { CircleHelp } from 'lucide-react';
-import { styled } from '@mui/material/styles';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 
 export const TaskSettings = props => {
@@ -26,7 +24,6 @@ export const TaskSettings = props => {
 	});
 
 	const handleChange = (entry) => {
-		console.log(formState);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,
@@ -36,8 +33,6 @@ export const TaskSettings = props => {
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event);
-
 		setFormState({
 			...formState,
 			[event.target.name]: event.target.checked ? 'on' : 'off',

@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
-import { AddStatus } from './AddStatus';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
+import { AddStatus } from './AddStatus';
 
 export const StatusSelect = ({ handleInputChange, value }) => {
 	const { formattedStatuses, refreshStatuses } = useData();
@@ -45,7 +45,6 @@ export const StatusSelect = ({ handleInputChange, value }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

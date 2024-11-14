@@ -1,19 +1,18 @@
-import * as React from 'react';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import Grid2 from '@mui/material/Grid2';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import {
-    ChevronsRight,
-    ChevronsLeft,
+    ChevronLeft,
     ChevronRight,
-    ChevronLeft
-} from 'lucide-react'
-import { gridRenderContextColumnsSelector } from '@mui/x-data-grid';
+    ChevronsLeft,
+    ChevronsRight
+} from 'lucide-react';
+import * as React from 'react';
 
 
 export const TransferList = ({ right, setRight, allItems, formatter}) => {

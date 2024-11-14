@@ -1,7 +1,7 @@
 import IconButton from '@mui/material/IconButton';
-import { Fragment, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useSnackbar } from 'notistack';
+import { Fragment, useEffect, useState } from 'react';
 
 export const useNotification = () => {
 	const [conf, setConf] = useState({});

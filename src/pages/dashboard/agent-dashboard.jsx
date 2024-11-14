@@ -1,19 +1,19 @@
-import { Box, Tab, Tabs, MenuItem, Stack, Typography, styled, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Box, MenuItem, Stack, styled, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Settings2 } from 'lucide-react';
-import { Layout } from '../../components/layout';
-import { WhiteContainer } from '../../components/white-container';
-import { useState, useEffect, useContext } from 'react';
-import { StyledSelect } from '../settings/SettingsMenus';
-import { CircularButton } from '../../components/sidebar';
-import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
-import { useData } from '../../context/DataContext';
-import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs';
+import { Settings2 } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { Layout } from '../../components/layout';
+import { CircularButton } from '../../components/sidebar';
+import { WhiteContainer } from '../../components/white-container';
+import { AuthContext } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { StyledSelect } from '../settings/SettingsMenus';
 
 const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
@@ -73,8 +73,8 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					{headers.map((header) => (
-						<Tab label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
+					{headers.map((header, idx) => (
+						<Tab key={idx} label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}
 				</StyledTabs>
 			</Box>
@@ -168,7 +168,7 @@ const Dashboard = () => {
 			start_date = dayjs(start_date).format('MM-DD-YYYY');
 			let graph_data = await getTicketBetweenDates(start_date, end_date);
 
-			graph_data.data.map((data_point) => {
+			graph_data.data.forEach((data_point) => {
 				points.push(new Date(data_point.date));
 				y1.push(data_point.created);
 				y2.push(data_point.updated);
@@ -284,14 +284,13 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
 		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'department').then((res) => {
-			res.data.map((department) => {
+			res.data.forEach((department) => {
 				if (category.length) {
 					let new_cat = category.find((cat) => cat.dept_id === department.category_id);
 					department.category_name = new_cat.name;
 				}
 			});
 			setDashboardData(res.data);
-			console.log(res.data);
 		});
 	}, []);
 
@@ -322,8 +321,9 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map((departmentInfo) => (
+					{dashboardData.map((departmentInfo, idx) => (
 						<TableRow
+							key={idx}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {
@@ -352,14 +352,13 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 	useEffect(() => {
 		const start_date = dayjs(selectedDate).format('MM-DD-YYYY');
 		getDashboardStats(start_date, calculateNewDate(selectedDate, selectedPeriod), 'topics').then((res) => {
-			res.data.map((department) => {
+			res.data.forEach((department) => {
 				if (category.length) {
 					let new_cat = category.find((cat) => cat.topic_id === department.category_id);
 					department.category_name = new_cat.topic;
 				}
 			});
 			setDashboardData(res.data);
-			console.log(res.data);
 		});
 	}, []);
 
@@ -390,8 +389,9 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map((categoryInfo) => (
+					{dashboardData.map((categoryInfo, idx) => (
 						<TableRow
+							key={idx}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {
@@ -457,8 +457,9 @@ const Agent = ({ selectedPeriod, selectedDate }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{dashboardData.map((agentInfo) => (
+					{dashboardData.map((agentInfo, idx) => (
 						<TableRow
+							key={idx}
 							sx={{
 								'&:last-child td, &:last-child th': { border: 0 },
 								'& .MuiTableCell-root': {

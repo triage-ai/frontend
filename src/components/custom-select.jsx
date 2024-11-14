@@ -1,16 +1,12 @@
 import {
+	Autocomplete,
 	Box,
 	Button,
 	MenuItem,
-	TextField,
-	Typography,
-	alpha,
-	styled,
-	Autocomplete,
 	Popper,
-	Paper,
+	TextField,
+	Typography, styled
 } from '@mui/material';
-import { useEffect } from 'react';
 
 export const CustomInput = styled(props => (
 	<TextField

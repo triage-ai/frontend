@@ -1,12 +1,11 @@
+import { Box, Checkbox, CircularProgress, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { CircularButton } from '../../../components/sidebar';
+import { CustomTextField } from '../../../components/sidebar-items';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { Box, Checkbox, CircularProgress, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Stack, Typography } from '@mui/material';
-import { CustomTextField } from '../../../components/sidebar-items';
-import { handleSave } from '../SettingsMenus';
-import { CustomFilledInput } from '../../../components/custom-input';
-import { StyledSelect } from '../SettingsMenus';
-import { CircularButton } from '../../../components/sidebar';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 export const GeneralSettings = (props) => {
 	const { settingsData } = props;
@@ -47,7 +46,6 @@ export const GeneralSettings = (props) => {
 	];
 
 	const handleChange = (entry) => {
-		console.log(formState);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,
@@ -57,8 +55,6 @@ export const GeneralSettings = (props) => {
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event);
-
 		setFormState({
 			...formState,
 			[event.target.name]: event.target.checked ? 'on' : 'off',
@@ -194,7 +190,7 @@ export const GeneralSettings = (props) => {
 					<StyledSelect name='purge_logs' value={formState.purge_logs} onChange={handleChange} array={purge}>
 						{purge.map((item, idx) => {
 							return (
-								<MenuItem value={`${idx}`} label={item}>
+								<MenuItem key={idx} value={`${idx}`} label={item}>
 									{item}
 								</MenuItem>
 							);

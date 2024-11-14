@@ -1,20 +1,14 @@
-import { Box, Stack, Typography, Autocomplete, TextField, Popper, styled } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
-import { useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { useSLABackend } from '../../hooks/useSLABackend';
-import { useScheduleBackend } from '../../hooks/useScheduleBackend';
+import { Autocomplete, Box, Popper, Stack, styled, TextField, Typography } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { useGridApiContext } from '@mui/x-data-grid';
+import { useEffect, useRef, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
+import CustomDataGrid from '../../components/data-grid';
+import { CircularButton } from '../../components/sidebar';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
-import { useData } from '../../context/DataContext';
 import { useNotification } from '../../hooks/useNotification';
 import { AgentSelect } from '../agent/AgentSelect';
-import { SLASelect } from '../sla/SLASelect';
-import { ScheduleSelect } from '../schedule/ScheduleSelect';
-import CustomDataGrid from '../../components/data-grid';
-import { useGridApiContext } from '@mui/x-data-grid';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
 export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 	const { createGroup, updateGroup } = useGroupBackend();
@@ -47,7 +41,6 @@ export const AddGroup = ({ handleCreated, handleEdited, editGroup }) => {
 				return <CustomEditAutoCompleteComponent {...params} />
 			},
 			preProcessEditCellProps: async (params) => {
-				console.log(params)
 				const hasError = params.props.value === null ? 'Please enter an agent' : null
 				return { ...params.props, error: hasError };
 			},

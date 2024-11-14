@@ -16,21 +16,19 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
-import { Layout } from '../../components/layout';
-import { WhiteContainer } from '../../components/white-container';
 import { ChevronDown, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
-import { useEffect, useState, useContext } from 'react';
-import { useData } from '../../context/DataContext';
-import { Transition } from '../../components/sidebar';
-import { AddTicket } from './AddTicket';
-import { SearchTextField } from '../agent/Agents';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
-import { useQueuesBackend } from '../../hooks/useQueueBackend';
-import { TicketDetailContainer } from './TicketDetailContainer';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getQueriesForElement } from '@testing-library/react';
-import formatDate from '../../functions/date-formatter';
+import { Layout } from '../../components/layout';
+import { Transition } from '../../components/sidebar';
+import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
+import formatDate from '../../functions/date-formatter';
+import { usePriorityBackend } from '../../hooks/usePriorityBackend';
+import { SearchTextField } from '../agent/Agents';
+import { AddTicket } from './AddTicket';
+import { TicketDetailContainer } from './TicketDetailContainer';
 
 export const Tickets = () => {
 	const navigate = useNavigate();
@@ -46,13 +44,11 @@ export const Tickets = () => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [priorities, setPriorities] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('');
-	const [ticketList, setTicketList] = useState([]);
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
 
 
 	useEffect(() => {
-		getPriorityList();
 		refreshQueues();
 	}, []);
 
@@ -86,7 +82,7 @@ export const Tickets = () => {
 	};
 
 	useEffect(() => {
-		if (ticketList.length > 0 && ticketId) {
+		if (tickets.length > 0 && ticketId) {
 			const ticket = {
 				ticket_id: parseInt(ticketId, 10),
 			};
@@ -94,27 +90,7 @@ export const Tickets = () => {
 			setOpenDetail(true);
 			setSelectedTicket(ticket);
 		}
-	}, [ticketList, ticketId]);
-
-	useEffect(() => {
-		if (priorities.length > 0 && tickets) {
-			const mappedTicketsPriority = tickets.map(ticket => ({
-				...ticket,
-				priority: priorities.find(priority => priority.priority_id === ticket.priority_id),
-			}));
-			setTicketList(mappedTicketsPriority);
-		}
-	}, [tickets]);
-
-	const getPriorityList = () => {
-		getAllPriorities()
-			.then(res => {
-				setPriorities(res.data);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-	};
+	}, [tickets, ticketId]);
 
 	const handleDialogOpen = (event, ticket) => {
 		event.stopPropagation();
@@ -297,7 +273,7 @@ export const Tickets = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{ticketList.map(ticket => (
+						{tickets.map(ticket => (
 							<TableRow
 								key={ticket.ticket_id}
 								onClick={toggleDetailDrawer(true, ticket)}

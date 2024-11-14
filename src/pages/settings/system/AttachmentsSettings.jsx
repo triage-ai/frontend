@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { useData } from '../../../context/DataContext';
-import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import {
 	Box,
 	Checkbox,
@@ -10,9 +7,11 @@ import {
 	MenuItem,
 	Typography,
 } from '@mui/material';
-import { handleSave } from '../SettingsMenus';
-import { StyledSelect } from '../SettingsMenus';
+import { useState } from 'react';
 import { CircularButton } from '../../../components/sidebar';
+import { useData } from '../../../context/DataContext';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 export const Attachments = props => {
 	const { settingsData } = props;
@@ -27,7 +26,6 @@ export const Attachments = props => {
 	});
 
 	const handleChange = entry => {
-		console.log(entry);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,

@@ -1,18 +1,16 @@
-import CustomDataGrid from "../../components/data-grid";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import { useEffect, useState } from "react";
-import {
-    GridRowModes,
-    DataGrid,
-    GridToolbarContainer,
-    GridActionsCellItem,
-    GridRowEditStopReasons,
-} from '@mui/x-data-grid';
-import CancelIcon from '@mui/icons-material/Close';
-import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import CancelIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import { Button } from '@mui/material';
+import {
+	GridActionsCellItem,
+	GridRowEditStopReasons,
+	GridRowModes, GridToolbarContainer
+} from '@mui/x-data-grid';
+import { useEffect, useState } from "react";
+import CustomDataGrid from "../../components/data-grid";
 import { useFormBackend } from "../../hooks/useFormBackend";
 
 function EditToolbar(props) {
@@ -182,7 +180,6 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
     };
 
     const processRowUpdate = async (newRow, oldRow) => {
-        console.log('entered')
 
         if (!validateRow(newRow)) {
             setRows(rows.filter((row) => (row.id !== newRow.id)));

@@ -1,36 +1,26 @@
 import {
 	Box,
 	Dialog,
-	FormControl,
 	IconButton,
-	InputAdornment,
-	InputLabel,
-	MenuItem,
-	Select,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableRow,
-	TextField,
 	Typography,
-	inputLabelClasses,
-	styled,
+	styled
 } from '@mui/material';
+import TablePagination from '@mui/material/TablePagination';
+import { Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Layout } from '../../components/layout';
-import { WhiteContainer } from '../../components/white-container';
-import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useUserBackend } from '../../hooks/useUserBackend';
-import { useContext, useEffect, useState } from 'react';
-import { useData } from '../../context/DataContext';
 import { Transition } from '../../components/sidebar';
+import { WhiteContainer } from '../../components/white-container';
+import formatDate from '../../functions/date-formatter';
+import { useUserBackend } from '../../hooks/useUserBackend';
 import { AddUser } from './AddUser';
 import { DeleteUser } from './DeleteUser';
-import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
-import { useGroupBackend } from '../../hooks/useGroupBackend';
-import TablePagination from '@mui/material/TablePagination';
-import formatDate from '../../functions/date-formatter';
 
 export const SearchTextField = styled('input')({
 	width: '100%',

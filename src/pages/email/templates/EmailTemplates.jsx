@@ -1,11 +1,11 @@
+import { Drawer, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { MailPlus, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../../../components/layout';
 import { WhiteContainer } from '../../../components/white-container';
-import { useState, useEffect } from 'react';
 import { useData } from '../../../context/DataContext';
-import { Table, TableCell, Typography, TableHead, TableRow, Stack, TableBody, IconButton, Drawer } from '@mui/material';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
-import { useNavigate, useParams } from 'react-router-dom';
 import { TemplateDetail } from './TemplateDetail';
 
 export const EmailTemplates = () => {

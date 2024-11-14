@@ -1,17 +1,18 @@
-import { Box, Typography, Tab, Avatar, Stack, MenuItem, CircularProgress } from '@mui/material';
-import { WhiteContainer } from '../../components/white-container';
-import { useState, useContext, useEffect, useLayoutEffect, useRef } from 'react';
-import { StyledTabs, StyledSelect, handleSave } from '../settings/SettingsMenus';
-import { Layout } from '../../components/layout';
-import { Settings2, UserRound } from 'lucide-react';
-import { CustomFilledInput } from '../../components/custom-input';
-import { AuthContext } from '../../context/AuthContext';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
-import { CircularButton } from '../../components/sidebar';
-import { RichTextEditorBox } from '../../components/rich-text-editor';
+import { Avatar, Box, CircularProgress, MenuItem, Stack, Tab, Typography } from '@mui/material';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Settings2, UserRound } from 'lucide-react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { CustomFilledInput } from '../../components/custom-input';
+import { Layout } from '../../components/layout';
+import { RichTextEditorBox } from '../../components/rich-text-editor';
+import { CircularButton } from '../../components/sidebar';
+import { WhiteContainer } from '../../components/white-container';
+import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
+import { StyledSelect, StyledTabs } from '../settings/SettingsMenus';
+import { convertFieldResponseIntoMuiTextFieldProps } from '@mui/x-date-pickers/internals';
 
 const Header = ({ headers, components }) => {
 	// const [menuState, setMenuState] = useState(headers[0].id);
@@ -54,8 +55,8 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					{headers.map((header) => (
-						<Tab label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
+					{headers.map((header, idx) => (
+						<Tab key={idx} label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}
 				</StyledTabs>
 			</Box>
@@ -68,15 +69,17 @@ const Header = ({ headers, components }) => {
 	);
 };
 
-const profileSave = async (formData, profileData, updateAgent, refreshAgents, setLoading, setCircleLoading) => {
+const profileSave = async (formData, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	var updates = { ...profileData };
 	try {
 		Object.entries(formData).forEach((update) => {
 			updates[update[0]] = update[1];
 		});
-		console.log(updates);
 		setCircleLoading(true);
-		await updateAgent(updates);
+		await updateAgent(updates)
+			.then(res => {
+				refreshAgent(res.data)
+			});
 		setCircleLoading(false);
 		setLoading(true);
 	} catch (error) {
@@ -84,13 +87,15 @@ const profileSave = async (formData, profileData, updateAgent, refreshAgents, se
 	}
 };
 
-const profileSaveSig = async (signature, profileData, updateAgent, refreshAgents, setLoading, setCircleLoading) => {
+const profileSaveSig = async (signature, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	try {
 		var updates = { ...profileData };
 		updates['signature'] = signature;
-		console.log(updates);
 		setCircleLoading(true);
-		await updateAgent(updates);
+		await updateAgent(updates)
+			.then(res => {
+				refreshAgent(res.data)
+			});
 		setCircleLoading(false);
 		setLoading(true);
 	} catch (error) {
@@ -98,14 +103,15 @@ const profileSaveSig = async (signature, profileData, updateAgent, refreshAgents
 	}
 };
 
-const profileSavePref = async (preferences, profileData, updateAgent, refreshAgents, setLoading, setCircleLoading) => {
+const profileSavePref = async (preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	try {
 		var updates = { ...profileData };
 		updates['preferences'] = preferences;
-		console.log(updates)
-		console.log(updates);
 		setCircleLoading(true);
-		await updateAgent(updates);
+		await updateAgent(updates)
+			.then(res => {
+				refreshAgent(res.data)
+			});
 		setCircleLoading(false);
 		setLoading(true);
 	} catch (error) {
@@ -130,13 +136,22 @@ export const Profile = () => {
 	const [profileData, setProfileData] = useState({});
 
 	useEffect(() => {
-		getAgentById(agentAuthState.agent_id).then((res) => {
-			setProfileData(res.data);
-		});
+		refreshAgent()
 	}, []);
 
+	const refreshAgent = (agent = null) => {
+		if (agent) {
+			setProfileData({...profileData, ...agent});
+		}
+		else {
+			getAgentById(agentAuthState.agent_id).then((res) => {
+				setProfileData(res.data);
+			});
+		}
+	}
+
 	useEffect(() => {
-		setComponents([<Account {...profileData} />, <Preferences {...profileData} />, <Signature {...profileData} />]);
+		setComponents([<Account profileData={profileData} refreshAgent={refreshAgent} />, <Preferences profileData={profileData} refreshAgent={refreshAgent}  />, <Signature profileData={profileData} refreshAgent={refreshAgent}  />]);
 	}, [profileData]);
 
 	return (
@@ -154,11 +169,10 @@ export const Profile = () => {
 	);
 };
 
-const Account = (profileData) => {
+const Account = ({refreshAgent, profileData}) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const { updateAgent } = useAgentBackend();
-	const { refreshAgents } = useData();
 	const [formData, setFormData] = useState({});
 
 	useEffect(() => {
@@ -173,7 +187,6 @@ const Account = (profileData) => {
 	}, [profileData]);
 
 	const handleChange = (entry) => {
-		console.log(formData);
 		setFormData({
 			...formData,
 			[entry.target.name]: entry.target.value,
@@ -244,7 +257,7 @@ const Account = (profileData) => {
 
 					<CircularButton
 						sx={{ py: 2, px: 6, width: 250 }}
-						onClick={() => profileSave(formData, profileData, updateAgent, setLoading, setCircleLoading)}
+						onClick={() => profileSave(formData, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading)}
 						disabled={loading || circleLoading}
 					>
 						{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
@@ -257,10 +270,9 @@ const Account = (profileData) => {
 	);
 };
 
-const Preferences = (profileData) => {
+const Preferences = ({refreshAgent, profileData}) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
-	const { refreshAgents } = useData();
 	const { updateAgent } = useAgentBackend();	
 	const [formData, setFormData] = useState({
 		agent_default_page_size: profileData.default_preferences.agent_default_page_size,
@@ -377,7 +389,7 @@ const Preferences = (profileData) => {
 
 			<CircularButton
 				sx={{ py: 2, px: 6, width: 250 }}
-				onClick={() => profileSavePref(formData.preferences, profileData, updateAgent, refreshAgents, setLoading, setCircleLoading)}
+				onClick={() => profileSavePref(formData.preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading)}
 				disabled={loading || circleLoading}
 			>
 				{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
@@ -386,11 +398,10 @@ const Preferences = (profileData) => {
 	);
 };
 
-const Signature = (profileData) => {
+const Signature = ({refreshAgent, profileData}) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const { updateAgent } = useAgentBackend();
-	const { refreshAgents } = useData();
 	const firstUpdate = useRef(true);
 
 	// useEffect(() => {
@@ -431,7 +442,7 @@ const Signature = (profileData) => {
 			<Stack direction='row' spacing={10} width={800}>
 				<CircularButton
 					sx={{ py: 2, px: 6, width: 250 }}
-					onClick={() => profileSaveSig(editor.getHTML(), profileData, updateAgent, setLoading, setCircleLoading)}
+					onClick={() => profileSaveSig(editor.getHTML(), profileData, updateAgent, refreshAgent, setLoading, setCircleLoading)}
 					disabled={loading || circleLoading}
 				>
 					Save Changes

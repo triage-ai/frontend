@@ -1,33 +1,8 @@
-import {
-	Box,
-	Chip,
-	Dialog,
-	Drawer,
-	FormControl,
-	IconButton,
-	MenuItem,
-	Select,
-	Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TablePagination,
-	TableRow,
-	Typography,
-} from '@mui/material';
+import { MailPlus } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../../components/layout';
 import { WhiteContainer } from '../../../components/white-container';
-import { ChevronDown, MailPlus, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
-import { useEffect, useState, useContext } from 'react';
-import { useData } from '../../../context/DataContext';
-import { Transition } from '../../../components/sidebar';
-import { SearchTextField } from '../../agent/Agents';
-import { useQueueBackend } from '../../../hooks/useQueueBackend';
-import { TicketDetailContainer } from '../../ticket/TicketDetailContainer';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getQueriesForElement } from '@testing-library/react';
-import { AuthContext } from '../../../context/AuthContext';
 
 export const Emails = (props) => {
 	const navigate = useNavigate();

@@ -1,20 +1,19 @@
+import { Box, Checkbox, CircularProgress, FormControlLabel, MenuItem, Stack, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { CircleHelp } from 'lucide-react';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { CircularButton } from '../../../components/sidebar';
+import { CustomTextField } from '../../../components/sidebar-items';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { Box, Checkbox, CircularProgress, FormControlLabel, MenuItem, Stack, Typography } from '@mui/material';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { CustomTextField } from '../../../components/sidebar-items';
-import { handleSave } from '../SettingsMenus';
-import { CustomFilledInput } from '../../../components/custom-input';
-import { StyledSelect } from '../SettingsMenus';
-import { CircularButton } from '../../../components/sidebar';
-import { CircleHelp } from 'lucide-react';
-import { styled } from '@mui/material/styles';
 import { PrioritySelect } from '../../priority/PrioritySelect';
-import { StatusSelect } from '../../status/StatusSelect';
 import { SLASelect } from '../../sla/SLASelect';
+import { StatusSelect } from '../../status/StatusSelect';
 import { TopicSelect } from '../../topic/TopicSelect';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 const storedAuthState = localStorage.getItem('agentAuthState');
 

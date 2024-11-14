@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Sidebar } from '../../components/sidebar';
 import { Box, styled } from '@mui/material';
+import React from 'react';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
 	// necessary for content to be below app bar

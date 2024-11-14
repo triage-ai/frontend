@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { useData } from '../../../context/DataContext';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { handleSave } from '../SettingsMenus';
+import { useState } from 'react';
 import { CustomFilledInput } from '../../../components/custom-input';
 import { CircularButton } from '../../../components/sidebar';
+import { useData } from '../../../context/DataContext';
+import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
+import { handleSave } from '../SettingsMenus';
 
 export const BasicInformation = props => {
 	const { settingsData } = props;
@@ -20,7 +20,6 @@ export const BasicInformation = props => {
 	});
 
 	const handleChange = entry => {
-		console.log(formState);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,

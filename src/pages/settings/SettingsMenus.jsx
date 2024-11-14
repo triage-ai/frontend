@@ -1,27 +1,22 @@
-import { Box, Select, Typography, styled, Tabs, Tab } from '@mui/material';
-import { WhiteContainer } from '../../components/white-container';
-import { useState } from 'react';
+import { Box, Select, styled, Tab, Tabs, Typography } from '@mui/material';
 import { ChevronDown } from 'lucide-react';
-import { GeneralSettings } from './system/GeneralSettings';
-import { DateAndTime } from './system/DateTimeSettings';
-import { SystemLanguages } from './system/SystemLanguages';
-import { Attachments } from './system/AttachmentsSettings';
-import { BasicInformation } from './company/CompanyBasicInfo';
-import { TicketSettings } from './tickets/TicketSettings';
-import { Autoresponder } from './tickets/AutoResponder';
-import { AlertsAndNotices } from './tickets/AlertsAndNotices';
-import { TaskSettings } from './tasks/TaskSettings';
-import { TaskAlertsAndNotices } from './tasks/TasksAlertsAndNotices';
+import { useState } from 'react';
+import { WhiteContainer } from '../../components/white-container';
 import { AgentSettings } from './agents/AgentSettings';
 import { AgentTemplates } from './agents/AgentTemplates';
+import { BasicInformation } from './company/CompanyBasicInfo';
+import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
+import { Attachments } from './system/AttachmentsSettings';
+import { DateAndTime } from './system/DateTimeSettings';
+import { GeneralSettings } from './system/GeneralSettings';
+import { SystemLanguages } from './system/SystemLanguages';
+import { TaskSettings } from './tasks/TaskSettings';
+import { TaskAlertsAndNotices } from './tasks/TasksAlertsAndNotices';
+import { AlertsAndNotices } from './tickets/AlertsAndNotices';
+import { Autoresponder } from './tickets/AutoResponder';
+import { TicketSettings } from './tickets/TicketSettings';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
-import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
-import { Emails } from '../email/emails/Emails';
-import { EmailSettings } from '../email/EmailSettings';
-import { EmailBanlist } from '../email/EmailBanlist';
-import { EmailTemplates } from '../email/templates/EmailTemplates';
-import { EmailDiagnostic } from '../email/EmailDiagnostic';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
@@ -45,7 +40,6 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 			row.value = k[1];
 			updates.push(row);
 		});
-		console.log(updates);
 		setCircleLoading(true);
 		await updateSettings(updates);
 		await refreshSettings();
@@ -137,8 +131,9 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					{headers.map((header) => (
-						<Tab label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
+					
+					{headers.map((header, idx) => (
+						<Tab key={idx} label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}
 				</StyledTabs>
 			</Box>

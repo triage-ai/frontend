@@ -1,6 +1,6 @@
 import {
 	Box,
-	Chip,
+	CssBaseline,
 	Dialog,
 	Drawer,
 	FormControl,
@@ -8,37 +8,30 @@ import {
 	MenuItem,
 	Select,
 	Stack,
+	styled,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TablePagination,
 	TableRow,
-	styled,
-	Typography,
-	Button,
-	CircularProgress,
-	CssBaseline,
+	Typography
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { Layout } from '../../components/layout';
+import { ChevronDown, LogOut, Menu, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
+import React, { useContext, useEffect, useState } from 'react';
+import { CircularButton, Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
-import { ChevronDown, Pencil, Search, TicketPlus, Trash2, LogOut, Menu, X } from 'lucide-react';
-import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react';
-import { useData } from '../../context/DataContext';
-import { Transition, CircularButton } from '../../components/sidebar';
 // import { AddTicket } from './AddTicket';
-import { SearchTextField } from '../agent/Agents';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
-import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { useQueueBackend } from '../../hooks/useQueueBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { SearchTextField } from '../agent/Agents';
 // import { TicketDetailContainer } from './TicketDetailContainer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getQueriesForElement } from '@testing-library/react';
 import { AppBarHeight } from '../../components/layout';
 import { AuthContext } from '../../context/AuthContext';
-import { UserTicketDetailContainer } from './UserTicketDetailContainer';
 import { UserAddTicket } from './UserAddTicket';
+import { UserTicketDetailContainer } from './UserTicketDetailContainer';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer - 1,

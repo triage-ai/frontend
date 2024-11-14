@@ -1,16 +1,16 @@
 import {
-    Box,
-    Stack,
-    Typography,
+	Box,
+	Stack,
+	Typography,
 } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
-import { useEffect, useState, useContext } from 'react';
 import { CircularButton } from '../../components/sidebar';
-import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { TopicSelect } from '../topic/TopicSelect'
-import { FormInput } from '../form/FormInput';
-import { useFormBackend } from '../../hooks/useFormBackend'
 import { AuthContext } from '../../context/AuthContext';
+import { useFormBackend } from '../../hooks/useFormBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { FormInput } from '../form/FormInput';
+import { TopicSelect } from '../topic/TopicSelect';
 
 export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTicket }) => {
     const { userAuthState } = useContext(AuthContext)
@@ -35,7 +35,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
             .then(res => {
                 setForms(res.data)
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
     }, [])
 
     useEffect(() => {

@@ -1,21 +1,15 @@
-import { Box, Checkbox, deprecatedPropType, FormControlLabel, Stack, Typography } from '@mui/material';
-import { CircularButton } from '../../components/sidebar';
-import { CustomSelect } from '../../components/custom-select';
+import { Box, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useSLABackend } from '../../hooks/useSLABackend';
-import { useScheduleBackend } from '../../hooks/useScheduleBackend';
 import { CustomFilledInput } from '../../components/custom-input';
+import { CircularButton } from '../../components/sidebar';
 import { useTopicBackend } from '../../hooks/useTopicBackend';
-import { useData } from '../../context/DataContext';
-import { useNotification } from '../../hooks/useNotification';
 import { AgentSelect } from '../agent/AgentSelect';
-import { SLASelect } from '../sla/SLASelect';
-import { ScheduleSelect } from '../schedule/ScheduleSelect';
-import { FormSelect } from '../form/FormSelect';
-import { StatusSelect } from '../status/StatusSelect';
-import { PrioritySelect } from '../priority/PrioritySelect';
-import { GroupSelect } from '../group/GroupSelect';
 import { DepartmentSelect } from '../department/DepartmentSelect';
+import { FormSelect } from '../form/FormSelect';
+import { GroupSelect } from '../group/GroupSelect';
+import { PrioritySelect } from '../priority/PrioritySelect';
+import { SLASelect } from '../sla/SLASelect';
+import { StatusSelect } from '../status/StatusSelect';
 
 export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 	const { createTopic, updateTopic } = useTopicBackend();

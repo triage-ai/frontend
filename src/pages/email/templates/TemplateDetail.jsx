@@ -1,10 +1,10 @@
-import { Typography, Stack, IconButton, Box } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { CustomFilledInput } from '../../../components/custom-input';
-import { RichTextEditorBox } from '../../../components/rich-text-editor';
+import { Box, IconButton, Stack, Typography } from '@mui/material';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Check, Pencil, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { RichTextEditorBox } from '../../../components/rich-text-editor';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
 
 
@@ -20,7 +20,6 @@ export const TemplateDetail = ({ templateInfo, closeDrawer }) => {
 	});
 
 	const handleChange = (entry) => {
-		console.log(formData);
 		setFormData({
 			...formData,
 			[entry.target.name]: entry.target.value,

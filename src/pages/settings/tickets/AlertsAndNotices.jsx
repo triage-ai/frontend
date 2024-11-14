@@ -1,9 +1,9 @@
+import { Box, Checkbox, CircularProgress, FormControlLabel, Radio, RadioGroup, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
+import { CircularButton } from '../../../components/sidebar';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { Box, Checkbox, CircularProgress, FormControlLabel, Radio, RadioGroup, Stack, Typography } from '@mui/material';
 import { handleSave } from '../SettingsMenus';
-import { CircularButton } from '../../../components/sidebar';
 
 export const AlertsAndNotices = (props) => {
 	const { settingsData } = props;
@@ -44,7 +44,6 @@ export const AlertsAndNotices = (props) => {
 	});
 
 	const handleChange = (entry) => {
-		console.log(formState);
 		setFormState({
 			...formState,
 			[entry.target.name]: entry.target.value,
@@ -54,7 +53,6 @@ export const AlertsAndNotices = (props) => {
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event);
 
 		setFormState({
 			...formState,

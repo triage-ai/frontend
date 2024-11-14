@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { CustomSelect } from '../../components/custom-select';
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
 // import { AddForm } from './AddForm';
 import { useData } from '../../context/DataContext';
 
@@ -45,7 +45,6 @@ export const FormSelect = ({ handleInputChange, value }) => {
 					// 	const formData = new FormData(event.currentTarget);
 					// 	const formJson = Object.fromEntries(formData.entries());
 					// 	const email = formJson.email;
-					// 	console.log(email);
 					// 	handleClose();
 					// },
 					sx: {

@@ -1,22 +1,17 @@
 import {
-    MenuButtonBold,
-    MenuButtonItalic,
-    MenuButtonStrikethrough,
-    MenuButtonEditLink,
-    MenuButtonOrderedList,
-    MenuButtonBulletedList,
-    MenuButtonBlockquote,
-    MenuButtonCode,
-    MenuButtonCodeBlock,
-    // MenuButtonAddTable, this errors for some reason
-    MenuControlsContainer,
-    MenuDivider,
-    MenuSelectHeading,
-    RichTextEditorProvider,
-    RichTextField,
-    LinkBubbleMenu
+	MenuButtonBlockquote,
+	MenuButtonBold,
+	MenuButtonBulletedList,
+	MenuButtonCode,
+	MenuButtonCodeBlock,
+	MenuButtonItalic,
+	MenuButtonOrderedList,
+	MenuButtonStrikethrough,
+	// MenuButtonAddTable, this errors for some reason
+	MenuControlsContainer,
+	MenuDivider, RichTextEditorProvider,
+	RichTextField
 } from "mui-tiptap";
-import { Box } from '@mui/material';
 
 
 export const RichTextEditorBox = ({editor, children}) => {

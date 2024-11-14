@@ -2,36 +2,27 @@ import {
 	Box,
 	Dialog,
 	FormControl,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	MenuItem,
+	IconButton, MenuItem,
 	Select,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
-	TableRow,
-	TextField,
-	Typography,
-	inputLabelClasses,
-	styled,
+	TableRow, Typography, styled
 } from '@mui/material';
-import { Layout } from '../../components/layout';
-import { WhiteContainer } from '../../components/white-container';
+import TablePagination from '@mui/material/TablePagination';
 import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useContext, useEffect, useState } from 'react';
-import { useData } from '../../context/DataContext';
+import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
-import { AddAgent } from './AddAgent';
-import { DeleteAgent } from './DeleteAgent';
+import { WhiteContainer } from '../../components/white-container';
+import { AuthContext } from '../../context/AuthContext';
+import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
-import TablePagination from '@mui/material/TablePagination';
-import { AuthContext } from '../../context/AuthContext';
-import { AddTicket } from '../ticket/AddTicket';
+import { AddAgent } from './AddAgent';
+import { DeleteAgent } from './DeleteAgent';
 
 export const SearchTextField = styled('input')({
 	width: '100%',

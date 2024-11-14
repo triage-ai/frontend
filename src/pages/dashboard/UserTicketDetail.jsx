@@ -1,33 +1,17 @@
 import {
 	Box,
-	Button,
-	FormControl,
-	IconButton,
-	MenuItem,
-	Select,
-	styled,
-	Typography,
+	Button, IconButton, styled,
+	Typography
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 import {
-	BadgeAlert,
-	Calendar,
-	ChevronDown,
-	CircleAlert,
-	FileText,
+	Calendar, FileText,
 	Info,
-	Network,
-	OctagonAlert,
-	Pencil,
-	TriangleAlert,
-	User,
-	X,
+	Network, Pencil, User,
+	X
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { useStatusBackend } from '../../hooks/useStatusBackend';
 
 const IconBox = styled(Box)(() => ({
 	height: '35px',

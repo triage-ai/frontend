@@ -1,36 +1,12 @@
 import {
-    Box,
-    Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    FormControlLabel,
-    IconButton,
-    InputAdornment,
-    Stack,
-    Step,
-    StepConnector,
-    StepLabel,
-    Stepper,
-    TextField,
-    Typography,
-    stepConnectorClasses,
-    styled,
+	Box,
+	Stack,
+	Typography
 } from '@mui/material';
-import { CustomFilledInput } from '../../components/custom-input';
-import { CustomSelect } from '../../components/custom-select';
 import { useEffect, useState } from 'react';
+import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
-import { Check, Eye, EyeOff, X } from 'lucide-react';
-import { useRolesBackend } from '../../hooks/useRoleBackend';
 import { useUserBackend } from '../../hooks/useUserBackend';
-import { AddDepartment } from '../department/AddDepartment';
-import { DepartmentSelect } from '../department/DepartmentSelect';
-import { RoleSelect } from '../role/RoleSelect';
-import { TransferList } from '../../components/transfer-list';
 
 export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
     const { createUser, updateUser } = useUserBackend();

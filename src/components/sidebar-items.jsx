@@ -1,63 +1,44 @@
 import {
-	Backdrop,
 	Box,
 	Collapse,
 	Drawer,
 	List,
 	ListItem,
 	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	ListSubheader,
+	ListItemIcon, ListSubheader,
 	TextField,
 	Typography,
-	styled,
+	styled
 } from '@mui/material';
 import {
-	Blocks,
-	Headset,
-	PanelLeft,
-	Route,
-	SlidersHorizontal,
-	Ticket,
-	ToyBrick,
-	Settings,
 	BriefcaseBusiness,
-	Lightbulb,
-	UsersRound,
-	ClipboardList,
-	MonitorCog,
 	Building2,
-	Star,
-	ChevronUp,
 	ChevronDown,
-	AlarmClock,
-	Filter,
-	Calendar,
-	GitFork,
-	SquareUserRound,
-	Users,
-	UserRound,
-	CircleAlert,
-	TicketCheck,
-	MessageCircleQuestion,
-	Files,
-	KeyRound,
-	Notebook,
-	NotebookText,
+	ChevronUp,
 	CircleUserRound,
+	ClipboardList,
+	Files,
+	Headset,
+	KeyRound,
+	Lightbulb,
 	Mail,
-	MailX,
-	LayoutTemplate,
-	Wrench,
-	Mails,
 	MailPlus,
+	MailX,
+	Mails,
+	MessageCircleQuestion,
+	MonitorCog,
+	PanelLeft,
+	Settings,
+	SlidersHorizontal,
+	SquareUserRound,
+	Ticket,
+	UserRound,
+	Wrench
 } from 'lucide-react';
-import { Fragment, useEffect, useState, useRef, useContext, act } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
 import SubMenuHook from '../assets/submenu-hook.svg';
-import { drawerWidth } from './sidebar';
 import { AuthContext } from '../context/AuthContext';
 
 export const CustomTextField = styled((props) => {
