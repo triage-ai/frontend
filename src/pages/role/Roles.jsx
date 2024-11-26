@@ -1,12 +1,4 @@
-import {
-	Box,
-	Dialog, IconButton, Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow, Typography, styled
-} from '@mui/material';
+import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -47,40 +39,39 @@ export const SearchTextField = styled('input')({
 
 export const Roles = () => {
 	const { getAllRoles, updateRole, removeRole } = useRoleBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalRoles, setTotalRoles] = useState(0);
 	const [roles, setRoles] = useState([]);
 	const [selectedRole, setSelectedRole] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-    const [search, setSearch] = useState('');
+	const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshRoles()
-    }, []);
-	
+		refreshRoles();
+	}, []);
+
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+		setSize(e.target.value);
+		setPage(0);
+	};
 
 	const refreshRoles = () => {
-
 		getAllRoles(search, page + 1, size)
-			.then(res => {
-				setRoles(res.data)
-				setTotalRoles(res.data.length)
+			.then((res) => {
+				setRoles(res.data);
+				setTotalRoles(res.data.length);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (role, button) => {
 		setSelectedRole(role);
@@ -95,7 +86,7 @@ export const Roles = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
-        refreshRoles()
+		refreshRoles();
 	};
 
 	const handleEdited = () => {
@@ -117,10 +108,10 @@ export const Roles = () => {
 			title={'Role List'}
 			subtitle={'View your roles and add new ones'}
 			buttonInfo={{
-				label: 'Add new role',
+				label: 'Add role',
 				icon: <Plus size={20} />,
 			}}
-            AddResource={AddRole}
+			AddResource={AddRole}
 			refreshResource={refreshRoles}
 		>
 			<WhiteContainer noPadding>
@@ -128,10 +119,10 @@ export const Roles = () => {
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							disabled
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -147,12 +138,9 @@ export const Roles = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-							/>
+							<Search size={20} />
 						</Box>
 					</Box>
-
 				</Box>
 
 				<Table>
@@ -166,21 +154,21 @@ export const Roles = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant='overline'>Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Updated</Typography>
+								<Typography variant='overline'>Updated</Typography>
 							</TableCell>
-                            <TableCell>
-								<Typography variant="overline">Created</Typography>
+							<TableCell>
+								<Typography variant='overline'>Created</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{roles.slice(page*size, page*size + size).map(role => (
+						{roles.slice(page * size, page * size + size).map((role) => (
 							<TableRow
 								key={role.role_id}
 								sx={{
@@ -193,18 +181,10 @@ export const Roles = () => {
 								}}
 							>
 								<TableCell>{role.name}</TableCell>
-                                <TableCell>{formatDate(role.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{formatDate(role.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>{formatDate(role.created, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
 										<IconButton
 											sx={{
 												'&:hover': {
@@ -235,14 +215,14 @@ export const Roles = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalRoles}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalRoles}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -268,7 +248,7 @@ export const Roles = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -286,10 +266,7 @@ export const Roles = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddRole
-							handleEdited={handleEdited}
-							editRole={selectedRole}
-						/>
+						<AddRole handleEdited={handleEdited} editRole={selectedRole} />
 					</Box>
 				</Dialog>
 			)}
@@ -312,7 +289,7 @@ export const Roles = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -328,11 +305,7 @@ export const Roles = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteRole
-							editRole={selectedRole}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteRole editRole={selectedRole} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

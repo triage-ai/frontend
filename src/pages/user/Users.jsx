@@ -1,16 +1,4 @@
-import {
-	Box,
-	Dialog,
-	IconButton,
-	Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	Typography,
-	styled
-} from '@mui/material';
+import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -51,49 +39,48 @@ export const SearchTextField = styled('input')({
 
 export const Users = () => {
 	const { getAllUsersBySearch } = useUserBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalUsers, setTotalUsers] = useState(0);
-	const [users, setUsers] = useState([])
+	const [users, setUsers] = useState([]);
 	const [selectedUser, setSelectedUser] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-    const [search, setSearch] = useState('');
+	const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshUsers()
-    }, [page, size]);
+		refreshUsers();
+	}, [page, size]);
 
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-	}
+		setSize(e.target.value);
+	};
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value)
-    }
+	const handleSearchChange = (e) => {
+		setSearch(e.target.value);
+	};
 
-    const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            refreshUsers()
-        }
-    }
+	const handleSearch = (e) => {
+		if (e.key === 'Enter') {
+			refreshUsers();
+		}
+	};
 
 	const refreshUsers = () => {
-
 		getAllUsersBySearch(search, page + 1, size)
-			.then(res => {
-				setUsers(res.data.items)
-				setTotalUsers(res.data.total)
+			.then((res) => {
+				setUsers(res.data.items);
+				setTotalUsers(res.data.total);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (user, button) => {
 		setSelectedUser(user);
@@ -129,22 +116,22 @@ export const Users = () => {
 			title={'User List'}
 			subtitle={'View your users and add new ones'}
 			buttonInfo={{
-				label: 'Add new user',
+				label: 'Add user',
 				icon: <UserRoundPlus size={20} />,
 			}}
-            AddResource={AddUser}
-            refreshResource={refreshUsers}
+			AddResource={AddUser}
+			refreshResource={refreshUsers}
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
-                            onKeyDown={handleSearch}
-                            onChange={handleSearchChange}
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
+							onKeyDown={handleSearch}
+							onChange={handleSearchChange}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -160,12 +147,9 @@ export const Users = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-							/>
+							<Search size={20} />
 						</Box>
 					</Box>
-
 				</Box>
 
 				<Table>
@@ -179,24 +163,24 @@ export const Users = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant='overline'>Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Status</Typography>
+								<Typography variant='overline'>Status</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Created</Typography>
+								<Typography variant='overline'>Created</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Updated</Typography>
+								<Typography variant='overline'>Updated</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{users.map(user => (
+						{users.map((user) => (
 							<TableRow
 								key={user.user_id}
 								sx={{
@@ -212,16 +196,8 @@ export const Users = () => {
 								<TableCell>{user.status === 0 ? 'Complete' : user.status === 1 ? 'Pending' : 'Guest'}</TableCell>
 								<TableCell>{formatDate(user.created, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>{formatDate(user.updated, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
 										<IconButton
 											sx={{
 												'&:hover': {
@@ -252,14 +228,14 @@ export const Users = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalUsers}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalUsers}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -285,7 +261,7 @@ export const Users = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -303,10 +279,7 @@ export const Users = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddUser
-							handleEdited={handleEdited}
-							editUser={selectedUser}
-						/>
+						<AddUser handleEdited={handleEdited} editUser={selectedUser} />
 					</Box>
 				</Dialog>
 			)}
@@ -329,7 +302,7 @@ export const Users = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -345,11 +318,7 @@ export const Users = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteUser
-							editUser={selectedUser}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteUser editUser={selectedUser} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

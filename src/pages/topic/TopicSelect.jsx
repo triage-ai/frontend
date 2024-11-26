@@ -5,7 +5,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddTopic } from './AddTopic';
 
-export const TopicSelect = ({ handleInputChange, value }) => {
+export const TopicSelect = ({ handleInputChange, value, name }) => {
 	const { formattedTopics, refreshTopics } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -27,7 +27,7 @@ export const TopicSelect = ({ handleInputChange, value }) => {
 				label="Topic"
 				onChange={handleInputChange}
 				value={value}
-				name="topic_id"
+				name={name ?? "topic_id"}
 				mb={2}
 				fullWidth
 				addNewButton

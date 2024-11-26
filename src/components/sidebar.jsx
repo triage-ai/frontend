@@ -189,16 +189,6 @@ export const Sidebar = ({
 							{buttonInfo.icon}
 							{buttonInfo.label}
 						</CircularButton>}
-
-						<IconButton
-							aria-label="logout"
-							onClick={authLogout}
-						>
-							<LogOut
-								color="#585858"
-								size={22}
-							/>
-						</IconButton>
 					</Box>
 				</Box>
 			</AppBar>

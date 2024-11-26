@@ -13,34 +13,11 @@ export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
     const { getTemplateById } = useTemplateBackend();
 
 
-	// const handleChange = (entry) => {
-	// 	console.log(formData);
-	// 	setFormData({
-	// 		...formData,
-	// 		[entry.target.name]: entry.target.value,
-	// 	});
-
-	// 	setLoading(false);
-	// };
-
 	const openEditModal = (event, template) => {
 		closeDrawer();
-		openEdit(template, 'edit');
+		openEdit(event, template, 'edit');
 	};
 
-    // const templateSave = (formData, templateInfo, updateTemplate, setLoading) => {
-    //     formData['body'] = editor.getHTML();
-    //     var updates = {...templateInfo}
-    //     try {
-    //         Object.entries(formData).forEach((update) => {
-    //             updates[update[0]] = update[1];
-    //         });
-    //         updateTemplate(updates);
-    //         setLoading(true);
-    //     } catch (error) {
-    //         console.error("Error with saving template", error)
-    //     }
-    // }
 
     useEffect(() => {
 		if (templateInfo) {
@@ -59,6 +36,10 @@ export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
         editable: false,
 	});
 
+    const transformString = (inputString) => {
+		const words = inputString.split('_');
+		return words[0].charAt(0).toUpperCase() +  words[0].slice(1) + ' ' + words.slice(1).join(' ');
+	}
 
 	return (
         <Box sx={{ height: '100%', bgcolor: '#FFF' }}>
@@ -75,7 +56,7 @@ export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Stack direction='row'>
-                                <Typography variant='h2'>{template?.template_name}</Typography>
+                                <Typography variant='h2'>{template ? transformString(template.code_name) : ''}</Typography>
                             </Stack>
                         </Box>
 
@@ -106,14 +87,6 @@ export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
 
                     <CustomFilledInput label='Notes' name='notes' sx={{ width: 430, pb: 4 }} value={template?.notes} disabled/>
 
-                    
-                    {/* <CircularButton
-                        sx={{ py: 1, px: 6, width: 250 }}
-                        onClick={() => templateSave(formData, templateInfo, updateTemplate, setLoading, setCircleLoading)}
-                        disabled={loading || circleLoading}
-                    >
-                        {circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
-                    </CircularButton> */}
                        
                 </Box>
         </Box>

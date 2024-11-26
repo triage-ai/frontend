@@ -5,7 +5,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddDepartment } from './AddDepartment';
 
-export const DepartmentSelect = ({ handleInputChange, value }) => {
+export const DepartmentSelect = ({ handleInputChange, value, name }) => {
 	const { formattedDepartments, refreshDepartments } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -27,7 +27,7 @@ export const DepartmentSelect = ({ handleInputChange, value }) => {
 				label="Department"
 				onChange={handleInputChange}
 				value={value}
-				name="dept_id"
+				name={name ?? "dept_id"}
 				mb={2}
 				fullWidth
 				addNewButton

@@ -18,7 +18,7 @@ import {
 	Typography
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { ChevronDown, LogOut, Menu, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
+import { ChevronDown, CircleUserRound, LogOut, Menu, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
 import { CircularButton, Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
@@ -32,6 +32,7 @@ import { AppBarHeight } from '../../components/layout';
 import { AuthContext } from '../../context/AuthContext';
 import { UserAddTicket } from './UserAddTicket';
 import { UserTicketDetailContainer } from './UserTicketDetailContainer';
+import { UserProfile } from '../profile/UserProfile';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer - 1,
@@ -74,6 +75,7 @@ export const UserTickets = () => {
 	const [priorities, setPriorities] = useState([]);
 	const [selectedStatus, setSelectedStatus] = useState('');
 	const [openDetail, setOpenDetail] = useState(false);
+	const [openProfile, setOpenProfile] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
 
 	const [queues, setQueues] = useState([]);
@@ -207,10 +209,22 @@ export const UserTickets = () => {
 		setQueueIdx(e.target.value);
 	};
 
+	const handleProfileDialogOpen = (event) => {
+		event.stopPropagation();
+
+
+		setOpenProfile(true);
+	}
+
+	const handleProfileDialogClose = () => {
+		setOpenProfile(false);
+	}
+
 	const authLogout = async () => {
 		userLogout();
 		navigate('/', { replace: true });
 	};
+
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
@@ -223,6 +237,7 @@ export const UserTickets = () => {
 			setOpenDetail(newOpen);
 			setSelectedTicket(ticket);
 		};
+
 
 	return (
 		<Box sx={{ display: 'flex', background: '#FFF' }}>
@@ -272,8 +287,18 @@ export const UserTickets = () => {
 							onClick={handleDialogOpen}
 						>
 							{<TicketPlus size={20} />}
-							{'Add new ticket'}
+							{'Add ticket'}
 						</CircularButton>
+
+						<IconButton
+							aria-label='profile'
+							onClick={event => handleProfileDialogOpen(event)}
+						>
+							<CircleUserRound 								
+								color="#585858"
+								size={22}
+							/>
+						</IconButton>
 
 						<IconButton
 							aria-label="logout"
@@ -531,7 +556,16 @@ export const UserTickets = () => {
 						}}
 						sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
 					>
-						<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
+						<Box 
+							sx={{
+								width: '100%',
+								textAlign: 'right',
+								// pb: 1,
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+							}}
+						>
 							<IconButton
 								aria-label="close dialog"
 								onClick={handleDialogClose}
@@ -582,6 +616,55 @@ export const UserTickets = () => {
 					</Drawer>
 				</Box>
 			</DrawerContentContainer>
+
+			<Dialog
+				open={openProfile}
+				onClose={handleProfileDialogClose}
+				PaperProps={{
+					sx: {
+						maxWidth: '500px',
+						background: '#f1f4f2',
+						py: 2,
+						px: 3,
+						m: 2,
+						borderRadius: '10px',
+					},
+				}}
+			>
+			<Box sx={{ textAlign: 'center' }}>
+					<Box
+						sx={{
+							width: '100%',
+							textAlign: 'right',
+							// pb: 1,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
+					>
+						<Box sx={{ width: '40px', height: '40px' }} />
+
+						<IconButton
+							aria-label="close dialog"
+							onClick={handleProfileDialogClose}
+							sx={{
+								width: '40px',
+								height: '40px',
+								color: '#545555',
+								transition: 'all 0.2s',
+								'&:hover': {
+									color: '#000',
+								},
+							}}
+						>
+							<X size={20} />
+						</IconButton>
+					</Box>
+
+					<UserProfile />
+				</Box>
+
+			</Dialog>
 		</Box>
 	);
 };

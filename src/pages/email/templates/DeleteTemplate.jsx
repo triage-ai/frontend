@@ -5,6 +5,11 @@ import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
 export const DeleteTemplate = ({ editTemplate, handleDelete, handleClose }) => {
 	const { removeTemplate } = useTemplateBackend();
 
+	const transformString = (inputString) => {
+		const words = inputString.split('_');
+		return words[0].charAt(0).toUpperCase() +  words[0].slice(1) + ' ' + words.slice(1).join(' ');
+	}
+
 	const deleteTemplate = () => {
 		removeTemplate(editTemplate)
 			.then(res => {
@@ -12,7 +17,6 @@ export const DeleteTemplate = ({ editTemplate, handleDelete, handleClose }) => {
 			})
 			.catch(err => console.error(err));
 	};
-	console.log(editTemplate)
 
 	return (
 		<Box sx={{ px: 4 }}>
@@ -20,7 +24,7 @@ export const DeleteTemplate = ({ editTemplate, handleDelete, handleClose }) => {
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete template {editTemplate.template_name}?
+				Are you sure you want to delete template {transformString(editTemplate.template_name)}?
 			</Typography>
 
 			<Typography

@@ -50,6 +50,17 @@ export const useTemplateBackend = () => {
 		);
 	};
 
+	const bulkUpdateTemplate = async (templateInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + "template/put/",
+			templateInfo,
+			config
+		);
+	};
+
     const removeTemplate = async (templateInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -63,6 +74,6 @@ export const useTemplateBackend = () => {
 		);
 	};
 
-    return {getAllTemplates, getTemplateById, createTemplate, updateTemplate, removeTemplate}
+    return {getAllTemplates, getTemplateById, createTemplate, updateTemplate, removeTemplate, bulkUpdateTemplate}
 
 }

@@ -63,8 +63,10 @@ export const DataProvider = ({ children }) => {
 	const [queueIdx, setQueueIdx] = useState([])
 
 	const [templates, setTemplates] = useState([])
+	const [formattedTemplates, setFormattedTemplates] = useState([])
 
 	const [emails, setEmails] = useState([])
+	const [formattedEmails, setFormattedEmails] = useState([])
 
 	const [schedules, setSchedules] = useState([])
 	const [formattedSchedules, setFormattedSchedules] = useState([])
@@ -222,16 +224,40 @@ export const DataProvider = ({ children }) => {
 	}, [getQueuesForAgent]);
 
 	const refreshTemplates = useCallback(() => {
-		getAllTemplates().then(templateList => {
-			setTemplates(templateList.data);
+		getAllTemplates()
+			.then(templates => {
+				const templatesData = templates.data;
+				const formattedTemplates = templatesData.map(template => {
+					return {
+						value: template.template_name,
+						label: template.template_name
+					};
+				});
+			setTemplates(templatesData);
+			setFormattedTemplates(formattedTemplates)
+		})
+		.catch(err => {
+			console.error(err)
 		});
 	}, [getAllTemplates]);
 
 	const refreshEmails = useCallback(() => {
-		getAllEmails().then(emailList => {
-			setEmails(emailList.data);
+		getAllEmails()
+			.then(emails => {
+				const emailsData = emails.data;
+				const formattedEmails = emailsData.map(email => {
+					return {
+						value: email.email_id,
+						label: email.email
+					};
+				});
+			setEmails(emailsData);
+			setFormattedEmails(formattedEmails)
+		})
+		.catch(err => {
+			console.error(err)
 		});
-	}, [getAllTemplates]);
+	}, [getAllEmails]);
 
 	const refreshSchedules = useCallback(() => {
 		getAllSchedules()
@@ -277,8 +303,10 @@ export const DataProvider = ({ children }) => {
 				tickets,
 				refreshTickets,
 				templates,
+				formattedTemplates,
 				refreshTemplates,
 				emails,
+				formattedEmails,
 				refreshEmails,
 				departments,
 				formattedDepartments,

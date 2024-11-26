@@ -173,7 +173,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
                 variant="h1"
                 sx={{ mb: 1.5 }}
             >
-                {editTicket ? 'Edit ticket' : 'Add new ticket'}
+                {editTicket ? 'Edit ticket' : 'Add ticket'}
             </Typography>
 
             <Typography variant="subtitle2">

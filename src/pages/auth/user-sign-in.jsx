@@ -99,7 +99,7 @@ export const UserSignIn = () => {
 
 					const authInfo = {
 						isAuth: true,
-						userId: userData.user_id,
+						user_id: userData.user_id,
 						token: userData.token,
 					};
 					setUserData(authInfo);

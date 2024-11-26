@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material';
 import { CustomFilledInput } from '../../../components/custom-input';
 import { CircularButton } from '../../../components/sidebar';
 import { useEditor } from '@tiptap/react';
@@ -6,29 +6,31 @@ import StarterKit from '@tiptap/starter-kit';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
 import { RichTextEditorBox } from '../../../components/rich-text-editor';
 import { useEffect, useState } from 'react';
-import { create } from '@mui/material/styles/createTransitions';
+
 
 export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
     const [isFormValid, setIsFormValid] = useState(false);
     const { updateTemplate, createTemplate } = useTemplateBackend();
     const [formData, setFormData] = useState({
-        template_name: '',
-        subject: '',
+        code_name: '',
+		subject: '',
         body: '',
-        notes: '', 
+        notes: '',
+		active: '', 
     })
 
     const validateTemplate = () => {
-        return formData.template_name && formData.subject && formData.body
+        return formData.subject && formData.body
     }
 
     useEffect(() => {
         if(editTemplate) {
             setFormData({
-                template_name: editTemplate.template_name,
+				code_name: editTemplate.code_name,
                 subject: editTemplate.subject,
                 body: editTemplate.body,
                 notes: editTemplate.notes,
+				active: editTemplate.active === 1 ? 'on' : 'off'
             })
             editor.commands.setContent(editTemplate.body)
         }
@@ -42,18 +44,22 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 		});
 	};
 
-	const editorChange = () => {
+	const handleCheckBox = (event) => {
+		console.log(event)
 		setFormData({
 			...formData,
-			['body']: editor.getHTML(),
+			[event.target.name]: event.target.checked ? 'on' : 'off',
 		});
+
 	};
+
 
     const handleAction = () => {
         if(editTemplate) {
 			// formData['body'] = editor.getHTML();
 			try {
 				var updates = {...editTemplate}
+				formData.active = formData.active === 'on' ? 1 : 0
 				Object.entries(formData).forEach((update) => {
 					updates[update[0]] = update[1];
 				});
@@ -95,15 +101,20 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 		console.log(formData)
 	}, [formData]);
 
+	const transformString = (inputString) => {
+		const words = inputString.split('_');
+		return words[0].charAt(0).toUpperCase() +  words[0].slice(1) + ' ' + words.slice(1).join(' ');
+	}
+
 
 	return (
 		<>
 			<Typography variant='h1' sx={{ mb: 1.5 }}>
-				{editTemplate ? 'Edit template' : 'Add new template'}
+				Edit template
 			</Typography>
 
 			<Typography variant='subtitle2'>
-				{editTemplate ? 'Edit template information.' : 'Please fill out the following information for the new template.'}
+				Edit template information.
 			</Typography>
 
 			<Box
@@ -116,18 +127,14 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 					textAlign: 'left',
 				}}
 			>
+				<Typography variant='h2' sx={{ fontWeight: 600, mb: 2 }}>
+					{transformString(formData.code_name)}
+				</Typography>
+				
 				<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 					Required information
 				</Typography>
 
-				<CustomFilledInput 
-                    label='Template Name' 
-                    onChange={handleChange} 
-                    value={formData?.template_name} 
-                    name='template_name' 
-                    fullWidth 
-                    mb={2} 
-                />
 
 				<CustomFilledInput
 					label='Email Subject'
@@ -160,6 +167,16 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
                     mb={2} 
                 />
 
+				<FormControlLabel
+					name='active'
+					control={<Checkbox checked={formData.active === 'on' ? true : false} onChange={handleCheckBox} />}
+					label={
+						<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
+							Enable Template
+						</Typography>
+					}
+				/>
+
 
 			</Box>
 
@@ -173,7 +190,7 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
                     onClick={handleAction} 
                     disabled={!isFormValid}
                 >
-					{editTemplate ? 'Edit' : 'Create'} template
+					Edit template
 				</CircularButton>
 			</Stack>
 		</>

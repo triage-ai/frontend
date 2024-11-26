@@ -5,7 +5,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddStatus } from './AddStatus';
 
-export const StatusSelect = ({ handleInputChange, value }) => {
+export const StatusSelect = ({ handleInputChange, value, name }) => {
 	const { formattedStatuses, refreshStatuses } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -27,7 +27,7 @@ export const StatusSelect = ({ handleInputChange, value }) => {
 				label="Status"
 				onChange={handleInputChange}
 				value={value}
-				name="status_id"
+				name={name ?? "status_id"}
 				mb={2}
 				fullWidth
 				addNewButton

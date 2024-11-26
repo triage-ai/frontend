@@ -37,7 +37,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:env": "env-cmd -f ./.prod.env npm run-script build" 
+    "build:env": "env-cmd -f ./.prod.env npm run-script build"
   },
   "eslintConfig": {
     "extends": [

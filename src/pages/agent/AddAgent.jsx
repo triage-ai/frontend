@@ -1,14 +1,17 @@
 import {
-	Box, Checkbox, FormControlLabel,
+	Box,
+	Checkbox,
+	FormControlLabel,
 	IconButton,
 	InputAdornment,
 	Stack,
 	Step,
 	StepConnector,
 	StepLabel,
-	Stepper, Typography,
+	Stepper,
+	Typography,
 	stepConnectorClasses,
-	styled
+	styled,
 } from '@mui/material';
 import { Check, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -68,15 +71,8 @@ function QontoStepIcon(props) {
 	const { active, completed, className } = props;
 
 	return (
-		<QontoStepIconRoot
-			ownerState={{ active }}
-			className={className}
-		>
-			{completed ? (
-				<Check className="QontoStepIcon-completedIcon" />
-			) : (
-				<div className="QontoStepIcon-circle" />
-			)}
+		<QontoStepIconRoot ownerState={{ active }} className={className}>
+			{completed ? <Check className='QontoStepIcon-completedIcon' /> : <div className='QontoStepIcon-circle' />}
 		</QontoStepIconRoot>
 	);
 }
@@ -90,7 +86,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	const [roles, setRoles] = useState([]);
 
 	const [permissions, setPermissions] = useState([]);
-	const [allPermissions, setAllPermissions] = useState([])
+	const [allPermissions, setAllPermissions] = useState([]);
 
 	const [activeStep, setActiveStep] = useState(0);
 	const [isNextDisabled, setIsNextDisabled] = useState(true);
@@ -111,22 +107,22 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 
 	useEffect(() => {
 		getAllRoles()
-			.then(roles => {
+			.then((roles) => {
 				const rolesData = roles.data;
-				const formattedRoles = rolesData.map(role => {
+				const formattedRoles = rolesData.map((role) => {
 					return { value: role.role_id, label: role.name };
 				});
 
 				setRoles(formattedRoles);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 		getPermissions()
-			.then(res => {
-				setAllPermissions(res.data)
+			.then((res) => {
+				setAllPermissions(res.data);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 	}, []);
@@ -134,19 +130,21 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	const permissionsFromString = (jsonString) => {
 		var list;
 		try {
-			list = JSON.parse(jsonString)
+			list = JSON.parse(jsonString);
 		} catch (err) {
-			return []
+			return [];
 		}
-		return Object.keys(list).map(name => {
-			const match = allPermissions.find(item => item.name === name);
-			return match ? { name: match.name, label: match.label } : null;
-		}).filter(Boolean);
-	}
+		return Object.keys(list)
+			.map((name) => {
+				const match = allPermissions.find((item) => item.name === name);
+				return match ? { name: match.name, label: match.label } : null;
+			})
+			.filter(Boolean);
+	};
 
 	useEffect(() => {
 		if (allPermissions.length > 0 && editAgent) {
-			setPermissions(permissionsFromString(editAgent.permissions))
+			setPermissions(permissionsFromString(editAgent.permissions));
 		}
 	}, [allPermissions]);
 
@@ -161,20 +159,20 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		setIsNextDisabled(!validateCurrentStep());
 	}, [formData, activeStep]);
 
-	const handleInputChange = e => {
+	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setFormData(prevFormData => ({
+		setFormData((prevFormData) => ({
 			...prevFormData,
 			[name]: name === 'admin' ? (e.target.checked ? 1 : 0) : value,
 		}));
 	};
 
 	const handleNext = () => {
-		setActiveStep(prevActiveStep => prevActiveStep + 1);
+		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
 
 	const handleBack = () => {
-		setActiveStep(prevActiveStep => prevActiveStep - 1);
+		setActiveStep((prevActiveStep) => prevActiveStep - 1);
 	};
 
 	const validateStep1 = () => {
@@ -219,53 +217,47 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	};
 
 	const handleClickShowPassword = () => {
-		setShowPassword(show => !show);
+		setShowPassword((show) => !show);
 	};
 
 	const formatPermissions = () => {
 		const obj = permissions.reduce((acc, item) => {
 			acc[item.name] = 1;
 			return acc;
-		}, {})
+		}, {});
 		return JSON.stringify(obj);
-	}
+	};
 
 	const handleAction = () => {
 		if (editAgent) {
 			updateAgent({ ...formData, permissions: formatPermissions() })
-				.then(res => {
+				.then((res) => {
 					handleEdited();
 				})
-				.catch(err => console.error(err));
+				.catch((err) => console.error(err));
 		} else {
 			createAgent({ ...formData, permissions: formatPermissions() })
-				.then(res => {
+				.then((res) => {
 					handleCreated();
 				})
-				.catch(err => console.error(err));
+				.catch((err) => console.error(err));
 		}
 	};
 
 	return (
 		<>
-			<Typography
-				variant="h1"
-				sx={{ mb: 1.5 }}
-			>
-				{editAgent ? 'Edit agent' : 'Add new agent'}
+			<Typography variant='h1' sx={{ mb: 1.5 }}>
+				{editAgent ? 'Edit agent' : 'Add agent'}
 			</Typography>
 
-			<Typography variant="subtitle2">
-				{editAgent ? 'Edit the details for this agent' : 'We will gather essential details about the new agent. Complete the following steps to ensure accurate setup and access.'}
+			<Typography variant='subtitle2'>
+				{editAgent
+					? 'Edit the details for this agent'
+					: 'We will gather essential details about the new agent. Complete the following steps to ensure accurate setup and access.'}
 			</Typography>
 
-			<Stepper
-				alternativeLabel
-				activeStep={activeStep}
-				connector={<QontoConnector />}
-				sx={{ my: 2 }}
-			>
-				{steps.map(label => (
+			<Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />} sx={{ my: 2 }}>
+				{steps.map((label) => (
 					<Step key={label}>
 						{/* <StepLabel StepIconComponent={QontoStepIcon} /> */}
 						<StepLabel
@@ -293,39 +285,15 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						textAlign: 'left',
 					}}
 				>
-					<Typography
-						variant="h4"
-						sx={{ fontWeight: 600, mb: 2 }}
-					>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Agent information
 					</Typography>
 
-					<CustomFilledInput
-						label="First name"
-						onChange={handleInputChange}
-						value={formData.firstname}
-						name="firstname"
-						mb={2}
-						halfWidth
-						mr={'2%'}
-					/>
+					<CustomFilledInput label='First name' onChange={handleInputChange} value={formData.firstname} name='firstname' mb={2} halfWidth mr={'2%'} />
 
-					<CustomFilledInput
-						label="Last name"
-						onChange={handleInputChange}
-						value={formData.lastname}
-						name="lastname"
-						mb={2}
-						halfWidth
-					/>
+					<CustomFilledInput label='Last name' onChange={handleInputChange} value={formData.lastname} name='lastname' mb={2} halfWidth />
 
-					<CustomFilledInput
-						label="Phone (optional)"
-						onChange={handleInputChange}
-						value={formData.phone}
-						name="phone"
-						halfWidth
-					/>
+					<CustomFilledInput label='Phone (optional)' onChange={handleInputChange} value={formData.phone} name='phone' halfWidth />
 				</Box>
 			)}
 
@@ -342,10 +310,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						flexDirection: 'column',
 					}}
 				>
-					<Typography
-						variant="h4"
-						sx={{ fontWeight: 600, mb: 2 }}
-					>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Settings
 					</Typography>
 
@@ -354,7 +319,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 							<Checkbox
 								onChange={handleInputChange}
 								checked={formData.admin === 1}
-								name="admin"
+								name='admin'
 								sx={{
 									'&.Mui-checked': {
 										color: '#22874E',
@@ -363,20 +328,17 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 							/>
 						}
 						label={
-							<Typography
-								variant="subtitle1"
-								sx={{ fontWeight: 500 }}
-							>
+							<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
 								Is administrator?
 							</Typography>
 						}
 					/>
 
 					<CustomFilledInput
-						label="Timezone"
+						label='Timezone'
 						onChange={handleInputChange}
 						value={formData.timezone}
-						name="timezone"
+						name='timezone'
 						mb={2}
 						mt={2}
 						halfWidth
@@ -384,10 +346,10 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 					/>
 
 					<CustomFilledInput
-						label="Signature"
+						label='Signature'
 						onChange={handleInputChange}
 						value={formData.signature}
-						name="signature"
+						name='signature'
 						fullWidth
 						multiline
 						rows={4}
@@ -406,10 +368,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						textAlign: 'left',
 					}}
 				>
-					<Typography
-						variant="h4"
-						sx={{ fontWeight: 600, mb: 2 }}
-					>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Access
 					</Typography>
 
@@ -425,29 +384,15 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						options={departments}
 					/> */}
 
-					<DepartmentSelect
-						handleInputChange={handleInputChange}
-						value={formData.dept_id}
-					/>
+					<DepartmentSelect handleInputChange={handleInputChange} value={formData.dept_id} />
 
-					<RoleSelect
-						handleInputChange={handleInputChange}
-						value={formData.role_id}
-					/>
+					<RoleSelect handleInputChange={handleInputChange} value={formData.role_id} />
 
-					<Typography
-						variant="h4"
-						sx={{ fontWeight: 600, mb: 2 }}
-					>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Agent level permissions
 					</Typography>
 
-					<TransferList
-						right={permissions}
-						setRight={setPermissions}
-						allItems={allPermissions}
-						formatter={(item) => item.label}
-					/>
+					<TransferList right={permissions} setRight={setPermissions} allItems={allPermissions} formatter={(item) => item.label} />
 
 					{/* <CustomSelect
 						label="Role"
@@ -474,48 +419,30 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						textAlign: 'left',
 					}}
 				>
-					<Typography
-						variant="h4"
-						sx={{ fontWeight: 600, mb: 2 }}
-					>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Authentication
 					</Typography>
 
-					<CustomFilledInput
-						label="Email"
-						onChange={handleInputChange}
-						value={formData.email}
-						name="email"
-						mb={2}
-						fullWidth
-					/>
+					<CustomFilledInput label='Email' onChange={handleInputChange} value={formData.email} name='email' mb={2} fullWidth />
 
-					<CustomFilledInput
-						label="Username"
-						onChange={handleInputChange}
-						value={formData.username}
-						name="username"
-						mb={2}
-						halfWidth
-						mr={'2%'}
-					/>
+					<CustomFilledInput label='Username' onChange={handleInputChange} value={formData.username} name='username' mb={2} halfWidth mr={'2%'} />
 
 					{!editAgent && (
 						<CustomFilledInput
-							label="Password"
+							label='Password'
 							onChange={handleInputChange}
 							value={formData.password}
-							name="password"
+							name='password'
 							halfWidth
 							type={showPassword ? 'text' : 'password'}
-							autoComplete="new-password"
+							autoComplete='new-password'
 							endAdornment={
-								<InputAdornment position="end">
+								<InputAdornment position='end'>
 									<IconButton
-										aria-label="toggle password visibility"
+										aria-label='toggle password visibility'
 										onClick={handleClickShowPassword}
-										onMouseDown={e => e.preventDefault()}
-										edge="end"
+										onMouseDown={(e) => e.preventDefault()}
+										edge='end'
 									>
 										{showPassword ? <EyeOff /> : <Eye />}
 									</IconButton>
@@ -526,11 +453,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 				</Box>
 			)}
 
-			<Stack
-				direction="row"
-				spacing={1.5}
-				sx={{ justifyContent: 'center' }}
-			>
+			<Stack direction='row' spacing={1.5} sx={{ justifyContent: 'center' }}>
 				{activeStep !== 0 && (
 					<CircularButton
 						sx={{
@@ -551,21 +474,13 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 				)}
 
 				{activeStep !== steps.length - 1 && (
-					<CircularButton
-						sx={{ py: 2, px: 6 }}
-						onClick={handleNext}
-						disabled={isNextDisabled}
-					>
+					<CircularButton sx={{ py: 2, px: 6 }} onClick={handleNext} disabled={isNextDisabled}>
 						Next
 					</CircularButton>
 				)}
 
 				{activeStep === steps.length - 1 && (
-					<CircularButton
-						sx={{ py: 2, px: 6 }}
-						onClick={handleAction}
-						disabled={isNextDisabled}
-					>
+					<CircularButton sx={{ py: 2, px: 6 }} onClick={handleAction} disabled={isNextDisabled}>
 						{editAgent ? 'Edit' : 'Create'} agent
 					</CircularButton>
 				)}

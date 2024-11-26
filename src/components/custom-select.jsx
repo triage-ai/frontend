@@ -1,20 +1,12 @@
-import {
-	Autocomplete,
-	Box,
-	Button,
-	MenuItem,
-	Popper,
-	TextField,
-	Typography, styled
-} from '@mui/material';
+import { Autocomplete, Box, Button, MenuItem, Popper, TextField, Typography, styled } from '@mui/material';
 
-export const CustomInput = styled(props => (
+export const CustomInput = styled((props) => (
 	<TextField
 		slotProps={{
 			input: {
 				disableUnderline: true,
-				...props.InputProps
-			}
+				...props.InputProps,
+			},
 		}}
 		{...props}
 	/>
@@ -42,7 +34,7 @@ export const CustomInput = styled(props => (
 	},
 }));
 
-const CustomMultibox = styled(props => <Autocomplete {...props} />)(({ theme }) => ({
+const CustomMultibox = styled((props) => <Autocomplete {...props} />)(({ theme }) => ({
 	'& fieldset': {
 		overflow: 'hidden',
 		borderRadius: 12,
@@ -66,41 +58,20 @@ const CustomMultibox = styled(props => <Autocomplete {...props} />)(({ theme }) 
 	},
 }));
 
-export const CustomSelect = ({
-	label,
-	options,
-	halfWidth,
-	addNewButton,
-	handleAddBtnClick,
-	...props
-}) => {
+export const CustomSelect = ({ label, options, halfWidth, addNewButton, handleAddBtnClick, ...props }) => {
 	const { mt, mb, ...otherProps } = props;
 
 	return (
-		<CustomInput
-			variant="filled"
-			label={label}
-			defaultValue=""
-			select
-			sx={{ mt: mt, mb: mb, width: halfWidth && '49%' }}
-			{...otherProps}
-		>
-			<MenuItem value="">
-				<Typography variant="subtitle2">- Choose {label.toLowerCase()} -</Typography>
+		<CustomInput variant='filled' label={label} defaultValue='' select sx={{ mt: mt, mb: mb, width: halfWidth && '49%' }} {...otherProps}>
+			<MenuItem value=''>
+				<Typography variant='subtitle2'>- Choose {label.toLowerCase()} -</Typography>
 			</MenuItem>
 
-			{options?.map(option => (
-				<MenuItem
-					key={option.value}
-					value={option.value}
-					sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
-				>
+			{options?.map((option) => (
+				<MenuItem key={option.value} value={option.value} sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
 					{option.label}{' '}
 					{option.sublabel && (
-						<Typography
-							variant="caption"
-							sx={{ lineHeight: 1, color: '#545555' }}
-						>
+						<Typography variant='caption' sx={{ lineHeight: 1, color: '#545555' }}>
 							({option.sublabel})
 						</Typography>
 					)}
@@ -108,9 +79,7 @@ export const CustomSelect = ({
 			))}
 
 			{addNewButton && (
-				<Box
-					sx={{ px: 2, pb: 1, pt: 2, mt: 1, borderTop: '1px solid #E5EFE9', textAlign: 'center' }}
-				>
+				<Box sx={{ px: 2, pb: 1, pt: 2, mt: 1, borderTop: '1px solid #E5EFE9', textAlign: 'center' }}>
 					<Button
 						sx={{
 							backgroundColor: 'transparent',
@@ -130,7 +99,7 @@ export const CustomSelect = ({
 						}}
 						onClick={handleAddBtnClick}
 					>
-						Add new {label.toLowerCase()}
+						Add {label.toLowerCase()}
 					</Button>
 				</Box>
 			)}
@@ -163,11 +132,11 @@ export const CustomAutocomplete = ({
 			value={value}
 			mb={mb}
 			getOptionLabel={getOptionLabel}
-			type="text"
+			type='text'
 			name={name}
 			size={size}
 			onInputChange={onInputChange}
-			filterOptions={x => x}
+			filterOptions={(x) => x}
 			onChange={onChange}
 			// sx={{
 			// 	width: 250,
@@ -180,21 +149,9 @@ export const CustomAutocomplete = ({
 			// 		borderColor: '#E5EFE9',
 			// 	},
 			// }}
-			PopperComponent={props => (
-				<Popper
-					{...props}
-					style={{ maxWidth: 400 }}
-					placement="bottom-start"
-				/>
-			)}
+			PopperComponent={(props) => <Popper {...props} style={{ maxWidth: 400 }} placement='bottom-start' />}
 			renderOption={renderOption}
-			renderInput={props => (
-				<CustomInput
-					{...props}
-					label={label}
-					variant='filled'
-				/>
-			)}
+			renderInput={(props) => <CustomInput {...props} label={label} variant='filled' />}
 		/>
 	);
 };

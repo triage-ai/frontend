@@ -127,7 +127,7 @@ export const Tickets = () => {
 			title={'Ticket List'}
 			subtitle={'View your tickets and add new ones'}
 			buttonInfo={{
-				label: 'Add new ticket',
+				label: 'Add ticket',
 				icon: <TicketPlus size={20} />,
 				hidden: permissions.hasOwnProperty('ticket.create')
 			}}

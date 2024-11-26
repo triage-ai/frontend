@@ -1,5 +1,5 @@
-import { Box, Dialog, Drawer, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { MailPlus, Pencil, Trash2, X } from 'lucide-react';
+import { Box, Dialog, Drawer, IconButton, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { CircleCheck, CircleX, MailPlus, Pencil, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../../../components/layout';
@@ -15,6 +15,9 @@ export const EmailTemplates = () => {
 
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openDialog, setOpenDialog] = useState(false);
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
+	const [totalTemplates, setTotalTemplates] = useState(0);
 	const [buttonClicked, setButtonClicked] = useState('');
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const navigate = useNavigate();
@@ -27,16 +30,18 @@ export const EmailTemplates = () => {
 			const template = {
 				template_id: parseInt(templateId, 10),
 			};
-			console.log(openDetail)
 			setOpenDetail(true);
 			setSelectedTemplate(template);
-			console.log(templateId)
 		}
 	}, [templates, templateId]);
 
 	useEffect(() => {
 		refreshTemplates();
 	}, []);
+
+	useEffect(() => {
+		setTotalTemplates(templates.length);
+	}, [templates]);
 
 	const toggleDetailDrawer =
 		(newOpen, template = null) =>
@@ -88,14 +93,28 @@ export const EmailTemplates = () => {
 		refreshTemplates();
 	};
 
+	const handleChangePage = (e, newValue) => {
+		setPage(newValue);
+	};
+
+	const handleChangeRowsPerPage = (e) => {
+		setSize(e.target.value);
+		setPage(0);
+	};
+
+	const transformString = (inputString) => {
+		const words = inputString.split('_');
+		return words[0].charAt(0).toUpperCase() + words[0].slice(1) + ' ' + words.slice(1).join(' ');
+	};
+
 	return (
 		<Layout
 			title={'Templates'}
 			subtitle={'View all email templates'}
 			buttonInfo={{
-				label: 'Add new template',
+				label: 'Add template',
 				icon: <MailPlus size={20} />,
-				hidden: true,
+				hidden: false,
 			}}
 			AddResource={AddTemplate}
 			refreshResource={refreshTemplates}
@@ -116,10 +135,10 @@ export const EmailTemplates = () => {
 									<Typography variant='overline'>Template Name</Typography>
 								</TableCell>
 								<TableCell>
-									<Typography variant='overline'>Notes</Typography>
+									<Typography variant='overline'>Active</Typography>
 								</TableCell>
 								<TableCell>
-									<Typography variant='overline'>Created</Typography>
+									<Typography variant='overline'>Notes</Typography>
 								</TableCell>
 								<TableCell>
 									<Typography variant='overline'>Updated</Typography>
@@ -130,7 +149,7 @@ export const EmailTemplates = () => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{templates.map((template) => (
+							{templates.slice(page * size, page * size + size).map((template) => (
 								<TableRow
 									key={template.template_id}
 									onClick={toggleDetailDrawer(true, template)}
@@ -148,10 +167,10 @@ export const EmailTemplates = () => {
 									}}
 								>
 									<TableCell component='th' scope='row' sx={{ maxWidth: '200px' }}>
-										{template.template_name}
+										{transformString(template.code_name)}
 									</TableCell>
+									<TableCell>{template.active === 1 ? <CircleCheck color='green' /> : <CircleX color='red' />}</TableCell>
 									<TableCell>{template.notes}</TableCell>
-									<TableCell>{template.created.replace('T', ' ')}</TableCell>
 									<TableCell>{template.updated.replace('T', ' ')}</TableCell>
 									<TableCell component='th' scope='row' align='right'>
 										<Stack
@@ -159,12 +178,8 @@ export const EmailTemplates = () => {
 											// spacing={0.5}
 											sx={{ justifyContent: 'flex-end' }}
 										>
-											<IconButton onClick={event => handleDialogOpen(event, template, 'edit')}>
+											<IconButton onClick={(event) => handleDialogOpen(event, template, 'edit')}>
 												<Pencil size={18} />
-											</IconButton>
-
-											<IconButton onClick={event => handleDialogOpen(event, template, 'delete')}>
-												<Trash2 size={18} />
 											</IconButton>
 										</Stack>
 									</TableCell>
@@ -173,6 +188,16 @@ export const EmailTemplates = () => {
 						</TableBody>
 					</Table>
 				)}
+				<Box>
+					<TablePagination
+						component='div'
+						count={totalTemplates}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
+				</Box>
 			</WhiteContainer>
 
 			{buttonClicked === 'edit' && (
