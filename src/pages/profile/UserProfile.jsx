@@ -30,14 +30,15 @@ const Header = ({ headers, components }) => {
 			{/* Tab Bar */}
 			<Box
 				sx={{
-					display: 'flex',
 					mb: 4,
+                    ml: 4.2,
+                    justifyContent: 'center',
 				}}
 			>
 				<StyledTabs
 					value={tabValue}
 					onChange={handleTabChange}
-					variant='scrollable'
+					variant='fullWidth'
 					scrollButtons='auto'
 					sx={{
 						position: 'relative',
