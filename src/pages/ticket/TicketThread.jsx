@@ -1,11 +1,11 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Avatar, List, Box, Button, IconButton, ListItem, ListItemAvatar, ListItemText, Stack, styled, Typography } from '@mui/material';
 import Link from '@tiptap/extension-link';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { X } from 'lucide-react';
+import { CloudUploadIcon, File, X } from 'lucide-react';
 import { LinkBubbleMenuHandler } from 'mui-tiptap';
 import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -13,15 +13,32 @@ import { CircularButton } from '../../components/sidebar';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import humanFileSize from '../../functions/file-size-formatter';
+import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
+import axios from "axios";
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
 
+const VisuallyHiddenInput = styled('input')({
+	clip: 'rect(0 0 0 0)',
+	clipPath: 'inset(50%)',
+	height: 1,
+	overflow: 'hidden',
+	position: 'absolute',
+	bottom: 0,
+	left: 0,
+	whiteSpace: 'nowrap',
+	width: 1,
+  });
+
 export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const [formData, setFormData] = useState({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 	const [postDisabled, setPostDisabled] = useState(true);
+	const [files, setFiles] = useState([]);
 	const { createThreadEntry } = useThreadsBackend();
+	const { getPresignedURL, createAttachment, getAttachmentById } = useAttachmentBackend();
 	const { permissions } = useContext(AuthContext);
 	const editor = useEditor({
 		extensions: [
@@ -52,12 +69,67 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				updatedTicket.thread.entries.push(response.data);
 				updateCurrentTicket(updatedTicket);
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
+				return response.data.entry_id
+			})
+			.then((entry_id) => {
+				const file_names = files.map(item => item.name);
+				getPresignedURL({'attachment_names': file_names}).then((res) => {
+					var presigned_urls = { ...res.data.url_dict }
+
+					for (const [fileName, url] of Object.entries(presigned_urls)) {
+						const file = files.find(f => f.name === fileName);
+				
+						if (!file) {
+							console.warn(`No matching file found for ${fileName}`);
+							continue;
+						}
+
+						try {
+							axios.put(url, file, {
+								headers: {
+									'Content-Type': file.type,
+									'Content-Disposition': `attachment; filename="${fileName}"`
+								}
+							})
+							.then(res => {
+								console.log(`${fileName} uploaded successfully.`);
+								createAttachment({'object_id': entry_id, 'type': file.type, 'name': fileName, 'inline': 1, link: url.split('?')[0]})
+							})
+							.catch(err => {
+								console.error(`Error creating attachment in db for ${fileName}: `, err)
+							});
+						} catch (error) {
+							console.error(`Error uploading ${fileName}:`, error.message);
+						}
+					}
+					setFiles([])
+				})
 			})
 			.catch((err) => {
 				alert('Error while creating thread entry');
 				console.error(err);
-			});
+			});	
 	};
+
+	const handleFileUpload = (event) => {
+		console.log(event)
+		const length = event.target.files.length
+		var tempArray = [] 
+		for(let i = 0; i < length; i++) {
+			tempArray.push(event.target.files[i])
+		}
+		setFiles(p => [...p, ...tempArray])
+		event.target.value = ''
+	}
+
+	const handleDeleteFile = (idx) => {
+		console.log(idx)
+		setFiles(p => [...p.slice(0, idx), ...p.slice(idx+1)])
+	}
+
+	useEffect(() => {
+		console.log(files)
+	}, [files])
 
 	function getEventText(item) {
 		var newValue = item.new_val;
@@ -78,8 +150,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	}
 
 	useEffect(() => {
-		setPostDisabled(formData.body === '');
-	}, [formData]);
+		setPostDisabled(formData.body === '' && files.length === 0);
+	}, [formData, files]);
 
 	return (
 		<Box sx={{ height: '100%', padding: '28px', position: 'relative', overflowY: 'scroll' }}>
@@ -158,6 +230,9 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 										<Typography variant='caption' color='#1B1D1F' fontWeight={500}>
 											{item.body}
 										</Typography>
+										{item.attachment && (
+											<br />
+										)}
 									</Box>
 
 									<Typography variant='caption' fontWeight={500}>
@@ -215,9 +290,49 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 								<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
 							</RichTextEditor> */}
 
-								<CircularButton sx={{ py: 2, px: 6 }} onClick={handleSubmit} disabled={postDisabled}>
-									Post
-								</CircularButton>
+								<List dense>
+									{files.map((file, idx) =>  (
+										<ListItem
+											key={idx}
+											secondaryAction={
+												<IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFile(idx)}>
+													<X />
+												</IconButton>
+										}
+										>
+										<ListItemAvatar>
+											<Avatar>
+												<File />
+											</Avatar>
+										</ListItemAvatar>
+										<ListItemText
+											primary={file.name}
+											secondary={humanFileSize(file.size, false, 1)}
+										/>
+										</ListItem>
+									))}
+								</List>
+
+								<Stack maxWidth={200} spacing={1}>
+									<Button
+										component="label"
+										role={undefined}
+										variant="contained"
+										tabIndex={-1}
+										startIcon={<CloudUploadIcon />}
+									>
+										Upload files
+									<VisuallyHiddenInput
+										type="file"
+										onChange={(event) => handleFileUpload(event)}
+										multiple
+									/>
+									</Button>
+
+									<CircularButton sx={{ py: 2, px: 6 }} onClick={handleSubmit} disabled={postDisabled}>
+										Post
+									</CircularButton>
+								</Stack>	
 							</Box>
 						</TimelineContent>
 					</TimelineItem>
