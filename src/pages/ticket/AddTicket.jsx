@@ -346,15 +346,13 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					onChange={handleDueDateChange}
 				/>
 
-
-
 			</Box>
 
 
 
 			<Stack
 				direction="row"
-				// spacing={1.5}
+				spacing={1.5}
 				sx={{ justifyContent: 'center' }}
 			>
 

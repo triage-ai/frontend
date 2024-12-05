@@ -17,8 +17,7 @@ export const DateAndTime = (props) => {
 		date_and_time_format: settingsData.date_and_time_format.value,
 		default_schedule: settingsData.default_schedule.value,
 	});
-	var TimeZoneArray = Intl.supportedValuesOf('timeZone');
-	TimeZoneArray.push('UTC');
+	var TimeZoneArray = Intl.supportedValuesOf('timeZone').push('UTC');
 
 	const handleChange = (entry) => {
 		setFormState({

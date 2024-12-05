@@ -20,6 +20,7 @@
     "@tiptap/starter-kit": "^2.9.1",
     "axios": "^1.6.8",
     "dayjs": "^1.11.13",
+    "javascript-time-ago": "^2.5.11",
     "jstz": "^2.1.1",
     "lucide-react": "^0.408.0",
     "mui-tiptap": "^1.12.0",

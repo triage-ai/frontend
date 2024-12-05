@@ -15,14 +15,29 @@ import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import { RichTextEditorBox } from '../../components/rich-text-editor';
+import { RichTextReadOnly } from 'mui-tiptap';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 var localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat)
 dayjs.extend(utc)
 
 export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
-	const [formData, setFormData] = useState({'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': ''});
+	const [formData, setFormData] = useState({ 'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': '' });
 	const [postDisabled, setPostDisabled] = useState(true)
 	const { createThreadEntryForUser } = useThreadsBackend();
+	const editor = useEditor({
+		extensions: [StarterKit],
+		content: '',
+		onUpdate({ editor }) {
+			setFormData((prevFormData) => ({
+				...prevFormData,
+				body: editor.getHTML(),
+			}));
+			setPostDisabled(editor.isEmpty);
+		},
+	});
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -39,7 +54,8 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data)
 				updateCurrentTicket(updatedTicket)
-				setFormData({'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': ''})
+				setFormData({ 'subject': null, 'body': '', 'type': 'A', 'editor': '', 'recipients': '' })
+				editor.commands.setContent('');
 			})
 			.catch(err => {
 				alert('Error while creating thread entry')
@@ -70,7 +86,7 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 
 	useEffect(() => {
 		setPostDisabled(formData.subject === '' || formData.body === '')
-	},[formData])
+	}, [formData])
 
 
 	return (
@@ -135,7 +151,7 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 			>
 				{ticket.thread.events_and_entries.map(item => item.entry_id ? (
 					<TimelineItem
-						key={"entry"+item.entry_id}
+						key={"entry" + item.entry_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -163,13 +179,7 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 										padding: '8px 10px',
 									}}
 								>
-									<Typography
-										variant="caption"
-										color="#1B1D1F"
-										fontWeight={500}
-									>
-										{item.body}
-									</Typography>
+									<RichTextReadOnly sx={{fontWeight: 500}} content={item.body} extensions={[StarterKit]} />
 								</Box>
 
 								<Typography
@@ -183,7 +193,7 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 					</TimelineItem>
 				) : (
 					<TimelineItem
-						key={"event"+item.event_id}
+						key={"event" + item.event_id}
 						sx={{ marginBottom: '24px' }}
 					>
 						<TimelineSeparator>
@@ -225,20 +235,12 @@ export const UserTicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) =
 					<TimelineContent paddingTop={0}>
 						<Box>
 
-							<CustomFilledInput
-								label="Response"
-								onChange={handleInputChange}
-								value={formData.body}
-								name="body"
-								fullWidth
-								multiline
-								rows={3}
-								borderWidth={1}
-								mb={1}
+							<RichTextEditorBox
+								editor={editor}
 							/>
 
 							<CircularButton
-								sx={{ py: 2, px: 6 }}
+								sx={{ py: 2, px: 6, mt: 2}}
 								onClick={handleSubmit}
 								disabled={postDisabled}
 							>

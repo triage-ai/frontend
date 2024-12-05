@@ -12,7 +12,7 @@ import {
 import MuiAppBar from '@mui/material/AppBar';
 import { LogOut, Menu, X } from 'lucide-react';
 import React, { forwardRef, useContext, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { AppBarHeight } from './layout';
 import { SidebarItems } from './sidebar-items';
@@ -77,13 +77,25 @@ export const Transition = forwardRef(function Transition(props, ref) {
 	);
 });
 
-export const Sidebar = () => {
+export const Header = ({
+	appBarTitle,
+	appBarSubtitle,
+	buttonInfo,
+	AddResource,
+	refreshResource
+}) => {
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const initialTime = 10; // in seconds
+	const [timeLeft, setTimeLeft] = useState(initialTime);
+	const navigate = useNavigate();
+
+	const { agentLogout } = useContext(AuthContext);
 
 	const theme = useTheme();
+	const [openDialog, setOpenDialog] = useState(false);
+	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
 	const handleDrawerClose = () => {
 		setIsClosing(true);
@@ -100,59 +112,38 @@ export const Sidebar = () => {
 		}
 	};
 
-	return ( <>
+	const authLogout = async () => {
+		agentLogout();
+		navigate('/', { replace: true });
+	};
+
+	const handleClickDialogOpen = () => {
+		setOpenDialog(true);
+	};
+
+	const handleDialogClose = () => {
+		setOpenDialog(false);
+	};
+
+	const handleCreated = () => {
+		handleDialogClose()
+		refreshResource()
+	}
+
+	return (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
-			<Box
+
+            <Box
 				component="nav"
 				sx={{
 					width: { md: drawerWidth },
 					flexShrink: { md: 0 },
 				}}
 				aria-label="mailbox folders"
-			>
-				<Drawer
-					variant="temporary"
-					open={mobileOpen}
-					onTransitionEnd={handleDrawerTransitionEnd}
-					onClose={handleDrawerClose}
-					ModalProps={{
-						keepMounted: true, // Better open performance on mobile.
-					}}
-					sx={{
-						display: { xs: "block", md: "none" },
-						"& .MuiDrawer-paper": {
-							boxSizing: "border-box",
-							width: drawerWidth,
-							alignItems: "center",
-							backgroundColor: "#FFF",
-							borderRight: "1px solid #F4F4F4",
-						},
-					}}
-				>
-					<SidebarItems />
-				</Drawer>
+			/>
 
-				<Drawer
-					variant="permanent"
-					sx={{
-						display: { xs: "none", md: "block" },
-						"& .MuiDrawer-paper": {
-							boxSizing: "border-box",
-							width: drawerWidth,
-							alignItems: "center",
-							backgroundColor: "#FFF",
-							borderRight: "1.5px solid #E5EFE9",
-						},
-					}}
-					open
-				>
-					<SidebarItems />
-				</Drawer>
-
-			</Box>
-
-			{/* <AppBar
+			<AppBar
 				position="fixed"
 				sx={{
 					width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
@@ -163,14 +154,14 @@ export const Sidebar = () => {
 					sx={{
 						height: AppBarHeight,
 						display: 'flex',
-						alignItems: 'flex-start',
+						alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center',
 						justifyContent: 'space-between',
 						py: { xs: 1, md: 3 },
 						px: { xs: 2, md: 5 },
 					}}
 				>
 					<Box
-						sx={{ display: 'flex', alignItems: 'flex-start' }}
+						sx={{ display: 'flex', alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center' }}
 					>
 						<IconButton
 							color="inherit"
@@ -182,13 +173,93 @@ export const Sidebar = () => {
 							<Menu />
 						</IconButton>
 
+						<Box sx={{ display: 'flex', flexDirection: 'column', color: '#1B1D1F' }}>
+							<Typography variant="h2">{appBarTitle}</Typography>
+							{appBarSubtitle !== '' && (
+								<Typography
+									variant="subtitle2"
+									sx={{
+										letterSpacing: '-0.03em',
+										lineHeight: 1.9,
+										color: '#545555',
+									}}
+								>
+									{appBarSubtitle}
+								</Typography>
+							)}
+						</Box>
 					</Box>
 
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+						{buttonInfo.hidden !== false && <CircularButton
+							sx={{ mr: 1 }}
+							onClick={handleClickDialogOpen}
+						>
+							{buttonInfo.icon}
+							{buttonInfo.label}
+						</CircularButton>}
+
+						<IconButton
+							aria-label="logout"
+							onClick={authLogout}
+						>
+							<LogOut
+								color="#585858"
+								size={22}
+							/>
+						</IconButton>
+					</Box>
 				</Box>
-			</AppBar> */}
+			</AppBar>
+
+			<Dialog
+				open={openDialog}
+				TransitionComponent={Transition}
+				onClose={handleDialogClose}
+				// maxWidth={'xl'}
+				// fullWidth
+				// fullScreen={fullScreen}
+				PaperProps={{
+					sx: {
+						width: '100%',
+						maxWidth: 'unset',
+						height: 'calc(100% - 64px)',
+						maxHeight: 'unset',
+						margin: 0,
+						background: '#f1f4f2',
+						borderBottomLeftRadius: 0,
+						borderBottomRightRadius: 0,
+						padding: 2,
+					},
+				}}
+				sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
+			>
+				<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
+					<IconButton
+						aria-label="close dialog"
+						onClick={handleDialogClose}
+						sx={{
+							width: '40px',
+							height: '40px',
+							position: 'fixed',
+							right: '26px',
+							top: 'calc(64px + 26px)',
+							color: '#545555',
+							transition: 'all 0.2s',
+							'&:hover': {
+								color: '#000',
+							},
+						}}
+					>
+						<X size={20} />
+					</IconButton>
+
+					{AddResource && <AddResource handleCreated={handleCreated} />}
+				</Box>
+
+			</Dialog>
 
 		</Box>
-		<Outlet/>
-		</>
 	);
 };

@@ -1,5 +1,6 @@
 import { Box, styled } from '@mui/material';
 import { Sidebar } from './sidebar';
+import { Header } from './header';
 
 export const AppBarHeight = '100px';
 
@@ -18,7 +19,7 @@ const DrawerContentContainer = styled(Box)(() => ({
 export const Layout = ({ children, title, subtitle, buttonInfo, AddResource, refreshResource }) => {
 	return (
 		<Box sx={{ display: 'flex', background: '#FFF' }}>
-			<Sidebar
+			<Header
 				appBarTitle={title}
 				appBarSubtitle={subtitle}
 				buttonInfo={buttonInfo}
