@@ -5,7 +5,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddSLA } from './AddSLA';
 
-export const SLASelect = ({ handleInputChange, value }) => {
+export const SLASelect = ({ handleInputChange, value, name }) => {
 	const { formattedSLAs, refreshSLAs } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -27,7 +27,7 @@ export const SLASelect = ({ handleInputChange, value }) => {
 				label="SLA"
 				onChange={handleInputChange}
 				value={value}
-				name="sla_id"
+				name={name ?? "sla_id"}
 				mb={2}
 				fullWidth
 				addNewButton

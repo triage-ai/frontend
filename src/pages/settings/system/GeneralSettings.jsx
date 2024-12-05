@@ -6,6 +6,7 @@ import { CustomTextField } from '../../../components/sidebar-items';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import { handleSave, StyledSelect } from '../SettingsMenus';
+import { DepartmentSelect } from '../../department/DepartmentSelect';
 
 export const GeneralSettings = (props) => {
 	const { settingsData } = props;
@@ -17,7 +18,7 @@ export const GeneralSettings = (props) => {
 		helpdesk_status: settingsData.helpdesk_status.value,
 		helpdesk_url: settingsData.helpdesk_url.value || '',
 		helpdesk_name: settingsData.helpdesk_name.value || '',
-		default_department: settingsData.default_department.value,
+		default_dept_id: settingsData.default_dept_id.value,
 		force_http: settingsData.force_http.value,
 		collision_avoidance_duration: settingsData.collision_avoidance_duration.value || '',
 		default_page_size: settingsData.default_page_size.value,
@@ -105,11 +106,11 @@ export const GeneralSettings = (props) => {
 						Default Department
 					</Typography>
 
-					<StyledSelect name='default_department' value={formState.default_department} onChange={handleChange}>
-						<MenuItem value='Support'>Support</MenuItem>
-						<MenuItem value='Sales'>Sales</MenuItem>
-						<MenuItem value='HR'>HR</MenuItem>
-					</StyledSelect>
+					<DepartmentSelect
+						handleInputChange={handleChange}
+						value={formState.default_dept_id}
+						name='default_dept_id'
+					/>
 				</FormControl>
 			</Stack>
 

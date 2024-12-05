@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useUserBackend = () => {
-	const { agentAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
 	// const getAllAgents = async () => {
 	// 	const config = {
@@ -84,5 +84,25 @@ export const useUserBackend = () => {
 		);
 	};
 
-	return { createUser, registerUser, confirmToken, confirmResetPasswordToken, resendResetPasswordEmail, resendConfirmationEmail, sendResetPasswordEmail, updateUser, getAllUsersBySearch, getUserBySearch, removeUser };
+	const getUserById = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${userAuthState.token}` },
+		};
+
+		return await axios.get(process.env.REACT_APP_BACKEND_URL + `user/get/user`, config);
+	}
+
+	const updateUserProfile = async userInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${userAuthState.token}` },
+		};
+
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'user/put',
+			userInfo,
+			config
+		);
+	};
+
+	return { createUser, registerUser, confirmToken, confirmResetPasswordToken, resendResetPasswordEmail, resendConfirmationEmail, sendResetPasswordEmail, updateUser, getAllUsersBySearch, getUserBySearch, removeUser, getUserById, updateUserProfile };
 };

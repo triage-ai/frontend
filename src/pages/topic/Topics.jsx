@@ -1,16 +1,4 @@
-import {
-	Box,
-	Dialog,
-	IconButton,
-	Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	Typography,
-	styled
-} from '@mui/material';
+import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -51,40 +39,39 @@ export const SearchTextField = styled('input')({
 
 export const Topics = () => {
 	const { getAllTopicsJoined, updateTopic, removeTopic } = useTopicBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalTopics, setTotalTopics] = useState(0);
 	const [topics, setTopics] = useState([]);
 	const [selectedTopic, setSelectedTopic] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-    const [search, setSearch] = useState('');
+	const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshTopics()
-    }, []);
-	
+		refreshTopics();
+	}, []);
+
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+		setSize(e.target.value);
+		setPage(0);
+	};
 
 	const refreshTopics = () => {
-
 		getAllTopicsJoined(search, page + 1, size)
-			.then(res => {
-				setTopics(res.data)
-				setTotalTopics(res.data.length)
+			.then((res) => {
+				setTopics(res.data);
+				setTotalTopics(res.data.length);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (topic, button) => {
 		setSelectedTopic(topic);
@@ -120,10 +107,10 @@ export const Topics = () => {
 			title={'Topic List'}
 			subtitle={'View your topics and add new ones'}
 			buttonInfo={{
-				label: 'Add new topic',
+				label: 'Add topic',
 				icon: <Plus size={20} />,
 			}}
-            AddResource={AddTopic}
+			AddResource={AddTopic}
 			refreshResource={refreshTopics}
 		>
 			<WhiteContainer noPadding>
@@ -131,10 +118,10 @@ export const Topics = () => {
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							disabled
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -150,12 +137,9 @@ export const Topics = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-							/>
+							<Search size={20} />
 						</Box>
 					</Box>
-
 				</Box>
 
 				<Table>
@@ -169,27 +153,27 @@ export const Topics = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Topic Name</Typography>
+								<Typography variant='overline'>Topic Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Priority</Typography>
+								<Typography variant='overline'>Priority</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Department</Typography>
+								<Typography variant='overline'>Department</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Last Updated</Typography>
+								<Typography variant='overline'>Last Updated</Typography>
 							</TableCell>
-                            <TableCell>
-								<Typography variant="overline">Created</Typography>
+							<TableCell>
+								<Typography variant='overline'>Created</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{topics.slice(page*size, page*size + size).map(topic => (
+						{topics.slice(page * size, page * size + size).map((topic) => (
 							<TableRow
 								key={topic.topic_id}
 								sx={{
@@ -204,18 +188,10 @@ export const Topics = () => {
 								<TableCell>{topic.topic}</TableCell>
 								<TableCell>{topic.priority?.priority_desc}</TableCell>
 								<TableCell>{topic.department?.name}</TableCell>
-                                <TableCell>{formatDate(topic.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{formatDate(topic.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>{formatDate(topic.created, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
 										<IconButton
 											sx={{
 												'&:hover': {
@@ -246,14 +222,14 @@ export const Topics = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalTopics}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalTopics}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -279,7 +255,7 @@ export const Topics = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -297,10 +273,7 @@ export const Topics = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddTopic
-							handleEdited={handleEdited}
-							editTopic={selectedTopic}
-						/>
+						<AddTopic handleEdited={handleEdited} editTopic={selectedTopic} />
 					</Box>
 				</Dialog>
 			)}
@@ -323,7 +296,7 @@ export const Topics = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -339,11 +312,7 @@ export const Topics = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteTopic
-							editTopic={selectedTopic}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteTopic editTopic={selectedTopic} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

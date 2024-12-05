@@ -28,10 +28,10 @@ export const TicketSettings = (props) => {
 		default_ticket_number_format: settingsData.default_ticket_number_format.value,
 		default_ticket_number_sequence: settingsData.default_ticket_number_sequence.value,
 		top_level_ticket_counts: settingsData.top_level_ticket_counts.value,
-		status_id: settingsData.default_status_id.value,
-		priority_id: settingsData.default_priority_id.value,
-		sla_id: settingsData.default_sla_id.value,
-		topic_id: settingsData.default_topic_id.value,
+		default_status_id: settingsData.default_status_id.value,
+		default_priority_id: settingsData.default_priority_id.value,
+		default_sla_id: settingsData.default_sla_id.value,
+		default_topic_id: settingsData.default_topic_id.value,
 		lock_semantics: settingsData.lock_semantics.value,
 		default_ticket_queue: settingsData.default_ticket_queue.value,
 		max_open_tickets: settingsData.max_open_tickets.value,
@@ -135,7 +135,8 @@ export const TicketSettings = (props) => {
 					</Typography>
 					<StatusSelect
 						handleInputChange={handleChange}
-						value={formState.status_id}
+						value={formState.default_status_id}
+						name='default_status_id'
 						sx={{ width: 200 }}
 					/>
 				</Stack>
@@ -146,7 +147,8 @@ export const TicketSettings = (props) => {
 					</Typography>
 					<PrioritySelect
 						handleInputChange={handleChange}
-						value={formState.priority_id}
+						value={formState.default_priority_id}
+						name='default_priority_id'
 						sx={{ width: 200 }}
 					/>
 				</Stack>
@@ -157,7 +159,8 @@ export const TicketSettings = (props) => {
 					</Typography>
 					<SLASelect
 						handleInputChange={handleChange}
-						value={formState.sla_id}
+						value={formState.default_sla_id}
+						name='default_sla_id'
 					/>
 				</Stack>
 
@@ -167,7 +170,8 @@ export const TicketSettings = (props) => {
 					</Typography>
 					<TopicSelect
 						handleInputChange={handleChange}
-						value={formState.topic_id}
+						value={formState.default_topic_id}
+						name='default_topic_id'
 						sx={{ width: 200 }}
 					/>
 				</Stack>

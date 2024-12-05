@@ -5,7 +5,7 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddPriority } from './AddPriority';
 
-export const PrioritySelect = ({ handleInputChange, value }) => {
+export const PrioritySelect = ({ handleInputChange, value, name }) => {
 	const { formattedPriorities, refreshPriorities } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
@@ -27,7 +27,7 @@ export const PrioritySelect = ({ handleInputChange, value }) => {
 				label="Priority"
 				onChange={handleInputChange}
 				value={value}
-				name="priority_id"
+				name={name ?? "priority_id"}
 				mb={2}
 				fullWidth
 				addNewButton

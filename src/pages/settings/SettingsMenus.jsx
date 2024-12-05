@@ -20,19 +20,15 @@ import { UserTemplates } from './users/UserTemplates';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
-		if (data.hasOwnProperty('status_id') || data.hasOwnProperty('priority_id') || data.hasOwnProperty('sla_id') || data.hasOwnProperty('topic_id')) {
-			data = {
-				...data,
-				default_status_id: data.status_id.toString(),
-				default_priority_id: data.priority_id.toString(),
-				default_sla_id: data.sla_id.toString(),
-				default_topic_id: data.topic_id.toString(),
-			};
-			delete data.status_id;
-			delete data.priority_id;
-			delete data.sla_id;
-			delete data.topic_id;
-		}
+		console.log(data)
+		const fields = ["default_status_id", "default_priority_id", "default_sla_id", "default_topic_id", "default_dept_id"];
+		fields.forEach((key) => {
+			if (data[key]) {
+				data[`${key}`] = data[key].toString();
+			}
+		})
+	
+		console.log(data)
 
 		var updates = [];
 		Object.entries(data).forEach((k) => {

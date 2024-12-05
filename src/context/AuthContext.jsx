@@ -72,8 +72,8 @@ const AuthProvider = ({ children }) => {
 		if (agentAuthState.agent_id) {
 			getAgentById(agentAuthState)
 				.then((agentRes) => {
-					const agent_perm = JSON.parse(agentRes.data.permissions);
-					const agent_roles = JSON.parse(agentRes.data.role.permissions);
+					const agent_perm = agentRes.data.permissions ? JSON.parse(agentRes.data.permissions) : {};
+					const agent_roles = agentRes.data.role ? JSON.parse(agentRes.data.role.permissions) : {};
 					setPermissions({...agent_perm, ...agent_roles})
 				})
 				.catch((err) => {

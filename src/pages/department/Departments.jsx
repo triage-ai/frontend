@@ -126,7 +126,7 @@ export const Departments = () => {
 			title={'Department List'}
 			subtitle={'View your departments and add new ones'}
 			buttonInfo={{
-				label: 'Add new department',
+				label: 'Add department',
 				icon: <Plus size={20} />,
 			}}
             AddResource={AddDepartment}

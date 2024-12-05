@@ -292,7 +292,8 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 			});
 			setDashboardData(res.data);
 		});
-	}, []);
+	}, [category]);
+
 
 	return (
 		<Box>

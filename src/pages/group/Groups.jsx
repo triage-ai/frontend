@@ -1,12 +1,4 @@
-import {
-	Box,
-	Dialog, IconButton, Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow, Typography, styled
-} from '@mui/material';
+import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -47,50 +39,49 @@ export const SearchTextField = styled('input')({
 export const Groups = () => {
 	const { getAllGroups } = useGroupBackend();
 	const { getAllGroupsJoined, updateGroup, removeGroup } = useGroupBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalGroups, setTotalGroups] = useState(0);
 	const [groups, setGroups] = useState([]);
 	const [selectedGroup, setSelectedGroup] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-    const [search, setSearch] = useState('');
+	const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshGroups()
-    }, []);
-	
+		refreshGroups();
+	}, []);
+
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+		setSize(e.target.value);
+		setPage(0);
+	};
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value)
-    }
+	const handleSearchChange = (e) => {
+		setSearch(e.target.value);
+	};
 
-    const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            refreshGroups()
-        }
-    }
+	const handleSearch = (e) => {
+		if (e.key === 'Enter') {
+			refreshGroups();
+		}
+	};
 
 	const refreshGroups = () => {
-
 		getAllGroupsJoined(search, page + 1, size)
-			.then(res => {
-				setGroups(res.data)
-				setTotalGroups(res.data.length)
+			.then((res) => {
+				setGroups(res.data);
+				setTotalGroups(res.data.length);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (group, button) => {
 		setSelectedGroup(group);
@@ -126,10 +117,10 @@ export const Groups = () => {
 			title={'Group List'}
 			subtitle={'View your groups and add new ones'}
 			buttonInfo={{
-				label: 'Add new group',
+				label: 'Add group',
 				icon: <Plus size={20} />,
 			}}
-            AddResource={AddGroup}
+			AddResource={AddGroup}
 			refreshResource={refreshGroups}
 		>
 			<WhiteContainer noPadding>
@@ -137,12 +128,12 @@ export const Groups = () => {
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							disabled
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
-                            onKeyDown={handleSearch}
-                            onChange={handleSearchChange}
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
+							onKeyDown={handleSearch}
+							onChange={handleSearchChange}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -158,12 +149,9 @@ export const Groups = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-							/>
+							<Search size={20} />
 						</Box>
 					</Box>
-
 				</Box>
 
 				<Table>
@@ -177,24 +165,24 @@ export const Groups = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant='overline'>Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Lead</Typography>
+								<Typography variant='overline'>Lead</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Agents</Typography>
+								<Typography variant='overline'>Agents</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Created</Typography>
+								<Typography variant='overline'>Created</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{groups.slice(page*size, page*size + size).map(group => (
+						{groups.slice(page * size, page * size + size).map((group) => (
 							<TableRow
 								key={group.group_id}
 								sx={{
@@ -210,16 +198,8 @@ export const Groups = () => {
 								<TableCell>{group.lead ? group.lead?.firstname + ' ' + group.lead?.lastname : ''}</TableCell>
 								<TableCell>{group.agent_count}</TableCell>
 								<TableCell>{group.created}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
 										<IconButton
 											sx={{
 												'&:hover': {
@@ -250,14 +230,14 @@ export const Groups = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalGroups}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalGroups}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -283,7 +263,7 @@ export const Groups = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -301,10 +281,7 @@ export const Groups = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddGroup
-							handleEdited={handleEdited}
-							editGroup={selectedGroup}
-						/>
+						<AddGroup handleEdited={handleEdited} editGroup={selectedGroup} />
 					</Box>
 				</Dialog>
 			)}
@@ -327,7 +304,7 @@ export const Groups = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -343,11 +320,7 @@ export const Groups = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteGroup
-							editGroup={selectedGroup}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteGroup editGroup={selectedGroup} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

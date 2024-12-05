@@ -2,14 +2,17 @@ import {
 	Box,
 	Dialog,
 	FormControl,
-	IconButton, MenuItem,
+	IconButton,
+	MenuItem,
 	Select,
 	Stack,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
-	TableRow, Typography, styled
+	TableRow,
+	Typography,
+	styled,
 } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
@@ -55,12 +58,12 @@ export const Agents = () => {
 	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllGroups } = useGroupBackend();
 	const { getAllAgentsByDeptAndGroup } = useAgentBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalAgents, setTotalAgents] = useState(0);
-	const [agents, setAgents] = useState([])
+	const [agents, setAgents] = useState([]);
 	const [departments, setDepartments] = useState([]);
-	const [groups, setGroups] = useState([])
+	const [groups, setGroups] = useState([]);
 	const [dept, setDept] = useState(-1);
 	const [group, setGroup] = useState(-1);
 	const [selectedAgent, setSelectedAgent] = useState({});
@@ -70,47 +73,46 @@ export const Agents = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
 	useEffect(() => {
-		refreshAgents()
+		refreshAgents();
 
 		getAllDepartments()
-			.then(res => {
+			.then((res) => {
 				setDepartments(res.data);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 		getAllGroups()
-			.then(res => {
+			.then((res) => {
 				setGroups(res.data);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 	}, []);
 
 	useEffect(() => {
-		refreshAgents()
-	}, [dept, group, page, size])
+		refreshAgents();
+	}, [dept, group, page, size]);
 
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-	}
+		setSize(e.target.value);
+	};
 
 	const refreshAgents = () => {
-
 		getAllAgentsByDeptAndGroup(departments[dept]?.dept_id ?? null, groups[group]?.group_id ?? null, page + 1, size)
-			.then(res => {
-				setAgents(res.data.items)
-				setTotalAgents(res.data.total)
+			.then((res) => {
+				setAgents(res.data.items);
+				setTotalAgents(res.data.total);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (agent, button) => {
 		setSelectedAgent(agent);
@@ -142,19 +144,19 @@ export const Agents = () => {
 	};
 
 	const handleDeptChange = (e) => {
-		setDept(e.target.value)
-	}
+		setDept(e.target.value);
+	};
 
 	const handleGroupChange = (e) => {
-		setGroup(e.target.value)
-	}
+		setGroup(e.target.value);
+	};
 
 	return (
 		<Layout
 			title={'Agent List'}
 			subtitle={'View your agents and add new ones'}
 			buttonInfo={{
-				label: 'Add new agent',
+				label: 'Add agent',
 				icon: <UserRoundPlus size={20} />,
 				hidden: agentAuthState.isAdmin,
 			}}
@@ -165,10 +167,10 @@ export const Agents = () => {
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
 							disabled
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
@@ -185,42 +187,24 @@ export const Agents = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-								color="#575757"
-							/>
+							<Search size={20} color='#575757' />
 						</Box>
 					</Box>
 
-					<FormControl
-						sx={{ minWidth: 200 }}
-					>
+					<FormControl sx={{ minWidth: 200 }}>
 						<Select
 							displayEmpty
 							size='small'
 							value={dept}
 							onChange={handleDeptChange}
-							renderValue={item => (
-								<Box
-									display={'flex'}
-									alignItems={'center'}
-								>
-									<Typography
-										variant="subtitle2"
-										fontWeight={600}
-										sx={{ color: '#1B1D1F' }}
-									>
+							renderValue={(item) => (
+								<Box display={'flex'} alignItems={'center'}>
+									<Typography variant='subtitle2' fontWeight={600} sx={{ color: '#1B1D1F' }}>
 										{item === -1 ? 'All Departments' : departments[item].name}
 									</Typography>
 								</Box>
 							)}
-							IconComponent={props => (
-								<ChevronDown
-									{...props}
-									size={17}
-									color="#1B1D1F"
-								/>
-							)}
+							IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
 							sx={{
 								'.MuiOutlinedInput-notchedOutline': {
 									borderRadius: '8px',
@@ -228,74 +212,47 @@ export const Agents = () => {
 								},
 							}}
 						>
-							<MenuItem
-								key={-1}
-								value={-1}
-							>
-								<Typography variant="subtitle2">All Departments</Typography>
+							<MenuItem key={-1} value={-1}>
+								<Typography variant='subtitle2'>All Departments</Typography>
 							</MenuItem>
 							{departments.map((x, y) => (
-								<MenuItem
-									key={y}
-									value={y}
-								>
-									<Typography variant="subtitle2">{x.name}</Typography>
+								<MenuItem key={y} value={y}>
+									<Typography variant='subtitle2'>{x.name}</Typography>
 								</MenuItem>
 							))}
 						</Select>
 					</FormControl>
-					
-					<FormControl
-						sx={{ minWidth: 200 }}
-					>
-					<Select
-						displayEmpty
-						size='small'
-						value={group}
-						onChange={handleGroupChange}
-						renderValue={item => (
-							<Box
-								display={'flex'}
-								alignItems={'center'}
-							>
-								<Typography
-									variant="subtitle2"
-									fontWeight={600}
-									sx={{ color: '#1B1D1F' }}
-								>
-									{item === -1 ? 'All Groups' : groups[item].name}
-								</Typography>
-							</Box>
-						)}
-						IconComponent={props => (
-							<ChevronDown
-								{...props}
-								size={17}
-								color="#1B1D1F"
-							/>
-						)}
-						sx={{
-							'.MuiOutlinedInput-notchedOutline': {
-								borderRadius: '8px',
-								borderColor: '#E5EFE9',
-							},
-						}}
-					>
-						<MenuItem
-							key={-1}
-							value={-1}
+
+					<FormControl sx={{ minWidth: 200 }}>
+						<Select
+							displayEmpty
+							size='small'
+							value={group}
+							onChange={handleGroupChange}
+							renderValue={(item) => (
+								<Box display={'flex'} alignItems={'center'}>
+									<Typography variant='subtitle2' fontWeight={600} sx={{ color: '#1B1D1F' }}>
+										{item === -1 ? 'All Groups' : groups[item].name}
+									</Typography>
+								</Box>
+							)}
+							IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
+							sx={{
+								'.MuiOutlinedInput-notchedOutline': {
+									borderRadius: '8px',
+									borderColor: '#E5EFE9',
+								},
+							}}
 						>
-							<Typography variant="subtitle2">All Groups</Typography>
-						</MenuItem>
-						{groups.map((x, y) => (
-							<MenuItem
-								key={y}
-								value={y}
-							>
-								<Typography variant="subtitle2">{x.name}</Typography>
+							<MenuItem key={-1} value={-1}>
+								<Typography variant='subtitle2'>All Groups</Typography>
 							</MenuItem>
-						))}
-					</Select>
+							{groups.map((x, y) => (
+								<MenuItem key={y} value={y}>
+									<Typography variant='subtitle2'>{x.name}</Typography>
+								</MenuItem>
+							))}
+						</Select>
 					</FormControl>
 				</Box>
 
@@ -310,27 +267,27 @@ export const Agents = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Name</Typography>
+								<Typography variant='overline'>Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Username</Typography>
+								<Typography variant='overline'>Username</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Department</Typography>
+								<Typography variant='overline'>Department</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Email</Typography>
+								<Typography variant='overline'>Email</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Phone</Typography>
+								<Typography variant='overline'>Phone</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{agents.map(agent => (
+						{agents.map((agent) => (
 							<TableRow
 								key={agent.agent_id}
 								sx={{
@@ -342,49 +299,42 @@ export const Agents = () => {
 									},
 								}}
 							>
-								<TableCell
-									component="th"
-									scope="row"
-								>
+								<TableCell component='th' scope='row'>
 									{agent.firstname + ' ' + agent.lastname}
 								</TableCell>
 								<TableCell>{agent.username}</TableCell>
 								<TableCell>{agent.department.name}</TableCell>
 								<TableCell>{agent.email}</TableCell>
 								<TableCell>{agent.phone}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
-										{agentAuthState.isAdmin && <IconButton
-											sx={{
-												'&:hover': {
-													background: '#f3f6fa',
-													color: '#105293',
-												},
-											}}
-											onClick={() => handleDialogOpen(agent, 'edit')}
-										>
-											<Pencil size={18} />
-										</IconButton>}
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
+										{agentAuthState.isAdmin && (
+											<IconButton
+												sx={{
+													'&:hover': {
+														background: '#f3f6fa',
+														color: '#105293',
+													},
+												}}
+												onClick={() => handleDialogOpen(agent, 'edit')}
+											>
+												<Pencil size={18} />
+											</IconButton>
+										)}
 
-										{agentAuthState.isAdmin && <IconButton
-											sx={{
-												'&:hover': {
-													background: '#faf3f3',
-													color: '#921010',
-												},
-											}}
-											onClick={() => handleDialogOpen(agent, 'delete')}
-										>
-											<Trash2 size={18} />
-										</IconButton>}
+										{agentAuthState.isAdmin && (
+											<IconButton
+												sx={{
+													'&:hover': {
+														background: '#faf3f3',
+														color: '#921010',
+													},
+												}}
+												onClick={() => handleDialogOpen(agent, 'delete')}
+											>
+												<Trash2 size={18} />
+											</IconButton>
+										)}
 									</Stack>
 								</TableCell>
 							</TableRow>
@@ -392,14 +342,14 @@ export const Agents = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalAgents}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalAgents}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -425,7 +375,7 @@ export const Agents = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -443,10 +393,7 @@ export const Agents = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddAgent
-							handleEdited={handleAgentEdited}
-							editAgent={selectedAgent}
-						/>
+						<AddAgent handleEdited={handleAgentEdited} editAgent={selectedAgent} />
 					</Box>
 				</Dialog>
 			)}
@@ -469,7 +416,7 @@ export const Agents = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -485,11 +432,7 @@ export const Agents = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteAgent
-							editAgent={selectedAgent}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteAgent editAgent={selectedAgent} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

@@ -1,12 +1,4 @@
-import {
-	Box,
-	Dialog, IconButton, Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow, Typography, styled
-} from '@mui/material';
+import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -47,40 +39,39 @@ export const SearchTextField = styled('input')({
 
 export const Forms = () => {
 	const { getAllForms, updateForm, removeForm } = useFormBackend();
-	const [page, setPage] = useState(0)
-	const [size, setSize] = useState(10)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
 	const [totalForms, setTotalForms] = useState(0);
 	const [forms, setForms] = useState([]);
 	const [selectedForm, setSelectedForm] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-    const [search, setSearch] = useState('');
+	const [search, setSearch] = useState('');
 
 	useEffect(() => {
-        refreshForms()
-    }, []);
-	
+		refreshForms();
+	}, []);
+
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue)
-	}
+		setPage(newValue);
+	};
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value)
-		setPage(0)
-	}
+		setSize(e.target.value);
+		setPage(0);
+	};
 
 	const refreshForms = () => {
-
 		getAllForms(search, page + 1, size)
-			.then(res => {
-				setForms(res.data)
-				setTotalForms(res.data.length)
+			.then((res) => {
+				setForms(res.data);
+				setTotalForms(res.data.length);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
-	}
+	};
 
 	const handleDialogOpen = (form, button) => {
 		setSelectedForm(form);
@@ -95,7 +86,7 @@ export const Forms = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
-        refreshForms()
+		refreshForms();
 	};
 
 	const handleEdited = () => {
@@ -117,10 +108,10 @@ export const Forms = () => {
 			title={'Form List'}
 			subtitle={'View your forms and add new ones'}
 			buttonInfo={{
-				label: 'Add new form',
+				label: 'Add form',
 				icon: <Plus size={20} />,
 			}}
-            AddResource={AddForm}
+			AddResource={AddForm}
 			refreshResource={refreshForms}
 		>
 			<WhiteContainer noPadding>
@@ -128,10 +119,10 @@ export const Forms = () => {
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
 							disabled
-							type="text"
-							label="Search"
-							variant="filled"
-							placeholder="Search"
+							type='text'
+							label='Search'
+							variant='filled'
+							placeholder='Search'
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -147,12 +138,9 @@ export const Forms = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search
-								size={20}
-							/>
+							<Search size={20} />
 						</Box>
 					</Box>
-
 				</Box>
 
 				<Table>
@@ -166,21 +154,21 @@ export const Forms = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant="overline">Title</Typography>
+								<Typography variant='overline'>Title</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant="overline">Updated</Typography>
+								<Typography variant='overline'>Updated</Typography>
 							</TableCell>
-                            <TableCell>
-								<Typography variant="overline">Created</Typography>
+							<TableCell>
+								<Typography variant='overline'>Created</Typography>
 							</TableCell>
-							<TableCell align="right">
-								<Typography variant="overline"></Typography>
+							<TableCell align='right'>
+								<Typography variant='overline'></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{forms.slice(page*size, page*size + size).map(form => (
+						{forms.slice(page * size, page * size + size).map((form) => (
 							<TableRow
 								key={form.form_id}
 								sx={{
@@ -193,18 +181,10 @@ export const Forms = () => {
 								}}
 							>
 								<TableCell>{form.title}</TableCell>
-                                <TableCell>{formatDate(form.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell>{formatDate(form.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell>{formatDate(form.created, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell
-									component="th"
-									scope="row"
-									align="right"
-								>
-									<Stack
-										direction="row"
-										spacing={0.5}
-										sx={{ justifyContent: 'flex-end' }}
-									>
+								<TableCell component='th' scope='row' align='right'>
+									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
 										<IconButton
 											sx={{
 												'&:hover': {
@@ -235,14 +215,14 @@ export const Forms = () => {
 					</TableBody>
 				</Table>
 				<Box>
-				<TablePagination
-					component="div"
-					count={totalForms}
-					page={page}
-					onPageChange={handleChangePage}
-					rowsPerPage={size}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					<TablePagination
+						component='div'
+						count={totalForms}
+						page={page}
+						onPageChange={handleChangePage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+					/>
 				</Box>
 			</WhiteContainer>
 
@@ -268,7 +248,7 @@ export const Forms = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label="close dialog"
+							aria-label='close dialog'
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -286,10 +266,7 @@ export const Forms = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddForm
-							handleEdited={handleEdited}
-							editForm={selectedForm}
-						/>
+						<AddForm handleEdited={handleEdited} editForm={selectedForm} />
 					</Box>
 				</Dialog>
 			)}
@@ -312,7 +289,7 @@ export const Forms = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label="close dialog"
+								aria-label='close dialog'
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -328,11 +305,7 @@ export const Forms = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteForm
-							editForm={selectedForm}
-							handleDelete={handleDelete}
-							handleClose={handleDeleteDialogClose}
-						/>
+						<DeleteForm editForm={selectedForm} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
 					</Box>
 				</Dialog>
 			)}

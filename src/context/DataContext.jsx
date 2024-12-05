@@ -11,6 +11,7 @@ import { useSettingsBackend } from '../hooks/useSettingsBackend';
 import { useSLABackend } from '../hooks/useSLABackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTemplateBackend } from '../hooks/useTemplateBackend';
+import { useEmailBackend } from '../hooks/useEmailBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 
@@ -20,7 +21,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllAgents } = useAgentBackend();
 	const { getTicketsbyAdvancedSearch } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
-	const { getAllRoles } = useRoleBackend();
+	const { getAllRoles, getRoleById } = useRoleBackend();
 	const { getAllSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();
@@ -30,6 +31,7 @@ export const DataProvider = ({ children }) => {
 	const { getQueuesForAgent, getAllDefaultColumns } = useQueueBackend();
 	const { getAllTemplates } = useTemplateBackend();
 	const { getAllSchedules } = useScheduleBackend();
+	const { getAllEmails } = useEmailBackend();
 	const { getAllForms } = useFormBackend();
 
 	const [agents, setAgents] = useState([]);
@@ -61,6 +63,10 @@ export const DataProvider = ({ children }) => {
 	const [queueIdx, setQueueIdx] = useState([])
 
 	const [templates, setTemplates] = useState([])
+	const [formattedTemplates, setFormattedTemplates] = useState([])
+
+	const [emails, setEmails] = useState([])
+	const [formattedEmails, setFormattedEmails] = useState([])
 
 	const [schedules, setSchedules] = useState([])
 	const [formattedSchedules, setFormattedSchedules] = useState([])
@@ -224,10 +230,40 @@ export const DataProvider = ({ children }) => {
 	}, [getQueuesForAgent]);
 
 	const refreshTemplates = useCallback(() => {
-		getAllTemplates().then(templateList => {
-			setTemplates(templateList.data);
+		getAllTemplates()
+			.then(templates => {
+				const templatesData = templates.data;
+				const formattedTemplates = templatesData.map(template => {
+					return {
+						value: template.template_name,
+						label: template.template_name
+					};
+				});
+			setTemplates(templatesData);
+			setFormattedTemplates(formattedTemplates)
+		})
+		.catch(err => {
+			console.error(err)
 		});
 	}, [getAllTemplates]);
+
+	const refreshEmails = useCallback(() => {
+		getAllEmails()
+			.then(emails => {
+				const emailsData = emails.data;
+				const formattedEmails = emailsData.map(email => {
+					return {
+						value: email.email_id,
+						label: email.email
+					};
+				});
+			setEmails(emailsData);
+			setFormattedEmails(formattedEmails)
+		})
+		.catch(err => {
+			console.error(err)
+		});
+	}, [getAllEmails]);
 
 	const refreshSchedules = useCallback(() => {
 		getAllSchedules()
@@ -289,7 +325,11 @@ export const DataProvider = ({ children }) => {
 				tickets,
 				refreshTickets,
 				templates,
+				formattedTemplates,
 				refreshTemplates,
+				emails,
+				formattedEmails,
+				refreshEmails,
 				departments,
 				formattedDepartments,
 				refreshDepartments,

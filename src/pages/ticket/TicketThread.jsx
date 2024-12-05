@@ -1,25 +1,43 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Avatar, Box, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, styled, Typography } from '@mui/material';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { X } from 'lucide-react';
+import { CloudUploadIcon, File, X } from 'lucide-react';
 import { RichTextReadOnly } from 'mui-tiptap';
 import { useContext, useState } from 'react';
 import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
+import humanFileSize from '../../functions/file-size-formatter';
+import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import { FileCard } from './FileCard';
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
 
+const VisuallyHiddenInput = styled('input')({
+	clip: 'rect(0 0 0 0)',
+	clipPath: 'inset(50%)',
+	height: 1,
+	overflow: 'hidden',
+	position: 'absolute',
+	bottom: 0,
+	left: 0,
+	whiteSpace: 'nowrap',
+	width: 1,
+});
+
 export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const [formData, setFormData] = useState({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 	const [postDisabled, setPostDisabled] = useState(true);
+	const [files, setFiles] = useState([]);
 	const { createThreadEntry } = useThreadsBackend();
+	const { getPresignedURL, createAttachment } = useAttachmentBackend();
 	const { permissions } = useContext(AuthContext);
 	const editor = useEditor({
 		extensions: [StarterKit],
@@ -41,15 +59,31 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 		}));
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		const newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
+		var attachments = []
 		var updatedTicket = { ...ticket };
 		createThreadEntry(newThreadEntry)
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data);
-				updateCurrentTicket(updatedTicket);
+				// updateCurrentTicket(updatedTicket); 
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
-				editor.commands.setContent('');
+				return response.data.entry_id;
+			})
+			.then((entry_id) => {
+				const file_names = files.map((item) => item.name);
+				getPresignedURL({ attachment_names: file_names })
+				.then(async (res) => {
+					var presigned_urls = { ...res.data.url_dict };
+
+					await awsFileUpload(presigned_urls, files, entry_id)
+					.then((response) => {
+						setFiles([]);
+						updatedTicket.thread.entries.at(-1).attachments.push(...response)
+						updateCurrentTicket(updatedTicket);
+					});
+
+				})		
 			})
 			.catch((err) => {
 				alert('Error while creating thread entry');
@@ -57,13 +91,68 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 			});
 	};
 
+	const awsFileUpload = async (presigned_urls, files, entry_id) => {
+		var attachments = []
+		await Promise.all(Object.entries(presigned_urls).map(([fileName, url]) => {
+			const file = files.find((f) => f.name === fileName);
+
+			try {
+				return axios
+					.put(url, file, {
+						headers: {
+							'Content-Type': file.type,
+							'Content-Disposition': `inline; filename="${fileName}"`,
+						},
+					})
+					.then(async (res) => {
+						await createAttachment({
+							object_id: entry_id,
+							type: file.type,
+							name: fileName,
+							inline: 1,
+							link: url.split('?')[0],
+							size: file.size,
+						})
+						.then(res => {
+							attachments.push(res.data)
+						});
+					})
+					.catch((err) => {
+						console.error(`Error creating attachment in db for ${fileName}: `, err);
+					})
+			} catch (error) {
+				console.error(`Error uploading ${fileName}:`, error.message);
+			}
+		}))
+		return attachments
+		
+	}
+
+	const handleFileUpload = (event) => {
+		const length = event.target.files.length;
+		var tempArray = [];
+		for (let i = 0; i < length; i++) {
+			tempArray.push(event.target.files[i]);
+		}
+		setFiles((p) => [...p, ...tempArray]);
+		event.target.value = '';
+	};
+
+	const handleDeleteFile = (idx) => {
+		setFiles((p) => [...p.slice(0, idx), ...p.slice(idx + 1)]);
+	};
+
+	// useEffect(() => {
+	// 	console.log(files);
+	// }, [files]);
+
 	function getEventText(item) {
 		var newValue = item.new_val;
 		var prevValue = item.prev_val;
 
 		if (item.field === 'due_date') {
-			newValue = newValue ? formatDate(newValue, 'lll') : null
-			prevValue = prevValue ? formatDate(prevValue, 'lll') : null
+			newValue = newValue ? formatDate(newValue, 'lll') : null;
+			prevValue = prevValue ? formatDate(prevValue, 'lll') : null;
 		}
 
 		if (item.type === 'A') {
@@ -74,6 +163,10 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 			return `updated from ${prevValue} to ${newValue}`;
 		}
 	}
+
+	useEffect(() => {
+		setPostDisabled(formData.body === '' && files.length === 0);
+	}, [formData, files]);
 
 	return (
 		<Box sx={{ height: '100%', padding: '28px', position: 'relative', overflowY: 'scroll' }}>
@@ -137,7 +230,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 									<Typography variant='subtitle2' fontWeight={600} color='#1B1D1F'>
 										{item.subject}
 									</Typography>
-
 									<Box
 										mt={1}
 										mb={0.5}
@@ -149,10 +241,28 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 											padding: '8px 10px',
 										}}
 									>
-
-										<RichTextReadOnly sx={{fontWeight: 500}} content={item.body} extensions={[StarterKit]} />
+										<Stack direction='column' width='100%'>
+											<RichTextReadOnly sx={{fontWeight: 500}} content={item.body} extensions={[StarterKit]} />
+											<Typography variant='caption' color='#1B1D1F' fontWeight={500}>
+												{item.body}
+											</Typography>
+											{(item.body && item.attachments.length !== 0) && (<Box border='1px solid #E5EFE9' height={0} width='100%' my={1}/>)}
+											<Box
+												sx={{
+													display: 'flex',
+													flexWrap: 'wrap',
+													gap: 2,
+													alignItems: 'flex-start'
+												}}
+											>
+												{(item.attachments && item.attachments.length !== 0) && 
+													item.attachments.map((attachment, idx) => (
+														<FileCard file={attachment} key={idx} />
+													)
+												)}
+											</Box>
+										</Stack>
 									</Box>
-
 									<Typography variant='caption' fontWeight={500}>
 										<span className='text-muted'>By</span> {item.owner}{' '}
 										<span className='text-muted'>at {dayjs.utc(item.created).local().format('lll')}</span>
@@ -191,9 +301,40 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 						</TimelineSeparator>
 						<TimelineContent paddingTop={0}>
 							<Box>
-								<RichTextEditorBox
+							<RichTextEditorBox
 									editor={editor}
 								/>
+								{/* <RichTextEditor 
+								editor={editor}
+							>
+								<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
+							</RichTextEditor> */}
+
+								<List dense>
+									{files.map((file, idx) => (
+										<ListItem
+											key={idx}
+											secondaryAction={
+												<IconButton edge='end' aria-label='delete' onClick={() => handleDeleteFile(idx)}>
+													<X />
+												</IconButton>
+											}
+										>
+											<ListItemAvatar>
+												<Avatar>
+													<File />
+												</Avatar>
+											</ListItemAvatar>
+											<ListItemText primary={file.name} secondary={humanFileSize(file.size, true, 1)} />
+										</ListItem>
+									))}
+								</List>
+
+								<Stack maxWidth={200} spacing={1}>
+									<Button component='label' role={undefined} variant='contained' tabIndex={-1} startIcon={<CloudUploadIcon />}>
+										Upload files
+										<VisuallyHiddenInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
+									</Button>
 
 								<CircularButton sx={{ py: 2, px: 6, mt: 2 }} onClick={handleSubmit} disabled={postDisabled}>
 									Post

@@ -2,13 +2,16 @@ import {
 	Box,
 	Collapse,
 	Drawer,
+	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
-	ListItemIcon, ListSubheader,
+	ListItemIcon,
+	ListSubheader,
+	Stack,
 	TextField,
 	Typography,
-	styled
+	styled,
 } from '@mui/material';
 import {
 	BriefcaseBusiness,
@@ -21,6 +24,7 @@ import {
 	Headset,
 	KeyRound,
 	Lightbulb,
+	LogOut,
 	Mail,
 	MailPlus,
 	MailX,
@@ -33,10 +37,10 @@ import {
 	SquareUserRound,
 	Ticket,
 	UserRound,
-	Wrench
+	Wrench,
 } from 'lucide-react';
 import { Fragment, useContext, useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import LogoHorizontal from '../assets/logo-horizontal-primary.svg';
 import SubMenuHook from '../assets/submenu-hook.svg';
 import { AuthContext } from '../context/AuthContext';
@@ -165,11 +169,7 @@ export const getMenuItems = (adminStatus) => [
 				},
 				{
 					title: 'Email',
-					icon: (
-						<Mail
-							size={20}
-						/>
-					),
+					icon: <Mail size={20} />,
 				},
 		  ]
 		: []),
@@ -184,12 +184,8 @@ export const getMenuItems = (adminStatus) => [
 	},
 	{
 		title: 'Profile',
-		icon: (
-			<CircleUserRound 
-				size={20}
-			/>
-		)
-	}
+		icon: <CircleUserRound size={20} />,
+	},
 ];
 
 export const getManageSubmenuItems = (permissions, adminStatus) => [
@@ -311,7 +307,7 @@ const emailSubmenuItems = [
 		title: 'Diagnostic',
 		icon: <Wrench size={20} />,
 	},
-]
+];
 
 // const urlCheck = new RegExp('')
 
@@ -323,6 +319,8 @@ export const SidebarItems = () => {
 	const [manageOpen, setManageOpen] = useState(false);
 	const [emailOpen, setEmailOpen] = useState(false);
 	const { agentAuthState, permissions } = useContext(AuthContext);
+	const { agentLogout } = useContext(AuthContext);
+	const navigate = useNavigate();
 
 	const menuItems = getMenuItems(agentAuthState.isAdmin);
 	const manageSubmenuItems = getManageSubmenuItems(permissions, agentAuthState.isAdmin);
@@ -337,6 +335,11 @@ export const SidebarItems = () => {
 
 	const handleEmailClick = () => {
 		setEmailOpen((p) => !p);
+	};
+
+	const authLogout = async () => {
+		agentLogout();
+		navigate('/', { replace: true });
 	};
 
 	let location = useLocation();
@@ -644,8 +647,10 @@ export const SidebarItems = () => {
 																>
 																	<StyledListItemBtn
 																		component={Link}
-																		to={item.title === 'Emails' ? '/email' : '/email/' + item.title.toLowerCase()}
-																		selected={path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'}
+																		to={'/email/' + item.title.toLowerCase()}
+																		selected={
+																			path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'
+																		}
 																		sx={{ pl: 1 }}
 																		disableRipple
 																	>
@@ -665,18 +670,21 @@ export const SidebarItems = () => {
 							))}
 						</List>
 					</Box>
-					<Box sx={{ display: 'flex', flexDirection: 'column', justifyContent:'flex-end', flexGrow: 1, width: '100%' }}>
+					<Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', flexGrow: 1, width: '100%' }}>
 						<List sx={{ p: 0, mt: 4 }} dense={true}>
 							<ListItem disablePadding sx={{ display: 'block', mt: 0.2 }}>
-								<StyledListItemBtn
-								component={Link}
-								to='/profile'
-								selected={activeRoute('profile')}
-								disableRipple
-								>
-									<StlyedListItemIcon>{menuItems.find(item => item.title === 'Profile').icon}</StlyedListItemIcon>
-									<MenuItemTitle variant='subtitle2'>Profile</MenuItemTitle>
-								</StyledListItemBtn>
+								<Stack direction='row' alignItems='center' sx={{ justifyContent: 'space-between' }}>
+									<Box flexGrow='1'>
+										<StyledListItemBtn component={Link} to='/profile' selected={activeRoute('profile')} disableRipple>
+											<StlyedListItemIcon>{menuItems.find((item) => item.title === 'Profile').icon}</StlyedListItemIcon>
+											<MenuItemTitle variant='subtitle2'>Profile</MenuItemTitle>
+										</StyledListItemBtn>
+									</Box>
+
+									<IconButton aria-label='logout' onClick={authLogout} sx={{ borderRadius: '12px' }}>
+										<LogOut color='#000' size={20} />
+									</IconButton>
+								</Stack>
 							</ListItem>
 						</List>
 					</Box>
