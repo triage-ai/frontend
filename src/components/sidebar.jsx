@@ -94,6 +94,12 @@ export const Sidebar = () => {
 		setIsClosing(false);
 	};
 
+	const handleDrawerToggle = () => {
+		if (!isClosing) {
+			setMobileOpen(!mobileOpen);
+		}
+	};
+
 	return ( <>
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
@@ -145,6 +151,41 @@ export const Sidebar = () => {
 				</Drawer>
 
 			</Box>
+
+			{/* <AppBar
+				position="fixed"
+				sx={{
+					width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
+					ml: `${drawerWidth}px`,
+				}}
+			>
+				<Box
+					sx={{
+						height: AppBarHeight,
+						display: 'flex',
+						alignItems: 'flex-start',
+						justifyContent: 'space-between',
+						py: { xs: 1, md: 3 },
+						px: { xs: 2, md: 5 },
+					}}
+				>
+					<Box
+						sx={{ display: 'flex', alignItems: 'flex-start' }}
+					>
+						<IconButton
+							color="inherit"
+							aria-label="open drawer"
+							edge="start"
+							onClick={handleDrawerToggle}
+							sx={{ mr: 2, display: { md: 'none' } }}
+						>
+							<Menu />
+						</IconButton>
+
+					</Box>
+
+				</Box>
+			</AppBar> */}
 
 		</Box>
 		<Outlet/>

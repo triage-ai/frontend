@@ -1,23 +1,28 @@
+import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { CustomInput } from './custom-select';
 dayjs.extend(utc)
 
-export const CustomDateTimePicker = ({ defaultValue, onChange }) => {
+export const CustomDatePicker = ({ value, onChange, label, ...props}) => {
+
+    const {mb, mt} = props
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-                label="Due Date"
+            <DatePicker
+                sx={{
+                    mb: mb
+                }}
+                size='small'
+                label={label}
                 timezone='default'
-                defaultValue={defaultValue ? dayjs.utc(defaultValue).local() : null}
+                value={value ? dayjs.utc(value).local() : null}
                 onError={(e) => { console.error(e) }}
                 onChange={onChange}
-                slotProps={{ field: { clearable: true }, textField: { variant: 'filled', fullWidth: true } }}
-                disablePast
+                slotProps={{ field: { clearable: true }, textField: { variant: 'filled', fullWidth: true, size: 'small'} }}
                 slots={{ textField: CustomInput }}
             />
         </LocalizationProvider>

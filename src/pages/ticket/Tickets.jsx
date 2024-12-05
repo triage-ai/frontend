@@ -6,9 +6,7 @@ import {
 	FormControl,
 	IconButton,
 	MenuItem,
-	Select,
-	Skeleton,
-	Stack,
+	Select, Stack,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,22 +14,28 @@ import {
 	TableHead,
 	TablePagination,
 	TableRow,
-	Typography,
+	Typography
 } from '@mui/material';
-import { ChevronDown, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+import { ChevronDown, Filter, Pencil, Search, TicketPlus, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { StyledInput } from '../../components/custom-select';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
+import { TableRowsLoader } from '../../components/table-loader';
 import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { SearchTextField } from '../agent/Agents';
 import { AddTicket } from './AddTicket';
+import { AdvancedSearch } from './AdvancedSearch';
 import { TicketDetailContainer } from './TicketDetailContainer';
-import { TableRowsLoader } from '../../components/table-loader';
+
+TimeAgo.addDefaultLocale(en)
+const timeAgo = new TimeAgo('en-US')
 
 export const Tickets = () => {
 	const navigate = useNavigate();
@@ -40,25 +44,70 @@ export const Tickets = () => {
 	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } =
 		useData();
 	const { permissions } = useContext(AuthContext);
-	const { getAllPriorities } = usePriorityBackend();
 
-	const [page, setPage] = useState(0);
-	const [size, setSize] = useState(10);
 	const [openDialog, setOpenDialog] = useState(false);
-	const [priorities, setPriorities] = useState([]);
-	const [selectedStatus, setSelectedStatus] = useState('');
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
 	const [loading, setLoading] = useState(true)
+	const [openAdvancedSearch, setOpenAdvancedSearch] = useState(false)
+	const [searchColumns, setSearchColumns] = useState([]);
+	const [queueColumns, setQueueColumns] = useState([]);
+	const [searchFilters, setSearchFilters] = useState([])
+	const [searchSorts, setSearchSorts] = useState([])
+	const [advancedSearchMode, setAdvancedSearchMode] = useState(false)
 
+	const [queueConfig, setQueueConfig] = useState({page: 0, size: 10, filters: [], sorts: []})
+
+
+	const columnFormatter = {
+		1: (ticket) => (ticket.number),
+		2: (ticket) => (formatDate(ticket.created, 'MM-DD-YY hh:mm A')),
+		3: (ticket) => (ticket.title),
+		4: (ticket) => (ticket.user ? ticket.user.firstname + ' ' + ticket.user.lastname : ''),
+		5: (ticket) => (
+			<Chip
+				label={ticket.priority.priority_desc}
+				sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+			/>
+		),
+		6: (ticket) => (ticket.status?.name),
+		7: (ticket) => (formatDate(ticket.closed, 'MM-DD-YY hh:mm A')),
+		8: (ticket) => (ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : ''),
+		9: (ticket) => (ticket.due_date ? formatDate(ticket.due_date, 'MM-DD-YY hh:mm A') : formatDate(ticket.est_due_date, 'MM-DD-YY hh:mm A')),
+		10: (ticket) => (formatDate(ticket.updated, 'MM-DD-YY hh:mm A')),
+		11: (ticket) => (ticket.dept?.name),
+		12: (ticket) => { },
+		13: (ticket) => { },
+		14: (ticket) => (ticket.group?.name),
+	}
 
 	useEffect(() => {
 		refreshQueues();
 	}, []);
 
+	// useEffect(() => {
+	// 	console.log(searchFilters)
+	// 	console.log(queues)
+	// }, [searchFilters])
+
+	useEffect(() => {
+		if (queues.length !== 0 && queueIdx !== -1) {
+			setQueueColumns([...queues[queueIdx].columns])
+			setSearchColumns([...queues[queueIdx].columns])
+
+			setSearchFilters(structuredClone(queues[queueIdx].config.filters))
+
+			setSearchSorts(structuredClone(queues[queueIdx].config.sorts))
+
+			setQueueConfig(({size: 10, page: 0, filters: [...queues[queueIdx].config.filters], sorts: [...queues[queueIdx].config.sorts]}))
+		}
+
+	}, [queues, queueIdx])
+
 	useEffect(() => {
 		getTicketList();
-	}, [page, size, queues, queueIdx]);
+	}, [queueConfig]);
+
 
 	const handleTicketEdited = () => {
 		handleDialogClose();
@@ -73,18 +122,32 @@ export const Tickets = () => {
 	const getTicketList = async () => {
 		if (queues.length !== 0) {
 			setLoading(true)
-			await refreshTickets(size, page + 1)
+
+			await refreshTickets(
+				{filters: queueConfig.filters, sorts: queueConfig.sorts},
+				queueConfig.size,
+				queueConfig.page + 1)
+				
 			setLoading(false)
 		}
 	};
 
+	const handleSubmitSearch = () => {
+		setOpenAdvancedSearch(false)
+		setAdvancedSearchMode(true)
+		setQueueIdx(-1)
+
+		setQueueColumns([...searchColumns])
+
+		setQueueConfig(p => ({...p, filters: [...searchFilters], sorts: [...searchSorts]}))
+	}
+
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue);
+		setQueueConfig(p => ({...p, page: newValue}))
 	};
 
 	const handleChangeRowsPerPage = e => {
-		setSize(e.target.value);
-		setPage(0);
+		setQueueConfig(p => ({...p, page: 0, size: e.target.value}))
 	};
 
 	useEffect(() => {
@@ -107,13 +170,16 @@ export const Tickets = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
-		refreshTickets(size, page + 1);
+		getTicketList()
 	};
 
+	const handleAdvancedSearchClose = () => {
+		setOpenAdvancedSearch(false)
+	}
+
 	const handleQueueChange = e => {
-		setPage(0);
-		setSize(10);
 		setQueueIdx(e.target.value.queue_id - 1);
+		setAdvancedSearchMode(false)
 	};
 
 	const toggleDetailDrawer =
@@ -138,7 +204,7 @@ export const Tickets = () => {
 				hidden: permissions.hasOwnProperty('ticket.create')
 			}}
 			AddResource={AddTicket}
-			refreshResource={refreshTickets}
+			refreshResource={getTicketList}
 		>
 			<WhiteContainer noPadding>
 				<Box
@@ -197,20 +263,21 @@ export const Tickets = () => {
 						>
 							<Select
 								displayEmpty
-								value={queues.length ? queues[queueIdx] : ''}
+								value={advancedSearchMode ? '' : queues.length ? queues[queueIdx] : ''}
 								onChange={handleQueueChange}
+								input={<StyledInput />}
 								renderValue={item => (
 									<Box
 										display={'flex'}
 										alignItems={'center'}
 									>
-										<Box
+										{item && <Box
 											width={'6px'}
 											height={'6px'}
 											borderRadius={'6px'}
 											marginRight={1}
 											sx={{ backgroundColor: '#D9D9D9' }}
-										/>
+										/>}
 
 										<Typography
 											variant="subtitle2"
@@ -221,12 +288,6 @@ export const Tickets = () => {
 										</Typography>
 									</Box>
 								)}
-								sx={{
-									'.MuiOutlinedInput-notchedOutline': {
-										borderRadius: '8px',
-										borderColor: '#E5EFE9',
-									},
-								}}
 								IconComponent={props => (
 									<ChevronDown
 										{...props}
@@ -245,6 +306,9 @@ export const Tickets = () => {
 								))}
 							</Select>
 						</FormControl>
+						<IconButton sx={{ borderRadius: '8px', border: advancedSearchMode ? '2px solid #29b866' : '1.5px solid #E5EFE9' }} onClick={() => setOpenAdvancedSearch(true)} >
+							<Filter color={advancedSearchMode ? '#29b866' : 'currentColor'} size={20} />
+						</IconButton>
 					</Box>
 				</Box>
 				<TableContainer>
@@ -258,21 +322,20 @@ export const Tickets = () => {
 									},
 								}}
 							>
-								<TableCell>
-									<Typography variant="overline">Title</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant="overline">Number</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant="overline">Last updated</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant="overline">Priority</Typography>
-								</TableCell>
-								<TableCell>
-									<Typography variant="overline">From</Typography>
-								</TableCell>
+								{
+									queues.length !== 0 ? queueColumns.map((column, idx) => (
+										<TableCell key={idx} >
+											<Typography key={idx} variant="overline">{column.name}</Typography>
+										</TableCell>
+									)) :
+										<>
+											<TableCell />
+											<TableCell />
+											<TableCell />
+											<TableCell />
+											<TableCell />
+										</>
+								}
 								<TableCell align="right">
 									<Typography variant="overline"></Typography>
 								</TableCell>
@@ -285,83 +348,88 @@ export const Tickets = () => {
 									colNum={5}
 								/>
 								:
-									tickets.map(ticket => (
-										<TableRow
-											key={ticket.ticket_id}
-											onClick={toggleDetailDrawer(true, ticket)}
-											sx={{
-												'&:last-child td, &:last-child th': { border: 0 },
-												'& .MuiTableCell-root': {
-													color: '#1B1D1F',
-													fontWeight: 500,
-													letterSpacing: '-0.02em',
-												},
-												'&:hover': {
-													background: '#f9fbfa',
-													cursor: 'pointer',
-												},
-											}}
+								tickets.map(ticket => (
+									<TableRow
+										key={ticket.ticket_id}
+										onClick={toggleDetailDrawer(true, ticket)}
+										sx={{
+											'&:last-child td, &:last-child th': { border: 0 },
+											'& .MuiTableCell-root': {
+												color: '#1B1D1F',
+												fontWeight: 500,
+												letterSpacing: '-0.02em',
+											},
+											'&:hover': {
+												background: '#f9fbfa',
+												cursor: 'pointer',
+											},
+										}}
+									>
+										{
+											queues.length !== 0 && queueColumns.map((column, idx) => (
+												<TableCell key={idx} >
+													{columnFormatter[column.default_column_id](ticket)}
+												</TableCell>
+											)
+											)
+										}
+										{/* <TableCell
+											component="th"
+											scope="row"
+											sx={{ maxWidth: '200px' }}
 										>
-											<TableCell
-												component="th"
-												scope="row"
-												sx={{ maxWidth: '200px' }}
+											{ticket.title}
+											<Typography
+												variant="subtitle2"
+												sx={{
+													fontSize: '0.75rem',
+													lineHeight: 1.2,
+													overflow: 'hidden',
+													textOverflow: 'ellipsis',
+													display: '-webkit-box',
+													WebkitBoxOrient: 'vertical',
+													WebkitLineClamp: 2,
+												}}
 											>
-												{ticket.title}
-												<Typography
-													variant="subtitle2"
-													sx={{
-														fontSize: '0.75rem',
-														lineHeight: 1.2,
-														overflow: 'hidden',
-														textOverflow: 'ellipsis',
-														display: '-webkit-box',
-														WebkitBoxOrient: 'vertical',
-														WebkitLineClamp: 2,
-													}}
-												>
-													{ticket.description}
-												</Typography>
-											</TableCell>
-											<TableCell>{ticket.number}</TableCell>
-											<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
-											<TableCell>
-												<Chip
-													label={ticket.priority.priority_desc}
-													sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
-												/>
-											</TableCell>
-											<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell>
-											<TableCell
-												component="th"
-												scope="row"
-												align="right"
+												{ticket.description}
+											</Typography>
+										</TableCell>
+										<TableCell>{ticket.number}</TableCell>
+										<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+										<TableCell>
+											<Chip
+												label={ticket.priority.priority_desc}
+												sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+											/>
+										</TableCell>
+										<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell> */}
+										{/* <TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell> */}
+										<TableCell
+											component="th"
+											scope="row"
+											align="right"
+										>
+											<Stack
+												direction="row"
+												// spacing={0.5}
+												sx={{ justifyContent: 'flex-end' }}
 											>
-												<Stack
-													direction="row"
-													// spacing={0.5}
-													sx={{ justifyContent: 'flex-end' }}
-												>
-													{permissions.hasOwnProperty('ticket.edit') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
-														<Pencil size={18} />
-													</IconButton>}
-
-													{permissions.hasOwnProperty('ticket.delete') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
-														<Trash2 size={18} />
-													</IconButton>}
-												</Stack>
-											</TableCell>
-										</TableRow>
-									))
+												{permissions.hasOwnProperty('ticket.edit') && <IconButton onClick={event => handleDialogOpen(event, ticket)}>
+													<Pencil size={18} />
+												</IconButton>}
+											</Stack>
+										</TableCell>
+									</TableRow>
+								))
 							}
 						</TableBody>
 					</Table>
 					<TablePagination
 						component="div"
 						count={totalTickets}
-						page={page}
+						page={queueConfig.page}
 						onPageChange={handleChangePage}
-						rowsPerPage={size}
+						rowsPerPage={queueConfig.size}
 						onRowsPerPageChange={handleChangeRowsPerPage}
 					/>
 				</TableContainer>
@@ -411,6 +479,67 @@ export const Tickets = () => {
 						handleCreated={handleTicketCreated}
 						handleEdited={handleTicketEdited}
 						editTicket={selectedTicket}
+					/>
+				</Box>
+			</Dialog>
+
+			<Dialog
+				open={openAdvancedSearch}
+				onClose={() => { }}
+				PaperProps={{
+					sx: {
+						minWidth: '700px',
+						background: '#f1f4f2',
+						py: 2,
+						px: 3,
+						m: 2,
+						borderRadius: '10px',
+					},
+				}}
+			>
+				<Box sx={{ textAlign: 'center' }}>
+					<Box
+						sx={{
+							width: '100%',
+							textAlign: 'right',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
+					>
+						<Box sx={{ width: '40px', height: '40px' }} />
+
+						<Typography
+							variant="h2"
+							sx={{ lineHeight: 1.3, textAlign: 'center' }}
+						>
+							Advanced Search
+						</Typography>
+
+						<IconButton
+							aria-label="close dialog"
+							onClick={handleAdvancedSearchClose}
+							sx={{
+								width: '40px',
+								height: '40px',
+								color: '#545555',
+								transition: 'all 0.2s',
+								'&:hover': {
+									color: '#000',
+								},
+							}}
+						>
+							<X size={20} />
+						</IconButton>
+					</Box>
+					<AdvancedSearch 
+						rows={searchColumns}
+						setRows={setSearchColumns}
+						filters={searchFilters}
+						setFilters={setSearchFilters}
+						sorts={searchSorts}
+						setSorts={setSearchSorts}
+						submitSearch={handleSubmitSearch}
 					/>
 				</Box>
 			</Dialog>

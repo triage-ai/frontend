@@ -27,7 +27,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllGroups } = useGroupBackend();
 	const { getAllStatuses } = useStatusBackend();
 	const { getAllTopics } = useTopicBackend();
-	const { getQueuesForAgent } = useQueueBackend();
+	const { getQueuesForAgent, getAllDefaultColumns } = useQueueBackend();
 	const { getAllTemplates } = useTemplateBackend();
 	const { getAllSchedules } = useScheduleBackend();
 	const { getAllForms } = useFormBackend();
@@ -68,14 +68,20 @@ export const DataProvider = ({ children }) => {
 	const [forms, setForms] = useState([])
 	const [formattedForms, setFormattedForms] = useState([])
 
+	const [defaultColumns, setDefaultColumns] = useState([])
+	const [formattedDefaultColumns, setFormattedDefaultColumns] = useState([])
+
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
 			setAgents(agentList.data);
 		});
 	}, [getAllAgents]);
 
-	const refreshTickets = useCallback(async (size = 10, page = 1) => {
-		await getTicketsbyAdvancedSearch({ ...queues[queueIdx].config, 'size': size, 'page': page }).then(ticketList => {
+	const refreshTickets = useCallback(async (config = null, size = 10, page = 1) => {
+		if (!config) {
+			config = queues[queueIdx].config
+		}
+		await getTicketsbyAdvancedSearch({ ...config, 'size': size, 'page': page }).then(ticketList => {
 			const { items, total } = ticketList.data;
 			setTotalTickets(total)
 			setTickets(items);
@@ -258,6 +264,22 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getAllForms]);
 
+	const refreshDefaultColumns = useCallback(() => {
+		getAllDefaultColumns()
+			.then(form => {
+				const columnData = form.data;
+				const formattedColumns = columnData.map(column => {
+					return { value: form.default_column_id, label: form.name };
+				});
+
+				setDefaultColumns(columnData);
+				setFormattedDefaultColumns(formattedColumns);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}, [getAllDefaultColumns]);
+
 
 	return (
 		<DataContext.Provider
@@ -301,7 +323,10 @@ export const DataProvider = ({ children }) => {
 				formattedSchedules,
 				forms,
 				formattedForms,
-				refreshForms
+				refreshForms,
+				defaultColumns,
+				formattedDefaultColumns,
+				refreshDefaultColumns
 			}}
 		>
 			{children}

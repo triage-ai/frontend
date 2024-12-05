@@ -10,7 +10,7 @@ import {
 	stepConnectorClasses,
 	styled
 } from '@mui/material';
-import { Check, Eye, EyeOff } from 'lucide-react';
+import { Check, Eye, EyeOff, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
@@ -19,6 +19,8 @@ import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useRoleBackend } from '../../hooks/useRoleBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
+import { CustomSelect } from '../../components/custom-select';
+import jstz from 'jstz';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -109,7 +111,10 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		password: '',
 	});
 
+	var timezoneOptions = Intl.supportedValuesOf('timeZone').map(t => ({ value: t, label: t }));
+
 	useEffect(() => {
+		timezoneOptions.push({ label: 'UTC', value: 'UTC' })
 		getAllRoles()
 			.then(roles => {
 				const rolesData = roles.data;
@@ -246,6 +251,11 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		}
 	};
 
+	const handleLocationDetect = () => {
+		const timezone = jstz.determine();
+		setFormData(p => ({ ...p, 'timezone': timezone.name() }))
+	};
+
 	return (
 		<>
 			<Typography
@@ -372,16 +382,34 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						}
 					/>
 
-					<CustomFilledInput
-						label="Timezone"
-						onChange={handleInputChange}
-						value={formData.timezone}
-						name="timezone"
-						mb={2}
-						mt={2}
-						halfWidth
-						mr={'2%'}
-					/>
+					<Stack direction='row' spacing={2} marginBottom={2} alignItems='center'>
+
+						<CustomSelect
+							label="Timezone"
+							onChange={handleInputChange}
+							value={formData.timezone}
+							name="timezone"
+							mb={2}
+							fullWidth
+							options={timezoneOptions}
+						/>
+
+						<IconButton
+							sx={{
+								background: 'transparent',
+								color: '#22874E',
+								fontWeight: 600,
+								border: '1.5px solid #22874E',
+								py: 1,
+								px: 1,
+								'&:hover': {
+									background: '#E5EFE9',
+								},
+							}}
+							onClick={handleLocationDetect}>
+							<MapPin size={20} />
+						</IconButton>
+					</Stack>
 
 					<CustomFilledInput
 						label="Signature"
@@ -413,18 +441,6 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						Access
 					</Typography>
 
-					{/* <CustomSelect
-						label="Department"
-						onChange={handleInputChange}
-						value={formData.dept_id}
-						name="dept_id"
-						mb={2}
-						fullWidth
-						addNewButton
-						handleAddBtnClick={openDialog}
-						options={departments}
-					/> */}
-
 					<DepartmentSelect
 						handleInputChange={handleInputChange}
 						value={formData.dept_id}
@@ -449,17 +465,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						formatter={(item) => item.label}
 					/>
 
-					{/* <CustomSelect
-						label="Role"
-						onChange={handleInputChange}
-						value={formData.role_id}
-						name="role_id"
-						fullWidth
-						mb={2}
-						addNewButton
-						// handleAddBtnClick={openDialog}
-						options={roles}
-					/> */}
+
 				</Box>
 			)}
 

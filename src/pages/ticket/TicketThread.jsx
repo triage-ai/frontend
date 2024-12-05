@@ -1,19 +1,17 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
 import { Box, IconButton, Typography } from '@mui/material';
-import Link from '@tiptap/extension-link';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { X } from 'lucide-react';
-import { LinkBubbleMenuHandler } from 'mui-tiptap';
-import { useContext, useEffect, useState } from 'react';
-import { CustomFilledInput } from '../../components/custom-input';
+import { RichTextReadOnly } from 'mui-tiptap';
+import { useContext, useState } from 'react';
+import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
-
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
@@ -24,16 +22,15 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const { createThreadEntry } = useThreadsBackend();
 	const { permissions } = useContext(AuthContext);
 	const editor = useEditor({
-		extensions: [
-			StarterKit,
-			Link.configure({
-				openOnClick: false,
-				autolink: true,
-				defaultProtocol: 'https',
-			}),
-			LinkBubbleMenuHandler,
-		],
+		extensions: [StarterKit],
 		content: '',
+		onUpdate({ editor }) {
+			setFormData((prevFormData) => ({
+				...prevFormData,
+				body: editor.getHTML(),
+			}));
+			setPostDisabled(editor.isEmpty);
+		},
 	});
 
 	const handleInputChange = (e) => {
@@ -52,6 +49,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 				updatedTicket.thread.entries.push(response.data);
 				updateCurrentTicket(updatedTicket);
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
+				editor.commands.setContent('');
 			})
 			.catch((err) => {
 				alert('Error while creating thread entry');
@@ -76,10 +74,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 			return `updated from ${prevValue} to ${newValue}`;
 		}
 	}
-
-	useEffect(() => {
-		setPostDisabled(formData.body === '');
-	}, [formData]);
 
 	return (
 		<Box sx={{ height: '100%', padding: '28px', position: 'relative', overflowY: 'scroll' }}>
@@ -155,9 +149,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 											padding: '8px 10px',
 										}}
 									>
-										<Typography variant='caption' color='#1B1D1F' fontWeight={500}>
-											{item.body}
-										</Typography>
+
+										<RichTextReadOnly sx={{fontWeight: 500}} content={item.body} extensions={[StarterKit]} />
 									</Box>
 
 									<Typography variant='caption' fontWeight={500}>
@@ -198,24 +191,11 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 						</TimelineSeparator>
 						<TimelineContent paddingTop={0}>
 							<Box>
-								<CustomFilledInput
-									label='Response'
-									onChange={handleInputChange}
-									value={formData.body}
-									name='body'
-									fullWidth
-									multiline
-									rows={3}
-									borderWidth={1}
-									mb={1}
+								<RichTextEditorBox
+									editor={editor}
 								/>
-								{/* <RichTextEditor 
-								editor={editor}
-							>
-								<LinkBubbleMenu /> need to figure out why the link bubble menu doesn't work
-							</RichTextEditor> */}
 
-								<CircularButton sx={{ py: 2, px: 6 }} onClick={handleSubmit} disabled={postDisabled}>
+								<CircularButton sx={{ py: 2, px: 6, mt: 2 }} onClick={handleSubmit} disabled={postDisabled}>
 									Post
 								</CircularButton>
 							</Box>

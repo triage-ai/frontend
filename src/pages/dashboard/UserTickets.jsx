@@ -111,7 +111,6 @@ export const UserTickets = () => {
 		setIsClosing(true);
 		setMobileOpen(false);
 	};
-
 	const handleDrawerTransitionEnd = () => {
 		setIsClosing(false);
 	};
@@ -493,9 +492,9 @@ export const UserTickets = () => {
 													<Pencil size={18} />
 												</IconButton>
 
-												<IconButton onClick={event => handleDialogOpen(event, ticket)}>
+												{/* <IconButton onClick={event => handleDialogOpen(event, ticket)}>
 													<Trash2 size={18} />
-												</IconButton>
+												</IconButton> */}
 											</Stack>
 										</TableCell>
 									</TableRow>

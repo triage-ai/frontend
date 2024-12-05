@@ -1,10 +1,9 @@
 import {
 	Autocomplete,
 	Box,
-	Button,
-	MenuItem,
-	Popper,
-	TextField,
+	Button, MenuItem,
+	OutlinedInput,
+	Popper, TextField,
 	Typography, styled
 } from '@mui/material';
 
@@ -42,7 +41,23 @@ export const CustomInput = styled(props => (
 	},
 }));
 
-const CustomMultibox = styled(props => <Autocomplete {...props} />)(({ theme }) => ({
+export const StyledInput = styled(OutlinedInput)(({ theme }) => ({
+	"&.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+		border: '1.5px solid #E5EFE9',
+		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
+		borderRadius: 8,
+	},
+	"&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+		backgroundColor: 'transparent',
+		borderColor: '#22874E',
+	},
+	"&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+		backgroundColor: 'transparent',
+		borderColor: '#22874E',
+	},
+}));
+
+export const CustomMultibox = styled(props => <Autocomplete {...props} />)(({ theme }) => ({
 	'& fieldset': {
 		overflow: 'hidden',
 		borderRadius: 12,
@@ -72,6 +87,7 @@ export const CustomSelect = ({
 	halfWidth,
 	addNewButton,
 	handleAddBtnClick,
+	hideEmptyOption,
 	...props
 }) => {
 	const { mt, mb, ...otherProps } = props;
@@ -85,9 +101,9 @@ export const CustomSelect = ({
 			sx={{ mt: mt, mb: mb, width: halfWidth && '49%' }}
 			{...otherProps}
 		>
-			<MenuItem value="">
+			{!hideEmptyOption && <MenuItem value="">
 				<Typography variant="subtitle2">- Choose {label.toLowerCase()} -</Typography>
-			</MenuItem>
+			</MenuItem>}
 
 			{options?.map(option => (
 				<MenuItem
@@ -169,17 +185,6 @@ export const CustomAutocomplete = ({
 			onInputChange={onInputChange}
 			filterOptions={x => x}
 			onChange={onChange}
-			// sx={{
-			// 	width: 250,
-			// 	m: 1,
-			// 	'& .MuiInputBase-root': {
-			// 		fontWeight: 600,
-			// 	},
-			// 	'.MuiOutlinedInput-notchedOutline': {
-			// 		borderRadius: '8px',
-			// 		borderColor: '#E5EFE9',
-			// 	},
-			// }}
 			PopperComponent={props => (
 				<Popper
 					{...props}

@@ -26,6 +26,16 @@ export const useQueueBackend = () => {
 		);
 	}
 
+	const getAllDefaultColumns = async () => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` }
+		};
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + `default_column/get`,
+			config
+		);
+	}
+
 	// const getTicketsbyAdvancedSearch = async (adv_search) => {
 	// 	const config = {
 	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` }
@@ -73,5 +83,5 @@ export const useQueueBackend = () => {
 	// 	);
 	// };
 
-	return { getQueuesForAgent, getQueuesForUser };
+	return { getQueuesForAgent, getQueuesForUser, getAllDefaultColumns };
 };

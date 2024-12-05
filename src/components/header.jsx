@@ -141,7 +141,7 @@ export const Header = ({
 					flexShrink: { md: 0 },
 				}}
 				aria-label="mailbox folders"
-			></Box>
+			/>
 
 			<AppBar
 				position="fixed"
