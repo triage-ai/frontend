@@ -140,7 +140,7 @@ export const Emails = () => {
 										},
 									}}
 								>
-									<TableCell component='th' scope='row'>
+									<TableCell>
 										{email.email}
 									</TableCell>
 									<TableCell

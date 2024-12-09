@@ -9,7 +9,6 @@ export const useThreadsBackend = () => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
-		threadInfo.agent_id = agentAuthState.agent_id;
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create', threadInfo, config);
 	};
 
@@ -17,7 +16,7 @@ export const useThreadsBackend = () => {
 		const config = {
 			headers: { Authorization: `Bearer ${userAuthState.token}` },
 		};
-		threadInfo.user_id = userAuthState.userId;
+		threadInfo.user_id = userAuthState.user_id;
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user', threadInfo, config);
 	};
 
