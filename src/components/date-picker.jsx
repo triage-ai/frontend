@@ -8,15 +8,16 @@ dayjs.extend(utc)
 
 export const CustomDatePicker = ({ value, onChange, label, ...props}) => {
 
-    const {mb, mt} = props
+    const {mb, mt, width, ...otherProps} = props
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
                 sx={{
-                    mb: mb
+                    mb: mb,
+                    width: width
                 }}
-                size='small'
+                {...otherProps}
                 label={label}
                 timezone='default'
                 value={value ? dayjs.utc(value).local() : null}

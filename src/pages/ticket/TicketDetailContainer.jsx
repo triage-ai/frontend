@@ -48,8 +48,8 @@ function TabPanel(props) {
 	);
 }
 
-export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer }) => {
-	const { getTicketById } = useTicketBackend();
+export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer, type }) => {
+	const { getTicketById, getTicketByIdForUser } = useTicketBackend();
 
 	const [ticket, setTicket] = useState(null);
 	const [value, setValue] = useState(0);
@@ -83,12 +83,22 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer }) => 
 
 	useEffect(() => {
 		if (ticketInfo) {
-			getTicketById(ticketInfo.ticket_id)
+			if (type === 'agent') {
+				getTicketById(ticketInfo.ticket_id)
+					.then(response => response.data)
+					.then(ticket => {
+						ticket = preProcessTicket(ticket);
+						setTicket(ticket);
+					});
+			}
+			else {
+				getTicketByIdForUser(ticketInfo.ticket_id)
 				.then(response => response.data)
 				.then(ticket => {
 					ticket = preProcessTicket(ticket);
 					setTicket(ticket);
 				});
+			}
 		}
 	}, [ticketInfo]);
 
@@ -145,6 +155,7 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer }) => 
 						closeDrawer={closeDrawer}
 						updateCurrentTicket={updateTicket}
 						openEdit={openEdit}
+						type={type}
 					/>
 				</TabPanel>
 				<TabPanel
@@ -155,6 +166,7 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer }) => 
 						ticket={ticket}
 						closeDrawer={closeDrawer}
 						updateCurrentTicket={updateTicket}
+						type={type}
 					/>
 				</TabPanel>
 			</Box>

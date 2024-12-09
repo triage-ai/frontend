@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
 			? JSON.parse(storedAuthState)
 			: {
 					isAuth: false,
-					userId: null,
+					user_id: null,
 					token: null,
 			  };
 	};
@@ -62,7 +62,7 @@ const AuthProvider = ({ children }) => {
 	const userLogout = () => {
 		setUserAuthState({
 			isAuth: false,
-			userId: null,
+			user_id: null,
 			token: null,
 		});
 		localStorage.removeItem('userAuthState');

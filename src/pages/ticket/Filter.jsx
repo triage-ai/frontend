@@ -291,6 +291,7 @@ const DateSelect = ({ filters, setFilters, idx }) => {
     }
     return (
         <CustomDatePicker
+            size='small'
             onChange={handleDateChange}
             value={filters[idx][2]}
             label={'Date'}
@@ -313,12 +314,14 @@ const DateRangeSelect = ({ filters, setFilters, idx }) => {
     return (
         <Box>
             <CustomDatePicker
+                size='small'
                 onChange={(newValue) => handleDateChange(newValue, 0)}
                 value={filters[idx][2] instanceof Array ? filters[idx][2][0] : ''}
                 label={'From'}
                 mb={1}
             />
             <CustomDatePicker
+                size='small'
                 onChange={(newValue) => handleDateChange(newValue, 1)}
                 value={filters[idx][2] instanceof Array ? filters[idx][2][1] : ''}
                 label={'To'}

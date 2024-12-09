@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { ChevronDown, Filter, Pencil, Search, TicketPlus, X } from 'lucide-react';
+import { ChevronDown, Filter, Pencil, RotateCw, Search, TicketPlus, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { StyledInput } from '../../components/custom-select';
@@ -131,6 +131,7 @@ export const Tickets = () => {
 			setLoading(false)
 		}
 	};
+
 
 	const handleSubmitSearch = () => {
 		setOpenAdvancedSearch(false)
@@ -306,8 +307,11 @@ export const Tickets = () => {
 								))}
 							</Select>
 						</FormControl>
-						<IconButton sx={{ borderRadius: '8px', border: advancedSearchMode ? '2px solid #29b866' : '1.5px solid #E5EFE9' }} onClick={() => setOpenAdvancedSearch(true)} >
+						<IconButton sx={{ borderRadius: '8px', border: advancedSearchMode ? '2px solid #29b866' : '1.5px solid #E5EFE9', mr: 1 }} onClick={() => setOpenAdvancedSearch(true)} >
 							<Filter color={advancedSearchMode ? '#29b866' : 'currentColor'} size={20} />
+						</IconButton>
+						<IconButton sx={{ borderRadius: '8px', border: '1.5px solid #E5EFE9' }} onClick={() => getTicketList()} >
+							<RotateCw size={20} />
 						</IconButton>
 					</Box>
 				</Box>
@@ -550,8 +554,9 @@ export const Tickets = () => {
 				onClose={toggleDetailDrawer(false)}
 				PaperProps={{
 					sx: {
-						minWidth: 700,
-						maxWidth: 735,
+						// minWidth: 700,
+						// maxWidth: 735,
+						width: 700,
 						margin: '12px',
 						height: 'calc(100vh - 24px)',
 						borderRadius: '24px',
@@ -563,6 +568,7 @@ export const Tickets = () => {
 					ticketInfo={selectedTicket}
 					openEdit={handleDialogOpen}
 					closeDrawer={toggleDetailDrawer(false)}
+					type='agent'
 				/>
 			</Drawer>
 		</Layout>

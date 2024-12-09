@@ -2,20 +2,16 @@ import { useTheme } from '@emotion/react';
 import {
 	Box,
 	Button, CssBaseline,
-	Dialog,
-	Drawer,
-	IconButton,
+	Dialog, IconButton,
 	Slide,
 	Typography, styled,
 	useMediaQuery
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { LogOut, Menu, X } from 'lucide-react';
-import React, { forwardRef, useContext, useState } from 'react';
+import { Menu, X } from 'lucide-react';
+import React, { forwardRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 import { AppBarHeight } from './layout';
-import { SidebarItems } from './sidebar-items';
 
 export const drawerWidth = 250;
 
@@ -91,7 +87,6 @@ export const Header = ({
 	const [timeLeft, setTimeLeft] = useState(initialTime);
 	const navigate = useNavigate();
 
-	const { agentLogout } = useContext(AuthContext);
 
 	const theme = useTheme();
 	const [openDialog, setOpenDialog] = useState(false);
@@ -110,11 +105,6 @@ export const Header = ({
 		if (!isClosing) {
 			setMobileOpen(!mobileOpen);
 		}
-	};
-
-	const authLogout = async () => {
-		agentLogout();
-		navigate('/', { replace: true });
 	};
 
 	const handleClickDialogOpen = () => {
@@ -200,15 +190,6 @@ export const Header = ({
 							{buttonInfo.label}
 						</CircularButton>}
 
-						<IconButton
-							aria-label="logout"
-							onClick={authLogout}
-						>
-							<LogOut
-								color="#585858"
-								size={22}
-							/>
-						</IconButton>
 					</Box>
 				</Box>
 			</AppBar>

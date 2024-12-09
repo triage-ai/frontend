@@ -14,6 +14,8 @@ import { useData } from '../../context/DataContext';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { StyledSelect } from '../settings/SettingsMenus';
+import { CustomDatePicker } from '../../components/date-picker';
+import { CustomSelect } from '../../components/custom-select';
 
 const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
@@ -33,16 +35,12 @@ const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ child
 });
 
 const Header = ({ headers, components }) => {
-	// const [menuState, setMenuState] = useState(headers[0].id);
 	const [tabValue, setTabValue] = useState(0);
 
 	const handleTabChange = (event, newValue) => {
 		setTabValue(newValue);
 	};
 
-	// const handleMenuChange = newMenuState => {
-	// 	setMenuState(newMenuState);
-	// };
 
 	return (
 		<Box>
@@ -133,6 +131,14 @@ const Dashboard = () => {
 	const [tabValue, setTabValue] = useState(0);
 	const [ypoints, setypoints] = useState({ y1: [], y2: [], y3: [] });
 
+	const periodOptions = [
+		{ label: "Up to today", value: "Up to today" },
+		{ label: "One Week", value: "One Week" },
+		{ label: "Two Weeks", value: "Two Weeks" },
+		{ label: "One Month", value: "One Month" },
+		{ label: "One Quarter", value: "One Quarter" }
+	  ];
+
 	const { refreshDepartments, departments, refreshTopics, topics } = useData();
 	useEffect(() => {
 		refreshDepartments();
@@ -200,23 +206,43 @@ const Dashboard = () => {
 	return (
 		<Box>
 			<Stack spacing={2} direction='row' alignItems='center' pb={3}>
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
+				{/* <LocalizationProvider dateAdapter={AdapterDayjs}>
 					<DemoContainer components={['DatePicker']}>
 						<DatePicker label='Report Timeframe' value={selectedDate} onChange={handleDateChange} />
 					</DemoContainer>
-				</LocalizationProvider>
+				</LocalizationProvider> */}
+				<CustomDatePicker
+					size='small'
+					width='200px'
+					onChange={handleDateChange}
+					value={selectedDate}
+					label='Date'
+				/>
+
 
 				<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
 					Period:
 				</Typography>
 
-				<StyledSelect name='default_ticket_number_sequence' value={selectedPeriod} onChange={handleSelectChange} sx={{ width: 200 }}>
+				<CustomSelect
+					value={selectedPeriod}
+					label='Direction'
+					onChange={handleSelectChange}
+					sx={{ width: 200 }}
+					name='default_ticket_number_sequence'
+					fullWidth
+					hideEmptyOption
+					options={periodOptions}
+					size={'small'}
+				/>
+
+				{/* <StyledSelect name='default_ticket_number_sequence' value={selectedPeriod} onChange={handleSelectChange} sx={{ width: 200 }}>
 					<MenuItem value='Up to today'>Up to today</MenuItem>
 					<MenuItem value='One Week'>One Week</MenuItem>
 					<MenuItem value='Two Weeks'>Two Weeks</MenuItem>
 					<MenuItem value='One Month'>One Month</MenuItem>
 					<MenuItem value='One Quarter'>One Quarter</MenuItem>
-				</StyledSelect>
+				</StyledSelect> */}
 
 				<CircularButton
 					sx={{ py: 2, px: 6, width: 250 }}

@@ -1,5 +1,6 @@
 import {
 	Box,
+	Chip,
 	CssBaseline,
 	Dialog,
 	Drawer,
@@ -12,27 +13,28 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableContainer,
 	TableHead,
 	TablePagination,
 	TableRow,
 	Typography
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { ChevronDown, CircleUserRound, LogOut, Menu, Pencil, Search, TicketPlus, Trash2, X } from 'lucide-react';
+import { ChevronDown, CircleUserRound, LogOut, Menu, Pencil, Search, TicketPlus, X } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AppBarHeight } from '../../components/layout';
 import { CircularButton, Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
-// import { AddTicket } from './AddTicket';
+import { AuthContext } from '../../context/AuthContext';
 import { useQueueBackend } from '../../hooks/useQueueBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { SearchTextField } from '../agent/Agents';
-// import { TicketDetailContainer } from './TicketDetailContainer';
-import { useNavigate, useParams } from 'react-router-dom';
-import { AppBarHeight } from '../../components/layout';
-import { AuthContext } from '../../context/AuthContext';
-import { UserAddTicket } from './UserAddTicket';
-import { UserTicketDetailContainer } from './UserTicketDetailContainer';
 import { UserProfile } from '../profile/UserProfile';
+import { TicketDetailContainer } from '../ticket/TicketDetailContainer';
+import { UserAddTicket } from './UserAddTicket';
+import { TableRowsLoader } from '../../components/table-loader';
+import formatDate from '../../functions/date-formatter';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer - 1,
@@ -77,6 +79,7 @@ export const UserTickets = () => {
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openProfile, setOpenProfile] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
+	const [loading, setLoading] = useState(true)
 
 	const [queues, setQueues] = useState([]);
 	const [queueIdx, setQueueIdx] = useState(0);
@@ -88,6 +91,25 @@ export const UserTickets = () => {
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
+
+	const columnFormatter = {
+		1: (ticket) => (ticket.number),
+		2: (ticket) => (formatDate(ticket.created, 'MM-DD-YY hh:mm A')),
+		3: (ticket) => (ticket.title),
+		4: (ticket) => (ticket.user ? ticket.user.firstname + ' ' + ticket.user.lastname : ''),
+		5: (ticket) => (
+			<></>
+		),
+		6: (ticket) => (ticket.status?.name),
+		7: (ticket) => (formatDate(ticket.closed, 'MM-DD-YY hh:mm A')),
+		8: (ticket) => (ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : ''),
+		9: (ticket) => (ticket.due_date ? formatDate(ticket.due_date, 'MM-DD-YY hh:mm A') : formatDate(ticket.est_due_date, 'MM-DD-YY hh:mm A')),
+		10: (ticket) => (formatDate(ticket.updated, 'MM-DD-YY hh:mm A')),
+		11: (ticket) => (ticket.dept?.name),
+		12: (ticket) => { },
+		13: (ticket) => { },
+		14: (ticket) => (ticket.group?.name),
+	}
 
 	useEffect(() => {
 		// getPriorityList();
@@ -139,6 +161,7 @@ export const UserTickets = () => {
 
 	const getTicketList = () => {
 		if (queues.length != 0) {
+			setLoading(true)
 			getTicketsbyAdvancedSearchForUser({
 				...queues[queueIdx].config,
 				size: size,
@@ -147,6 +170,7 @@ export const UserTickets = () => {
 				setTicketList(res.data.items);
 				setTotalTickets(res.data.total);
 			});
+			setLoading(false)
 		}
 	};
 
@@ -227,15 +251,15 @@ export const UserTickets = () => {
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
-		() => {
-			if (newOpen) {
-				navigate('/user/tickets/' + ticket.ticket_id);
-			} else {
-				navigate('/user/tickets');
-			}
-			setOpenDetail(newOpen);
-			setSelectedTicket(ticket);
-		};
+			() => {
+				if (newOpen) {
+					navigate('/user/tickets/' + ticket.ticket_id);
+				} else {
+					navigate('/user/tickets');
+				}
+				setOpenDetail(newOpen);
+				setSelectedTicket(ticket);
+			};
 
 
 	return (
@@ -293,7 +317,7 @@ export const UserTickets = () => {
 							aria-label='profile'
 							onClick={event => handleProfileDialogOpen(event)}
 						>
-							<CircleUserRound 								
+							<CircleUserRound
 								color="#585858"
 								size={22}
 							/>
@@ -430,58 +454,71 @@ export const UserTickets = () => {
 							</Box>
 						</Box>
 
-						<Table>
-							<TableHead>
-								<TableRow
-									sx={{
-										background: '#F1F4F2',
-										'& .MuiTypography-overline': {
-											color: '#545555',
-										},
-									}}
-								>
-									<TableCell>
-										<Typography variant="overline">Number</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant="overline">Created</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant="overline">Status</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant="overline">Title</Typography>
-									</TableCell>
-									<TableCell>
-										<Typography variant="overline">Department</Typography>
-									</TableCell>
-									<TableCell align="right">
-										<Typography variant="overline"></Typography>
-									</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{ticketList.map(ticket => (
+
+
+						<TableContainer>
+							<Table>
+								<TableHead>
 									<TableRow
-										key={ticket.ticket_id}
-										onClick={toggleDetailDrawer(true, ticket)}
 										sx={{
-											'&:last-child td, &:last-child th': { border: 0 },
-											'& .MuiTableCell-root': {
-												color: '#1B1D1F',
-												fontWeight: 500,
-												letterSpacing: '-0.02em',
-											},
-											'&:hover': {
-												background: '#f9fbfa',
-												cursor: 'pointer',
+											background: '#F1F4F2',
+											'& .MuiTypography-overline': {
+												color: '#545555',
 											},
 										}}
 									>
-										<TableCell>{ticket.number}</TableCell>
-										<TableCell>{ticket.status.name}</TableCell>
-										<TableCell>{ticket.created}</TableCell>
-										<TableCell
+										{
+											queues.length !== 0 ? queues[queueIdx].columns.slice(0,3).map((column, idx) => (
+												<TableCell key={idx} >
+													<Typography key={idx} variant="overline">{column.name}</Typography>
+												</TableCell>
+											)) :
+												<>
+													<TableCell />
+													<TableCell />
+													<TableCell />
+													<TableCell />
+													<TableCell />
+												</>
+										}
+										<TableCell align="right">
+											<Typography variant="overline"></Typography>
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{loading ?
+										<TableRowsLoader
+											rowsNum={10}
+											colNum={5}
+										/>
+										:
+										ticketList.map(ticket => (
+											<TableRow
+												key={ticket.ticket_id}
+												onClick={toggleDetailDrawer(true, ticket)}
+												sx={{
+													'&:last-child td, &:last-child th': { border: 0 },
+													'& .MuiTableCell-root': {
+														color: '#1B1D1F',
+														fontWeight: 500,
+														letterSpacing: '-0.02em',
+													},
+													'&:hover': {
+														background: '#f9fbfa',
+														cursor: 'pointer',
+													},
+												}}
+											>
+												{
+													queues.length !== 0 && queues[queueIdx].columns.slice(0,3).map((column, idx) => (
+														<TableCell key={idx} >
+															{columnFormatter[column.default_column_id](ticket)}
+														</TableCell>
+													)
+													)
+												}
+												{/* <TableCell
 											component="th"
 											scope="row"
 											sx={{ maxWidth: '200px' }}
@@ -502,38 +539,45 @@ export const UserTickets = () => {
 												{ticket.description}
 											</Typography>
 										</TableCell>
-										<TableCell>{ticket.dept.name}</TableCell>
-										<TableCell
-											component="th"
-											scope="row"
-											align="right"
-										>
-											<Stack
-												direction="row"
-												// spacing={0.5}
-												sx={{ justifyContent: 'flex-end' }}
-											>
-												<IconButton onClick={event => handleDialogOpen(event, ticket)}>
-													<Pencil size={18} />
-												</IconButton>
-
-												{/* <IconButton onClick={event => handleDialogOpen(event, ticket)}>
-													<Trash2 size={18} />
-												</IconButton> */}
-											</Stack>
+										<TableCell>{ticket.number}</TableCell>
+										<TableCell>{formatDate(ticket.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+										<TableCell>
+											<Chip
+												label={ticket.priority.priority_desc}
+												sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+											/>
 										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component="div"
-							count={totalTickets}
-							page={page}
-							onPageChange={handleChangePage}
-							rowsPerPage={size}
-							onRowsPerPageChange={handleChangeRowsPerPage}
-						/>
+										<TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell> */}
+												{/* <TableCell>{ticket.user.firstname + ' ' + ticket.user.lastname}</TableCell> */}
+												<TableCell
+													component="th"
+													scope="row"
+													align="right"
+												>
+													<Stack
+														direction="row"
+														// spacing={0.5}
+														sx={{ justifyContent: 'flex-end' }}
+													>
+														<IconButton onClick={event => handleDialogOpen(event, ticket)}>
+															<Pencil size={18} />
+														</IconButton>
+													</Stack>
+												</TableCell>
+											</TableRow>
+										))
+									}
+								</TableBody>
+							</Table>
+							<TablePagination
+								component="div"
+								count={totalTickets}
+								page={page}
+								onPageChange={handleChangePage}
+								rowsPerPage={size}
+								onRowsPerPageChange={handleChangeRowsPerPage}
+							/>
+						</TableContainer>
 					</WhiteContainer>
 
 					<Dialog
@@ -555,16 +599,7 @@ export const UserTickets = () => {
 						}}
 						sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
 					>
-						<Box 
-							sx={{
-								width: '100%',
-								textAlign: 'right',
-								// pb: 1,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
+						<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 							<IconButton
 								aria-label="close dialog"
 								onClick={handleDialogClose}
@@ -607,10 +642,11 @@ export const UserTickets = () => {
 							},
 						}}
 					>
-						<UserTicketDetailContainer
+						<TicketDetailContainer
 							ticketInfo={selectedTicket}
 							openEdit={handleDialogOpen}
 							closeDrawer={toggleDetailDrawer(false)}
+							type='user'
 						/>
 					</Drawer>
 				</Box>
@@ -630,7 +666,7 @@ export const UserTickets = () => {
 					},
 				}}
 			>
-			<Box sx={{ textAlign: 'center' }}>
+				<Box sx={{ textAlign: 'center' }}>
 					<Box
 						sx={{
 							width: '100%',

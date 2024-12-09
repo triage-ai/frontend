@@ -1,7 +1,7 @@
 import {
-	Box,
-	Stack,
-	Typography,
+    Box,
+    Stack,
+    Typography,
 } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -23,7 +23,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
 
     const [isFormValid, setIsFormValid] = useState(false);
     const [formData, setFormData] = useState({
-        user_id: userAuthState.userId,
+        user_id: userAuthState.user_id,
         description: '',
         title: '',
         topic_id: '',
