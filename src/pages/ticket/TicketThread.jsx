@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { CloudUploadIcon, File, X } from 'lucide-react';
 import { RichTextReadOnly } from 'mui-tiptap';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { AuthContext } from '../../context/AuthContext';
@@ -335,7 +335,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 										Upload files
 										<VisuallyHiddenInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
 									</Button>
-
+								</Stack>
 								<CircularButton sx={{ py: 2, px: 6, mt: 2 }} onClick={handleSubmit} disabled={postDisabled}>
 									Post
 								</CircularButton>
