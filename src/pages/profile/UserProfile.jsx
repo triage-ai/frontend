@@ -168,7 +168,7 @@ const Account = ({refreshUser, profileData}) => {
 
 	return (
 		<Box>
-			{Object.keys(formData).length ? (
+			{Object.keys(formData).length !== 0 && (
 				<>
 					<Stack spacing={5} pb={4}>
                         <Stack alignItems="center">
@@ -219,9 +219,7 @@ const Account = ({refreshUser, profileData}) => {
 						{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
 					</CircularButton>
 				</>
-			) : (
-				<p>loading...</p>
-			)}
+			)} 
 		</Box>
 	);
 };

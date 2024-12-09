@@ -197,7 +197,7 @@ const Account = ({refreshAgent, profileData}) => {
 
 	return (
 		<Box>
-			{Object.keys(formData).length ? (
+			{Object.keys(formData).length !== 0 && (
 				<>
 					<Stack direction='row' spacing={5}>
 						<Avatar sx={{ width: 200, height: 200 }} variant='rounded'>
@@ -263,8 +263,6 @@ const Account = ({refreshAgent, profileData}) => {
 						{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
 					</CircularButton>
 				</>
-			) : (
-				<p>loading...</p>
 			)}
 		</Box>
 	);
