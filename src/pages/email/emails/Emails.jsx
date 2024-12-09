@@ -140,11 +140,29 @@ export const Emails = () => {
 										},
 									}}
 								>
-									<TableCell component='th' scope='row' sx={{ maxWidth: '200px' }}>
+									<TableCell component='th' scope='row'>
 										{email.email}
 									</TableCell>
-									<TableCell>{email.email_from_name}</TableCell>
-									<TableCell>{email.notes}</TableCell>
+									<TableCell
+										noWrap
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											maxWidth: '200px'
+										}}
+									>
+										{email.email_from_name}
+									</TableCell>
+									<TableCell
+										noWrap
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											maxWidth: '200px'
+										}}
+									>
+										{email.notes}
+									</TableCell>
 									<TableCell>{email.created.replace('T', ' ')}</TableCell>
 									<TableCell>{email.updated.replace('T', ' ')}</TableCell>
 									<TableCell component='th' scope='row' align='right'>
