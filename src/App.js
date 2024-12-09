@@ -15,7 +15,7 @@ import { UserResetPasswordForm } from "./pages/auth/user-reset-password-form";
 import { UserSignIn } from "./pages/auth/user-sign-in";
 import { UserSignUp } from "./pages/auth/user-sign-up";
 import { UserSignUpConfirmation } from "./pages/auth/user-sign-up-confirmation";
-import { AgentDashboard } from "./pages/dashboard/agent-dashboard";
+import { AgentDashboard } from "./pages/dashboard/AgentDashboard";
 import { UserTickets } from "./pages/dashboard/UserTickets";
 import { Departments } from "./pages/department/Departments";
 import { EmailBanlist } from "./pages/email/EmailBanlist";

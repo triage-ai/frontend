@@ -140,7 +140,7 @@ export const Emails = () => {
 										},
 									}}
 								>
-									<TableCell component='th' scope='row' sx={{ maxWidth: '200px' }}>
+									<TableCell>
 										{email.email}
 									</TableCell>
 									<TableCell>{email.email_from_name}</TableCell>
