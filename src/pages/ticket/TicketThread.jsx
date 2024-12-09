@@ -1,15 +1,14 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
 import { Avatar, Box, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, styled, Typography } from '@mui/material';
-import Link from '@tiptap/extension-link';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { CloudUploadIcon, File, X } from 'lucide-react';
-import { LinkBubbleMenuHandler } from 'mui-tiptap';
-import { useContext, useEffect, useState } from 'react';
-import { CustomFilledInput } from '../../components/custom-input';
+import { RichTextReadOnly } from 'mui-tiptap';
+import { useContext, useState } from 'react';
+import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
@@ -17,7 +16,6 @@ import humanFileSize from '../../functions/file-size-formatter';
 import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
 import { FileCard } from './FileCard';
-
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
@@ -42,16 +40,15 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 	const { getPresignedURL, createAttachment } = useAttachmentBackend();
 	const { permissions } = useContext(AuthContext);
 	const editor = useEditor({
-		extensions: [
-			StarterKit,
-			Link.configure({
-				openOnClick: false,
-				autolink: true,
-				defaultProtocol: 'https',
-			}),
-			LinkBubbleMenuHandler,
-		],
+		extensions: [StarterKit],
 		content: '',
+		onUpdate({ editor }) {
+			setFormData((prevFormData) => ({
+				...prevFormData,
+				body: editor.getHTML(),
+			}));
+			setPostDisabled(editor.isEmpty);
+		},
 	});
 
 	const handleInputChange = (e) => {
@@ -245,6 +242,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 										}}
 									>
 										<Stack direction='column' width='100%'>
+											<RichTextReadOnly sx={{fontWeight: 500}} content={item.body} extensions={[StarterKit]} />
 											<Typography variant='caption' color='#1B1D1F' fontWeight={500}>
 												{item.body}
 											</Typography>
@@ -303,16 +301,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 						</TimelineSeparator>
 						<TimelineContent paddingTop={0}>
 							<Box>
-								<CustomFilledInput
-									label='Response'
-									onChange={handleInputChange}
-									value={formData.body}
-									name='body'
-									fullWidth
-									multiline
-									rows={3}
-									borderWidth={1}
-									mb={1}
+							<RichTextEditorBox
+									editor={editor}
 								/>
 								{/* <RichTextEditor 
 								editor={editor}
@@ -346,10 +336,9 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket }) => {
 										<VisuallyHiddenInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
 									</Button>
 
-									<CircularButton sx={{ py: 2, px: 6 }} onClick={handleSubmit} disabled={postDisabled}>
-										Post
-									</CircularButton>
-								</Stack>
+								<CircularButton sx={{ py: 2, px: 6, mt: 2 }} onClick={handleSubmit} disabled={postDisabled}>
+									Post
+								</CircularButton>
 							</Box>
 						</TimelineContent>
 					</TimelineItem>

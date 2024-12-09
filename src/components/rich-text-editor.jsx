@@ -31,7 +31,6 @@ export const RichTextEditorBox = ({editor, children}) => {
                     <MenuButtonStrikethrough />
                     <MenuDivider />
                     {/* <MenuButtonEditLink /> */}
-                    <MenuDivider />
                     <MenuButtonOrderedList />
                     <MenuButtonBulletedList />
                     <MenuDivider />

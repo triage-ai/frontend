@@ -124,7 +124,7 @@ export const Users = () => {
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
-					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
+					<Box sx={{ position: 'relative', width: '20%', opacity: 1 }}>
 						<SearchTextField
 							type='text'
 							label='Search'
