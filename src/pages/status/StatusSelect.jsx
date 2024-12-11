@@ -30,7 +30,7 @@ export const StatusSelect = ({ handleInputChange, value, name }) => {
 				name={name ?? "status_id"}
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedStatuses}
 			/>

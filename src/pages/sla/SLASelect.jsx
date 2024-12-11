@@ -30,7 +30,7 @@ export const SLASelect = ({ handleInputChange, value, name }) => {
 				name={name ?? "sla_id"}
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedSLAs}
 			/>

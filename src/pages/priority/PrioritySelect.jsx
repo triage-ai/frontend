@@ -30,7 +30,7 @@ export const PrioritySelect = ({ handleInputChange, value, name }) => {
 				name={name ?? "priority_id"}
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedPriorities}
 			/>

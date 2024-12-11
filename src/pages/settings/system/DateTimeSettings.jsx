@@ -1,6 +1,6 @@
 import { Box, CircularProgress, FormControl, MenuItem, Stack, Typography } from '@mui/material';
 import jstz from 'jstz';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CircularButton } from '../../../components/sidebar';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
@@ -17,7 +17,8 @@ export const DateAndTime = (props) => {
 		date_and_time_format: settingsData.date_and_time_format.value,
 		default_schedule: settingsData.default_schedule.value,
 	});
-	var TimeZoneArray = Intl.supportedValuesOf('timeZone').push('UTC');
+	const TimeZoneArray = Intl.supportedValuesOf('timeZone').concat('UTC')
+
 
 	const handleChange = (entry) => {
 		setFormState({

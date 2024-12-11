@@ -30,7 +30,7 @@ export const RoleSelect = ({ handleInputChange, value }) => {
 				name="role_id"
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedRoles}
 			/>

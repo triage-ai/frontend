@@ -1,7 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 import { useContext } from "react";
 import { CookiesProvider } from "react-cookie";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import ProtectedRoute from "./components/protected-route";
 import UserProtectedRoute from "./components/user-protected-route";
@@ -43,6 +43,8 @@ import { Topics } from "./pages/topic/Topics";
 import { Users } from "./pages/user/Users";
 import { Sidebar } from "./components/sidebar";
 import { drawerWidth } from "./components/sidebar";
+import axios from "axios";
+import { TicketView } from "./pages/ticket/TicketView";
 
 const theme = createTheme({
 	palette: {
@@ -108,7 +110,19 @@ const theme = createTheme({
 });
 
 function App() {
-	const { agentAuthState, userAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState, agentLogout, userLogout } = useContext(AuthContext);
+	const navigate = useNavigate()
+
+	axios.interceptors.response.use(response => {
+		return response;
+	}, error => {
+		if (error.response.status === 401) {
+			agentLogout()
+			userLogout()
+			navigate("/")
+		}
+		return error;
+	});
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -187,10 +201,18 @@ function App() {
 								}
 							/>
 							<Route
-								path="tickets/:ticketId"
+								path="tickets/id/:ticketId"
 								element={
 									<ProtectedRoute>
 										<Tickets />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="tickets/:number"
+								element={
+									<ProtectedRoute>
+										<TicketView />
 									</ProtectedRoute>
 								}
 							/>

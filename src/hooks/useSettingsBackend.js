@@ -13,6 +13,9 @@ export const useSettingsBackend = () => {
         return await axios.get(process.env.REACT_APP_BACKEND_URL + 'settings/get', config);
     };
 
+    const getCompanyLogo = async () => {
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + 'settings/logo');
+    }
 
     const updateSettings = async (settingsInfo) => {
 		const config = {
@@ -26,6 +29,6 @@ export const useSettingsBackend = () => {
 		);
 	};
 
-    return { getAllSettings, updateSettings };
+    return { getAllSettings, getCompanyLogo, updateSettings };
  
 };

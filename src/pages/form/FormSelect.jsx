@@ -30,7 +30,7 @@ export const FormSelect = ({ handleInputChange, value }) => {
 				name="form_id"
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedForms}
 			/>

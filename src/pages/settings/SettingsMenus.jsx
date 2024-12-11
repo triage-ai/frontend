@@ -17,6 +17,7 @@ import { Autoresponder } from './tickets/AutoResponder';
 import { TicketSettings } from './tickets/TicketSettings';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
+import { Logos } from './company/Logos';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
@@ -28,14 +29,16 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 			}
 		})
 	
-		console.log(data)
-
 		var updates = [];
 		Object.entries(data).forEach((k) => {
 			var row = settingsData[k[0]];
 			row.value = k[1];
 			updates.push(row);
 		});
+
+
+
+		console.log(updates)
 		setCircleLoading(true);
 		await updateSettings(updates);
 		await refreshSettings();
@@ -57,17 +60,27 @@ export const StyledSelect = styled((props) => (
 			</Typography>
 		)}
 	/>
-))({
-	'.MuiOutlinedInput-notchedOutline': {
-		borderRadius: '12px',
-		borderColor: '#E5EFE9',
+))(({theme}) => ({
+	'& .MuiOutlinedInput-notchedOutline': {
+		overflow: 'hidden',
+		borderRadius: 12,
+		backgroundColor: 'transparent',
+		border: '1.5px solid #E5EFE9',
+		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
+		fontSize: '0.9375rem',
+		fontWeight: 500,
+		textAlign: 'left',
 	},
 	'&:hover': {
 		'&& fieldset': {
+			backgroundColor: 'transparent',
 			borderColor: '#22874E',
-		},
+		}
 	},
-});
+	'& label.Mui-focused': {
+		color: '#545555',
+	},
+}));
 
 export const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
@@ -158,15 +171,15 @@ export const SystemMenu = (props) => {
 export const CompanyMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'Basic Information' },
+		{ id: 2, label: 'Logos' },
 		// { id: 2, label: 'Site Pages' },
-		// { id: 3, label: 'Logos' },
 		// { id: 4, label: 'Login Backdrop' },
 	];
 
 	const components = [
 		<BasicInformation {...props} />,
+		<Logos {...props} />,
 		// 2: <SitePages {...props} />,
-		// 3: <Logos {...props} />,
 		// 4: <LoginBackdrop {...props} />
 	];
 

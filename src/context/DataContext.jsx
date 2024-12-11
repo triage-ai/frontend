@@ -14,6 +14,7 @@ import { useTemplateBackend } from '../hooks/useTemplateBackend';
 import { useEmailBackend } from '../hooks/useEmailBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
+import axios from 'axios';
 
 const DataContext = createContext();
 
@@ -239,12 +240,12 @@ export const DataProvider = ({ children }) => {
 						label: template.template_name
 					};
 				});
-			setTemplates(templatesData);
-			setFormattedTemplates(formattedTemplates)
-		})
-		.catch(err => {
-			console.error(err)
-		});
+				setTemplates(templatesData);
+				setFormattedTemplates(formattedTemplates)
+			})
+			.catch(err => {
+				console.error(err)
+			});
 	}, [getAllTemplates]);
 
 	const refreshEmails = useCallback(() => {
@@ -257,12 +258,12 @@ export const DataProvider = ({ children }) => {
 						label: email.email
 					};
 				});
-			setEmails(emailsData);
-			setFormattedEmails(formattedEmails)
-		})
-		.catch(err => {
-			console.error(err)
-		});
+				setEmails(emailsData);
+				setFormattedEmails(formattedEmails)
+			})
+			.catch(err => {
+				console.error(err)
+			});
 	}, [getAllEmails]);
 
 	const refreshSchedules = useCallback(() => {
