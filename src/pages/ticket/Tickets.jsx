@@ -140,7 +140,7 @@ export const Tickets = () => {
 
 		setQueueColumns([...searchColumns])
 
-		setQueueConfig(p => ({...p, filters: [...searchFilters], sorts: [...searchSorts]}))
+		setQueueConfig(p => ({page: 0, size: 10, filters: [...searchFilters], sorts: [...searchSorts]}))
 	}
 
 	const handleChangePage = (e, newValue) => {

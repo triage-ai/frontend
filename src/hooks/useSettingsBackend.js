@@ -13,6 +13,14 @@ export const useSettingsBackend = () => {
         return await axios.get(process.env.REACT_APP_BACKEND_URL + 'settings/get', config);
     };
 
+    const getSettingsByKey = async (key) => {
+        const config = {
+            headers: { Authorization: `Bearer ${agentAuthState.token}` }
+        };
+
+        return await axios.get(process.env.REACT_APP_BACKEND_URL + 'settings/key/' + key, config);
+    };
+
     const getCompanyLogo = async () => {
         return await axios.get(process.env.REACT_APP_BACKEND_URL + 'settings/logo');
     }
@@ -29,6 +37,6 @@ export const useSettingsBackend = () => {
 		);
 	};
 
-    return { getAllSettings, getCompanyLogo, updateSettings };
+    return { getAllSettings, getCompanyLogo, updateSettings, getSettingsByKey };
  
 };

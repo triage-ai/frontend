@@ -5,7 +5,7 @@ import { Settings2, UserRound } from 'lucide-react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { Layout } from '../../components/layout';
-import { RichTextEditorBox } from '../../components/rich-text-editor';
+import { extensions, RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
@@ -409,7 +409,7 @@ const Signature = ({refreshAgent, profileData}) => {
 	// }, [profileData])
 
 	const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: extensions,
 		content: profileData.signature,
 	});
 

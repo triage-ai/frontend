@@ -4,7 +4,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Check, Pencil, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../../components/custom-input';
-import { RichTextEditorBox } from '../../../components/rich-text-editor';
+import { extensions, RichTextEditorBox } from '../../../components/rich-text-editor';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
 
 
@@ -31,7 +31,7 @@ export const TemplateDetail = ({ templateInfo, closeDrawer, openEdit }) => {
 	}, [templateInfo]);
 
     const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: extensions,
 		content: template?.body,
         editable: false,
 	});

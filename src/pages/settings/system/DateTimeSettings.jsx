@@ -44,8 +44,8 @@ export const DateAndTime = (props) => {
 				<Stack direction='row' spacing={2} alignItems='center'>
 					<FormControl>
 						<StyledSelect name='default_timezone' value={formState.default_timezone} onChange={handleChange}>
-							{TimeZoneArray.map((zone) => {
-								return <MenuItem value={zone}>{zone}</MenuItem>;
+							{TimeZoneArray.map((zone, idx) => {
+								return <MenuItem value={zone} key={idx}>{zone}</MenuItem>;
 							})}
 						</StyledSelect>
 					</FormControl>

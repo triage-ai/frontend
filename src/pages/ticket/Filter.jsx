@@ -154,7 +154,7 @@ export const Filter = ({filters, setFilters}) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', pb: 2 }} height={500} >
-            <Box overflow={'scroll'} mb={2}>
+            <Box sx={{overflowY: 'auto'}} mb={2}>
                 <List>
                     {filters.map((filter, idx) => (
                         <ListItem key={idx}>

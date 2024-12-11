@@ -1,26 +1,41 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, IconButton, Link, List, ListItem, ListItemAvatar, ListItemText, Stack, styled, Typography } from '@mui/material';
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Avatar,
+	Box,
+	IconButton,
+	Link,
+	List,
+	ListItem,
+	ListItemAvatar,
+	ListItemText,
+	Stack,
+	styled,
+	Typography,
+} from '@mui/material';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { CloudUploadIcon, File, Paperclip, Send, X } from 'lucide-react';
-import { MenuButton, RichTextReadOnly } from 'mui-tiptap';
+import { RichTextReadOnly, TableBubbleMenu, TableImproved } from 'mui-tiptap';
 import { useContext, useEffect, useState } from 'react';
-import { RichTextEditorBox } from '../../components/rich-text-editor';
-import { CircularButton } from '../../components/sidebar';
+import { extensions, RichTextEditorBox } from '../../components/rich-text-editor';
 import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
-import humanFileSize from '../../functions/file-size-formatter';
+import  humanFileSize from '../../functions/file-size-formatter';
 import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import { useSettingsBackend } from '../../hooks/useSettingsBackend';
 import { FileCard } from './FileCard';
+
 
 var localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
-
 
 const CustomInput = styled('input')({
 	opacity: 0,
@@ -31,18 +46,20 @@ const CustomInput = styled('input')({
 	width: '100%',
 	height: '60px',
 	cursor: 'pointer',
-})
+});
 
 export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type }) => {
 	const [formData, setFormData] = useState({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 	const [postDisabled, setPostDisabled] = useState(true);
 	const [files, setFiles] = useState([]);
+	const [maxUploadSize, setMaxUploadSize] = useState('')
 	const { createThreadEntry, createThreadEntryForUser } = useThreadsBackend();
 	const { getPresignedURL, createAttachment } = useAttachmentBackend();
+	const { getSettingsByKey } = useSettingsBackend();
 	const { permissions } = useContext(AuthContext);
 	const { agentAuthState, userAuthState } = useContext(AuthContext);
 	const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: extensions,
 		content: '',
 		onUpdate({ editor }) {
 			setFormData((prevFormData) => ({
@@ -52,101 +69,114 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		},
 	});
 
+	getSettingsByKey('agent_max_file_size').then(res => {
+		setMaxUploadSize(res.data.value)
+	})
+
 	const getDirection = (agent_id, option1, option2) => {
 		if ((agent_id && type === 'agent') || (!agent_id && type !== 'agent')) {
-			return option1
-		}
-		else return option2
-	}
+			return option1;
+		} else return option2;
+	};
 
 	const handleSubmit = async () => {
 		const threadEntryCreate = type === 'agent' ? createThreadEntry : createThreadEntryForUser;
 		var newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
 		if (type === 'agent') {
-			newThreadEntry.agent_id = agentAuthState.agent_id
-		}
-		else {
-			newThreadEntry.user_id = userAuthState.user_id
+			newThreadEntry.agent_id = agentAuthState.agent_id;
+		} else {
+			newThreadEntry.user_id = userAuthState.user_id;
 		}
 
 		var updatedTicket = { ...ticket };
 		threadEntryCreate(newThreadEntry)
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data);
-				editor.commands.setContent('')
+				editor.commands.setContent('');
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 				return response.data.entry_id;
 			})
 			.then(async (entry_id) => {
 				if (files.length !== 0) {
 					const file_names = files.map((item) => item.name);
-					await getPresignedURL({ attachment_names: file_names })
-						.then(async (res) => {
+					try {
+						await getPresignedURL({ attachment_names: file_names }).then(async (res) => {
 							var presigned_urls = { ...res.data.url_dict };
 
-							await awsFileUpload(presigned_urls, files, entry_id)
-								.then((response) => {
-									setFiles([]);
-									updatedTicket.thread.entries.at(-1).attachments.push(...response)
-								});
-
-						})
+							await awsFileUpload(presigned_urls, files, entry_id).then((response) => {
+								setFiles([]);
+								updatedTicket.thread.entries.at(-1).attachments.push(...response);
+							});
+						});
+					} catch(err) {
+						alert('Attachment will not added to thread. Configure S3 to allow attachments');
+						console.error(err);
+					}
 				}
 			})
 			.then(() => {
 				updateCurrentTicket(updatedTicket);
 			})
 			.catch((err) => {
-				alert('Error while creating thread entry');
+				alert('Error creating thread');
 				console.error(err);
 			});
 	};
 
 	const awsFileUpload = async (presigned_urls, files, entry_id) => {
-		var attachments = []
-		await Promise.all(Object.entries(presigned_urls).map(([fileName, url]) => {
-			const file = files.find((f) => f.name === fileName);
+		var attachments = [];
+		await Promise.all(
+			Object.entries(presigned_urls).map(([fileName, url]) => {
+				const file = files.find((f) => f.name === fileName);
 
-			try {
-				return axios
-					.put(url, file, {
-						headers: {
-							'Content-Type': file.type,
-							'Content-Disposition': `inline; filename="${fileName}"`,
-						},
-					})
-					.then(async (res) => {
-						await createAttachment({
-							object_id: entry_id,
-							type: file.type,
-							name: fileName,
-							inline: 1,
-							link: url.split('?')[0],
-							size: file.size,
+				try {
+					return axios
+						.put(url, file, {
+							headers: {
+								'Content-Type': file.type,
+								'Content-Disposition': `inline; filename="${fileName}"`,
+							},
 						})
-							.then(res => {
-								attachments.push(res.data)
+						.then(async (res) => {
+							await createAttachment({
+								object_id: entry_id,
+								type: file.type,
+								name: fileName,
+								inline: 1,
+								link: url.split('?')[0],
+								size: file.size,
+							}).then((res) => {
+								attachments.push(res.data);
 							});
-					})
-					.catch((err) => {
-						console.error(`Error creating attachment in db for ${fileName}: `, err);
-					})
-			} catch (error) {
-				console.error(`Error uploading ${fileName}:`, error.message);
-			}
-		}))
-		return attachments
-
-	}
+						})
+						.catch((err) => {
+							console.error(`Error creating attachment in db for ${fileName}: `, err);
+						});
+				} catch (error) {
+					console.error(`Error uploading ${fileName}:`, error.message);
+				}
+			})
+		);
+		return attachments;
+	};
 
 	const handleFileUpload = (event) => {
 		const length = event.target.files.length;
 		var tempArray = [];
-		for (let i = 0; i < length; i++) {
+		var sizeExceed = false
+		for (let i = 0; i < length; i++) {	
+			if (event.target.files[i].size > Number(maxUploadSize)) {
+				sizeExceed = true
+				continue
+			}
 			tempArray.push(event.target.files[i]);
 		}
 		setFiles((p) => [...p, ...tempArray]);
 		event.target.value = '';
+
+		if(sizeExceed) {
+			alert(`One or more files exceed the max upload limit of ${humanFileSize(maxUploadSize, true)}!`)
+		}
 	};
 
 	const handleDeleteFile = (idx) => {
@@ -158,10 +188,12 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	// }, [files]);
 
 	function getEventText(item) {
-
 		const capitilize = (str) => {
-			return str.split(' ').map(word => (word.charAt(0).toUpperCase() + word.substring(1))).join(' ')
-		}
+			return str
+				.split(' ')
+				.map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+				.join(' ');
+		};
 
 		var newValue = item.new_val;
 		var prevValue = item.prev_val;
@@ -171,47 +203,45 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 			prevValue = prevValue ? formatDate(prevValue, 'lll') : null;
 		}
 
-		const field = capitilize(item.field.replace('_id', '').replace('_', ' '))
+		const field = capitilize(item.field.replace('_id', '').replace('_', ' '));
 
 		if (item.type === 'A') {
 			return (
 				<Typography variant='subtitle2' fontWeight={600} color='#6c757d'>
 					{field} set to&nbsp;
-					<Typography variant='subtitle2' component="span" fontWeight={600} color='black'>
+					<Typography variant='subtitle2' component='span' fontWeight={600} color='black'>
 						{newValue}
 					</Typography>
 				</Typography>
-			)
-		}
-		else if (item.type === 'R') {
+			);
+		} else if (item.type === 'R') {
 			return (
 				<Typography variant='subtitle2' fontWeight={600} color='#6c757d'>
 					{field} unset from&nbsp;
-					<Typography variant='subtitle2' component="span" fontWeight={600} color='black'>
+					<Typography variant='subtitle2' component='span' fontWeight={600} color='black'>
 						{prevValue}
 					</Typography>
 				</Typography>
-			)
-		}
-		else {
+			);
+		} else {
 			return (
 				<Typography
 					variant='subtitle2'
 					fontWeight={600}
 					color='#6c757d'
 					sx={{
-						display: "flex",
-						flexWrap: "wrap",
-						wordBreak: "break-word",
+						display: 'flex',
+						flexWrap: 'wrap',
+						wordBreak: 'break-word',
 					}}
 				>
 					{field} updated from&nbsp;
 					<Typography
 						variant='subtitle2'
 						fontWeight={600}
-						component="span"
+						component='span'
 						sx={{
-							color: "black",
+							color: 'black',
 						}}
 					>
 						{prevValue}
@@ -220,15 +250,15 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 					<Typography
 						variant='subtitle2'
 						fontWeight={600}
-						component="span"
+						component='span'
 						sx={{
-							color: "black",
+							color: 'black',
 						}}
 					>
 						{newValue}
 					</Typography>
 				</Typography>
-			)
+			);
 		}
 	}
 
@@ -245,7 +275,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 					alignItems: 'center',
 					justifyContent: 'space-between',
 					padding: '28px',
-
 				}}
 			>
 				<Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -255,16 +284,13 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				</Box>
 
 				<Box sx={{ display: 'flex', alignItems: 'center' }}>
-
 					<IconButton sx={{ borderRadius: '8px' }} aria-label='edit' onClick={closeDrawer}>
 						<X color='#6E7772' strokeWidth={1.5} />
 					</IconButton>
 				</Box>
 			</Box>
 
-			<Box sx={{ height: '100%', px: '28px', position: 'relative', overflowY: 'scroll' }}>
-
-
+			<Box sx={{ height: '100%', px: '28px', position: 'relative', overflowY: 'auto' }}>
 				<Timeline
 					sx={{
 						px: 0,
@@ -292,35 +318,33 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 												marginLeft: getDirection(item.agent_id, 'auto', 0),
 												width: 'fit-content',
 												'& .MuiPaper-rounded': {
-													borderRadius: '8px'
+													borderRadius: '8px',
 												},
 												'& .MuiAccordionSummary-root': {
 													px: '12px',
 													minHeight: 0,
-													borderRadius: '8px'
+													borderRadius: '8px',
 												},
 												'& .MuiAccordionSummary-content': {
-													my: '12px'
+													my: '12px',
 												},
-												"& .ProseMirror p": {
+												'& .ProseMirror p': {
 													fontSize: 'small',
-													fontWeight: 500
+													fontWeight: 500,
 												},
 											}}
 										>
-
-											{item.attachments.length === 0 ?
-
+											{item.attachments.length === 0 ? (
 												<Box
 													sx={{
 														padding: '12px',
 														border: '1px solid #E5EFE9',
-														borderRadius: '8px'
+														borderRadius: '8px',
 													}}
 												>
-													<RichTextReadOnly content={item.body} extensions={[StarterKit]} />
+													<RichTextReadOnly content={item.body} extensions={extensions} />
 												</Box>
-												:
+											) : (
 												<Accordion
 													disableGutters={true}
 													elevation={0}
@@ -328,27 +352,24 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 														border: '1px solid #E5EFE9',
 													}}
 												>
-													<AccordionSummary >
+													<AccordionSummary>
 														<Box
 															sx={{
 																display: 'flex',
 																flexDirection: 'row',
 																justifyContent: 'space-between',
 																alignItems: 'start',
-																width: '100%'
+																width: '100%',
 															}}
 														>
-															<RichTextReadOnly content={item.body} extensions={[StarterKit]} />
+															<RichTextReadOnly content={item.body} extensions={extensions} />
 															<Stack direction='row' ml={0.5} spacing={0.5} alignItems='center' color={'grey'}>
-																<Typography fontSize='small'>
-																	{item.attachments.length}
-																</Typography>
+																<Typography fontSize='small'>{item.attachments.length}</Typography>
 																<Paperclip size={15} />
 															</Stack>
 														</Box>
 													</AccordionSummary>
 													<AccordionDetails>
-
 														<Box
 															sx={{
 																display: 'flex',
@@ -358,15 +379,13 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 														>
 															{item.attachments.map((attachment, idx) => (
 																<FileCard file={attachment} key={idx} />
-															)
-															)}
+															))}
 														</Box>
 													</AccordionDetails>
 												</Accordion>
-											}
+											)}
 										</Box>
 										<Box textAlign={getDirection(item.agent_id, 'right', 'left')}>
-
 											<Typography variant='caption' fontWeight={500}>
 												<span className='text-muted'>By</span> {item.owner}
 												<span className='text-muted'> at {dayjs.utc(item.created).local().format('lll')}</span>
@@ -414,17 +433,12 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 			{(type === 'user' || permissions.hasOwnProperty('ticket.edit')) && (
 				<Box sx={{ px: '28px', py: '20px' }}>
 					<RichTextEditorBox
-						PostButton={
-							<PostButton
-								handleSubmit={handleSubmit}
-								disabled={postDisabled}
-							/>
-						}
+						PostButton={<PostButton handleSubmit={handleSubmit} disabled={postDisabled} />}
 						editor={editor}
 						footer={
 							<Stack>
-								{files.length !== 0 &&
-									<Box sx={{ borderTop: '1.5px solid #E5EFE9', maxHeight: '200px', overflowY: 'scroll' }}>
+								{files.length !== 0 && (
+									<Box sx={{ borderTop: '1.5px solid #E5EFE9', maxHeight: '200px', overflowY: 'auto' }}>
 										<List dense>
 											{files.map((file, idx) => (
 												<ListItem
@@ -445,7 +459,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 											))}
 										</List>
 									</Box>
-								}
+								)}
 
 								<Stack
 									justifyContent={'center'}
@@ -457,8 +471,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 									spacing={1}
 									height='60px'
 								>
-									<CloudUploadIcon color="grey" />
-									<Typography color="grey">
+									<CloudUploadIcon color='grey' />
+									<Typography color='grey'>
 										Drop files to attach, or
 										<label>
 											<Link underline='none'> browse</Link>
@@ -468,7 +482,9 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 								<CustomInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
 							</Stack>
 						}
-					/>
+					>
+
+					</RichTextEditorBox>
 
 					{/* <Box mt={2} width={'100%'} textAlign={'center'}>
 						<CircularButton sx={{ py: 2, px: 6, width: 200 }} onClick={handleSubmit} disabled={postDisabled}>
@@ -484,12 +500,9 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 const PostButton = ({ handleSubmit, disabled }) => {
 	return (
 		<Box border={disabled ? '1.5px solid #E5EFE9' : '1.5px solid #5a9ee5'} borderRadius='8px'>
-			<IconButton
-				onClick={handleSubmit}
-				disabled={disabled}
-			>
+			<IconButton onClick={handleSubmit} disabled={disabled}>
 				<Send size={20} />
 			</IconButton>
 		</Box>
-	)
-}
+	);
+};

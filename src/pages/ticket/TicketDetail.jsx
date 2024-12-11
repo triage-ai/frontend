@@ -1,11 +1,13 @@
-import { Box, Button, FormControl, IconButton, MenuItem, Select, styled, Typography } from '@mui/material';
+import { Box, FormControl, IconButton, MenuItem, Select, styled, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import StarterKit from '@tiptap/starter-kit';
 import { BadgeAlert, CalendarClock, ChevronDown, CircleAlert, FileText, Info, Network, OctagonAlert, Pencil, TriangleAlert, User, X } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { RichTextReadOnly } from 'mui-tiptap';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { usePriorityBackend } from '../../hooks/usePriorityBackend';
 import { useData } from '../../context/DataContext';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
+import { extensions } from '../../components/rich-text-editor';
 
 const IconBox = styled(Box)(() => ({
 	height: '35px',
@@ -27,11 +29,10 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 
 	const { permissions } = useContext(AuthContext);
 
-
 	const handleStatusChange = (e) => {
 		const statusUpdate = {
 			status_id: statuses.find((x) => x.name === e.target.value).status_id,
-			ticket_id: ticket.ticket_id
+			ticket_id: ticket.ticket_id,
 		};
 		updateTicket(statusUpdate)
 			.then((res) => {
@@ -39,7 +40,6 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 			})
 			.catch((err) => alert('Error while updating ticket status'));
 	};
-
 
 	useEffect(() => {
 		if (type === 'agent') {
@@ -76,69 +76,66 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 		<Box sx={{ height: '100%', width: '100%', justifyContent: 'space-between', display: 'flex', flexDirection: 'column' }}>
 			{ticket && (
 				<>
-				<Box
-							px={'28px'}
-							py={'20px'}
-							sx={{
-								width: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<Typography variant='subtitle2' mr={0.5}>
-									Ticket number
-								</Typography>
-								<Typography variant='h6' fontWeight={600}>
-									#{ticket.number}
-								</Typography>
-								{type === 'agent' &&
-									<>
-										<Typography variant='h6' mx={1}>
-											•
-										</Typography>
-										<Box display='flex' alignItems='center' bgcolor='lightgrey' p={1} borderRadius='20px'>
-
-											{getPriorityIcon(ticket.priority)}
-											<Typography variant='overline' ml={0.5} sx={{ color: ticket.priority.color }}>
-												{ticket.priority.priority_desc} priority
-											</Typography>
-										</Box>
-									</>
-								}
-							</Box>
-
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								{(type === 'user' || permissions.hasOwnProperty('ticket.edit')) && (
-									<>
-										<IconButton sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }} aria-label='edit' onClick={(event) => openEditModal(event, ticket)}>
-											<Pencil size={20} color='#6E7772' />
-										</IconButton>
-
-										<Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={2.25} mr={1} />
-									</>
-								)}
-
-								<IconButton sx={{ borderRadius: '8px' }} aria-label='edit' onClick={closeDrawer}>
-									<X color='#6E7772' strokeWidth={1.5} />
-								</IconButton>
-							</Box>
-						</Box>
 					<Box
+						px={'28px'}
+						py={'20px'}
 						sx={{
-							overflowY: 'scroll',
-							height: '100%',
-							width: '100%'
+							width: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
 						}}
 					>
-						
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+							<Typography variant='subtitle2' mr={0.5}>
+								Ticket number
+							</Typography>
+							<Typography variant='h6' fontWeight={600}>
+								#{ticket.number}
+							</Typography>
+							{type === 'agent' && (
+								<>
+									<Typography variant='h6' mx={1}>
+										•
+									</Typography>
+									<Box display='flex' alignItems='center' bgcolor='lightgrey' p={1} borderRadius='20px'>
+										{getPriorityIcon(ticket.priority)}
+										<Typography variant='overline' ml={0.5} sx={{ color: ticket.priority.color }}>
+											{ticket.priority.priority_desc} priority
+										</Typography>
+									</Box>
+								</>
+							)}
+						</Box>
 
-						
-						<Box
-							px={'28px'}
-							pb={'20px'}
-						>
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+							{(type === 'user' || permissions.hasOwnProperty('ticket.edit')) && (
+								<>
+									<IconButton
+										sx={{ border: '1px solid #E5EFE9', borderRadius: '8px' }}
+										aria-label='edit'
+										onClick={(event) => openEditModal(event, ticket)}
+									>
+										<Pencil size={20} color='#6E7772' />
+									</IconButton>
+
+									<Box sx={{ borderLeft: '1.5px solid #E5EFE9', height: '24px' }} ml={2.25} mr={1} />
+								</>
+							)}
+
+							<IconButton sx={{ borderRadius: '8px' }} aria-label='edit' onClick={closeDrawer}>
+								<X color='#6E7772' strokeWidth={1.5} />
+							</IconButton>
+						</Box>
+					</Box>
+					<Box
+						sx={{
+							overflowY: 'auto',
+							height: '100%',
+							width: '100%',
+						}}
+					>
+						<Box px={'28px'} pb={'20px'}>
 							<Box
 								display={'flex'}
 								alignItems={'flex-start'}
@@ -159,7 +156,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									</Typography>
 								</Box>
 
-								{type === 'agent' ?
+								{type === 'agent' ? (
 									<Box display={'flex'} alignItems={'center'}>
 										<Typography variant='caption' className='text-muted' fontWeight={600}>
 											Status
@@ -173,7 +170,13 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 												disabled={!permissions.hasOwnProperty('ticket.edit')}
 												renderValue={(item) => (
 													<Box display={'flex'} alignItems={'center'}>
-														<Box width={'6px'} height={'6px'} borderRadius={'6px'} marginRight={1} sx={{ backgroundColor: '#D9D9D9' }} />
+														<Box
+															width={'6px'}
+															height={'6px'}
+															borderRadius={'6px'}
+															marginRight={1}
+															sx={{ backgroundColor: '#D9D9D9' }}
+														/>
 
 														<Typography variant='subtitle2' fontWeight={600} sx={{ color: '#1B1D1F' }}>
 															{item}
@@ -196,31 +199,16 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 											</Select>
 										</FormControl>
 									</Box>
-										:
-										<Box
-											display={'flex'}
-											flexDirection={'column'}
-											alignItems={'flex-start'}
-										>
-											<Typography
-												variant="caption"
-												className="text-muted"
-												fontWeight={600}
-											>
-												Status
-											</Typography>
-											<Typography
-												variant="subtitle1"
-												color={'#1B1D1F'}
-												fontWeight={600}
-											>
-												{ticket.status.name}
-											</Typography>
-										</Box>
-
-
-
-							}
+								) : (
+									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+										<Typography variant='caption' className='text-muted' fontWeight={600}>
+											Status
+										</Typography>
+										<Typography variant='subtitle1' color={'#1B1D1F'} fontWeight={600}>
+											{ticket.status.name}
+										</Typography>
+									</Box>
+								)}
 							</Box>
 
 							<Box
@@ -236,14 +224,22 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 								bgcolor={'#FCFEFD'}
 								sx={{ pt: '40px', px: '16px', pb: '16px', border: '1px solid #E5EFE9', borderRadius: '8px' }}
 							>
-								<Box display={'flex'} >
+								<Box display={'flex'}>
 									<Box>
-
 										<FileText size={20} color='#6E7772' strokeWidth={1.5} />
 									</Box>
-									<Typography variant='subtitle2' ml={1} mb={'-4px'}>
-										{ticket.description}
-									</Typography>
+									<Box
+										ml={1}
+										mb={'-4px'}
+										sx={{
+											'& .ProseMirror p': {
+												fontSize: 'small',
+												fontWeight: 500,
+											},
+										}}
+									>
+										<RichTextReadOnly content={ticket.description} extensions={extensions} />
+									</Box>
 								</Box>
 
 								{/* {permissions.hasOwnProperty('ticket.edit') && (
@@ -256,114 +252,119 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 							</Box>
 						</Box>
 
-						{type === 'agent' &&<Grid container
-							px={'28px'}
-							py={'20px'}
-						>
-							<Grid size={{ xs: 4 }}>
-								<Box display={'flex'} alignItems={'flex-start'}>
-									<IconBox>
-										<CalendarClock size={18} />
-									</IconBox>
+						{type === 'agent' && (
+							<Grid container px={'28px'} py={'20px'}>
+								<Grid size={{ xs: 4 }}>
+									<Box display={'flex'} alignItems={'flex-start'}>
+										<IconBox>
+											<CalendarClock size={18} />
+										</IconBox>
 
-									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
-										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
-											Due date
-										</Typography>
-										<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
-											{ticket.due_date
-												? new Date(ticket.due_date)
-													.toLocaleDateString('en-US', {
-														day: '2-digit',
-														month: 'short',
-														year: 'numeric',
-													})
-													.replace(',', ' ')
-												: 'Not set'}
-										</Typography>
+										<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+											<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
+												Due date
+											</Typography>
+											<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
+												{ticket.due_date
+													? new Date(ticket.due_date)
+															.toLocaleDateString('en-US', {
+																day: '2-digit',
+																month: 'short',
+																year: 'numeric',
+															})
+															.replace(',', ' ')
+													: 'Not set'}
+											</Typography>
+										</Box>
 									</Box>
-								</Box>
-							</Grid>
+								</Grid>
 
-							<Grid size={{ xs: 4 }}>
-								<Box display={'flex'} alignItems={'flex-start'}>
-									<IconBox>
-										<Network size={18} />
-									</IconBox>
+								<Grid size={{ xs: 4 }}>
+									<Box display={'flex'} alignItems={'flex-start'}>
+										<IconBox>
+											<Network size={18} />
+										</IconBox>
 
-									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
-										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
-											Department
-										</Typography>
-										<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600} sx={{
-											flexWrap: "wrap",
-											wordBreak: "break-word",
-										}}>
-											{ticket.dept.name}
-										</Typography>
+										<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+											<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
+												Department
+											</Typography>
+											<Typography
+												variant='subtitle2'
+												color={'#1B1D1F'}
+												fontWeight={600}
+												sx={{
+													flexWrap: 'wrap',
+													wordBreak: 'break-word',
+												}}
+											>
+												{ticket.dept.name}
+											</Typography>
+										</Box>
 									</Box>
-								</Box>
-							</Grid>
+								</Grid>
 
-							<Grid size={{ xs: 4 }}>
-								<Box display={'flex'} alignItems={'flex-start'}>
-									<IconBox>
-										<User size={18} />
-									</IconBox>
+								<Grid size={{ xs: 4 }}>
+									<Box display={'flex'} alignItems={'flex-start'}>
+										<IconBox>
+											<User size={18} />
+										</IconBox>
 
-									<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
-										<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
-											User
-										</Typography>
-										<Typography
-											variant="subtitle2"
-											color={'#1B1D1F'}
-											fontWeight={600}
-											sx={{
-												flexWrap: "wrap",
-												wordBreak: "break-word",
-											}}
-										>
-											{ticket.user.firstname + ' ' + ticket.user.lastname}
-										</Typography>
+										<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'}>
+											<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
+												User
+											</Typography>
+											<Typography
+												variant='subtitle2'
+												color={'#1B1D1F'}
+												fontWeight={600}
+												sx={{
+													flexWrap: 'wrap',
+													wordBreak: 'break-word',
+												}}
+											>
+												{ticket.user.firstname + ' ' + ticket.user.lastname}
+											</Typography>
+										</Box>
 									</Box>
-								</Box>
+								</Grid>
 							</Grid>
-						</Grid>}
+						)}
 
-						{type === 'agent' ? 
-						<Box
-							px={'28px'}
-							py={'20px'}
-							// mb={'28px'}
-							borderTop={'1px solid #E5EFE9'}
-							borderBottom={'1px solid #E5EFE9'}
-							display={'flex'}
-							alignItems={'center'}
-							justifyContent={'space-between'}
-						>
-							<Box display={'flex'} alignItems={'flex-start'}>
-								<Typography variant='subtitle1' fontWeight={600} className='text-muted' mr={1}>
-									Agent
-								</Typography>
+						{type === 'agent' ? (
+							<Box
+								px={'28px'}
+								py={'20px'}
+								// mb={'28px'}
+								borderTop={'1px solid #E5EFE9'}
+								borderBottom={'1px solid #E5EFE9'}
+								display={'flex'}
+								alignItems={'center'}
+								justifyContent={'space-between'}
+							>
+								<Box display={'flex'} alignItems={'flex-start'}>
+									<Typography variant='subtitle1' fontWeight={600} className='text-muted' mr={1}>
+										Agent
+									</Typography>
 
-								<Typography variant='subtitle1' fontWeight={600} fontSize={'1.0625rem'} sx={{
-									flexWrap: "wrap",
-									wordBreak: "break-word",
-								}}>
-									{ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : 'Not assigned'}
-								</Typography>
+									<Typography
+										variant='subtitle1'
+										fontWeight={600}
+										fontSize={'1.0625rem'}
+										sx={{
+											flexWrap: 'wrap',
+											wordBreak: 'break-word',
+										}}
+									>
+										{ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : 'Not assigned'}
+									</Typography>
+								</Box>
 							</Box>
+						) : (
+							<Box borderBottom={'1px solid #E5EFE9'} width={'100%'} />
+						)}
 
-						</Box>
-						:
-						<Box borderBottom={'1px solid #E5EFE9'} width={'100%'} />
-					}
-
-						<Box
-							px={'28px'}
-							py={'20px'}
-						>
+						<Box px={'28px'} py={'20px'}>
 							<Typography variant='subtitle1' fontWeight={700} mb={'21px'}>
 								Extra information
 							</Typography>
@@ -443,7 +444,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						alignItems={'center'}
 						justifyContent={'center'}
 						gap={0.25}
-					// sx={{ transform: 'translateX(-50%)' }}
+						// sx={{ transform: 'translateX(-50%)' }}
 					>
 						<Info size={16} strokeWidth={1.25} /> Created {ticket.created} • Last updated {ticket.updated}
 					</Typography>

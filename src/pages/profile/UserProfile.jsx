@@ -1,17 +1,12 @@
-import { Avatar, Box, CircularProgress, MenuItem, Stack, Tab, Typography } from '@mui/material';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Settings2, UserRound } from 'lucide-react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { Avatar, Box, CircularProgress, Stack, Tab, Typography } from '@mui/material';
+import { UserRound } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
-import { Layout } from '../../components/layout';
-import { RichTextEditorBox } from '../../components/rich-text-editor';
 import { CircularButton } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
-import { useData } from '../../context/DataContext';
 import { useUserBackend } from '../../hooks/useUserBackend';
-import { StyledSelect, StyledTabs } from '../settings/SettingsMenus';
+import { StyledTabs } from '../settings/SettingsMenus';
 
 const Header = ({ headers, components }) => {
 	// const [menuState, setMenuState] = useState(headers[0].id);
@@ -31,8 +26,8 @@ const Header = ({ headers, components }) => {
 			<Box
 				sx={{
 					mb: 4,
-                    ml: 4.2,
-                    justifyContent: 'center',
+					ml: 4.2,
+					justifyContent: 'center',
 				}}
 			>
 				<StyledTabs
@@ -64,7 +59,7 @@ const Header = ({ headers, components }) => {
 			{/* Tab Content */}
 			<WhiteContainer noPadding>
 				<Box sx={{ padding: 2 }}>{components[tabValue]}</Box>
-            </WhiteContainer>
+			</WhiteContainer>
 		</Box>
 	);
 };
@@ -76,17 +71,15 @@ const profileSave = async (formData, profileData, updateUserProfile, refreshUser
 			updates[update[0]] = update[1];
 		});
 		setCircleLoading(true);
-		await updateUserProfile(updates)
-			.then(res => {
-				refreshUser(res.data)
-			});
+		await updateUserProfile(updates).then((res) => {
+			refreshUser(res.data);
+		});
 		setCircleLoading(false);
 		setLoading(true);
 	} catch (error) {
 		console.error('Error updating profile:  ', error);
 	}
 };
-
 
 // const profileSavePref = async (preferences, profileData, updateUser, refreshUser, setLoading, setCircleLoading) => {
 // 	try {
@@ -119,30 +112,26 @@ export const UserProfile = () => {
 		refreshUser();
 	}, []);
 
-    console.log(userAuthState)
+	console.log(userAuthState);
 
 	const refreshUser = (user = null) => {
 		if (user) {
-			setProfileData({...profileData, ...user});
-		}
-		else {
+			setProfileData({ ...profileData, ...user });
+		} else {
 			getUserById(userAuthState.user_id).then((res) => {
 				setProfileData(res.data);
 			});
 		}
-	}
-
+	};
 
 	useEffect(() => {
 		setComponents([<Account profileData={profileData} refreshUser={refreshUser} />, <Preferences />]);
 	}, [profileData]);
 
-	return (
-        <Header headers={headers} components={components} />
-	);
+	return <Header headers={headers} components={components} />;
 };
 
-const Account = ({refreshUser, profileData}) => {
+const Account = ({ refreshUser, profileData }) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const { updateUserProfile } = useUserBackend();
@@ -171,12 +160,12 @@ const Account = ({refreshUser, profileData}) => {
 			{Object.keys(formData).length !== 0 && (
 				<>
 					<Stack spacing={5} pb={4}>
-                        <Stack alignItems="center">
-                            <Avatar sx={{ width: 200, height: 200 }} variant='rounded'>
-                                <UserRound size={120} />
-                            </Avatar>
-                        </Stack>
-                        
+						<Stack alignItems='center'>
+							<Avatar sx={{ width: 200, height: 200 }} variant='rounded'>
+								<UserRound size={120} />
+							</Avatar>
+						</Stack>
+
 						<Stack spacing={2}>
 							<Stack direction='row' spacing={2} alignItems='center'>
 								<Typography variant='subtitle1' pr={14}>
@@ -193,12 +182,10 @@ const Account = ({refreshUser, profileData}) => {
 								</Typography>
 								<CustomFilledInput label='Email' name='email' sx={{ width: 430 }} value={formData.email} onChange={handleChange} />
 							</Stack>
-
 						</Stack>
 					</Stack>
 
-
-						{/* <Stack direction='row' spacing={2} alignItems='center'>
+					{/* <Stack direction='row' spacing={2} alignItems='center'>
 					<Typography variant='subtitle1' pr={24.2}>Default 2FA:</Typography>
 					<StyledSelect 
 						name='default_2FA' 
@@ -219,16 +206,17 @@ const Account = ({refreshUser, profileData}) => {
 						{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
 					</CircularButton>
 				</>
-			)} 
+			)}
 		</Box>
 	);
 };
 
 const Preferences = () => {
 	return (
-        <Stack maxWidth={455} alignItems='center'>
-            <Typography variant='subtitle1' width={455}>user preference</Typography>
-        </Stack>
+		<Stack maxWidth={455} alignItems='center'>
+			<Typography variant='subtitle1' width={455}>
+				user preference
+			</Typography>
+		</Stack>
 	);
 };
-
