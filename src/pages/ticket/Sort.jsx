@@ -66,7 +66,7 @@ export const Sort = ({ sorts, setSorts }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', pb: 2 }} height={500} >
-            <Box overflow={'scroll'} mb={2}>
+            <Box sx={{overflowY: 'auto'}} mb={2}>
                 <List>
                 {internalSorts.map((sort, idx) => (
                         <ListItem key={idx}>

@@ -33,6 +33,7 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 		var updates = [];
 		Object.entries(data).forEach((k) => {
 			var row = settingsData[k[0]];
+			console.log(row)
 			row.value = k[1];
 			updates.push(row);
 		});

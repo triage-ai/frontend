@@ -4,7 +4,7 @@ import { CircularButton } from '../../../components/sidebar';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useTemplateBackend } from '../../../hooks/useTemplateBackend';
-import { RichTextEditorBox } from '../../../components/rich-text-editor';
+import { extensions, RichTextEditorBox } from '../../../components/rich-text-editor';
 import { useEffect, useState } from 'react';
 
 
@@ -84,7 +84,7 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
     }
 
     const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: extensions,
 		content: formData?.body,
 		onUpdate({editor}) {
 			setFormData(p => ({
