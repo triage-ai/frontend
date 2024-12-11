@@ -29,7 +29,7 @@ export const ScheduleSelect = ({ handleInputChange, value }) => {
 				name="schedule_id"
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedSchedules}
 			/>

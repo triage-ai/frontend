@@ -30,7 +30,7 @@ export const DepartmentSelect = ({ handleInputChange, value, name }) => {
 				name={name ?? "dept_id"}
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedDepartments}
 			/>

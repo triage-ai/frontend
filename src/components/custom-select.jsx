@@ -32,6 +32,7 @@ export const CustomInput = styled((props) => (
 	'& label.Mui-focused': {
 		color: '#545555',
 	},
+	
 }));
 
 export const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -78,7 +79,7 @@ export const CustomSelect = ({
 	label,
 	options,
 	halfWidth,
-	addNewButton,
+	// addNewButton,
 	handleAddBtnClick,
 	hideEmptyOption,
 	...props
@@ -109,7 +110,7 @@ export const CustomSelect = ({
 				</MenuItem>
 			))}
 
-			{addNewButton && (
+			{/* {addNewButton && (
 				<Box sx={{ px: 2, pb: 1, pt: 2, mt: 1, borderTop: '1px solid #E5EFE9', textAlign: 'center' }}>
 					<Button
 						sx={{
@@ -133,7 +134,7 @@ export const CustomSelect = ({
 						Add {label.toLowerCase()}
 					</Button>
 				</Box>
-			)}
+			)} */}
 		</CustomInput>
 	);
 };

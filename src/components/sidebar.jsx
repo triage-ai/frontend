@@ -45,7 +45,7 @@ export const CircularButton = styled(Button)(() => ({
 		backgroundColor: '#29b866',
 	},
 	'& svg': {
-		marginRight: '6px',
+		// marginRight: '6px',
 		// marginBottom: 2,
 	},
 	'&:disabled': {

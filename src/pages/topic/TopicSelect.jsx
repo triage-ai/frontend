@@ -30,7 +30,7 @@ export const TopicSelect = ({ handleInputChange, value, name }) => {
 				name={name ?? "topic_id"}
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedTopics}
 			/>

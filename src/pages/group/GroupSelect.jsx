@@ -30,7 +30,7 @@ export const GroupSelect = ({ handleInputChange, value }) => {
 				name="group_id"
 				mb={2}
 				fullWidth
-				addNewButton
+				
 				handleAddBtnClick={openDialog}
 				options={formattedGroups}
 			/>

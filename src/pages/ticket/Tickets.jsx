@@ -187,7 +187,7 @@ export const Tickets = () => {
 		(newOpen, ticket = null) =>
 			() => {
 				if (newOpen) {
-					navigate('/tickets/' + ticket.ticket_id);
+					navigate('/tickets/id/' + ticket.ticket_id);
 				} else {
 					navigate('/tickets');
 				}
@@ -259,7 +259,13 @@ export const Tickets = () => {
 							Queue
 						</Typography>
 						<FormControl
-							sx={{ m: 1, minWidth: 120 }}
+							sx={{ 
+								m: 1,
+								minWidth: 120,
+								'& .MuiSelect-select': {
+									alignContent: 'center'
+								}
+							}}
 							size="small"
 						>
 							<Select
@@ -271,14 +277,18 @@ export const Tickets = () => {
 									<Box
 										display={'flex'}
 										alignItems={'center'}
+										height={'100%'}
+										sx={{
+
+										}}
 									>
-										{item && <Box
+										<Box
 											width={'6px'}
 											height={'6px'}
 											borderRadius={'6px'}
 											marginRight={1}
-											sx={{ backgroundColor: '#D9D9D9' }}
-										/>}
+											sx={{ backgroundColor: advancedSearchMode ? '#D9D9D9' : '#29b866' }}
+										/>
 
 										<Typography
 											variant="subtitle2"
@@ -349,7 +359,7 @@ export const Tickets = () => {
 							{loading ?
 								<TableRowsLoader
 									rowsNum={10}
-									colNum={5}
+									colNum={6}
 								/>
 								:
 								tickets.map(ticket => (

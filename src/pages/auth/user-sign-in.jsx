@@ -482,10 +482,10 @@ export const UserSignIn = () => {
 									value={password}
 									onChange={event => {
 										// if (validatePassword(password)) {
-										// 	setError(false);
-										// }
-										setPassword(event.target.value);
-									}}
+											// 	setError(false);
+											// }
+											setPassword(event.target.value);
+										}}
 								/>
 
 								<Button
@@ -525,17 +525,32 @@ export const UserSignIn = () => {
 								</Button>
 							</form>
 							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 5,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+										<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
+							</p>
+						<p
 							style={{
 								fontSize: '0.875rem',
 								fontWeight: 600,
 								color: '#1B1D1F',
 								letterSpacing: '-0.01em',
 								lineHeight: 1.2,
-								marginTop: 15,
+								marginTop: 0,
+								marginBottom: '10px',
 								textAlign: 'center',
 							}}
 						>
-						<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
+							Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
 						</p>
 						<p
 							style={{
@@ -549,7 +564,7 @@ export const UserSignIn = () => {
 								textAlign: 'center',
 							}}
 						>
-							Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
+							Looking for agent sign in? <Link underline='none' component='button' onClick={() => navigate('/agent/login')}>Click here</Link>
 						</p>
 						</header>
 					</div>
