@@ -15,7 +15,7 @@ import {
 	styled,
 } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
-import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
+import { ChevronDown, Mail, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
@@ -57,7 +57,7 @@ export const SearchTextField = styled('input')({
 export const Agents = () => {
 	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllGroups } = useGroupBackend();
-	const { getAllAgentsByDeptAndGroup } = useAgentBackend();
+	const { getAllAgentsByDeptAndGroup, resendConfirmationEmail } = useAgentBackend();
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
 	const [totalAgents, setTotalAgents] = useState(0);
@@ -150,6 +150,15 @@ export const Agents = () => {
 	const handleGroupChange = (e) => {
 		setGroup(e.target.value);
 	};
+
+	const resendEmail = (agent_id) => {
+		//Do some notification stuff here
+		resendConfirmationEmail(agent_id)
+		.catch(error => {
+			console.error(error);
+		});
+		// window.location.reload();
+	}
 
 	return (
 		<Layout
@@ -281,6 +290,9 @@ export const Agents = () => {
 							<TableCell>
 								<Typography variant='overline'>Phone</Typography>
 							</TableCell>
+							<TableCell>
+								<Typography variant='overline'>Status</Typography>
+							</TableCell>
 							<TableCell align='right'>
 								<Typography variant='overline'></Typography>
 							</TableCell>
@@ -306,9 +318,24 @@ export const Agents = () => {
 								<TableCell>{agent.department.name}</TableCell>
 								<TableCell>{agent.email}</TableCell>
 								<TableCell>{agent.phone}</TableCell>
+								<TableCell>{agent.status === 0 ? 'Complete' : 'Pending'}</TableCell>
 								<TableCell component='th' scope='row' align='right'>
 									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
-										{agentAuthState.isAdmin && (
+										{agent.status === 0 ? (
+											agentAuthState.isAdmin && (
+												<IconButton
+													sx={{
+														'&:hover': {
+															background: '#f3f6fa',
+															color: '#105293',
+														},
+													}}
+													onClick={() => handleDialogOpen(agent, 'edit')}
+												>
+													<Pencil size={18} />
+												</IconButton>
+											)
+										) : (
 											<IconButton
 												sx={{
 													'&:hover': {
@@ -316,9 +343,9 @@ export const Agents = () => {
 														color: '#105293',
 													},
 												}}
-												onClick={() => handleDialogOpen(agent, 'edit')}
+												onClick={() => resendEmail(agent.agent_id)}
 											>
-												<Pencil size={18} />
+												<Mail size={18} />
 											</IconButton>
 										)}
 

@@ -65,6 +65,21 @@ export const useAgentBackend = () => {
 		);
 	};
 
+	const registerAgent = async agentInfo => {
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + 'agent/register',
+			agentInfo,
+		);
+	};
+
+	const confirmToken = async token => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/confirm/${token}`);
+	};
+
+	const resendConfirmationEmail = async (agent_id) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/resend/${agent_id}`);
+	}
+
 	const removeAgent = async agentInfo => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -87,5 +102,5 @@ export const useAgentBackend = () => {
 		);
 	};
 
-	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent, getAgentById };
+	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent, getAgentById, confirmToken, registerAgent, resendConfirmationEmail };
 };

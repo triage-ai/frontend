@@ -1,10 +1,11 @@
 import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
-import { Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Mail, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
+import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
 import { useUserBackend } from '../../hooks/useUserBackend';
 import { AddUser } from './AddUser';
@@ -38,7 +39,7 @@ export const SearchTextField = styled('input')({
 });
 
 export const Users = () => {
-	const { getAllUsersBySearch } = useUserBackend();
+	const { getAllUsersBySearch, resendConfirmationEmail } = useUserBackend();
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
 	const [totalUsers, setTotalUsers] = useState(0);
@@ -48,6 +49,7 @@ export const Users = () => {
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
 	const [search, setSearch] = useState('');
+	const { agentAuthState, permissions } = useContext(AuthContext);
 
 	useEffect(() => {
 		refreshUsers();
@@ -69,6 +71,14 @@ export const Users = () => {
 		if (e.key === 'Enter') {
 			refreshUsers();
 		}
+	};
+
+	const resendEmail = (user_id) => {
+		//Do some notification here
+		resendConfirmationEmail(user_id).catch((error) => {
+			console.error(error);
+		});
+		// window.location.reload();
 	};
 
 	const refreshUsers = () => {
@@ -118,6 +128,7 @@ export const Users = () => {
 			buttonInfo={{
 				label: 'Add user',
 				icon: <UserRoundPlus size={20} />,
+				hidden: permissions.hasOwnProperty('user.create')
 			}}
 			AddResource={AddUser}
 			refreshResource={refreshUsers}
@@ -198,29 +209,45 @@ export const Users = () => {
 								<TableCell>{formatDate(user.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell component='th' scope='row' align='right'>
 									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
-										<IconButton
-											sx={{
-												'&:hover': {
-													background: '#f3f6fa',
-													color: '#105293',
-												},
-											}}
-											onClick={() => handleDialogOpen(user, 'edit')}
-										>
-											<Pencil size={18} />
-										</IconButton>
+										{user.status === 1 ? (
+											<IconButton
+												sx={{
+													'&:hover': {
+														background: '#f3f6fa',
+														color: '#105293',
+													},
+												}}
+												onClick={() => resendEmail(user.user_id)}
+											>
+												<Mail size={18} />
+											</IconButton>
+										) : permissions.hasOwnProperty('user.edit') && (
+												<IconButton
+													sx={{
+														'&:hover': {
+															background: '#f3f6fa',
+															color: '#105293',
+														},
+													}}
+													onClick={() => handleDialogOpen(user, 'edit')}
+												>
+													<Pencil size={18} />
+												</IconButton>
+										)}
 
-										<IconButton
-											sx={{
-												'&:hover': {
-													background: '#faf3f3',
-													color: '#921010',
-												},
-											}}
-											onClick={() => handleDialogOpen(user, 'delete')}
-										>
-											<Trash2 size={18} />
-										</IconButton>
+										{permissions.hasOwnProperty('user.delete') && (
+											<IconButton
+												sx={{
+													'&:hover': {
+														background: '#faf3f3',
+														color: '#921010',
+													},
+												}}
+												onClick={() => handleDialogOpen(user, 'delete')}
+											>
+												<Trash2 size={18} />
+											</IconButton>
+										)}
 									</Stack>
 								</TableCell>
 							</TableRow>

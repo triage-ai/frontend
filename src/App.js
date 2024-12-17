@@ -9,6 +9,7 @@ import { AuthContext } from "./context/AuthContext";
 import { Agents } from "./pages/agent/Agents";
 import { AgentSignIn } from "./pages/auth/agent-sign-in";
 import { UserEmailConfirmation } from "./pages/auth/user-email-confirmation";
+import { AgentConfirmation } from "./pages/auth/agent-confirmation";
 import { UserResetPassword } from "./pages/auth/user-reset-password";
 import { UserResetPasswordConfirmation } from "./pages/auth/user-reset-password-confirmation";
 import { UserResetPasswordForm } from "./pages/auth/user-reset-password-form";
@@ -120,8 +121,9 @@ function App() {
 			agentLogout()
 			userLogout()
 			navigate("/")
+			return error
 		}
-		return error;
+		throw error;
 	});
 
 	return (
@@ -170,6 +172,10 @@ function App() {
 						<Route
 							path="confirm_email/:token"
 							element={<UserEmailConfirmation />}
+						/>
+						<Route
+							path="confirm_agent_email/:token"
+							element={<AgentConfirmation />}
 						/>
 						<Route
 								path="user/tickets/:ticketId"

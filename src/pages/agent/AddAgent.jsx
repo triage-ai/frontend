@@ -97,14 +97,12 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		dept_id: '',
 		role_id: '',
 		email: '',
-		username: '',
 		phone: '',
 		firstname: '',
 		lastname: '',
 		signature: '',
 		timezone: '',
 		admin: 0,
-		password: '',
 	});
 
 	var timezoneOptions = Intl.supportedValuesOf('timeZone').map(t => ({ value: t, label: t }));
@@ -196,13 +194,13 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	};
 
 	const validateStep4 = () => {
-		const { email, username, password } = formData;
+		const { email } = formData;
 
 		if (editAgent) {
-			return email !== '' && username !== '';
+			return validateEmail(email);
 		}
 
-		return email !== '' && username !== '' && password !== '';
+		return validateEmail(email);
 	};
 
 	// Function to validate current step
@@ -231,6 +229,14 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 			return acc;
 		}, {});
 		return JSON.stringify(obj);
+	};
+
+	const validateEmail = email => {
+		return String(email)
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			);
 	};
 
 	const handleAction = () => {
@@ -434,31 +440,6 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 
 					<CustomFilledInput label='Email' onChange={handleInputChange} value={formData.email} name='email' mb={2} fullWidth />
 
-					<CustomFilledInput label='Username' onChange={handleInputChange} value={formData.username} name='username' mb={2} halfWidth mr={'2%'} />
-
-					{!editAgent && (
-						<CustomFilledInput
-							label='Password'
-							onChange={handleInputChange}
-							value={formData.password}
-							name='password'
-							halfWidth
-							type={showPassword ? 'text' : 'password'}
-							autoComplete='new-password'
-							endAdornment={
-								<InputAdornment position='end'>
-									<IconButton
-										aria-label='toggle password visibility'
-										onClick={handleClickShowPassword}
-										onMouseDown={(e) => e.preventDefault()}
-										edge='end'
-									>
-										{showPassword ? <EyeOff /> : <Eye />}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
-					)}
 				</Box>
 			)}
 
