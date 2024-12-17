@@ -209,19 +209,7 @@ export const Users = () => {
 								<TableCell>{formatDate(user.updated, 'MM-DD-YY hh:mm A')}</TableCell>
 								<TableCell component='th' scope='row' align='right'>
 									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
-										{user.status === 1 ? (
-											<IconButton
-												sx={{
-													'&:hover': {
-														background: '#f3f6fa',
-														color: '#105293',
-													},
-												}}
-												onClick={() => resendEmail(user.user_id)}
-											>
-												<Mail size={18} />
-											</IconButton>
-										) : permissions.hasOwnProperty('user.edit') && (
+										{permissions.hasOwnProperty('user.edit') && (
 												<IconButton
 													sx={{
 														'&:hover': {
