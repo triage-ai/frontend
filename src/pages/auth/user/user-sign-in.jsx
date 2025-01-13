@@ -1,15 +1,24 @@
 import React, { useContext, useState } from 'react';
-import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
+import '../../../App.css';
+import AppIcon from '../../../assets/app-icon-black.png';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
 
-import { Box, Button, CircularProgress, InputAdornment, TextField, Typography, styled } from '@mui/material';
+import {
+	Box,
+	Button,
+	CircularProgress,
+	InputAdornment,
+	Link,
+	TextField,
+	Typography,
+	styled,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
+import { AuthContext } from '../../../context/AuthContext';
+import { useSetAuthCookie } from '../../../hooks/useSetAuthCookie';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -64,8 +73,8 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const AgentSignIn = () => {
-	const { setAgentData } = useContext(AuthContext);
+export const UserSignIn = () => {
+	const { setUserData } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 
 	const [email, setEmail] = useState('');
@@ -75,30 +84,29 @@ export const AgentSignIn = () => {
 	const [passwordError, setPasswordError] = useState(false);
 
 	const navigate = useNavigate();
-	const { agentSignInEmailAndPassword } = useSetAuthCookie();
+	const { userSignInEmailAndPassword } = useSetAuthCookie();
 
-	const signIn = async (e) => {
+	const signIn = async e => {
 		e.preventDefault();
 		setLoading(true);
 
 		if (validateEmail(email) && password !== '') {
-			agentSignInEmailAndPassword(email, password)
+			userSignInEmailAndPassword(email, password)
 				// signInWithEmailAndPassword(auth, email, password)
-				.then((userCredential) => {
+				.then(userCredential => {
 					// getApiToken(userCredential);
-					const agentData = userCredential.data;
+					const userData = userCredential.data;
 
 					const authInfo = {
 						isAuth: true,
-						agent_id: agentData.agent_id,
-						isAdmin: agentData.admin === 1,
-						token: agentData.token,
+						user_id: userData.user_id,
+						token: userData.token,
 					};
-					setAgentData(authInfo);
+					setUserData(authInfo);
 					setLoading(false);
-					navigate('/tickets');
+					navigate('/user/tickets');
 				})
-				.catch((error) => {
+				.catch(error => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
 					console.error(errorCode, errorMessage);
@@ -113,7 +121,7 @@ export const AgentSignIn = () => {
 		}
 	};
 
-	const validateEmail = (email) => {
+	const validateEmail = email => {
 		return String(email)
 			.toLowerCase()
 			.match(
@@ -131,7 +139,10 @@ export const AgentSignIn = () => {
 				backgroundColor: '#FCFCFC',
 			}}
 		>
-			<Grid container spacing={{ xs: 6, md: 8, lg: 2 }}>
+			<Grid
+				container
+				spacing={{ xs: 6, md: 8, lg: 2 }}
+			>
 				<Grid
 					size={{ xs: 0, md: 6 }}
 					sx={{
@@ -150,7 +161,8 @@ export const AgentSignIn = () => {
 							sx={{
 								width: '100%',
 								height: '100%',
-								background: 'radial-gradient(130% 135% at 30% 10%, #0000 40%, #0da54d, #D0FFD6), #010312',
+								background:
+									'radial-gradient(130% 135% at 30% 10%, #0000 40%, #0da54d, #D0FFD6), #010312',
 								display: { xs: 'none', md: 'flex' },
 								flexDirection: 'column',
 								alignItems: 'flex-start',
@@ -163,7 +175,7 @@ export const AgentSignIn = () => {
 							}}
 						>
 							<Typography
-								variant='h1'
+								variant="h1"
 								sx={{
 									fontSize: '3.75rem',
 									background: 'radial-gradient(45% 100% at 50% 50%, #fff 50%, #ffffff80)',
@@ -181,93 +193,88 @@ export const AgentSignIn = () => {
 								Experience the future of customer support with Triage.ai
 							</Typography>
 
-							{/* <Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									gap: '22px',
-									// textAlign: 'left',
-									fontSize: '0.875rem',
-									color: '#7A8087',
-								}}
+							<Grid
+								container
+								spacing={2}
+								sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}
 							>
-								<div>
-									<span style={{ display: 'inline-block', fontWeight: '600' }}>
-										Build, Fine-Tune, Test, and Deploy your own ticket classification system in a few
-										clicks!
-									</span>
-								</div>
-
-								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
-									<CheckCircle
-										color="#8CC279"
-										size={22}
-										style={{ flexShrink: 0 }}
-									/>
-									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
-										Auto-labels tickets
-									</span>
-								</Box>
-
-								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
-									<CheckCircle
-										color="#8CC279"
-										size={22}
-										style={{ flexShrink: 0 }}
-									/>
-									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
-										Ensures accurate ticket assignment
-									</span>
-								</Box>
-
-								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
-									<CheckCircle
-										color="#8CC279"
-										size={22}
-										style={{ flexShrink: 0 }}
-									/>
-									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
-										Pinpoints areas experiencing a surge in ticket volume
-									</span>
-								</Box>
-							</Box> */}
-
-							<Grid container spacing={2} sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}>
-								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
+								<Grid
+									size={{ xs: 4 }}
+									sx={{ textAlign: 'left' }}
+								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Tag color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
-										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
+										<Tag
+											color="#fff"
+											size={16}
+											strokeWidth={2.2}
+											style={{ opacity: 0.6, marginRight: '0.4rem' }}
+										/>
+										<Typography
+											variant="subtitle1"
+											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
+										>
 											Labels tickets
 										</Typography>
 									</Box>
 
-									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
+									<Typography
+										variant="body2"
+										sx={{ color: '#FFF', opacity: 0.6 }}
+									>
 										Triage AI automatically labels your tickets to streamline your support process
 									</Typography>
 								</Grid>
 
-								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
+								<Grid
+									size={{ xs: 4 }}
+									sx={{ textAlign: 'left' }}
+								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Split color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
-										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
+										<Split
+											color="#fff"
+											size={16}
+											strokeWidth={2.2}
+											style={{ opacity: 0.6, marginRight: '0.4rem' }}
+										/>
+										<Typography
+											variant="subtitle1"
+											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
+										>
 											Assigns tickets
 										</Typography>
 									</Box>
 
-									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
+									<Typography
+										variant="body2"
+										sx={{ color: '#FFF', opacity: 0.6 }}
+									>
 										Ensures that tickets are accurately assigned to the appropriate members
 									</Typography>
 								</Grid>
 
-								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
+								<Grid
+									size={{ xs: 4 }}
+									sx={{ textAlign: 'left' }}
+								>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Activity color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
-										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
+										<Activity
+											color="#fff"
+											size={16}
+											strokeWidth={2.2}
+											style={{ opacity: 0.6, marginRight: '0.4rem' }}
+										/>
+										<Typography
+											variant="subtitle1"
+											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
+										>
 											Identifies surges
 										</Typography>
 									</Box>
 
-									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
+									<Typography
+										variant="body2"
+										sx={{ color: '#FFF', opacity: 0.6 }}
+									>
 										Pinpoints areas with an increased ticket activity for proactive management
 									</Typography>
 								</Grid>
@@ -286,7 +293,7 @@ export const AgentSignIn = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className='App-header'>
+						<header className="App-header">
 							<Box
 								sx={{
 									width: '100%',
@@ -301,11 +308,19 @@ export const AgentSignIn = () => {
 								}}
 							>
 								<Box sx={{ display: { xs: 'none', md: 'block' } }}>
-									<img src={logo} className='App-logo' alt='logo' />
+									<img
+										src={logo}
+										className="App-logo"
+										alt="logo"
+									/>
 								</Box>
 
 								<Box sx={{ display: { xs: 'block', md: 'none' } }}>
-									<img src={logoBlack} className='App-logo' alt='logo' />
+									<img
+										src={logoBlack}
+										className="App-logo"
+										alt="logo"
+									/>
 								</Box>
 
 								{/* <Typography
@@ -318,9 +333,9 @@ export const AgentSignIn = () => {
 
 							<img
 								src={AppIcon}
-								className='App-logo'
+								className="App-logo"
 								// style={{ width: '0px' }}
-								alt='logo'
+								alt="logo"
 							/>
 
 							<h1
@@ -333,7 +348,7 @@ export const AgentSignIn = () => {
 									marginBottom: '30px',
 								}}
 							>
-								Agent Sign in
+								User Sign in
 							</h1>
 
 							{/* <p
@@ -418,27 +433,27 @@ export const AgentSignIn = () => {
 								Sign in with email and password
 							</p>
 
-							<form onSubmit={(e) => signIn(e)}>
+							<form onSubmit={e => signIn(e)}>
 								<CustomTextField
-									label=''
-									id='email'
-									autoComplete='username'
+									label=""
+									id="email"
+									autoComplete="username"
 									sx={{
 										mb: 1,
 										'& .MuiInputBase-root': {
 											border: error ? '2px solid #ff7474' : '2px solid transparent',
 										},
 									}}
-									placeholder='Your email'
+									placeholder="Your email"
 									InputProps={{
 										startAdornment: (
-											<InputAdornment position='start'>
-												<Mail color='#575757' />
+											<InputAdornment position="start">
+												<Mail color="#575757" />
 											</InputAdornment>
 										),
 									}}
 									value={email}
-									onChange={(event) => {
+									onChange={event => {
 										if (validateEmail(email)) {
 											setError(false);
 										}
@@ -447,30 +462,30 @@ export const AgentSignIn = () => {
 								/>
 
 								<CustomTextField
-									label=''
-									id='password'
-									type='password'
-									autoComplete='current-password'
+									label=""
+									id="password"
+									type="password"
+									autoComplete="current-password"
 									sx={{
 										'& .MuiInputBase-root': {
 											border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
 										},
 									}}
-									placeholder='Your password'
+									placeholder="Your password"
 									InputProps={{
 										startAdornment: (
-											<InputAdornment position='start'>
-												<Lock color='#575757' />
+											<InputAdornment position="start">
+												<Lock color="#575757" />
 											</InputAdornment>
 										),
 									}}
 									value={password}
-									onChange={(event) => {
+									onChange={event => {
 										// if (validatePassword(password)) {
-										// 	setError(false);
-										// }
-										setPassword(event.target.value);
-									}}
+											// 	setError(false);
+											// }
+											setPassword(event.target.value);
+										}}
 								/>
 
 								<Button
@@ -495,19 +510,62 @@ export const AgentSignIn = () => {
 											opacity: 0.4,
 										},
 									}}
-									type='submit'
+									type="submit"
 									disabled={loading || !validateEmail(email) || password === ''}
 								>
-									{loading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Sign in'}
+									{loading ? (
+										<CircularProgress
+											size={22}
+											thickness={5}
+											sx={{ color: '#FFF' }}
+										/>
+									) : (
+										'Sign in'
+									)}
 								</Button>
 							</form>
-
-							{/* <Typography
-								variant="caption"
-								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 5,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
 							>
-								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
-							</Typography> */}
+										<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
+							</p>
+						<p
+							style={{
+								fontSize: '0.875rem',
+								fontWeight: 600,
+								color: '#1B1D1F',
+								letterSpacing: '-0.01em',
+								lineHeight: 1.2,
+								marginTop: 0,
+								marginBottom: '10px',
+								textAlign: 'center',
+							}}
+						>
+							Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
+						</p>
+						<p
+							style={{
+								fontSize: '0.875rem',
+								fontWeight: 600,
+								color: '#1B1D1F',
+								letterSpacing: '-0.01em',
+								lineHeight: 1.2,
+								marginTop: 0,
+								marginBottom: '20px',
+								textAlign: 'center',
+							}}
+						>
+							Looking for agent sign in? <Link underline='none' component='button' onClick={() => navigate('/agent/login')}>Click here</Link>
+						</p>
 						</header>
 					</div>
 				</Grid>

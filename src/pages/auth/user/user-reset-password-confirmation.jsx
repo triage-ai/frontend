@@ -1,17 +1,17 @@
 import {
-	Box, CircularProgress, Link,
-	TextField,
+	Box,
+	Button, TextField,
 	Typography,
 	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Split, Tag } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import { Activity, CheckCircle, Split, Tag } from 'lucide-react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -66,29 +66,18 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserEmailConfirmation = () => {
-
-	const { token } = useParams()
+export const UserResetPasswordConfirmation = () => {
 
 	const { user_id } = useParams()
-	const { confirmToken } = useUserBackend()
+	const { resendResetPasswordEmail } = useUserBackend()
 
-	const [loading, setLoading] = useState(true)
-	const [status, setStatus] = useState(0)
-
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		confirmToken(token)
-			.then(res => {
-				setLoading(false)
-				setStatus(1)
-			})
-			.catch(err => {
-				setLoading(false)
-				console.error(err)
-			})
-	}, [])
+	const resendEmail = () => {
+		resendResetPasswordEmail(user_id)
+		.catch(error => {
+			console.error(error);
+		});
+		window.location.reload();
+	}
 
 	return (
 		<Box
@@ -350,32 +339,64 @@ export const UserEmailConfirmation = () => {
 								alt="logo"
 							/> */}
 
-							{/* <CheckCircle size={60} color='#34b233' /> */}
+							<CheckCircle size={60} color='#34b233' />
+							<h5
+								style={{
+									// fontSize: '0.95rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: '20px',
+									marginBottom: 0,
+									textAlign: 'center',
+								}}
+							>
+								Check Your Email
+							</h5>
 
-							{loading ? <CircularProgress
-								size={80}
-								thickness={5}
-								sx={{ color: '#9A9FA5' }}
-							/> :
-								<h5
-									style={{
-										// fontSize: '0.95rem',
+							<p
+								style={{
+									fontSize: '0.8rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: '10px',
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+								Follow the steps in the confirmation sent to your email
+							</p>
+
+							<Button
+									sx={{
+										backgroundColor: '#22874E',
+										color: '#FFF',
+										borderRadius: '12px',
+										fontSize: '0.9375rem',
 										fontWeight: 600,
-										color: '#1B1D1F',
-										letterSpacing: '-0.01em',
-										lineHeight: 1.2,
-										marginTop: '20px',
-										marginBottom: 0,
-										textAlign: 'center',
+										lineHeight: 1,
+										textTransform: 'unset',
+										padding: '16.5px 10px',
+										marginTop: '12px',
+										marginBottom: '28px',
+										transition: 'all 0.3s',
+										'&:hover': {
+											backgroundColor: '#29b866',
+										},
+										'&:disabled': {
+											color: 'unset',
+											opacity: 0.4,
+										},
 									}}
+									onClick={() => resendEmail()}
 								>
-									{status === 0 ? 'Unable to confirm email' : 'You have successfully confirmed your account!'}
-								</h5>}
+									Resend Email
+								</Button>
 
-								{!loading && status === 1 &&
-									<Link component='button' onClick={() => navigate('/user/login')}>Sign in</Link>
-								}
-
+						
 						</header>
 					</div>
 				</Grid>

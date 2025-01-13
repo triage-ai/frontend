@@ -27,6 +27,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
         description: '',
         title: '',
         topic_id: '',
+        source: 'native',
         form_id: null,
     });
 

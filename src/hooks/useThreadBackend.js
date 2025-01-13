@@ -20,7 +20,21 @@ export const useThreadsBackend = () => {
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user', threadInfo, config);
 	};
 
-	return { createThreadEntry, createThreadEntryForUser };
+	const threadEntryAgentEmailReply = async (threadInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/agent_attachment_reply', threadInfo, config);
+	};
+
+	const send_attachment_email = async (emailInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+		return axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/send_attachment_reply', emailInfo, config);
+	};
+
+	return { createThreadEntry, createThreadEntryForUser, threadEntryAgentEmailReply, send_attachment_email };
 
 	// const getAllOpenTickets = async () => {
 	// 	const config = {

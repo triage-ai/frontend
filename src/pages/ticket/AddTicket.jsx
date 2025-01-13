@@ -122,6 +122,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 			topic_id: formData.topic_id ? formData.topic_id : null,
 			group_id: formData.group_id ? formData.group_id : null,
 			due_date: formData.due_date,
+			source: 'native',
 			form_values: form_values
 		}
 	}

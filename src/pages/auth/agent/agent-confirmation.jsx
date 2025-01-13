@@ -3,12 +3,12 @@ import Grid from '@mui/material/Grid2';
 import { Activity, Eye, EyeOff, Split, Tag } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { CustomFilledInput } from '../../components/custom-input';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
-import { CircularButton } from '../../components/sidebar';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { useAgentBackend } from '../../../hooks/useAgentBackend';
+import { CircularButton } from '../../../components/sidebar';
 
 export const AgentConfirmation = () => {
 	const { token } = useParams();

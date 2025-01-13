@@ -1,17 +1,12 @@
-import {
-	Box,
-	Button, InputAdornment, TextField,
-	Typography,
-	styled
-} from '@mui/material';
+import { Box, Button, InputAdornment, TextField, Typography, styled } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Activity, Mail, Split, Tag } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import { useAgentBackend } from '../../../hooks/useAgentBackend';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -66,17 +61,15 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserResetPassword = () => {
-
-
-	const { sendResetPasswordEmail } = useUserBackend()
+export const AgentResetPassword = () => {
+	const { sendResetPasswordEmail } = useAgentBackend();
 
 	const [email, setEmail] = useState('');
 	const [error, setError] = useState(false);
 
 	const navigate = useNavigate();
 
-	const validateEmail = email => {
+	const validateEmail = (email) => {
 		return String(email)
 			.toLowerCase()
 			.match(
@@ -86,11 +79,11 @@ export const UserResetPassword = () => {
 
 	const sendResetPassword = () => {
 		sendResetPasswordEmail(email)
-		.then(res => {
-			navigate('/reset_password/confirmation/' + res.data.user_id)
-		})
-		.catch(err => console.error(err))
-	}
+			.then((res) => {
+				navigate('/agent/reset_password/confirmation/' + res.data.agent_id);
+			})
+			.catch((err) => console.error(err));
+	};
 
 	return (
 		<Box
@@ -102,10 +95,7 @@ export const UserResetPassword = () => {
 				backgroundColor: '#FCFCFC',
 			}}
 		>
-			<Grid
-				container
-				spacing={{ xs: 6, md: 8, lg: 2 }}
-			>
+			<Grid container spacing={{ xs: 6, md: 8, lg: 2 }}>
 				<Grid
 					size={{ xs: 0, md: 6 }}
 					sx={{
@@ -124,8 +114,7 @@ export const UserResetPassword = () => {
 							sx={{
 								width: '100%',
 								height: '100%',
-								background:
-									'radial-gradient(130% 135% at 30% 10%, #0000 40%, #0da54d, #D0FFD6), #010312',
+								background: 'radial-gradient(130% 135% at 30% 10%, #0000 40%, #0da54d, #D0FFD6), #010312',
 								display: { xs: 'none', md: 'flex' },
 								flexDirection: 'column',
 								alignItems: 'flex-start',
@@ -138,7 +127,7 @@ export const UserResetPassword = () => {
 							}}
 						>
 							<Typography
-								variant="h1"
+								variant='h1'
 								sx={{
 									fontSize: '3.75rem',
 									background: 'radial-gradient(45% 100% at 50% 50%, #fff 50%, #ffffff80)',
@@ -207,88 +196,42 @@ export const UserResetPassword = () => {
 								</Box>
 							</Box> */}
 
-							<Grid
-								container
-								spacing={2}
-								sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}
-							>
-								<Grid
-									size={{ xs: 4 }}
-									sx={{ textAlign: 'left' }}
-								>
+							<Grid container spacing={2} sx={{ marginTop: '1.5rem', display: { xs: 'none', lg: 'flex' } }}>
+								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Tag
-											color="#fff"
-											size={16}
-											strokeWidth={2.2}
-											style={{ opacity: 0.6, marginRight: '0.4rem' }}
-										/>
-										<Typography
-											variant="subtitle1"
-											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
-										>
+										<Tag color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
+										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
 											Labels tickets
 										</Typography>
 									</Box>
 
-									<Typography
-										variant="body2"
-										sx={{ color: '#FFF', opacity: 0.6 }}
-									>
+									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
 										Triage AI automatically labels your tickets to streamline your support process
 									</Typography>
 								</Grid>
 
-								<Grid
-									size={{ xs: 4 }}
-									sx={{ textAlign: 'left' }}
-								>
+								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Split
-											color="#fff"
-											size={16}
-											strokeWidth={2.2}
-											style={{ opacity: 0.6, marginRight: '0.4rem' }}
-										/>
-										<Typography
-											variant="subtitle1"
-											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
-										>
+										<Split color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
+										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
 											Assigns tickets
 										</Typography>
 									</Box>
 
-									<Typography
-										variant="body2"
-										sx={{ color: '#FFF', opacity: 0.6 }}
-									>
+									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
 										Ensures that tickets are accurately assigned to the appropriate members
 									</Typography>
 								</Grid>
 
-								<Grid
-									size={{ xs: 4 }}
-									sx={{ textAlign: 'left' }}
-								>
+								<Grid size={{ xs: 4 }} sx={{ textAlign: 'left' }}>
 									<Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.2rem' }}>
-										<Activity
-											color="#fff"
-											size={16}
-											strokeWidth={2.2}
-											style={{ opacity: 0.6, marginRight: '0.4rem' }}
-										/>
-										<Typography
-											variant="subtitle1"
-											sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}
-										>
+										<Activity color='#fff' size={16} strokeWidth={2.2} style={{ opacity: 0.6, marginRight: '0.4rem' }} />
+										<Typography variant='subtitle1' sx={{ color: '#FFF', lineHeight: 1.25, fontWeight: 500 }}>
 											Identifies surges
 										</Typography>
 									</Box>
 
-									<Typography
-										variant="body2"
-										sx={{ color: '#FFF', opacity: 0.6 }}
-									>
+									<Typography variant='body2' sx={{ color: '#FFF', opacity: 0.6 }}>
 										Pinpoints areas with an increased ticket activity for proactive management
 									</Typography>
 								</Grid>
@@ -307,7 +250,7 @@ export const UserResetPassword = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header">
+						<header className='App-header'>
 							<Box
 								sx={{
 									width: '100%',
@@ -322,19 +265,11 @@ export const UserResetPassword = () => {
 								}}
 							>
 								<Box sx={{ display: { xs: 'none', md: 'block' } }}>
-									<img
-										src={logo}
-										className="App-logo"
-										alt="logo"
-									/>
+									<img src={logo} className='App-logo' alt='logo' />
 								</Box>
 
 								<Box sx={{ display: { xs: 'block', md: 'none' } }}>
-									<img
-										src={logoBlack}
-										className="App-logo"
-										alt="logo"
-									/>
+									<img src={logoBlack} className='App-logo' alt='logo' />
 								</Box>
 
 								{/* <Typography
@@ -380,25 +315,25 @@ export const UserResetPassword = () => {
 							</p>
 
 							<CustomTextField
-								label=""
-								id="email"
-								autoComplete="username"
+								label=''
+								id='email'
+								autoComplete='username'
 								sx={{
 									mb: 1,
 									'& .MuiInputBase-root': {
 										border: error ? '2px solid #ff7474' : '2px solid transparent',
 									},
 								}}
-								placeholder="Your email"
+								placeholder='Your email'
 								InputProps={{
 									startAdornment: (
-										<InputAdornment position="start">
-											<Mail color="#575757" />
+										<InputAdornment position='start'>
+											<Mail color='#575757' />
 										</InputAdornment>
 									),
 								}}
 								value={email}
-								onChange={event => {
+								onChange={(event) => {
 									if (validateEmail(email)) {
 										setError(false);
 									}
@@ -433,7 +368,6 @@ export const UserResetPassword = () => {
 							>
 								Reset password
 							</Button>
-
 						</header>
 					</div>
 				</Grid>

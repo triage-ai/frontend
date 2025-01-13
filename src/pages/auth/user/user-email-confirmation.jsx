@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-
 import {
-	Box,
-	Button,
-	CircularProgress, TextField,
+	Box, CircularProgress, Link,
+	TextField,
 	Typography,
 	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Activity, Split, Tag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -69,59 +66,29 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserSignUp = () => {
-	const [loading, setLoading] = useState(false);
+export const UserEmailConfirmation = () => {
 
-	const [email, setEmail] = useState('');
-	const [error, setError] = useState(false);
+	const { token } = useParams()
 
-	const [firstname, setFirstname] = useState('');
-	const [lastname, setLastname] = useState('')
+	const { user_id } = useParams()
+	const { confirmToken } = useUserBackend()
 
-	const [password, setPassword] = useState('');
-	const [passwordError, setPasswordError] = useState(false);
-
-	const { registerUser } = useUserBackend();
+	const [loading, setLoading] = useState(true)
+	const [status, setStatus] = useState(0)
 
 	const navigate = useNavigate();
 
-	const signIn = async e => {
-		e.preventDefault();
-		setLoading(true);
-
-		if (validateEmail(email) && password !== '' && firstname !== '' && lastname !== '') {
-			registerUser({email, password, firstname, lastname})
-				.then(res => {
-					setLoading(false);
-					navigate('/signup/confirmation/' + res.data.user_id);
-				})
-				.catch(error => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					console.error(errorCode, errorMessage);
-					setLoading(false);
-				});
-
-		} else if (!validateEmail(email)) {
-			setError(true);
-			setLoading(false);
-		} else if (password === '') {
-			setPasswordError(true);
-			setLoading(false);
-		}
-	};
-
-	const validateEmail = email => {
-		return String(email)
-			.toLowerCase()
-			.match(
-				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-			);
-	};
-
-	const validateName = input => {
-		return input !== ''
-	}
+	useEffect(() => {
+		confirmToken(token)
+			.then(res => {
+				setLoading(false)
+				setStatus(1)
+			})
+			.catch(err => {
+				setLoading(false)
+				console.error(err)
+			})
+	}, [])
 
 	return (
 		<Box
@@ -338,7 +305,7 @@ export const UserSignUp = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header">
+						<header className="App-header-wide">
 							<Box
 								sx={{
 									width: '100%',
@@ -376,257 +343,39 @@ export const UserSignUp = () => {
 								</Typography> */}
 							</Box>
 
-							<img
+							{/* <img
 								src={AppIcon}
 								className="App-logo"
 								// style={{ width: '0px' }}
 								alt="logo"
-							/>
+							/> */}
 
-							<h1
-								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
-								}}
-							>
-								User Sign Up
-							</h1>
+							{/* <CheckCircle size={60} color='#34b233' /> */}
 
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign in with a provider
-							</p>
-
-							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
-								<ProviderButton onClick={loginWithSAML}>
-									<img
-										src={microsoftIcon}
-										alt="Microsoft Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Microsoft
-									</span>
-								</ProviderButton>
-
-								<ProviderButton>
-									<img
-										src={googleIcon}
-										alt="Google Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Google
-									</span>
-								</ProviderButton>
-							</Box>
-
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
-
-							{/* <span
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: '32px',
-									marginBottom: '25px',
-								}}
-							>
-								Or continue with email and password
-							</span> */}
-
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign up by entering your information
-							</p>
-
-							<form onSubmit={e => signIn(e)}>
-							<CustomTextField
-									label=""
-									id="firstname"
-									autoComplete="given-name"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="First name"
-									value={firstname}
-									onChange={event => {
-										if (validateName(email)) {
-											setError(false);
-										}
-										setFirstname(event.target.value);
-									}}
-								/>
-								<CustomTextField
-									label=""
-									id="lastname"
-									autoComplete="family-name"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Last name"
-									value={lastname}
-									onChange={event => {
-										if (validateName(email)) {
-											setError(false);
-										}
-										setLastname(event.target.value);
-									}}
-								/>
-								<CustomTextField
-									label=""
-									id="email"
-									autoComplete="username"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Your email"
-									// InputProps={{
-									// 	startAdornment: (
-									// 		<InputAdornment position="start">
-									// 			<Mail color="#575757" />
-									// 		</InputAdornment>
-									// 	),
-									// }}
-									value={email}
-									onChange={event => {
-										if (validateEmail(email)) {
-											setError(false);
-										}
-										setEmail(event.target.value);
-									}}
-								/>
-
-								<CustomTextField
-									label=""
-									id="password"
-									type="password"
-									autoComplete="current-password"
-									sx={{
-										'& .MuiInputBase-root': {
-											border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Your password"
-									// InputProps={{
-									// 	startAdornment: (
-									// 		<InputAdornment position="start">
-									// 			<Lock color="#575757" />
-									// 		</InputAdornment>
-									// 	),
-									// }}
-									value={password}
-									onChange={event => {
-										// if (validatePassword(password)) {
-										// 	setError(false);
-										// }
-										setPassword(event.target.value);
-									}}
-								/>
-								<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 15,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-							</p>
-
-								<Button
-									sx={{
-										backgroundColor: '#22874E',
-										color: '#FFF',
-										borderRadius: '12px',
-										width: '100%',
-										fontSize: '0.9375rem',
+							{loading ? <CircularProgress
+								size={80}
+								thickness={5}
+								sx={{ color: '#9A9FA5' }}
+							/> :
+								<h5
+									style={{
+										// fontSize: '0.95rem',
 										fontWeight: 600,
-										lineHeight: 1,
-										textTransform: 'unset',
-										padding: '16.5px 10px',
-										marginTop: '12px',
-										marginBottom: '28px',
-										transition: 'all 0.3s',
-										'&:hover': {
-											backgroundColor: '#29b866',
-										},
-										'&:disabled': {
-											color: 'unset',
-											opacity: 0.4,
-										},
+										color: '#1B1D1F',
+										letterSpacing: '-0.01em',
+										lineHeight: 1.2,
+										marginTop: '20px',
+										marginBottom: 0,
+										textAlign: 'center',
 									}}
-									type="submit"
-									disabled={loading || !validateEmail(email) || password === '' || firstname === '' || lastname === ''}
 								>
-									{loading ? (
-										<CircularProgress
-											size={22}
-											thickness={5}
-											sx={{ color: '#FFF' }}
-										/>
-									) : (
-										'Sign up'
-									)}
-								</Button>
-							</form>
+									{status === 0 ? 'Unable to confirm email' : 'You have successfully confirmed your account!'}
+								</h5>}
 
-							{/* <Typography
-								variant="caption"
-								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
-							>
-								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
-							</Typography> */}
+								{!loading && status === 1 &&
+									<Link component='button' onClick={() => navigate('/user/login')}>Sign in</Link>
+								}
+
 						</header>
 					</div>
 				</Grid>
