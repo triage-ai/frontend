@@ -39,6 +39,7 @@ import { Settings } from './pages/settings/Settings';
 import { AgentMenu, CompanyMenu, KnowledgebaseMenu, SystemMenu, TaskMenu, TicketMenu, UserMenu } from './pages/settings/SettingsMenus';
 import { Tickets } from './pages/ticket/Tickets';
 import { TicketView } from './pages/ticket/TicketView';
+import { GuestTicketConfirmation } from './pages/ticket/GuestTicketConfirmation';
 import { Topics } from './pages/topic/Topics';
 
 const theme = createTheme({
@@ -209,6 +210,10 @@ function App() {
 										<TicketView />
 									</ProtectedRoute>
 								}
+							/>
+							<Route 
+								path='guest/confirm_ticket/:token' 
+								element={<GuestTicketConfirmation />} 
 							/>
 							<Route
 								path='settings/system'

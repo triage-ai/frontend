@@ -70,7 +70,6 @@ export const UserEmailConfirmation = () => {
 
 	const { token } = useParams()
 
-	const { user_id } = useParams()
 	const { confirmToken } = useUserBackend()
 
 	const [loading, setLoading] = useState(true)
