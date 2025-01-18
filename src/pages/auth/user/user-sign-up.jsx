@@ -1,25 +1,21 @@
-import React, { useContext, useState } from 'react';
-import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
+import React, { useState } from 'react';
+import '../../../App.css';
+import AppIcon from '../../../assets/app-icon-black.png';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
 
 import {
-	Alert,
 	Box,
 	Button,
-	CircularProgress,
-	InputAdornment,
-	Link,
-	TextField,
+	CircularProgress, TextField,
 	Typography,
-	styled,
+	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
+import { Activity, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
+import { useUserBackend } from '../../../hooks/useUserBackend';
+
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -74,46 +70,39 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserSignIn = () => {
-	const { setUserData } = useContext(AuthContext);
+export const UserSignUp = () => {
 	const [loading, setLoading] = useState(false);
 
 	const [email, setEmail] = useState('');
 	const [error, setError] = useState(false);
 
+	const [firstname, setFirstname] = useState('');
+	const [lastname, setLastname] = useState('')
+
 	const [password, setPassword] = useState('');
 	const [passwordError, setPasswordError] = useState(false);
 
-	const navigate = useNavigate();
-	const { userSignInEmailAndPassword } = useSetAuthCookie();
+	const { registerUser } = useUserBackend();
 
-	const [notification, setNotification] = useState('')
+	const navigate = useNavigate();
 
 	const signIn = async e => {
 		e.preventDefault();
 		setLoading(true);
 
-		if (validateEmail(email) && password !== '') {
-			userSignInEmailAndPassword(email, password)
-				.then(userCredential => {
-					const userData = userCredential.data;
-
-					const authInfo = {
-						isAuth: true,
-						user_id: userData.user_id,
-						token: userData.token,
-					};
-					setUserData(authInfo);
+		if (validateEmail(email) && password !== '' && firstname !== '' && lastname !== '') {
+			registerUser({email, password, firstname, lastname})
+				.then(res => {
 					setLoading(false);
-					navigate('/user/tickets');
+					navigate('/signup/confirmation/' + res.data.user_id);
 				})
-				.catch((error) => {
+				.catch(error => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
 					console.error(errorCode, errorMessage);
-					setNotification(error.response?.data?.detail);
 					setLoading(false);
 				});
+
 		} else if (!validateEmail(email)) {
 			setError(true);
 			setLoading(false);
@@ -130,6 +119,10 @@ export const UserSignIn = () => {
 				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 			);
 	};
+
+	const validateName = input => {
+		return input !== ''
+	}
 
 	return (
 		<Box
@@ -194,6 +187,57 @@ export const UserSignIn = () => {
 							>
 								Experience the future of customer support with Triage.ai
 							</Typography>
+
+							{/* <Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '22px',
+									// textAlign: 'left',
+									fontSize: '0.875rem',
+									color: '#7A8087',
+								}}
+							>
+								<div>
+									<span style={{ display: 'inline-block', fontWeight: '600' }}>
+										Build, Fine-Tune, Test, and Deploy your own ticket classification system in a few
+										clicks!
+									</span>
+								</div>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Auto-labels tickets
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Ensures accurate ticket assignment
+									</span>
+								</Box>
+
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+									<CheckCircle
+										color="#8CC279"
+										size={22}
+										style={{ flexShrink: 0 }}
+									/>
+									<span style={{ fontWeight: '500', marginLeft: '12px', marginTop: '2px' }}>
+										Pinpoints areas experiencing a surge in ticket volume
+									</span>
+								</Box>
+							</Box> */}
 
 							<Grid
 								container
@@ -335,22 +379,22 @@ export const UserSignIn = () => {
 
 							<img
 								src={AppIcon}
-								className='App-logo'
+								className="App-logo"
 								// style={{ width: '0px' }}
-								alt='logo'
+								alt="logo"
 							/>
 
 							<h1
 								style={{
-									fontSize: '2rem',
-									fontWeight: 500,
+									fontSize: '3rem',
+									fontWeight: 600,
 									color: '#1B1D1F',
 									letterSpacing: '-0.03em',
-									marginTop: '20px',
-									marginBottom: '20px',
+									marginTop: '30px',
+									marginBottom: '30px',
 								}}
 							>
-								User Sign in
+								User Sign Up
 							</h1>
 
 							{/* <p
@@ -420,13 +464,60 @@ export const UserSignIn = () => {
 								Or continue with email and password
 							</span> */}
 
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 0,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+								Sign up by entering your information
+							</p>
 
 							<form onSubmit={e => signIn(e)}>
-								{notification &&
-									<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{ mb: 2, border: '1px solid rgb(239, 83, 80);' }} >
-										{notification}
-									</Alert>
-								}
+							<CustomTextField
+									label=""
+									id="firstname"
+									autoComplete="given-name"
+									sx={{
+										mb: 1,
+										'& .MuiInputBase-root': {
+											border: error ? '2px solid #ff7474' : '2px solid transparent',
+										},
+									}}
+									placeholder="First name"
+									value={firstname}
+									onChange={event => {
+										if (validateName(email)) {
+											setError(false);
+										}
+										setFirstname(event.target.value);
+									}}
+								/>
+								<CustomTextField
+									label=""
+									id="lastname"
+									autoComplete="family-name"
+									sx={{
+										mb: 1,
+										'& .MuiInputBase-root': {
+											border: error ? '2px solid #ff7474' : '2px solid transparent',
+										},
+									}}
+									placeholder="Last name"
+									value={lastname}
+									onChange={event => {
+										if (validateName(email)) {
+											setError(false);
+										}
+										setLastname(event.target.value);
+									}}
+								/>
 								<CustomTextField
 									label=""
 									id="email"
@@ -438,13 +529,13 @@ export const UserSignIn = () => {
 										},
 									}}
 									placeholder="Your email"
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position="start">
-												<Mail color="#575757" />
-											</InputAdornment>
-										),
-									}}
+									// InputProps={{
+									// 	startAdornment: (
+									// 		<InputAdornment position="start">
+									// 			<Mail color="#575757" />
+									// 		</InputAdornment>
+									// 	),
+									// }}
 									value={email}
 									onChange={event => {
 										if (validateEmail(email)) {
@@ -465,13 +556,13 @@ export const UserSignIn = () => {
 										},
 									}}
 									placeholder="Your password"
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position="start">
-												<Lock color="#575757" />
-											</InputAdornment>
-										),
-									}}
+									// InputProps={{
+									// 	startAdornment: (
+									// 		<InputAdornment position="start">
+									// 			<Lock color="#575757" />
+									// 		</InputAdornment>
+									// 	),
+									// }}
 									value={password}
 									onChange={event => {
 										// if (validatePassword(password)) {
@@ -480,6 +571,19 @@ export const UserSignIn = () => {
 										setPassword(event.target.value);
 									}}
 								/>
+								<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 15,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+							</p>
 
 								<Button
 									sx={{
@@ -504,7 +608,7 @@ export const UserSignIn = () => {
 										},
 									}}
 									type="submit"
-									disabled={loading || !validateEmail(email) || password === ''}
+									disabled={loading || !validateEmail(email) || password === '' || firstname === '' || lastname === ''}
 								>
 									{loading ? (
 										<CircularProgress
@@ -513,52 +617,17 @@ export const UserSignIn = () => {
 											sx={{ color: '#FFF' }}
 										/>
 									) : (
-										'Sign in'
+										'Sign up'
 									)}
 								</Button>
 							</form>
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 5,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
+
+							{/* <Typography
+								variant="caption"
+								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
 							>
-								<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
-							</p>
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '10px',
-									textAlign: 'center',
-								}}
-							>
-								Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
-							</p>
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Looking for agent sign in? <Link underline='none' component='button' onClick={() => navigate('/agent/login')}>Click here</Link>
-							</p>
+								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
+							</Typography> */}
 						</header>
 					</div>
 				</Grid>

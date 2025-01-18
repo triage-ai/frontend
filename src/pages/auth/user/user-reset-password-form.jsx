@@ -1,17 +1,19 @@
 import {
-	Box, CircularProgress, Link,
-	TextField,
+	Box,
+	Button,
+	CircularProgress,
+	InputAdornment, TextField,
 	Typography,
 	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Split, Tag } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { Activity, Lock, Split, Tag } from 'lucide-react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -66,29 +68,35 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserEmailConfirmation = () => {
+export const UserResetPasswordForm = () => {
 
 	const { token } = useParams()
 
-	const { user_id } = useParams()
-	const { confirmToken } = useUserBackend()
+	const { confirmResetPasswordToken } = useUserBackend()
 
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 	const [status, setStatus] = useState(0)
+
+	const [email, setEmail] = useState('');
+	const [error, setError] = useState(false);
+
+	const [password, setPassword] = useState('')
+	const [showComplete, setShowComplete] = useState(false)
 
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		confirmToken(token)
+	const sendResetPassword = () => {
+		setLoading(true)
+		confirmResetPasswordToken(token, password)
 			.then(res => {
 				setLoading(false)
-				setStatus(1)
+				setShowComplete(true)
 			})
 			.catch(err => {
 				setLoading(false)
 				console.error(err)
 			})
-	}, [])
+	}
 
 	return (
 		<Box
@@ -305,7 +313,7 @@ export const UserEmailConfirmation = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header-wide">
+						<header className="App-header">
 							<Box
 								sx={{
 									width: '100%',
@@ -352,34 +360,158 @@ export const UserEmailConfirmation = () => {
 
 							{/* <CheckCircle size={60} color='#34b233' /> */}
 
-							{loading ? <CircularProgress
-								size={80}
-								thickness={5}
-								sx={{ color: '#9A9FA5' }}
-							/> :
-								<h5
-									style={{
-										// fontSize: '0.95rem',
-										fontWeight: 600,
-										color: '#1B1D1F',
-										letterSpacing: '-0.01em',
-										lineHeight: 1.2,
-										marginTop: '20px',
-										marginBottom: 0,
-										textAlign: 'center',
-									}}
-								>
-									{status === 0 ? 'Unable to confirm email' : 'You have successfully confirmed your account!'}
-								</h5>}
+							{showComplete ?
+								<>
+									<h3
+										style={{
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.03em',
+											marginTop: '30px',
+										}}
+									>
+										Password Reset
+									</h3>
+									<p
+										style={{
+											fontSize: '0.875rem',
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.01em',
+											lineHeight: 1.2,
+											marginTop: 0,
+											marginBottom: '20px',
+											textAlign: 'center',
+										}}
+									>
+										Login with your new password
+									</p>
 
-								{!loading && status === 1 &&
-									<Link component='button' onClick={() => navigate('/user/login')}>Sign in</Link>
-								}
+									<Button
+										sx={{
+											backgroundColor: '#22874E',
+											color: '#FFF',
+											borderRadius: '12px',
+											width: '50%',
+											fontSize: '0.9375rem',
+											fontWeight: 600,
+											lineHeight: 1,
+											textTransform: 'unset',
+											padding: '16.5px 10px',
+											marginTop: '12px',
+											marginBottom: '28px',
+											transition: 'all 0.3s',
+											'&:hover': {
+												backgroundColor: '#29b866',
+											},
+											'&:disabled': {
+												color: 'unset',
+												opacity: 0.4,
+											},
+										}}
+										onClick={() => navigate('/user/login')}
+									>
+										Log in
+									</Button>
+
+								</>
+
+								:
+								<>
+									<h3
+										style={{
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.03em',
+											marginTop: '30px',
+										}}
+									>
+										Reset password
+									</h3>
+									<p
+										style={{
+											fontSize: '0.875rem',
+											fontWeight: 600,
+											color: '#1B1D1F',
+											letterSpacing: '-0.01em',
+											lineHeight: 1.2,
+											marginTop: 0,
+											marginBottom: '20px',
+											textAlign: 'center',
+										}}
+									>
+										Enter you new password below
+									</p>
+
+									<CustomTextField
+									label=""
+									id="password"
+									type="password"
+									autoComplete="current-password"
+									sx={{
+										'& .MuiInputBase-root': {
+											border: '2px solid transparent',
+										},
+									}}
+									placeholder="New password"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<Lock color="#575757" />
+											</InputAdornment>
+										),
+									}}
+									value={password}
+									onChange={event => {
+										// if (validatePassword(password)) {
+										// 	setError(false);
+										// }
+										setPassword(event.target.value);
+									}}
+								/>
+
+									<Button
+										sx={{
+											backgroundColor: '#22874E',
+											color: '#FFF',
+											borderRadius: '12px',
+											width: '100%',
+											fontSize: '0.9375rem',
+											fontWeight: 600,
+											lineHeight: 1,
+											textTransform: 'unset',
+											padding: '16.5px 10px',
+											marginTop: '12px',
+											marginBottom: '28px',
+											transition: 'all 0.3s',
+											'&:hover': {
+												backgroundColor: '#29b866',
+											},
+											'&:disabled': {
+												color: 'unset',
+												opacity: 0.4,
+											},
+										}}
+										onClick={() => sendResetPassword()}
+										disabled={loading || password === ''}
+									>
+										{loading ? (
+											<CircularProgress
+												size={22}
+												thickness={5}
+												sx={{ color: '#FFF' }}
+											/>
+										) : (
+											'Reset Password'
+										)}
+									</Button>
+								</>
+							}
 
 						</header>
 					</div>
 				</Grid>
 			</Grid>
-		</Box>
+		</Box >
 	);
 };

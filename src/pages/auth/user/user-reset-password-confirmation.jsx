@@ -8,10 +8,10 @@ import Grid from '@mui/material/Grid2';
 import { Activity, CheckCircle, Split, Tag } from 'lucide-react';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -66,13 +66,13 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserSignUpConfirmation = () => {
+export const UserResetPasswordConfirmation = () => {
 
 	const { user_id } = useParams()
-	const { resendConfirmationEmail } = useUserBackend()
+	const { resendResetPasswordEmail } = useUserBackend()
 
 	const resendEmail = () => {
-		resendConfirmationEmail(user_id)
+		resendResetPasswordEmail(user_id)
 		.catch(error => {
 			console.error(error);
 		});

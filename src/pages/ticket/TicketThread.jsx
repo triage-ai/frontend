@@ -27,10 +27,9 @@ import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
 import humanFileSize from '../../functions/file-size-formatter';
-import { useAttachmentBackend } from '../../hooks/useAttachmentBackend';
+import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
 import { FileCard } from './FileCard';
-
 
 let localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -66,6 +65,10 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		},
 	});
 
+	getSettingsByKey('agent_max_file_size').then(res => {
+		setMaxUploadSize(res.data.value)
+	})
+
 	const getDirection = (agent_id, option1, option2) => {
 		if ((agent_id && type === 'agent') || (!agent_id && type !== 'agent')) {
 			return option1;
@@ -73,6 +76,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	};
 
 	const handleSubmit = async () => {
+		// ABSTRACT SO THAT I CAN USE IT FOR EITHER TYPE OF THREAD ENTRY
 		const threadEntryCreate = type === 'agent' ? createThreadEntry : createThreadEntryForUser;
 		let newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
 		if (type === 'agent') {
@@ -82,69 +86,66 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		}
 
 		let updatedTicket = { ...ticket };
-		threadEntryCreate(newThreadEntry)
+		if (files.length !== 0) {
+			const file_names = files.map((item) => item.name);
+			
+			getPresignedURL({ attachment_names: file_names })
+			.then((res) => {
+				if (res.status !== 200) {
+					alert('Error with S3 configuration. Attachment will not be added to thread');
+					return {};
+				} else {
+					let presigned_urls = { ...res.data.url_dict };
+					return presigned_urls;
+				}
+			})
+			.then(async (presigned_urls) => {
+				if (Object.keys(presigned_urls).length === 0) {
+					return [];
+				} else {
+					let attachments = await awsFileUpload(presigned_urls, files);
+					return attachments;
+				}
+			})
+			.then(async (attachments) => {
+				newThreadEntry = attachments.length !== 0 ? { ...newThreadEntry, attachments: attachments } : newThreadEntry;
+				await threadEntryCreate(newThreadEntry)
+				.then((response) => {
+					updatedTicket.thread.entries.push(response.data);
+					editor.commands.setContent('');
+					setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
+					setFiles([]);
+				})
+			})
+			.then(() => {
+				updateCurrentTicket(updatedTicket);
+			});
+		} else {
+			threadEntryCreate(newThreadEntry)
 			.then((response) => {
 				updatedTicket.thread.entries.push(response.data);
 				editor.commands.setContent('');
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
-				return response.data.entry_id;
-			})
-			.then(async (entry_id) => {
-				if (files.length !== 0) {
-					const file_names = files.map((item) => item.name);
-					try {
-						await getPresignedURL({ attachment_names: file_names }).then(async (res) => {
-							let presigned_urls = { ...res.data.url_dict };
-
-							await awsFileUpload(presigned_urls, files, entry_id).then((response) => {
-								setFiles([]);
-								updatedTicket.thread.entries.at(-1).attachments.push(...response);
-							});
-						});
-					} catch (err) {
-						alert('Attachment will not added to thread. Configure S3 to allow attachments');
-						console.error(err);
-					}
-				}
 			})
 			.then(() => {
 				updateCurrentTicket(updatedTicket);
-			})
-			.catch((err) => {
-				alert('Error creating thread');
-				console.error(err);
 			});
+		}
 	};
 
-	const awsFileUpload = async (presigned_urls, files, entry_id) => {
+	const awsFileUpload = async (presigned_urls, files) => {
 		let attachments = [];
 		await Promise.all(
 			Object.entries(presigned_urls).map(([fileName, url]) => {
 				const file = files.find((f) => f.name === fileName);
-
 				try {
-					return axios
-						.put(url, file, {
-							headers: {
-								'Content-Type': file.type,
-								'Content-Disposition': `inline; filename="${fileName}"`,
-							},
-						})
-						.then(async (res) => {
-							await createAttachment({
-								object_id: entry_id,
-								type: file.type,
-								name: fileName,
-								inline: 1,
-								link: url.split('?')[0],
-								size: file.size,
-							}).then((res) => {
-								attachments.push(res.data);
-							});
-						})
-						.catch((err) => {
-							console.error(`Error creating attachment in db for ${fileName}: `, err);
-						});
+					axios.put(url, file, {
+						headers: {
+							'Content-Type': file.type,
+							'Content-Disposition': `inline; filename="${fileName}"`,
+						},
+					});
+					attachments.push({ name: fileName, link: url.split('?')[0], type: file.type, size: file.size, inline: 1});
 				} catch (error) {
 					console.error(`Error uploading ${fileName}:`, error.message);
 				}
@@ -175,10 +176,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	const handleDeleteFile = (idx) => {
 		setFiles((p) => [...p.slice(0, idx), ...p.slice(idx + 1)]);
 	};
-
-	// useEffect(() => {
-	// 	console.log(files);
-	// }, [files]);
 
 	function getEventText(item) {
 		const capitilize = (str) => {
@@ -476,9 +473,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 								<CustomInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
 							</Stack>
 						}
-					>
-
-					</RichTextEditorBox>
+					></RichTextEditorBox>
 
 					{/* <Box mt={2} width={'100%'} textAlign={'center'}>
 						<CircularButton sx={{ py: 2, px: 6, width: 200 }} onClick={handleSubmit} disabled={postDisabled}>

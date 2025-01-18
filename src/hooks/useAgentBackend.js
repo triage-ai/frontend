@@ -5,6 +5,18 @@ import { AuthContext } from '../context/AuthContext';
 export const useAgentBackend = () => {
 	const { agentAuthState } = useContext(AuthContext);
 
+	const sendResetPasswordEmail = async (email) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/reset`, {'email': email});
+	}
+
+	const resendResetPasswordEmail = async (agent_id) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/reset/resend/${agent_id}`);
+	}
+
+	const confirmResetPasswordToken = async (token, password) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/reset/confirm/${token}`, {'password': password});
+	}
+	
 	const getAllAgents = async () => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -65,6 +77,21 @@ export const useAgentBackend = () => {
 		);
 	};
 
+	const registerAgent = async agentInfo => {
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + 'agent/register',
+			agentInfo,
+		);
+	};
+
+	const confirmToken = async token => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/confirm/${token}`);
+	};
+
+	const resendConfirmationEmail = async (agent_id) => {
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + `agent/resend/${agent_id}`);
+	}
+
 	const removeAgent = async agentInfo => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -87,5 +114,5 @@ export const useAgentBackend = () => {
 		);
 	};
 
-	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent, getAgentById };
+	return { getAllAgents, getAllAgentsByDeptAndGroup, getPermissions, getAgentBySearch, createAgent, updateAgent, removeAgent, getAgentById, confirmToken, registerAgent, resendConfirmationEmail, sendResetPasswordEmail, resendResetPasswordEmail, confirmResetPasswordToken };
 };

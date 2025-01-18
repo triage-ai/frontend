@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react';
-import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
+import '../../../App.css';
+import AppIcon from '../../../assets/app-icon-black.png';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
 
-import { Alert, Box, Button, CircularProgress, IconButton, InputAdornment, TextField, Typography, styled } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, IconButton, InputAdornment, Link, TextField, Typography, styled } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Activity, Lock, Mail, Split, Tag, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
+import { AuthContext } from '../../../context/AuthContext';
+import { useSetAuthCookie } from '../../../hooks/useSetAuthCookie';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -637,6 +637,22 @@ export const AgentSignIn = () => {
 									{loading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Sign in'}
 								</Button>
 							</form>
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 5,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+								<Link underline='none' component='button' onClick={() => navigate('/agent/reset_password')}>
+									Forgot password?
+								</Link>
+							</p>
 
 							{/* <Typography
 								variant="caption"
