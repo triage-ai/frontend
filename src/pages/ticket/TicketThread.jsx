@@ -28,10 +28,6 @@ import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
 import humanFileSize from '../../functions/file-size-formatter';
 import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
-import { useSettingsBackend } from '../../hooks/useSettingsBackend';
-import { useThreadsBackend } from '../../hooks/useThreadBackend';
-import humanFileSize from '../../functions/file-size-formatter';
-import { useAttachmentBackend } from '../../hooks/useAttachmentBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
 import { FileCard } from './FileCard';
 
@@ -89,7 +85,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 			newThreadEntry.user_id = userAuthState.user_id;
 		}
 
-		var updatedTicket = { ...ticket };
+		let updatedTicket = { ...ticket };
 		if (files.length !== 0) {
 			const file_names = files.map((item) => item.name);
 			
@@ -99,7 +95,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 					alert('Error with S3 configuration. Attachment will not be added to thread');
 					return {};
 				} else {
-					var presigned_urls = { ...res.data.url_dict };
+					let presigned_urls = { ...res.data.url_dict };
 					return presigned_urls;
 				}
 			})
@@ -107,7 +103,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				if (Object.keys(presigned_urls).length === 0) {
 					return [];
 				} else {
-					var attachments = await awsFileUpload(presigned_urls, files);
+					let attachments = await awsFileUpload(presigned_urls, files);
 					return attachments;
 				}
 			})
