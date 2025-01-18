@@ -24,14 +24,18 @@ import { RichTextReadOnly } from 'mui-tiptap';
 import { useContext, useEffect, useState } from 'react';
 import { extensions, RichTextEditorBox } from '../../components/rich-text-editor';
 import { AuthContext } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
 import humanFileSize from '../../functions/file-size-formatter';
 import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
 import { useSettingsBackend } from '../../hooks/useSettingsBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import humanFileSize from '../../functions/file-size-formatter';
+import { useAttachmentBackend } from '../../hooks/useAttachmentBackend';
+import { useThreadsBackend } from '../../hooks/useThreadBackend';
 import { FileCard } from './FileCard';
 
-var localizedFormat = require('dayjs/plugin/localizedFormat');
+let localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
 
@@ -50,12 +54,10 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	const [formData, setFormData] = useState({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 	const [postDisabled, setPostDisabled] = useState(true);
 	const [files, setFiles] = useState([]);
-	const [maxUploadSize, setMaxUploadSize] = useState('');
+	const { defaultSettings } = useData()
 	const { createThreadEntry, createThreadEntryForUser } = useThreadsBackend();
-	const { getPresignedURL } = useAttachmentBackend();
-	const { getSettingsByKey } = useSettingsBackend();
-	const { permissions } = useContext(AuthContext);
-	const { agentAuthState, userAuthState } = useContext(AuthContext);
+	const { getPresignedURL, createAttachment } = useAttachmentBackend();
+	const { agentAuthState, userAuthState, permissions } = useContext(AuthContext);
 	const editor = useEditor({
 		extensions: extensions,
 		content: '',
@@ -67,11 +69,9 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		},
 	});
 
-	useEffect(() => {
-		getSettingsByKey('agent_max_file_size').then((res) => {
-			setMaxUploadSize(res.data.value);
-		});
-	}, []);
+	getSettingsByKey('agent_max_file_size').then(res => {
+		setMaxUploadSize(res.data.value)
+	})
 
 	const getDirection = (agent_id, option1, option2) => {
 		if ((agent_id && type === 'agent') || (!agent_id && type !== 'agent')) {
@@ -82,7 +82,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	const handleSubmit = async () => {
 		// ABSTRACT SO THAT I CAN USE IT FOR EITHER TYPE OF THREAD ENTRY
 		const threadEntryCreate = type === 'agent' ? createThreadEntry : createThreadEntryForUser;
-		var newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
+		let newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
 		if (type === 'agent') {
 			newThreadEntry.agent_id = agentAuthState.agent_id;
 		} else {
@@ -138,7 +138,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	};
 
 	const awsFileUpload = async (presigned_urls, files) => {
-		var attachments = [];
+		let attachments = [];
 		await Promise.all(
 			Object.entries(presigned_urls).map(([fileName, url]) => {
 				const file = files.find((f) => f.name === fileName);
@@ -160,12 +160,12 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 
 	const handleFileUpload = (event) => {
 		const length = event.target.files.length;
-		var tempArray = [];
-		var sizeExceed = false;
+		let tempArray = [];
+		let sizeExceed = false
 		for (let i = 0; i < length; i++) {
-			if (event.target.files[i].size > Number(maxUploadSize)) {
-				sizeExceed = true;
-				continue;
+			if (event.target.files[i].size > Number(defaultSettings.agent_max_file_size.value)) {
+				sizeExceed = true
+				continue
 			}
 			tempArray.push(event.target.files[i]);
 		}
@@ -173,7 +173,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		event.target.value = '';
 
 		if (sizeExceed) {
-			alert(`One or more files exceed the max upload limit of ${humanFileSize(maxUploadSize, true)}!`);
+			alert(`One or more files exceed the max upload limit of ${humanFileSize(defaultSettings.agent_max_file_size.value, true)}!`)
 		}
 	};
 
@@ -189,8 +189,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				.join(' ');
 		};
 
-		var newValue = item.new_val;
-		var prevValue = item.prev_val;
+		let newValue = item.new_val;
+		let prevValue = item.prev_val;
 
 		if (item.field === 'due_date') {
 			newValue = newValue ? formatDate(newValue, 'lll') : null;
@@ -325,6 +325,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 												'& .ProseMirror p': {
 													fontSize: 'small',
 													fontWeight: 500,
+													wordBreak: 'break-word'
 												},
 											}}
 										>

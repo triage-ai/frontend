@@ -13,17 +13,18 @@ import {
 	stepConnectorClasses,
 	styled,
 } from '@mui/material';
+import jstz from 'jstz';
 import { Check, Eye, EyeOff, MapPin } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
+import { CustomSelect } from '../../components/custom-select';
 import { CircularButton } from '../../components/sidebar';
 import { TransferList } from '../../components/transfer-list';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useRoleBackend } from '../../hooks/useRoleBackend';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { RoleSelect } from '../role/RoleSelect';
-import { CustomSelect } from '../../components/custom-select';
-import jstz from 'jstz';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -82,6 +83,13 @@ function QontoStepIcon(props) {
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
 export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
+
+	AddAgent.propTypes = {
+		handleCreated: PropTypes.func,
+		handleEdited: PropTypes.func,
+		editAgent: PropTypes.object
+	}
+
 	const { getAllRoles } = useRoleBackend();
 	const { createAgent, updateAgent, getPermissions } = useAgentBackend();
 
@@ -105,22 +113,22 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		admin: 0,
 	});
 
-	var timezoneOptions = Intl.supportedValuesOf('timeZone').map(t => ({ value: t, label: t }));
+	let timezoneOptions = Intl.supportedValuesOf('timeZone').map(t => ({ value: t, label: t }));
 
 	useEffect(() => {
 		timezoneOptions.push({ label: 'UTC', value: 'UTC' })
-		getAllRoles()
-			.then((roles) => {
-				const rolesData = roles.data;
-				const formattedRoles = rolesData.map((role) => {
-					return { value: role.role_id, label: role.name };
-				});
+		// getAllRoles()
+		// 	.then((roles) => {
+		// 		const rolesData = roles.data;
+		// 		const formattedRoles = rolesData.map((role) => {
+		// 			return { value: role.role_id, label: role.name };
+		// 		});
 
-				setRoles(formattedRoles);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		// 		setRoles(formattedRoles);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.error(err);
+		// 	});
 		getPermissions()
 			.then((res) => {
 				setAllPermissions(res.data);
@@ -131,7 +139,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	}, []);
 
 	const permissionsFromString = (jsonString) => {
-		var list;
+		let list;
 		try {
 			list = JSON.parse(jsonString);
 		} catch (err) {
@@ -409,9 +417,10 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 					<DepartmentSelect
 						handleInputChange={handleInputChange}
 						value={formData.dept_id}
+						mb={2}
 					/>
 
-					<RoleSelect handleInputChange={handleInputChange} value={formData.role_id} />
+					<RoleSelect handleInputChange={handleInputChange} value={formData.role_id} mb={2} />
 
 					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Agent level permissions

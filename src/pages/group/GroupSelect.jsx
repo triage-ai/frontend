@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddGroup } from './AddGroup';
 
-export const GroupSelect = ({ handleInputChange, value }) => {
+export const GroupSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedGroups, refreshGroups } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshGroups();
@@ -26,13 +28,13 @@ export const GroupSelect = ({ handleInputChange, value }) => {
 			<CustomSelect
 				label="Group"
 				onChange={handleInputChange}
-				value={value}
-				name="group_id"
-				mb={2}
+				value={formattedGroups.length === 0 ? '' : value}
+				name={name ?? "group_id"}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedGroups}
+				{...otherProps}
 			/>
 
 			<Dialog

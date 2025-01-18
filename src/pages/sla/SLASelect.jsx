@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddSLA } from './AddSLA';
 
-export const SLASelect = ({ handleInputChange, value, name }) => {
+export const SLASelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedSLAs, refreshSLAs } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshSLAs();
@@ -26,13 +28,13 @@ export const SLASelect = ({ handleInputChange, value, name }) => {
 			<CustomSelect
 				label="SLA"
 				onChange={handleInputChange}
-				value={value}
+				value={formattedSLAs.length === 0 ? '' : value}
 				name={name ?? "sla_id"}
-				mb={2}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedSLAs}
+				{...otherProps}
 			/>
 
 			<Dialog

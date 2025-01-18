@@ -39,7 +39,7 @@ export const Autoresponder = (props) => {
 	return (
 		<Box p={3} maxWidth={600}>
 			<Stack>
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+				<Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
 					New Ticket
 				</Typography>
 

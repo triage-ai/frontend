@@ -5,6 +5,7 @@ import { WhiteContainer } from '../../components/white-container';
 import { AgentSettings } from './agents/AgentSettings';
 import { AgentTemplates } from './agents/AgentTemplates';
 import { BasicInformation } from './company/CompanyBasicInfo';
+import { Logos } from './company/Logos';
 import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
 import { Attachments } from './system/AttachmentsSettings';
 import { DateAndTime } from './system/DateTimeSettings';
@@ -17,7 +18,6 @@ import { Autoresponder } from './tickets/AutoResponder';
 import { TicketSettings } from './tickets/TicketSettings';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
-import { Logos } from './company/Logos';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
@@ -28,10 +28,10 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 				data[`${key}`] = data[key].toString();
 			}
 		})
-	
-		var updates = [];
+
+		let updates = [];
 		Object.entries(data).forEach((k) => {
-			var row = settingsData[k[0]];
+			let row = settingsData[k[0]];
 			console.log(row)
 			row.value = k[1];
 			updates.push(row);
@@ -53,15 +53,15 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 
 export const StyledSelect = styled((props) => (
 	<Select
-		{...props}
-		IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
 		renderValue={(item) => (
 			<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
 				{props.array ? props.array[item] : item}
 			</Typography>
 		)}
+		{...props}
+		IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
 	/>
-))(({theme}) => ({
+))(({ theme }) => ({
 	'& .MuiOutlinedInput-notchedOutline': {
 		overflow: 'hidden',
 		borderRadius: 12,
@@ -81,6 +81,9 @@ export const StyledSelect = styled((props) => (
 	'& label.Mui-focused': {
 		color: '#545555',
 	},
+	'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+		borderWidth: '1.5px'
+	}
 }));
 
 export const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
@@ -141,7 +144,7 @@ const Header = ({ headers, components }) => {
 						},
 					}}
 				>
-					
+
 					{headers.map((header, idx) => (
 						<Tab key={idx} label={header.label} sx={{ textTransform: 'none', p: 0, mr: 5 }} />
 					))}

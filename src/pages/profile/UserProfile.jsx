@@ -65,7 +65,7 @@ const Header = ({ headers, components }) => {
 };
 
 const profileSave = async (formData, profileData, updateUserProfile, refreshUser, setLoading, setCircleLoading) => {
-	var updates = { ...profileData };
+	let updates = { ...profileData };
 	try {
 		Object.entries(formData).forEach((update) => {
 			updates[update[0]] = update[1];
@@ -83,7 +83,7 @@ const profileSave = async (formData, profileData, updateUserProfile, refreshUser
 
 // const profileSavePref = async (preferences, profileData, updateUser, refreshUser, setLoading, setCircleLoading) => {
 // 	try {
-// 		var updates = { ...profileData };
+// 		let updates = { ...profileData };
 // 		updates['preferences'] = preferences;
 // 		setCircleLoading(true);
 // 		await updateUser(updates)

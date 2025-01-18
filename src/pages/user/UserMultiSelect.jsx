@@ -1,26 +1,25 @@
-import { Box, Chip, Dialog, IconButton, Popper, Typography } from '@mui/material';
-import { X } from 'lucide-react';
+import { Chip, Popper } from '@mui/material';
 import { useState } from 'react';
-import { CustomAutocomplete, CustomInput, CustomMultibox } from '../../components/custom-select';
+import { CustomInput, CustomMultibox } from '../../components/custom-select';
 // import { AddUser } from './AddUser';
 import { useUserBackend } from '../../hooks/useUserBackend';
 
 export const UserMultiSelect = ({ onChange, values, ...props }) => {
     const { getUserBySearch } = useUserBackend();
-	const [userOptions, setUserOptions] = useState([]);
+    const [userOptions, setUserOptions] = useState([]);
 
-	const { mt, mb, ...otherProps } = props;
+    const { mt, mb, ...otherProps } = props;
 
-	const handleUserSearchChange = e => {
-		if (e?.target?.value) {
-			getUserBySearch(e.target.value)
-				.then(res => {
-					var formattedData = res.data.map((user) => (user.firstname + ' ' + user.lastname))
+    const handleUserSearchChange = e => {
+        if (e?.target?.value) {
+            getUserBySearch(e.target.value)
+                .then(res => {
+                    let formattedData = res.data.map((user) => (user.firstname + ' ' + user.lastname))
                     setUserOptions(formattedData)
-				})
-				.catch(err => alert('User search failed'));
-		}
-	};
+                })
+                .catch(err => alert('User search failed'));
+        }
+    };
 
     return (
         <CustomMultibox
@@ -53,12 +52,12 @@ export const UserMultiSelect = ({ onChange, values, ...props }) => {
                 </li>
             )}
             PopperComponent={props => (
-				<Popper
-					{...props}
-					style={{ maxWidth: 400 }}
-					placement="bottom-start"
-				/>
-			)}
+                <Popper
+                    {...props}
+                    style={{ maxWidth: 400 }}
+                    placement="bottom-start"
+                />
+            )}
             onChange={onChange}
         />
     )

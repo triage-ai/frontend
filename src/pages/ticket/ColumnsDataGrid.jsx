@@ -1,36 +1,38 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridToolbarContainer } from '@mui/x-data-grid';
+import { X } from 'lucide-react';
 import { useEffect, useMemo, useState } from "react";
 import { useData } from '../../context/DataContext';
-import { DeleteIcon, Triangle, X } from 'lucide-react';
 
 function EditToolbar(props) {
-	const { rows, setRows } = props;
+    const { rows, setRows } = props;
 
-	const handleClick = () => {
-		const column_id = rows.length === 0 ? 0 : rows.at(-1).column_id + 1
-		setRows((oldRows) => [
-			...oldRows,
-			{ column_id, name: "", default_column_id: 0 },
-		]);
-		// setRowModesModel((oldModel) => ({
-		// 	...oldModel,
-		// 	[id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
-		// }));
-	};
+    const handleClick = () => {
+        let column_id = rows.reduce((acc, value) => {
+            return acc > value.column_id ? acc : value.column_id;
+        }, 0);
+        setRows((oldRows) => [
+            ...oldRows,
+            { column_id: column_id + 1, name: "", default_column_id: 1 },
+        ]);
+        // setRowModesModel((oldModel) => ({
+        // 	...oldModel,
+        // 	[id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
+        // }));
+    };
 
-	return (
-		<GridToolbarContainer>
-			<Button
-				color="primary"
-				startIcon={<AddIcon />}
-				onClick={handleClick}
-			>
-				Add record
-			</Button>
-		</GridToolbarContainer>
-	);
+    return (
+        <GridToolbarContainer>
+            <Button
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={handleClick}
+            >
+                Add record
+            </Button>
+        </GridToolbarContainer>
+    );
 }
 
 export const ColumnsDataGrid = ({ rows, setRows }) => {
@@ -49,25 +51,25 @@ export const ColumnsDataGrid = ({ rows, setRows }) => {
     }, [])
 
     useEffect(() => {
-        var mapping = {}
+        let mapping = {}
         defaultColumns.forEach(column => (mapping[column.default_column_id] = column))
         setColumnMapping(mapping)
     }, [defaultColumns])
 
     const slotProps = useMemo(() => (
-		{
-			toolbar: { rows, setRows },
-		}
-	),
-		[rows]
-	)
+        {
+            toolbar: { rows, setRows },
+        }
+    ),
+        [rows]
+    )
 
-	const slots = useMemo(() => ({
-		toolbar: EditToolbar
-	}
-	),
-		[EditToolbar]
-	)
+    const slots = useMemo(() => ({
+        toolbar: EditToolbar
+    }
+    ),
+        [EditToolbar]
+    )
 
     const columns = useMemo(() => {
         return [
@@ -104,9 +106,9 @@ export const ColumnsDataGrid = ({ rows, setRows }) => {
                 width: 100,
                 cellClassName: "actions",
                 getActions: ({ id }) => {
-    
                     return [
                         <GridActionsCellItem
+                            key={id}
                             icon={<X />}
                             label="Delete"
                             onClick={handleDeleteClick(id)}
@@ -122,94 +124,58 @@ export const ColumnsDataGrid = ({ rows, setRows }) => {
         return row.name !== '' && row.type !== '';
     }
 
-    // const handleRowEditStop = (params, event) => {
-    //     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-    //         event.defaultMuiPrevented = true;
-    //     }
-    // };
-
-    // const handleEditClick = (id) => () => {
-    //     setRowModesModel({
-    //         ...rowModesModel,
-    //         [id]: { mode: GridRowModes.Edit },
-    //     });
-    // };
-
-    // const handleSaveClick = (id) => () => {
-    //     setRowModesModel({
-    //         ...rowModesModel,
-    //         [id]: { mode: GridRowModes.View },
-    //     });
-    // };
-
     const handleDeleteClick = (column_id) => () => {
         setRows(rows.filter((row) => row.column_id !== column_id));
     };
-
-    // const handleCancelClick = (id) => () => {
-    //     setRowModesModel({
-    //         ...rowModesModel,
-    //         [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    //     });
-
-    //     const editedRow = rows.find((row) => row.id === id);
-    //     if (editedRow.isNew) {
-    //         setRows(rows.filter((row) => row.id !== id));
-    //     }
-    // };
 
     const processRowUpdate = async (newRow, oldRow) => {
         setRows(rows.map((row) => (row.column_id === newRow.column_id ? newRow : row)));
         return newRow;
     };
 
-    // const handleRowModesModelChange = (newRowModesModel) => {
-    //     setRowModesModel(newRowModesModel);
-    // };
-
     return (
         <Box
-			sx={{
-				height: 500,
-				width: "100%",
+            sx={{
+                height: 500,
+                width: "100%",
                 pb: 2,
-				"& .actions": {
-					color: "text.secondary",
-				},
-				"& .textPrimary": {
-					color: "text.primary",
-				},
-				"&.Mui-focused fieldset": {
-					border: "none",
-				},
-				"&:hover fieldset": {
-					border: "none",
-				},
-				'& fieldset': { borderRadius: 0, p: 0, m: 0, border: "none" },
-				'& .MuiFilledInput-root': {
-					overflow: 'hidden',
-					backgroundColor: 'transparent',
-					fontSize: '0.9375rem',
-					fontWeight: 500,
-					textAlign: 'left',
-				},
-				'& .Mui-error': {
-					bgcolor: '#f57f8b'
-				},
-			}}
-		>
-			<DataGrid
-				rows={rows}
+                "& .actions": {
+                    color: "text.secondary",
+                },
+                "& .textPrimary": {
+                    color: "text.primary",
+                },
+                "&.Mui-focused fieldset": {
+                    border: "none",
+                },
+                "&:hover fieldset": {
+                    border: "none",
+                },
+                '& fieldset': { borderRadius: 0, p: 0, m: 0, border: "none" },
+                '& .MuiFilledInput-root': {
+                    overflow: 'hidden',
+                    backgroundColor: 'transparent',
+                    fontSize: '0.9375rem',
+                    fontWeight: 500,
+                    textAlign: 'left',
+                },
+                '& .Mui-error': {
+                    bgcolor: '#f57f8b'
+                },
+            }}
+        >
+            <DataGrid
+                rows={rows}
                 setRows={setRows}
-				columns={columns}
+                columns={columns}
                 slots={slots}
-				slotProps={slotProps}
+                slotProps={slotProps}
                 getRowId={(row) => row.column_id}
                 processRowUpdate={processRowUpdate}
-				disableColumnMenu
+                disableColumnMenu
                 hideFooter
-			/>
-		</Box>
+            />
+        </Box>
     )
 
 }

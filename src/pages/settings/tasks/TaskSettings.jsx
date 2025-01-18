@@ -1,4 +1,4 @@
-import { Box, CircularProgress, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, CircularProgress, InputAdornment, MenuItem, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { CircleHelp } from 'lucide-react';
@@ -9,6 +9,8 @@ import { CircularButton } from '../../../components/sidebar';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import { handleSave, StyledSelect } from '../SettingsMenus';
+import { CustomInput } from '../../../components/custom-select';
+import { HtmlTooltip } from '../../../components/tooltip';
 
 
 export const TaskSettings = props => {
@@ -41,48 +43,49 @@ export const TaskSettings = props => {
 		setLoading(false);
 	};
 
-	const HtmlTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
-		[`& .${tooltipClasses.tooltip}`]: {
-			backgroundColor: '#f5f5f9',
-			color: 'rgba(0, 0, 0, 0.87)',
-			maxWidth: 200,
-			fontSize: theme.typography.pxToRem(12),
-			border: '1px solid #dadde9',
-		},
-	}));
-
 	return (
 		<Box p={3} maxWidth={600}>
 			<Stack>
 				<Stack direction='row' alignItems='center' spacing={8}>
-					<CustomFilledInput
-						label='Default Task Number Format'
-						name='default_task_number_format'
-						value={formState.default_task_number_format}
-						onChange={handleChange}
-						maxWidth={400}
-					/>
+					<Stack>
+						<Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
+							Default Task Number Format
+						</Typography>
 
-					<HtmlTooltip
-						title={
-							<React.Fragment>
-								<Typography color='inherit'>Task Number Format</Typography>
-								{"This sequence will be used to generated task numbers. Use hash signs ('#')"}
-								{' where digits will be expected in the sequence.'}{' '}
-								<b>
-									{'Anything other than hash signs'}
-									{' will be preserved in the format.'}
-								</b>
-								<br />
-								<br />
-								{'For example, for six-digit only formats, use ######. This could produce a number like 123456.'}
-							</React.Fragment>
-						}
-						placement='right'
-						arrow
-					>
-						<CircleHelp size={20} />
-					</HtmlTooltip>
+						<CustomInput
+							name='default_task_number_format'
+							value={formState.default_task_number_format}
+							onChange={handleChange}
+							InputProps={{
+
+								endAdornment: (
+									<InputAdornment position='end'>
+										<HtmlTooltip
+											title={
+												<React.Fragment>
+													<Typography color='inherit'>Task Number Format</Typography>
+													{"This sequence will be used to generated task numbers. Use hash signs ('#')"}
+													{' where digits will be expected in the sequence.'}{' '}
+													<b>
+														{'Anything other than hash signs'}
+														{' will be preserved in the format.'}
+													</b>
+													<br />
+													<br />
+													{'For example, for six-digit only formats, use ######. This could produce a number like 123456.'}
+												</React.Fragment>
+											}
+											placement='right'
+											arrow
+										>
+											<CircleHelp size={20} />
+										</HtmlTooltip>
+									</InputAdornment>
+								)
+							}}
+						/>
+					</Stack>
+
 				</Stack>
 
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>

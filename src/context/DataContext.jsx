@@ -1,6 +1,8 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useAgentBackend } from '../hooks/useAgentBackend';
 import { useDepartmentBackend } from '../hooks/useDepartmentBackend';
+import { useEmailBackend } from '../hooks/useEmailBackend';
 import { useFormBackend } from '../hooks/useFormBackend';
 import { useGroupBackend } from '../hooks/useGroupBackend';
 import { usePriorityBackend } from '../hooks/usePriorityBackend';
@@ -11,19 +13,23 @@ import { useSettingsBackend } from '../hooks/useSettingsBackend';
 import { useSLABackend } from '../hooks/useSLABackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTemplateBackend } from '../hooks/useTemplateBackend';
-import { useEmailBackend } from '../hooks/useEmailBackend';
 import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
-import axios from 'axios';
+import { AuthContext } from './AuthContext';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
+
+	DataProvider.propTypes = {
+		children: PropTypes.node.isRequired
+	}
+
 	const { getAllAgents } = useAgentBackend();
-	const { getTicketsbyAdvancedSearch } = useTicketBackend();
+	// const { getTicketsbyAdvancedSearch, getTicketByQueue } = useTicketBackend();
 	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllRoles, getRoleById } = useRoleBackend();
-	const { getAllSettings } = useSettingsBackend();
+	const { getAllSettings, getDefaultSettings } = useSettingsBackend();
 	const { getAllSLAs } = useSLABackend();
 	const { getAllPriorities } = usePriorityBackend();
 	const { getAllGroups } = useGroupBackend();
@@ -34,10 +40,11 @@ export const DataProvider = ({ children }) => {
 	const { getAllSchedules } = useScheduleBackend();
 	const { getAllEmails } = useEmailBackend();
 	const { getAllForms } = useFormBackend();
+	const { preferences } = useContext(AuthContext)
 
 	const [agents, setAgents] = useState([]);
-	const [tickets, setTickets] = useState([]);
-	const [totalTickets, setTotalTickets] = useState(0);
+	// const [tickets, setTickets] = useState([]);
+	// const [totalTickets, setTotalTickets] = useState(0);
 
 	const [departments, setDepartments] = useState([]);
 	const [formattedDepartments, setFormattedDepartments] = useState([]);
@@ -45,7 +52,7 @@ export const DataProvider = ({ children }) => {
 	const [formattedRoles, setFormattedRoles] = useState([]);
 	const [settings, setSettings] = useState({});
 
-	const [slas, setSLAs] = useState([]);
+	const [slas, setSlas] = useState([]);
 	const [formattedSLAs, setFormattedSLAs] = useState([]);
 
 	const [priorities, setPriorities] = useState([]);
@@ -61,7 +68,7 @@ export const DataProvider = ({ children }) => {
 	const [formattedTopics, setFormattedTopics] = useState([]);
 
 	const [queues, setQueues] = useState([])
-	const [queueIdx, setQueueIdx] = useState([])
+	const [formattedQueues, setFormattedQueues] = useState([])
 
 	const [templates, setTemplates] = useState([])
 	const [formattedTemplates, setFormattedTemplates] = useState([])
@@ -78,26 +85,48 @@ export const DataProvider = ({ children }) => {
 	const [defaultColumns, setDefaultColumns] = useState([])
 	const [formattedDefaultColumns, setFormattedDefaultColumns] = useState([])
 
+	const [defaultSettings, setDefaultSettings] = useState({})
+
+	useEffect(() => {
+		getDefaultSettings()
+			.then((res) => {
+				let obj = {}
+				res.data.forEach((setting) => (obj[setting.key] = setting))
+				setDefaultSettings(obj)
+			})
+			.catch(e => {
+				console.error(e)
+			})
+	}, [])
+
 	const refreshAgents = useCallback(() => {
 		getAllAgents().then(agentList => {
 			setAgents(agentList.data);
 		});
 	}, [getAllAgents]);
 
-	const refreshTickets = useCallback(async (config = null, size = 10, page = 1) => {
-		if (!config) {
-			config = queues[queueIdx].config
-		}
-		await getTicketsbyAdvancedSearch({ ...config, 'size': size, 'page': page }).then(ticketList => {
-			const { items, total } = ticketList.data;
-			setTotalTickets(total)
-			setTickets(items);
-		});
-	}, [getTicketsbyAdvancedSearch]);
+	// const refreshTicketSearch = useCallback(async (config, page, size) => {
+	// 	await getTicketsbyAdvancedSearch(config, page, size).then(ticketList => {
+	// 		const { items, total } = ticketList.data;
+	// 		setTotalTickets(total)
+	// 		setTickets(items);
+	// 	}).catch((e) => console.error(e));
+	// }, [getTicketsbyAdvancedSearch]);
+
+	// const refreshTicketQueue = useCallback(async (queue_id, search, page, size) => {
+	// 	await getTicketByQueue(queue_id, search, page, size).then(ticketList => {
+	// 		const { items, total, queue_id } = ticketList.data;
+	// 		setTotalTickets(total)
+	// 		setTickets(items);
+	// 		if (selectedQueueId !== queue_id) {
+	// 			setSelectedQueueId(queue_id)
+	// 		}
+	// 	}).catch((e) => console.error(e));
+	// }, [getTicketByQueue]);
 
 	const refreshSettings = useCallback(() => {
 		getAllSettings().then(settingsList => {
-			var formattedSettings = {}
+			let formattedSettings = {}
 			Object.values(settingsList.data).forEach(setting => {
 				formattedSettings[setting.key] = setting
 			})
@@ -144,7 +173,7 @@ export const DataProvider = ({ children }) => {
 					return { value: sla.sla_id, label: sla.name };
 				});
 
-				setSLAs(slasData);
+				setSlas(slasData);
 				setFormattedSLAs(formattedSLAs);
 			})
 			.catch(err => {
@@ -222,8 +251,14 @@ export const DataProvider = ({ children }) => {
 				res.data.map(entry => {
 					entry.config = JSON.parse(entry.config)
 				})
+				const formattedQueues = res.data.map(queue => {
+					return {
+						value: queue.queue_id,
+						label: queue.title
+					};
+				});
 				setQueues(res.data)
-				setQueueIdx(0)
+				setFormattedQueues(formattedQueues)
 			})
 			.catch(err => {
 				console.error(err);
@@ -317,58 +352,111 @@ export const DataProvider = ({ children }) => {
 			});
 	}, [getAllDefaultColumns]);
 
+	const value = useMemo(() => (
+		{
+			agents,
+			refreshAgents,
+			// tickets,
+			// refreshTicketSearch,
+			// refreshTicketQueue,
+			templates,
+			formattedTemplates,
+			refreshTemplates,
+			emails,
+			formattedEmails,
+			refreshEmails,
+			departments,
+			formattedDepartments,
+			refreshDepartments,
+			roles,
+			formattedRoles,
+			refreshRoles,
+			settings,
+			refreshSettings,
+			slas,
+			formattedSLAs,
+			refreshSLAs,
+			refreshPriorities,
+			priorities,
+			formattedPriorities,
+			refreshGroups,
+			formattedGroups,
+			groups,
+			refreshStatuses,
+			statuses,
+			formattedStatuses,
+			refreshTopics,
+			topics,
+			formattedTopics,
+			queues,
+			formattedQueues,
+			refreshQueues,
+			// totalTickets,
+			refreshSchedules,
+			schedules,
+			formattedSchedules,
+			forms,
+			formattedForms,
+			refreshForms,
+			defaultColumns,
+			formattedDefaultColumns,
+			refreshDefaultColumns,
+			defaultSettings
+		}
+	), [
+		agents,
+		refreshAgents,
+		// tickets,
+		// refreshTicketSearch,
+		// refreshTicketQueue,
+		templates,
+		formattedTemplates,
+		refreshTemplates,
+		emails,
+		formattedEmails,
+		refreshEmails,
+		departments,
+		formattedDepartments,
+		refreshDepartments,
+		roles,
+		formattedRoles,
+		refreshRoles,
+		settings,
+		refreshSettings,
+		slas,
+		formattedSLAs,
+		refreshSLAs,
+		refreshPriorities,
+		priorities,
+		formattedPriorities,
+		refreshGroups,
+		formattedGroups,
+		groups,
+		refreshStatuses,
+		statuses,
+		formattedStatuses,
+		refreshTopics,
+		topics,
+		formattedTopics,
+		queues,
+		formattedQueues,
+		refreshQueues,
+		// totalTickets,
+		refreshSchedules,
+		schedules,
+		formattedSchedules,
+		forms,
+		formattedForms,
+		refreshForms,
+		defaultColumns,
+		formattedDefaultColumns,
+		refreshDefaultColumns,
+		defaultSettings
+	])
 
 	return (
 		<DataContext.Provider
-			value={{
-				agents,
-				refreshAgents,
-				tickets,
-				refreshTickets,
-				templates,
-				formattedTemplates,
-				refreshTemplates,
-				emails,
-				formattedEmails,
-				refreshEmails,
-				departments,
-				formattedDepartments,
-				refreshDepartments,
-				roles,
-				formattedRoles,
-				refreshRoles,
-				settings,
-				refreshSettings,
-				slas,
-				formattedSLAs,
-				refreshSLAs,
-				refreshPriorities,
-				priorities,
-				formattedPriorities,
-				refreshGroups,
-				formattedGroups,
-				groups,
-				refreshStatuses,
-				statuses,
-				formattedStatuses,
-				refreshTopics,
-				topics,
-				formattedTopics,
-				queues,
-				queueIdx,
-				setQueueIdx,
-				refreshQueues,
-				totalTickets,
-				refreshSchedules,
-				schedules,
-				formattedSchedules,
-				forms,
-				formattedForms,
-				refreshForms,
-				defaultColumns,
-				formattedDefaultColumns,
-				refreshDefaultColumns
-			}}
+			value={value}
 		>
 			{children}
 		</DataContext.Provider>

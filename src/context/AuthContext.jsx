@@ -1,9 +1,15 @@
 import axios from 'axios';
-import React, { createContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+
+	AuthProvider.propTypes = {
+		children: PropTypes.node.isRequired
+	}
+
 	const getAgentInitialAuthState = () => {
 		const storedAuthState = localStorage.getItem('agentAuthState');
 		return storedAuthState
@@ -30,16 +36,23 @@ const AuthProvider = ({ children }) => {
 	const [agentAuthState, setAgentAuthState] = useState(getAgentInitialAuthState);
 	const [userAuthState, setUserAuthState] = useState(getUserInitialAuthState);
 	const [permissions, setPermissions] = useState({});
+	const [preferences, setPreferences] = useState({});
 
 	useEffect(() => {
 		const storedAgentAuthState = localStorage.getItem('agentAuthState');
 		const storedUserAuthState = localStorage.getItem('userAuthState');
-		if (storedAgentAuthState) setAgentAuthState(JSON.parse(storedAgentAuthState));
+
+		if (storedAgentAuthState) {
+			const agentData = JSON.parse(storedAgentAuthState)
+			setAgentAuthState(agentData)
+			refreshAgentData(agentData)
+		}
 		if (storedUserAuthState) setUserAuthState(JSON.parse(storedUserAuthState));
 	}, []);
 
 	const setAgentData = (agentData) => {
 		setAgentAuthState(agentData);
+		refreshAgentData(agentData)
 		localStorage.setItem('agentAuthState', JSON.stringify(agentData));
 	};
 
@@ -68,22 +81,26 @@ const AuthProvider = ({ children }) => {
 		localStorage.removeItem('userAuthState');
 	};
 
-	useEffect(() => {
-		if (agentAuthState.agent_id) {
-			getAgentById(agentAuthState)
-				.then((agentRes) => {
-					const agent_perm = agentRes.data.permissions ? JSON.parse(agentRes.data.permissions) : {};
-					const agent_roles = agentRes.data.role ? JSON.parse(agentRes.data.role.permissions) : {};
-					setPermissions({...agent_perm, ...agent_roles})
-				})
-				.catch((err) => {
-					console.error(err);
-				});
-		}
-	}, [agentAuthState]);
+	const refreshAgentData = async (agentAuthState) => {
+		getAgentById(agentAuthState)
+			.then((agentRes) => {
+				const agent_perm = agentRes.data.permissions ? JSON.parse(agentRes.data.permissions) : {};
+				const agent_roles = agentRes.data.role ? JSON.parse(agentRes.data.role.permissions) : {};
+				const agent_pref = agentRes.data.preferences ? JSON.parse(agentRes.data.preferences) : {};
+				setPermissions({...agent_perm, ...agent_roles})
+				setPreferences({...agent_pref})
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	}
+
+	const value = useMemo(() => (
+		{ agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout, permissions, preferences }
+	), [agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout, permissions, preferences])
 
 	return (
-		<AuthContext.Provider value={{ agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout, permissions }}>
+		<AuthContext.Provider value={value}>
 			{children}
 		</AuthContext.Provider>
 	);

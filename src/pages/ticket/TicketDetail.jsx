@@ -1,13 +1,14 @@
-import { Box, FormControl, IconButton, MenuItem, Select, styled, Typography } from '@mui/material';
+import { Box, Chip, FormControl, IconButton, MenuItem, Select, styled, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import StarterKit from '@tiptap/starter-kit';
-import { BadgeAlert, CalendarClock, ChevronDown, CircleAlert, FileText, Info, Network, OctagonAlert, Pencil, TriangleAlert, User, X } from 'lucide-react';
+import { CalendarClock, ChevronDown, FileText, Info, Network, Pencil, User, X } from 'lucide-react';
 import { RichTextReadOnly } from 'mui-tiptap';
+import PropTypes from 'prop-types';
 import { useContext, useEffect } from 'react';
+import { StyledInput } from '../../components/custom-select';
+import { extensions } from '../../components/rich-text-editor';
 import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { extensions } from '../../components/rich-text-editor';
 
 const IconBox = styled(Box)(() => ({
 	height: '35px',
@@ -23,6 +24,15 @@ const IconBox = styled(Box)(() => ({
 }));
 
 export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdit, type }) => {
+
+	TicketDetail.propTypes = {
+		ticket: PropTypes.object,
+		closeDrawer: PropTypes.func,
+		updateCurrentTicket: PropTypes.func,
+		openEdit: PropTypes.func,
+		type: PropTypes.string,
+	}
+
 	const { updateTicket } = useTicketBackend();
 
 	const { refreshStatuses, statuses } = useData();
@@ -53,25 +63,6 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 		openEdit(event, ticket);
 	};
 
-	const getPriorityIcon = (priority) => {
-		switch (priority.priority) {
-			case 'low':
-				return <BadgeAlert size={20} color={priority.priority_color} />;
-
-			case 'normal':
-				return <CircleAlert size={20} color={priority.priority_color} backgroundColor='#000000' />;
-
-			case 'high':
-				return <OctagonAlert size={20} color={priority.priority_color} />;
-
-			case 'emergency':
-				return <TriangleAlert size={20} color={priority.priority_color} />;
-
-			default:
-				return <BadgeAlert size={20} color={priority.priority_color} />;
-		}
-	};
-
 	return (
 		<Box sx={{ height: '100%', width: '100%', justifyContent: 'space-between', display: 'flex', flexDirection: 'column' }}>
 			{ticket && (
@@ -98,12 +89,10 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									<Typography variant='h6' mx={1}>
 										•
 									</Typography>
-									<Box display='flex' alignItems='center' bgcolor='lightgrey' p={1} borderRadius='20px'>
-										{getPriorityIcon(ticket.priority)}
-										<Typography variant='overline' ml={0.5} sx={{ color: ticket.priority.color }}>
-											{ticket.priority.priority_desc} priority
-										</Typography>
-									</Box>
+										<Chip
+											label={ticket.priority.priority_desc}
+											sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+										/>
 								</>
 							)}
 						</Box>
@@ -167,6 +156,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 												displayEmpty
 												value={ticket.status?.name || ''}
 												onChange={handleStatusChange}
+												input={<StyledInput />}
 												disabled={!permissions.hasOwnProperty('ticket.edit')}
 												renderValue={(item) => (
 													<Box display={'flex'} alignItems={'center'}>
@@ -189,7 +179,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 														borderColor: '#E5EFE9',
 													},
 												}}
-												IconComponent={(props) => <ChevronDown {...props} size={17} color='#1B1D1F' />}
+												IconComponent={CustomChevron}
 											>
 												{statuses.map((status) => (
 													<MenuItem key={status.status_id} value={status.name}>
@@ -242,13 +232,6 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 									</Box>
 								</Box>
 
-								{/* {permissions.hasOwnProperty('ticket.edit') && (
-								<Button variant='text' sx={{ color: '#22874E', marginBottom: '-7px' }}>
-									<Typography variant='subtitle2' color={'#22874E'} textTransform={'none'} fontWeight={600}>
-										Edit
-									</Typography>
-								</Button>
-							)} */}
 							</Box>
 						</Box>
 
@@ -267,12 +250,12 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 											<Typography variant='subtitle2' color={'#1B1D1F'} fontWeight={600}>
 												{ticket.due_date
 													? new Date(ticket.due_date)
-															.toLocaleDateString('en-US', {
-																day: '2-digit',
-																month: 'short',
-																year: 'numeric',
-															})
-															.replace(',', ' ')
+														.toLocaleDateString('en-US', {
+															day: '2-digit',
+															month: 'short',
+															year: 'numeric',
+														})
+														.replace(',', ' ')
 													: 'Not set'}
 											</Typography>
 										</Box>
@@ -380,7 +363,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 										</Typography>
 									</Box>
 									{ticket?.form_entry?.form?.fields?.map((field, idx) => (
-										<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} key={idx} sx={{ pb: 3 }}>
+										<Box display={'flex'} flexDirection={'column'} alignItems={'flex-start'} key={field.label} sx={{ pb: 3 }}>
 											<Typography variant='overline' className='text-muted' sx={{ opacity: 0.7 }}>
 												{field.label}
 											</Typography>
@@ -444,7 +427,7 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 						alignItems={'center'}
 						justifyContent={'center'}
 						gap={0.25}
-						// sx={{ transform: 'translateX(-50%)' }}
+					// sx={{ transform: 'translateX(-50%)' }}
 					>
 						<Info size={16} strokeWidth={1.25} /> Created {ticket.created} • Last updated {ticket.updated}
 					</Typography>
@@ -453,3 +436,5 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 		</Box>
 	);
 };
+
+export const CustomChevron = (props) => (<ChevronDown {...props} size={17} color='#1B1D1F' />)

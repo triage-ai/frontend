@@ -52,7 +52,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
                 getFormById(form_id)
                     .then((res) => {
                         setFormFields(res.data.fields)
-                        var values = {}
+                        let values = {}
                         editTicket.form_entry.values.map(value => {
                             const field = res.data.fields.find((field) => field.field_id === value.field_id)
                             values[field.name] = value.value
@@ -124,7 +124,7 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
     }
 
     const validateTicket = () => {
-        var valid = true
+        let valid = true
         for (const key in formValues) {
             if (!formValues[key]) {
                 valid = false

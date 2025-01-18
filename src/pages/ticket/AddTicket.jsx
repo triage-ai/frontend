@@ -5,11 +5,11 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CustomDateTimePicker } from '../../components/date-time-picker';
 import { CircularButton } from '../../components/sidebar';
-import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useFormBackend } from '../../hooks/useFormBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { AgentSelect } from '../agent/AgentSelect';
@@ -25,7 +25,13 @@ import { UserSelect } from '../user/UserSelect';
 dayjs.extend(utc)
 
 export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
-	const { createAgent, updateAgent } = useAgentBackend();
+
+	AddTicket.propTypes = {
+		handleCreated: PropTypes.func,
+		handleEdited: PropTypes.func,
+		editTicket: PropTypes.object
+	}
+
 	const { createTicket, updateTicket, getTicketForms } = useTicketBackend();
 	const { getFormById } = useFormBackend();
 
@@ -65,24 +71,28 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 	useEffect(() => {
 		if (editTicket) {
 			const form_id = editTicket?.form_entry?.form_id
-			setFormData({...editTicket, form_id: form_id});
+			setFormData({ ...editTicket, form_id: form_id });
 			if (form_id) {
 				getFormById(form_id)
 					.then((res) => {
-						setFormFields(res.data.fields)
-						var values = {}
-						editTicket.form_entry.values.forEach(value => {
-							const field = res.data.fields.find((field) => field.field_id === value.field_id)
-							if (field) {
-								values[field.name] = value.value
-							}
-						})
-						setFormValues(values)
-				})
+						populateFormInfo(res)
+					})
 			}
 
 		}
 	}, [editTicket]);
+
+	const populateFormInfo = (res) => {
+		setFormFields(res.data.fields)
+		let values = {}
+		editTicket.form_entry.values.forEach(value => {
+			const field = res.data.fields.find((field) => field.field_id === value.field_id)
+			if (field) {
+				values[field.name] = value.value
+			}
+		})
+		setFormValues(values)
+	}
 
 	const setupForm = (topic_id) => {
 		const values = {}
@@ -97,7 +107,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 			...prev,
 			form_id: form?.form_id,
 		}));
-			
+
 	}
 
 	const prepareNewTicketFormData = () => {
@@ -132,7 +142,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 		const form_values = []
 		const field_to_value_map = {}
 		if (formFields.length) {
-			editTicket.form_entry.values.map(value =>{
+			editTicket.form_entry.values.map(value => {
 				field_to_value_map[value.field_id] = value.value_id
 			})
 		}
@@ -143,7 +153,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 				value: formValues[item.name]
 			})
 		}
-		
+
 		return {
 			ticket_id: formData.ticket_id,
 			agent_id: formData.agent?.agent_id ?? null,
@@ -162,7 +172,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 	}
 
 	const validateTicket = () => {
-		var valid = true
+		let valid = true
 		for (const key in formValues) {
 			if (!formValues[key]) {
 				valid = false
@@ -209,13 +219,13 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 
 	const handleAction = () => {
 		if (editTicket) {
-			updateTicket(prepareEditTicketFormData(formData))
+			updateTicket(prepareEditTicketFormData())
 				.then(res => {
 					handleEdited();
 				})
 				.catch(err => console.error(err));
 		} else {
-			createTicket(prepareNewTicketFormData(formData))
+			createTicket(prepareNewTicketFormData())
 				.then(res => {
 					handleCreated();
 				})
@@ -226,15 +236,15 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 	return (
 		<>
 			<Typography
-                variant="h1"
-                sx={{ mb: 1.5 }}
-            >
-                {editTicket ? 'Edit ticket' : 'Add ticket'}
-            </Typography>
+				variant="h1"
+				sx={{ mb: 1.5 }}
+			>
+				{editTicket ? 'Edit ticket' : 'Add ticket'}
+			</Typography>
 
-            <Typography variant="subtitle2">
-                {editTicket ? 'Edit ticket information.' : 'We will gather essential details about the new ticket. Please fill out the following information.'}
-            </Typography>
+			<Typography variant="subtitle2">
+				{editTicket ? 'Edit ticket information.' : 'We will gather essential details about the new ticket. Please fill out the following information.'}
+			</Typography>
 
 
 			<Box
@@ -269,6 +279,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 						}
 					}}
 					value={formData.topic_id ?? ''}
+					mb={2}
 				/>
 
 				<CustomFilledInput
@@ -291,7 +302,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					rows={5}
 				/>
 
-				{formFields?.length !== 0 && 
+				{formFields?.length !== 0 &&
 					formFields.map((formField) => (
 						<FormInput
 							value={formValues[formField.name] ?? ''}
@@ -320,31 +331,37 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 				<DepartmentSelect
 					handleInputChange={handleInputChange}
 					value={formData.dept_id ?? ''}
+					mb={2}
 				/>
 
 				<SLASelect
 					handleInputChange={handleInputChange}
 					value={formData.sla_id ?? ''}
+					mb={2}
 				/>
 
 				<StatusSelect
 					handleInputChange={handleInputChange}
 					value={formData.status_id ?? ''}
+					mb={2}
 				/>
 
 				<PrioritySelect
 					handleInputChange={handleInputChange}
 					value={formData.priority_id ?? ''}
+					mb={2}
 				/>
 
 				<GroupSelect
 					handleInputChange={handleInputChange}
 					value={formData.group_id ?? ''}
+					mb={2}
 				/>
 
 				<CustomDateTimePicker
 					defaultValue={editTicket?.due_date}
 					onChange={handleDueDateChange}
+					mb={2}
 				/>
 
 			</Box>

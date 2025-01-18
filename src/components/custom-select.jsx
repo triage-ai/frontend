@@ -4,13 +4,15 @@ export const CustomInput = styled((props) => (
 	<TextField
 		slotProps={{
 			input: {
-				disableUnderline: true,
+				...(props.variant === 'filled' ? {disableUnderline: true} : {}),
+				// since we are using this component for filled and standard, disableunderline only applies to filled
 				...props.InputProps,
 			},
 		}}
 		{...props}
 	/>
 ))(({ theme }) => ({
+	// for variant filled
 	'& .MuiFilledInput-root': {
 		overflow: 'hidden',
 		borderRadius: 12,
@@ -29,8 +31,23 @@ export const CustomInput = styled((props) => (
 			borderColor: '#22874E',
 		},
 	},
-	'& label.Mui-focused': {
-		color: '#545555',
+	// for variant outlined
+	'& .MuiOutlinedInput-notchedOutline': {
+		overflow: 'hidden',
+		borderRadius: 12,
+		backgroundColor: 'transparent',
+		border: '1.5px solid #E5EFE9',
+		transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
+		fontSize: '0.9375rem',
+		fontWeight: 500,
+		textAlign: 'left',
+	},
+	'& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+		backgroundColor: 'transparent',
+		borderColor: '#22874E',
+	},
+	'& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+		borderWidth: '1.5px'
 	},
 	
 }));
@@ -80,6 +97,7 @@ export const CustomSelect = ({
 	options,
 	halfWidth,
 	// addNewButton,
+	hideLabel,
 	handleAddBtnClick,
 	hideEmptyOption,
 	...props
@@ -88,11 +106,18 @@ export const CustomSelect = ({
 
 	return (
 		<CustomInput
-			variant="filled"
-			label={label}
+			variant={!hideLabel ? 'filled' : 'outlined'}
+			label={hideLabel ? '' : label}
 			defaultValue=""
 			select
-			sx={{ mt: mt, mb: mb, width: halfWidth && '49%' }}
+			sx={{ 
+				mt: mt,
+				mb: mb,
+				width: halfWidth && '49%',
+				input: {
+					disableUnderline: true
+				}
+			 }}
 			{...otherProps}
 		>
 			{!hideEmptyOption && <MenuItem value="">

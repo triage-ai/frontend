@@ -26,6 +26,7 @@ import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import { AddAgent } from './AddAgent';
 import { DeleteAgent } from './DeleteAgent';
+import { CustomInput, StyledInput } from '../../components/custom-select';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -34,6 +35,7 @@ export const SearchTextField = styled('input')({
 	borderRadius: '12px',
 	padding: '10px',
 	paddingLeft: '36px',
+	paddingRight: '36px',
 	fontWeight: 500,
 	fontSize: '0.9375rem',
 	color: '#000',
@@ -50,7 +52,7 @@ export const SearchTextField = styled('input')({
 	},
 	'&:focus': {
 		outline: 'none',
-		borderColor: '#22874E',
+		// borderColor: '#22874E',
 	},
 });
 
@@ -205,6 +207,7 @@ export const Agents = () => {
 							displayEmpty
 							size='small'
 							value={dept}
+							input={<StyledInput/>}
 							onChange={handleDeptChange}
 							renderValue={(item) => (
 								<Box display={'flex'} alignItems={'center'}>
@@ -219,6 +222,7 @@ export const Agents = () => {
 									borderRadius: '8px',
 									borderColor: '#E5EFE9',
 								},
+								ml: 2
 							}}
 						>
 							<MenuItem key={-1} value={-1}>
@@ -238,6 +242,7 @@ export const Agents = () => {
 							size='small'
 							value={group}
 							onChange={handleGroupChange}
+							input={<StyledInput/>}
 							renderValue={(item) => (
 								<Box display={'flex'} alignItems={'center'}>
 									<Typography variant='subtitle2' fontWeight={600} sx={{ color: '#1B1D1F' }}>
@@ -251,6 +256,7 @@ export const Agents = () => {
 									borderRadius: '8px',
 									borderColor: '#E5EFE9',
 								},
+								ml: 2
 							}}
 						>
 							<MenuItem key={-1} value={-1}>

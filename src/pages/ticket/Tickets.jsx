@@ -1,4 +1,5 @@
 import {
+	Badge,
 	Box,
 	Chip,
 	Dialog,
@@ -6,7 +7,8 @@ import {
 	FormControl,
 	IconButton,
 	MenuItem,
-	Select, Stack,
+	Select,
+	Stack,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,10 +18,8 @@ import {
 	TableRow,
 	Typography
 } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
-import { ChevronDown, Filter, Pencil, RotateCw, Search, TicketPlus, X } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { Filter, Pencil, RotateCw, Search, TicketPlus, X } from 'lucide-react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { StyledInput } from '../../components/custom-select';
 import { Layout } from '../../components/layout';
@@ -29,22 +29,25 @@ import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { SearchTextField } from '../agent/Agents';
 import { AddTicket } from './AddTicket';
 import { AdvancedSearch } from './AdvancedSearch';
+import { CustomChevron } from './TicketDetail';
 import { TicketDetailContainer } from './TicketDetailContainer';
 
-TimeAgo.addDefaultLocale(en)
-const timeAgo = new TimeAgo('en-US')
+// TimeAgo.addDefaultLocale(en)
 
 export const Tickets = () => {
 	const navigate = useNavigate();
 	const { ticketId } = useParams();
-
-	const { tickets, refreshTickets, queues, queueIdx, setQueueIdx, refreshQueues, totalTickets } =
-		useData();
 	const { permissions } = useContext(AuthContext);
+	const { getTicketByQueue, getTicketsbyAdvancedSearch } = useTicketBackend();
 
+
+	// const timeAgo = new TimeAgo('en-US')
+	const { queues, refreshQueues } =
+		useData();
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDetail, setOpenDetail] = useState(false);
 	const [selectedTicket, setSelectedTicket] = useState({});
@@ -55,8 +58,21 @@ export const Tickets = () => {
 	const [searchFilters, setSearchFilters] = useState([])
 	const [searchSorts, setSearchSorts] = useState([])
 	const [advancedSearchMode, setAdvancedSearchMode] = useState(false)
+	const [page, setPage] = useState(0);
+	const [size, setSize] = useState(10);
+	const [tickets, setTickets] = useState([]);
+	const [totalTickets, setTotalTickets] = useState(0);
+	const [selectedQueueId, setSelectedQueueId] = useState(null);
+	const [searchActive, setSearchActive] = useState(false);
 
-	const [queueConfig, setQueueConfig] = useState({page: 0, size: 10, filters: [], sorts: []})
+	const [search, setSearch] = useState('')
+
+	const selectedQueue = useMemo(() => {
+		if (queues.length !== 0 && selectedQueueId) {
+			return queues.find((q) => q.queue_id === selectedQueueId)
+		}
+		else return null
+	}, [selectedQueueId, queues])
 
 
 	const columnFormatter = {
@@ -64,12 +80,7 @@ export const Tickets = () => {
 		2: (ticket) => (formatDate(ticket.created, 'MM-DD-YY hh:mm A')),
 		3: (ticket) => (ticket.title),
 		4: (ticket) => (ticket.user ? ticket.user.firstname + ' ' + ticket.user.lastname : ''),
-		5: (ticket) => (
-			<Chip
-				label={ticket.priority.priority_desc}
-				sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
-			/>
-		),
+		5: (ticket) => CustomPriorityChip(ticket),
 		6: (ticket) => (ticket.status?.name),
 		7: (ticket) => (formatDate(ticket.closed, 'MM-DD-YY hh:mm A')),
 		8: (ticket) => (ticket.agent ? ticket.agent.firstname + ' ' + ticket.agent.lastname : ''),
@@ -82,73 +93,105 @@ export const Tickets = () => {
 	}
 
 	useEffect(() => {
+		if (selectedQueue) {
+			selectedQueue.columns.sort((a,b) => a.sort - b.sort)
+			setSearchColumns(selectedQueue.columns)
+			setQueueColumns(selectedQueue.columns)
+			setSearch('')
+			setSearchFilters(selectedQueue.config.filters)
+			setSearchSorts(selectedQueue.config.sorts)
+		}
+	}, [selectedQueue])
+
+	useEffect(() => {
 		refreshQueues();
+		refreshTicketQueue(null, 0, null, '');
 	}, []);
 
-	// useEffect(() => {
-	// 	console.log(searchFilters)
-	// 	console.log(queues)
-	// }, [searchFilters])
-
-	useEffect(() => {
-		if (queues.length !== 0 && queueIdx !== -1) {
-			setQueueColumns([...queues[queueIdx].columns])
-			setSearchColumns([...queues[queueIdx].columns])
-
-			setSearchFilters(structuredClone(queues[queueIdx].config.filters))
-
-			setSearchSorts(structuredClone(queues[queueIdx].config.sorts))
-
-			setQueueConfig(({size: 10, page: 0, filters: [...queues[queueIdx].config.filters], sorts: [...queues[queueIdx].config.sorts]}))
+	const refreshCurrentTicketList = (page = 0, size = null, search = '') => {
+		if (advancedSearchMode) {
+			refreshTicketSearch({ filters: searchFilters, sorts: searchSorts }, page, size, search)
 		}
-
-	}, [queues, queueIdx])
-
-	useEffect(() => {
-		getTicketList();
-	}, [queueConfig]);
+		else {
+			refreshTicketQueue(selectedQueueId, page, size, search)
+		}
+	}
 
 
 	const handleTicketEdited = () => {
 		handleDialogClose();
-		getTicketList();
+		refreshCurrentTicketList()
 	};
 
 	const handleTicketCreated = () => {
 		handleDialogClose();
-		getTicketList();
+		refreshCurrentTicketList()
 	};
 
-	const getTicketList = async () => {
-		if (queues.length !== 0) {
-			setLoading(true)
 
-			await refreshTickets(
-				{filters: queueConfig.filters, sorts: queueConfig.sorts},
-				queueConfig.size,
-				queueConfig.page + 1)
-				
-			setLoading(false)
-		}
+	const refreshTicketQueue = async (queue_id, new_page, new_size, new_search) => {
+		setLoading(true)
+		await getTicketByQueue(queue_id, new_search, new_page + 1, new_size).then(ticketList => {
+			const { items, total, queue_id } = ticketList.data;
+			setTotalTickets(total)
+			setTickets(items);
+			if (selectedQueueId !== queue_id) {
+				setSelectedQueueId(queue_id)
+			}
+			if (page !== ticketList.data.page - 1) {
+				setPage(ticketList.data.page - 1)
+			}
+			if (size !== ticketList.data.size) {
+				setSize(ticketList.data.size)
+			}
+			if (search !== new_search) {
+				setSearch(new_search)
+				if (!new_search) {
+					setSearchActive(false)
+				}
+			}
+
+		}).catch((e) => console.error(e));
+		setLoading(false);
+	};
+
+	const refreshTicketSearch = async (config, new_page, new_size, new_search) => {
+		setLoading(true)
+		await getTicketsbyAdvancedSearch(config, new_search, new_page + 1, new_size).then(ticketList => {
+			const { items, total } = ticketList.data;
+			setTotalTickets(total)
+			setTickets(items);
+			if (page !== ticketList.data.page - 1) {
+				setPage(ticketList.data.page - 1)
+			}
+			if (size !== ticketList.data.size) {
+				setSize(ticketList.data.size)
+			}
+			if (search !== new_search) {
+				setSearch(new_search)
+				if (!new_search) {
+					setSearchActive(false)
+				}
+			}
+		}).catch((e) => console.error(e));
+		setLoading(false);
 	};
 
 
 	const handleSubmitSearch = () => {
 		setOpenAdvancedSearch(false)
 		setAdvancedSearchMode(true)
-		setQueueIdx(-1)
-
+		setSelectedQueueId(null)
 		setQueueColumns([...searchColumns])
-
-		setQueueConfig(p => ({page: 0, size: 10, filters: [...searchFilters], sorts: [...searchSorts]}))
+		refreshTicketSearch({ filters: searchFilters, sorts: searchSorts }, 0, null, '')
 	}
 
 	const handleChangePage = (e, newValue) => {
-		setQueueConfig(p => ({...p, page: newValue}))
+		refreshCurrentTicketList(newValue, size, search)
 	};
 
-	const handleChangeRowsPerPage = e => {
-		setQueueConfig(p => ({...p, page: 0, size: e.target.value}))
+	const handleChangeSize = e => {
+		refreshCurrentTicketList(0, e.target.value, search)
 	};
 
 	useEffect(() => {
@@ -171,17 +214,39 @@ export const Tickets = () => {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
-		getTicketList()
+		refreshCurrentTicketList()
 	};
+
+	const handleAdvancedSearchOpen = () => {
+		setOpenAdvancedSearch(true)
+	}
 
 	const handleAdvancedSearchClose = () => {
 		setOpenAdvancedSearch(false)
+		setSearchFilters(p => p.filter((filter) => filter[0] && filter[1] && (filter[2] !== '' && filter[2]?.length !== 0)))
+		setSearchSorts(p => p.filter((sort) => sort))
+		setSearchColumns(p => p.filter((column) => column.default_column_id !== 0 && column.name !== ''))
 	}
 
 	const handleQueueChange = e => {
-		setQueueIdx(e.target.value.queue_id - 1);
 		setAdvancedSearchMode(false)
+		refreshTicketQueue(e.target.value.queue_id, 0, null, '')
 	};
+
+	const handleSearchBarChange = (e) => {
+		setSearch(e.target.value)
+	};
+
+	const handleSearchBar = (e) => {
+		if (e.key === 'Enter') {
+			setSearchActive(true)
+			refreshCurrentTicketList(0, null, search)
+		}
+	};
+
+	const handleSearchClear = () => {
+		refreshCurrentTicketList()
+	}
 
 	const toggleDetailDrawer =
 		(newOpen, ticket = null) =>
@@ -205,7 +270,7 @@ export const Tickets = () => {
 				hidden: permissions.hasOwnProperty('ticket.create')
 			}}
 			AddResource={AddTicket}
-			refreshResource={getTicketList}
+			refreshResource={refreshCurrentTicketList}
 		>
 			<WhiteContainer noPadding>
 				<Box
@@ -217,14 +282,16 @@ export const Tickets = () => {
 						px: 2.25,
 					}}
 				>
-					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
+					<Box sx={{ position: 'relative', width: '20%' }}>
 						<SearchTextField
 							type="text"
 							label="Search"
 							variant="filled"
 							placeholder="Search"
-							disabled
+							value={search}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
+							onChange={handleSearchBarChange}
+							onKeyDown={handleSearchBar}
 						/>
 						<Box
 							sx={{
@@ -241,9 +308,29 @@ export const Tickets = () => {
 						>
 							<Search
 								size={20}
-								color="#575757"
+								color={searchActive ? '#29b866' : '#575757'}
 							/>
 						</Box>
+						{search && <Box
+							sx={{
+								width: '42px',
+								height: '40px',
+								position: 'absolute',
+								top: 0,
+								right: 0,
+								zIndex: 5,
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+							}}
+						>
+							<IconButton onClick={handleSearchClear}>
+								<X
+									size={20}
+									color='#575757'
+								/>
+							</IconButton>
+						</Box>}
 					</Box>
 
 					<Box
@@ -259,7 +346,7 @@ export const Tickets = () => {
 							Queue
 						</Typography>
 						<FormControl
-							sx={{ 
+							sx={{
 								m: 1,
 								minWidth: 120,
 								'& .MuiSelect-select': {
@@ -270,7 +357,7 @@ export const Tickets = () => {
 						>
 							<Select
 								displayEmpty
-								value={advancedSearchMode ? '' : queues.length ? queues[queueIdx] : ''}
+								value={advancedSearchMode ? '' : selectedQueue ?? ''}
 								onChange={handleQueueChange}
 								input={<StyledInput />}
 								renderValue={item => (
@@ -295,17 +382,11 @@ export const Tickets = () => {
 											fontWeight={600}
 											sx={{ color: '#1B1D1F' }}
 										>
-											{item.title}
+											{item?.title ?? ''}
 										</Typography>
 									</Box>
 								)}
-								IconComponent={props => (
-									<ChevronDown
-										{...props}
-										size={17}
-										color="#1B1D1F"
-									/>
-								)}
+								IconComponent={CustomChevron}
 							>
 								{queues.map((queue) => (
 									<MenuItem
@@ -317,10 +398,12 @@ export const Tickets = () => {
 								))}
 							</Select>
 						</FormControl>
-						<IconButton sx={{ borderRadius: '8px', border: advancedSearchMode ? '2px solid #29b866' : '1.5px solid #E5EFE9', mr: 1 }} onClick={() => setOpenAdvancedSearch(true)} >
-							<Filter color={advancedSearchMode ? '#29b866' : 'currentColor'} size={20} />
-						</IconButton>
-						<IconButton sx={{ borderRadius: '8px', border: '1.5px solid #E5EFE9' }} onClick={() => getTicketList()} >
+						<Badge badgeContent={advancedSearchMode ? searchFilters.length : 0} color="primary">
+							<IconButton sx={{ borderRadius: '8px', border: '1.5px solid #E5EFE9' }} onClick={handleAdvancedSearchOpen} >
+								<Filter color={advancedSearchMode ? '#29b866' : 'currentColor'} size={20} />
+							</IconButton>
+						</Badge>
+						<IconButton sx={{ borderRadius: '8px', border: '1.5px solid #E5EFE9', ml: 1 }} onClick={() => refreshCurrentTicketList()} >
 							<RotateCw size={20} />
 						</IconButton>
 					</Box>
@@ -337,9 +420,9 @@ export const Tickets = () => {
 								}}
 							>
 								{
-									queues.length !== 0 ? queueColumns.map((column, idx) => (
-										<TableCell key={idx} >
-											<Typography key={idx} variant="overline">{column.name}</Typography>
+									queues.length !== 0 ? queueColumns.map((column) => (
+										<TableCell key={column.name} >
+											<Typography variant="overline">{column.name}</Typography>
 										</TableCell>
 									)) :
 										<>
@@ -380,8 +463,8 @@ export const Tickets = () => {
 										}}
 									>
 										{
-											queues.length !== 0 && queueColumns.map((column, idx) => (
-												<TableCell key={idx} >
+											queues.length !== 0 && (queueColumns).map((column) => (
+												<TableCell key={column.default_column_id} >
 													{columnFormatter[column.default_column_id](ticket)}
 												</TableCell>
 											)
@@ -441,10 +524,10 @@ export const Tickets = () => {
 					<TablePagination
 						component="div"
 						count={totalTickets}
-						page={queueConfig.page}
+						page={page}
 						onPageChange={handleChangePage}
-						rowsPerPage={queueConfig.size}
-						onRowsPerPageChange={handleChangeRowsPerPage}
+						rowsPerPage={size}
+						onRowsPerPageChange={handleChangeSize}
 					/>
 				</TableContainer>
 
@@ -546,7 +629,7 @@ export const Tickets = () => {
 							<X size={20} />
 						</IconButton>
 					</Box>
-					<AdvancedSearch 
+					<AdvancedSearch
 						rows={searchColumns}
 						setRows={setSearchColumns}
 						filters={searchFilters}
@@ -584,3 +667,10 @@ export const Tickets = () => {
 		</Layout>
 	);
 };
+
+const CustomPriorityChip = (ticket) => (
+	<Chip
+		label={ticket.priority.priority_desc}
+		sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
+	/>
+)

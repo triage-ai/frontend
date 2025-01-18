@@ -127,15 +127,15 @@ export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 
 				<CustomFilledInput label='Name' onChange={handleInputChange} value={formData.topic} name='topic' mb={2} fullWidth />
 
-				<StatusSelect handleInputChange={handleInputChange} value={formData.status_id ?? ''} />
+				<StatusSelect handleInputChange={handleInputChange} value={formData.status_id ?? ''} mb={2}/>
 
-				<PrioritySelect handleInputChange={handleInputChange} value={formData.priority_id ?? ''} />
+				<PrioritySelect handleInputChange={handleInputChange} value={formData.priority_id ?? ''} mb={2}/>
 
-				<DepartmentSelect handleInputChange={handleInputChange} value={formData.dept_id ?? ''} />
+				<DepartmentSelect handleInputChange={handleInputChange} value={formData.dept_id ?? ''} mb={2}/>
 
-				<GroupSelect handleInputChange={handleInputChange} value={formData.group_id ?? ''} />
+				<GroupSelect handleInputChange={handleInputChange} value={formData.group_id ?? ''} mb={2}/>
 
-				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id ?? ''} />
+				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id ?? ''} mb={2}/>
 
 				<AgentSelect name='manager' handleInputChange={handleManagerChange} value={manager ?? ''} mb={2} />
 

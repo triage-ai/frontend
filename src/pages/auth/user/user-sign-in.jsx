@@ -5,6 +5,7 @@ import logoBlack from '../../../assets/logo-black.svg';
 import logo from '../../../assets/logo-white.svg';
 
 import {
+	Alert,
 	Box,
 	Button,
 	CircularProgress,
@@ -86,15 +87,15 @@ export const UserSignIn = () => {
 	const navigate = useNavigate();
 	const { userSignInEmailAndPassword } = useSetAuthCookie();
 
+	const [notification, setNotification] = useState('')
+
 	const signIn = async e => {
 		e.preventDefault();
 		setLoading(true);
 
 		if (validateEmail(email) && password !== '') {
 			userSignInEmailAndPassword(email, password)
-				// signInWithEmailAndPassword(auth, email, password)
 				.then(userCredential => {
-					// getApiToken(userCredential);
 					const userData = userCredential.data;
 
 					const authInfo = {
@@ -106,10 +107,11 @@ export const UserSignIn = () => {
 					setLoading(false);
 					navigate('/user/tickets');
 				})
-				.catch(error => {
+				.catch((error) => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
 					console.error(errorCode, errorMessage);
+					setNotification(error.response?.data?.detail);
 					setLoading(false);
 				});
 		} else if (!validateEmail(email)) {
@@ -333,19 +335,19 @@ export const UserSignIn = () => {
 
 							<img
 								src={AppIcon}
-								className="App-logo"
+								className='App-logo'
 								// style={{ width: '0px' }}
-								alt="logo"
+								alt='logo'
 							/>
 
 							<h1
 								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
+									fontSize: '2rem',
+									fontWeight: 500,
 									color: '#1B1D1F',
 									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
+									marginTop: '20px',
+									marginBottom: '20px',
 								}}
 							>
 								User Sign in
@@ -418,22 +420,13 @@ export const UserSignIn = () => {
 								Or continue with email and password
 							</span> */}
 
-							<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-								Sign in with email and password
-							</p>
 
 							<form onSubmit={e => signIn(e)}>
+								{notification &&
+									<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{ mb: 2, border: '1px solid rgb(239, 83, 80);' }} >
+										{notification}
+									</Alert>
+								}
 								<CustomTextField
 									label=""
 									id="email"
@@ -482,10 +475,10 @@ export const UserSignIn = () => {
 									value={password}
 									onChange={event => {
 										// if (validatePassword(password)) {
-											// 	setError(false);
-											// }
-											setPassword(event.target.value);
-										}}
+										// 	setError(false);
+										// }
+										setPassword(event.target.value);
+									}}
 								/>
 
 								<Button
@@ -536,36 +529,36 @@ export const UserSignIn = () => {
 									textAlign: 'center',
 								}}
 							>
-										<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
+								<Link underline='none' component='button' onClick={() => navigate('/reset_password')}>Forgot password?</Link>
 							</p>
-						<p
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: 600,
-								color: '#1B1D1F',
-								letterSpacing: '-0.01em',
-								lineHeight: 1.2,
-								marginTop: 0,
-								marginBottom: '10px',
-								textAlign: 'center',
-							}}
-						>
-							Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
-						</p>
-						<p
-							style={{
-								fontSize: '0.875rem',
-								fontWeight: 600,
-								color: '#1B1D1F',
-								letterSpacing: '-0.01em',
-								lineHeight: 1.2,
-								marginTop: 0,
-								marginBottom: '20px',
-								textAlign: 'center',
-							}}
-						>
-							Looking for agent sign in? <Link underline='none' component='button' onClick={() => navigate('/agent/login')}>Click here</Link>
-						</p>
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 0,
+									marginBottom: '10px',
+									textAlign: 'center',
+								}}
+							>
+								Don't have an account? Sign up <Link underline='none' component='button' onClick={() => navigate('/signup')}>here</Link>
+							</p>
+							<p
+								style={{
+									fontSize: '0.875rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: 0,
+									marginBottom: '20px',
+									textAlign: 'center',
+								}}
+							>
+								Looking for agent sign in? <Link underline='none' component='button' onClick={() => navigate('/agent/login')}>Click here</Link>
+							</p>
 						</header>
 					</div>
 				</Grid>

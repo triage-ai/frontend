@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 
-export const ScheduleSelect = ({ handleInputChange, value }) => {
+export const ScheduleSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedSchedules, refreshSchedules } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshSchedules();
@@ -25,13 +27,13 @@ export const ScheduleSelect = ({ handleInputChange, value }) => {
 			<CustomSelect
 				label="Schedule"
 				onChange={handleInputChange}
-				value={value}
-				name="schedule_id"
-				mb={2}
+				value={formattedSchedules.length === 0 ? '' : value}
+				name={name ?? "schedule_id"}
 				fullWidth
-				
+				mb={mb}
 				handleAddBtnClick={openDialog}
 				options={formattedSchedules}
+				{...otherProps}
 			/>
 
 			<Dialog

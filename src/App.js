@@ -97,20 +97,17 @@ function App() {
 	const { agentAuthState, userAuthState, agentLogout, userLogout } = useContext(AuthContext);
 	const navigate = useNavigate();
 
-	axios.interceptors.response.use(
-		(response) => {
-			return response;
-		},
-		(error) => {
-			if (error.response.status === 401) {
-				agentLogout();
-				userLogout();
-				navigate('/');
-				return error;
-			}
-			throw error;
+	axios.interceptors.response.use(response => {
+		return response;
+	}, error => {
+		if (error.response.status === 401 && error.response.data.detail === "Could not validate credentials") { // This needs to be tested
+			agentLogout()
+			userLogout()
+			navigate("/")
+			return error;
 		}
-	);
+		throw error
+	});
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -366,7 +363,7 @@ function App() {
 								path='manage/queues'
 								element={
 									<ProtectedRoute>
-										<Users />
+										<Queues />
 									</ProtectedRoute>
 								}
 							/>

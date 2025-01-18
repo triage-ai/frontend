@@ -110,9 +110,9 @@ export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) =
 
 				<CustomFilledInput label='Name' onChange={handleInputChange} value={formData.name} name='name' mb={2} fullWidth />
 
-				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id} />
+				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id} mb={2} />
 
-				<ScheduleSelect handleInputChange={handleInputChange} value={formData.schedule_id} />
+				<ScheduleSelect handleInputChange={handleInputChange} value={formData.schedule_id} mb={2} />
 
 				<AgentSelect name='manager' handleInputChange={handleManagerChange} value={manager ?? ''} mb={2} />
 

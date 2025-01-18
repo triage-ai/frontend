@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddTopic } from './AddTopic';
 
-export const TopicSelect = ({ handleInputChange, value, name }) => {
+export const TopicSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedTopics, refreshTopics } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshTopics();
@@ -26,13 +28,13 @@ export const TopicSelect = ({ handleInputChange, value, name }) => {
 			<CustomSelect
 				label="Topic"
 				onChange={handleInputChange}
-				value={value}
+				value={formattedTopics.length === 0 ? '' : value}
 				name={name ?? "topic_id"}
-				mb={2}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedTopics}
+				{...otherProps}
 			/>
 
 			<Dialog

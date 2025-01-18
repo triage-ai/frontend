@@ -32,49 +32,46 @@ export const extensions = [
 	TableRow,
 	TableHeader,
 	TableCell,
-	LinkBubbleMenuHandler,
+	// LinkBubbleMenuHandler,
 	StarterKit
 ];
 
 
 
-export const RichTextEditorBox = ({ editor, children, footer, PostButton }) => {
-	return (
-		<Box>
-			<RichTextEditorProvider editor={editor}>
-				<StyledRichTextField
-					RichTextContentProps={{
-						className: 'App-rich-text-field',
-					}}
-					controls={
-						<MenuControlsContainer>
-							<Box display='flex' flexDirection='row' alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
-								<Box display='flex' flexDirection='row' alignItems={'center'} gap={'2.4px'}>
-									<MenuButtonBold />
-									<MenuButtonItalic />
-									<MenuButtonStrikethrough />
-									<MenuDivider />
-									<MenuButtonOrderedList />
-									<MenuButtonBulletedList />
-									<MenuDivider />
-									<MenuButtonBlockquote />
-									<MenuDivider />
-									<MenuButtonCode />
-									<MenuButtonCodeBlock />
-									<MenuDivider />
-									<MenuButtonAddTable />
-								</Box>
-								{PostButton}
-							</Box>
-						</MenuControlsContainer>
-					}
-					footer={footer}
-				>{children}</StyledRichTextField>
-				<TableBubbleMenu />
-			</RichTextEditorProvider>
-		</Box>
-	);
-};
+export const RichTextEditorBox = ({ editor, children, footer, PostButton }) => (
+	<Box>
+		<RichTextEditorProvider editor={editor}>
+			<StyledRichTextField
+				RichTextContentProps={{
+					className: 'App-rich-text-field',
+				}}
+				variant='outlined'
+				controls={<MenuControlsContainer>
+					<Box display='flex' flexDirection='row' alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
+						<Box display='flex' flexDirection='row' alignItems={'center'} gap={'2.4px'}>
+							<MenuButtonBold />
+							<MenuButtonItalic />
+							<MenuButtonStrikethrough />
+							<MenuDivider />
+							<MenuButtonOrderedList />
+							<MenuButtonBulletedList />
+							<MenuDivider />
+							<MenuButtonBlockquote />
+							<MenuDivider />
+							<MenuButtonCode />
+							<MenuButtonCodeBlock />
+							{/* <MenuDivider /> */}
+							{/* <MenuButtonAddTable /> */}
+						</Box>
+						{PostButton}
+					</Box>
+				</MenuControlsContainer>}
+				footer={footer}
+			>{children}</StyledRichTextField>
+			<TableBubbleMenu />
+		</RichTextEditorProvider>
+	</Box>
+);
 
 const StyledRichTextField = styled(RichTextField)(({ theme }) => ({
 	'& .MuiTiptap-FieldContainer-notchedOutline': {
@@ -86,8 +83,7 @@ const StyledRichTextField = styled(RichTextField)(({ theme }) => ({
 		backgroundColor: 'transparent',
 		border: '1.5px solid #22874E',
 	},
-	'&.MuiTiptap-FieldContainer-root.Mui-focused .MuiTiptap-FieldContainer-notchedOutline': {
-		backgroundColor: 'transparent',
+	'&.MuiTiptap-FieldContainer-focused .MuiTiptap-FieldContainer-notchedOutline': {
 		border: '1.5px solid #22874E',
 	},
 	'.App-rich-text-field': {

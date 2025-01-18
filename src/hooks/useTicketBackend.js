@@ -5,24 +5,30 @@ import { AuthContext } from "../context/AuthContext";
 export const useTicketBackend = () => {
 	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
-	const getTicketsbyAdvancedSearch = async (adv_search) => {
+	const getTicketsbyAdvancedSearch = async (payload, search, page, size) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
-		};
-		const page = adv_search.page;
-		const size = adv_search.size;
-		const payload = {
-			filters: adv_search.filters,
-			sorts: adv_search.sorts,
 		};
 
 		return await axios.post(
 			process.env.REACT_APP_BACKEND_URL +
-				`ticket/adv_search?size=${size}&page=${page}`,
+				`ticket/adv_search?page=${page}${size ? '&size=' + size : ''}${search ? '&search=' + search : ''}`,
 			payload,
 			config
 		);
 	};
+
+	const getTicketByQueue = async (queue_id, search, page, size) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + `ticket/queue/${queue_id ?? 0}?page=${page}${size ? '&size=' + size : ''}${search ? '&search=' + search : ''}`,
+			config
+		);
+	};
+
 
 	const getTicketsbyAdvancedSearchForUser = async (adv_search) => {
 		const config = {
@@ -160,6 +166,7 @@ export const useTicketBackend = () => {
 		getTicketsbyAdvancedSearch,
 		getTicketsbyAdvancedSearchForUser,
 		getTicketById,
+		getTicketByQueue,
 		getTicketByIdForUser,
 		getTicketByNumber,
 		getTicketForms,
