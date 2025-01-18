@@ -1,6 +1,5 @@
 import { Avatar, Box, CircularProgress, MenuItem, Stack, Tab, Typography } from '@mui/material';
 import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import { Settings2, UserRound } from 'lucide-react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -12,7 +11,6 @@ import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { StyledSelect, StyledTabs } from '../settings/SettingsMenus';
-import { convertFieldResponseIntoMuiTextFieldProps } from '@mui/x-date-pickers/internals';
 
 const Header = ({ headers, components }) => {
 	// const [menuState, setMenuState] = useState(headers[0].id);
@@ -70,7 +68,7 @@ const Header = ({ headers, components }) => {
 };
 
 const profileSave = async (formData, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
-	var updates = { ...profileData };
+	let updates = { ...profileData };
 	try {
 		Object.entries(formData).forEach((update) => {
 			updates[update[0]] = update[1];
@@ -89,7 +87,7 @@ const profileSave = async (formData, profileData, updateAgent, refreshAgent, set
 
 const profileSaveSig = async (signature, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	try {
-		var updates = { ...profileData };
+		let updates = { ...profileData };
 		updates['signature'] = signature;
 		setCircleLoading(true);
 		await updateAgent(updates)
@@ -105,7 +103,7 @@ const profileSaveSig = async (signature, profileData, updateAgent, refreshAgent,
 
 const profileSavePref = async (preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	try {
-		var updates = { ...profileData };
+		let updates = { ...profileData };
 		updates['preferences'] = preferences;
 		setCircleLoading(true);
 		await updateAgent(updates)
@@ -141,7 +139,7 @@ export const Profile = () => {
 
 	const refreshAgent = (agent = null) => {
 		if (agent) {
-			setProfileData({...profileData, ...agent});
+			setProfileData({ ...profileData, ...agent });
 		}
 		else {
 			getAgentById(agentAuthState.agent_id).then((res) => {
@@ -151,7 +149,7 @@ export const Profile = () => {
 	}
 
 	useEffect(() => {
-		setComponents([<Account profileData={profileData} refreshAgent={refreshAgent} />, <Preferences profileData={profileData} refreshAgent={refreshAgent}  />, <Signature profileData={profileData} refreshAgent={refreshAgent}  />]);
+		setComponents([<Account profileData={profileData} refreshAgent={refreshAgent} />, <Preferences profileData={profileData} refreshAgent={refreshAgent} />, <Signature profileData={profileData} refreshAgent={refreshAgent} />]);
 	}, [profileData]);
 
 	return (
@@ -169,7 +167,7 @@ export const Profile = () => {
 	);
 };
 
-const Account = ({refreshAgent, profileData}) => {
+const Account = ({ refreshAgent, profileData }) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const { updateAgent } = useAgentBackend();
@@ -268,10 +266,11 @@ const Account = ({refreshAgent, profileData}) => {
 	);
 };
 
-const Preferences = ({refreshAgent, profileData}) => {
+const Preferences = ({ refreshAgent, profileData }) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
-	const { updateAgent } = useAgentBackend();	
+	const { updateAgent } = useAgentBackend();
+	const { formattedQueues, refreshQueues } = useData()
 	const [formData, setFormData] = useState({
 		agent_default_page_size: profileData.default_preferences.agent_default_page_size,
 		default_from_name: profileData.default_preferences.default_from_name,
@@ -293,6 +292,10 @@ const Preferences = ({refreshAgent, profileData}) => {
 
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		refreshQueues()
+	}, [])
 
 	return (
 		<Box>
@@ -337,20 +340,19 @@ const Preferences = ({refreshAgent, profileData}) => {
 				</Typography>
 				<StyledSelect
 					name='agent_default_ticket_queue'
-					value={formData.agent_default_ticket_queue}
+					value={formattedQueues.length !== 0 ? formData.agent_default_ticket_queue : 0}
 					onChange={handleChange}
 					sx={{ width: 435 }}
+					renderValue={(item) => (
+						<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
+							{formattedQueues.find(x => x.value === item)?.label ?? 'System Default'}
+						</Typography>
+					)}
 				>
-					<MenuItem value='Open'>Open</MenuItem>
-					<MenuItem value='Closed'>Closed</MenuItem>
-					<MenuItem value='Unanswered'>Unanswered</MenuItem>
-					<MenuItem value='Overdue'>Overdue</MenuItem>
-					<MenuItem value='My Tickets'>My Tickets</MenuItem>
-					<MenuItem value='Today'>Today</MenuItem>
-					<MenuItem value='This Week'>This Week</MenuItem>
-					<MenuItem value='This Month'>This Month</MenuItem>
-					<MenuItem value='This Year'>This Year</MenuItem>
-					<MenuItem value='System Default'>System Default</MenuItem>
+					<MenuItem value={0} key={0}>System Default</MenuItem>
+					{formattedQueues.map((queue) => (
+						<MenuItem value={queue.value} key={queue.value}>{queue.label}</MenuItem>
+					))}
 				</StyledSelect>
 			</Stack>
 
@@ -396,7 +398,7 @@ const Preferences = ({refreshAgent, profileData}) => {
 	);
 };
 
-const Signature = ({refreshAgent, profileData}) => {
+const Signature = ({ refreshAgent, profileData }) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const { updateAgent } = useAgentBackend();

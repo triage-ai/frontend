@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddPriority } from './AddPriority';
 
-export const PrioritySelect = ({ handleInputChange, value, name }) => {
+export const PrioritySelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedPriorities, refreshPriorities } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshPriorities();
@@ -26,13 +28,13 @@ export const PrioritySelect = ({ handleInputChange, value, name }) => {
 			<CustomSelect
 				label="Priority"
 				onChange={handleInputChange}
-				value={value}
+				value={formattedPriorities.length === 0 ? '' : value}
 				name={name ?? "priority_id"}
-				mb={2}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedPriorities}
+				{...otherProps}
 			/>
 
 			<Dialog

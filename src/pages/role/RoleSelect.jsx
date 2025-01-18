@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddRole } from './AddRole';
 
-export const RoleSelect = ({ handleInputChange, value }) => {
+export const RoleSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedRoles, refreshRoles } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshRoles();
@@ -26,13 +28,13 @@ export const RoleSelect = ({ handleInputChange, value }) => {
 			<CustomSelect
 				label="Role"
 				onChange={handleInputChange}
-				value={value}
-				name="role_id"
-				mb={2}
+				value={formattedRoles.length === 0 ? '' : value}
+				name={name ?? "role_id"}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedRoles}
+				{...otherProps}
 			/>
 
 			<Dialog

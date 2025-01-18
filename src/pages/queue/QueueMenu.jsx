@@ -1,25 +1,24 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
-import { CircularButton } from "../../components/sidebar";
-import { ColumnsDataGrid } from "./ColumnsDataGrid";
-import { Filter } from "./Filter";
-import { Sort } from "./Sort";
 import PropTypes from "prop-types";
+import { Filter } from "../ticket/Filter";
+import { Sort } from "../ticket/Sort";
+import { CrudColumnsDataGrid } from "./CrudColumnsDataGrid";
 
-export const AdvancedSearch = ({ rows, setRows, filters, setFilters, sorts, setSorts, submitSearch }) => {
+export const QueueMenu = ({ rows, setRows, filters, setFilters, sorts, setSorts, setIsValid, queue_id }) => {
 
-    AdvancedSearch.propTypes = {
+    QueueMenu.propTypes = {
         rows: PropTypes.array,
         setRows: PropTypes.func,
         filters: PropTypes.array,
         setFilters: PropTypes.func,
         sorts: PropTypes.array,
         setSorts: PropTypes.func,
-        submitSearch: PropTypes.func
+        setIsValid: PropTypes.func,
+        queue_id: PropTypes.number,
     }
 
     const [value, setValue] = useState('one');
-    const [isValid, setIsValid] = useState(false)
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -27,7 +26,7 @@ export const AdvancedSearch = ({ rows, setRows, filters, setFilters, sorts, setS
 
     useEffect(() => {
         setIsValid(validateRows() && validateFilters() && validateSorts())
-    }, [rows, filters, sorts])
+    }, [filters, sorts])
 
     const validateRows = () => {
 
@@ -65,15 +64,16 @@ export const AdvancedSearch = ({ rows, setRows, filters, setFilters, sorts, setS
             return <Sort sorts={sorts} setSorts={setSorts} />
         }
         else {
-            return <ColumnsDataGrid
+            return <CrudColumnsDataGrid
                 rows={rows}
                 setRows={setRows}
+                queue_id={queue_id}
             />
         }
     }
 
     return (
-        <Box height={'600px'} sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
 
             <Tabs
                 value={value}
@@ -87,7 +87,7 @@ export const AdvancedSearch = ({ rows, setRows, filters, setFilters, sorts, setS
             </Tabs>
 
             {tabSwitcher(value)}
-            <CircularButton
+            {/* <CircularButton
                 sx={{ py: 2, px: 6 }}
                 position={'absolute'}
                 bottom={12}
@@ -95,7 +95,7 @@ export const AdvancedSearch = ({ rows, setRows, filters, setFilters, sorts, setS
                 disabled={!isValid}
             >
                 Search
-            </CircularButton>
+            </CircularButton> */}
         </Box>
     )
 

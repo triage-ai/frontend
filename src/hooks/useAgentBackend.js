@@ -18,7 +18,7 @@ export const useAgentBackend = () => {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
 
-		var url = `agent/get/?page=${page}&size=${size}&`
+		let url = `agent/get/?page=${page}&size=${size}&`
 		if (dept_id) {
 			url += `dept_id=${dept_id}&`
 		}

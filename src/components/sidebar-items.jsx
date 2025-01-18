@@ -21,6 +21,7 @@ import {
 	CircleUserRound,
 	ClipboardList,
 	Files,
+	Filter,
 	Headset,
 	KeyRound,
 	Lightbulb,
@@ -141,7 +142,7 @@ export const getMenuItems = (adminStatus) => [
 		icon: (
 			<PanelLeft
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
 			/>
 		),
 	},
@@ -152,33 +153,33 @@ export const getMenuItems = (adminStatus) => [
 		icon: (
 			<Ticket
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
 			/>
 		),
 	},
 	...(adminStatus
 		? [
-				{
-					title: 'Settings',
-					icon: (
-						<Settings
-							size={20}
-							// strokeWidth={2}
-						/>
-					),
-				},
-				{
-					title: 'Email',
-					icon: <Mail size={20} />,
-				},
-		  ]
+			{
+				title: 'Settings',
+				icon: (
+					<Settings
+						size={20}
+					// strokeWidth={2}
+					/>
+				),
+			},
+			{
+				title: 'Email',
+				icon: <Mail size={20} />,
+			},
+		]
 		: []),
 	{
 		title: 'Manage',
 		icon: (
 			<BriefcaseBusiness
 				size={20}
-				// strokeWidth={2}
+			// strokeWidth={2}
 			/>
 		),
 	},
@@ -191,67 +192,67 @@ export const getMenuItems = (adminStatus) => [
 export const getManageSubmenuItems = (permissions, adminStatus) => [
 	...(permissions.hasOwnProperty('agent.view')
 		? [
-				{
-					title: 'Agents',
-					icon: <Headset size={20} />,
-				},
-		  ]
+			{
+				title: 'Agents',
+				icon: <Headset size={20} />,
+			},
+		]
 		: []),
 	...(permissions.hasOwnProperty('user.view')
 		? [
-				{
-					title: 'Users',
-					icon: <UserRound size={20} />,
-				},
-		  ]
+			{
+				title: 'Users',
+				icon: <UserRound size={20} />,
+			},
+		]
 		: []),
 	...(permissions.hasOwnProperty('group.view')
 		? [
-				// {
-				// 	title: 'Groups',
-				// 	icon: <Users size={20} />,
-				// },
-		  ]
+			// {
+			// 	title: 'Groups',
+			// 	icon: <Users size={20} />,
+			// },
+		]
 		: []),
+	{
+		title: 'Queues',
+		icon: <Filter size={20} />,
+	},
 	...(adminStatus
 		? [
-				// {
-				// 	title: 'Queues',
-				// 	icon: <Filter size={20} />,
-				// },
-				// {
-				// 	title: 'SLA',
-				// 	icon: <AlarmClock size={20} />,
-				// },
-				// {
-				// 	title: 'Schedules',
-				// 	icon: <Calendar size={20} />,
-				// },
-				{
-					title: 'Departments',
-					icon: <SquareUserRound size={20} />,
-				},
-				// {
-				// 	title: 'Priorities',
-				// 	icon: <CircleAlert size={20} />,
-				// },
-				// {
-				// 	title: 'Statuses',
-				// 	icon: <TicketCheck size={20} />,
-				// },
-				{
-					title: 'Topics',
-					icon: <MessageCircleQuestion size={20} />,
-				},
-				{
-					title: 'Forms',
-					icon: <Files size={20} />,
-				},
-				{
-					title: 'Roles',
-					icon: <KeyRound size={20} />,
-				},
-		  ]
+			// {
+			// 	title: 'SLA',
+			// 	icon: <AlarmClock size={20} />,
+			// },
+			// {
+			// 	title: 'Schedules',
+			// 	icon: <Calendar size={20} />,
+			// },
+			{
+				title: 'Departments',
+				icon: <SquareUserRound size={20} />,
+			},
+			// {
+			// 	title: 'Priorities',
+			// 	icon: <CircleAlert size={20} />,
+			// },
+			// {
+			// 	title: 'Statuses',
+			// 	icon: <TicketCheck size={20} />,
+			// },
+			{
+				title: 'Topics',
+				icon: <MessageCircleQuestion size={20} />,
+			},
+			{
+				title: 'Forms',
+				icon: <Files size={20} />,
+			},
+			{
+				title: 'Roles',
+				icon: <KeyRound size={20} />,
+			},
+		]
 		: []),
 ];
 
@@ -379,317 +380,314 @@ export const SidebarItems = () => {
 	};
 
 	return (
-		<>
-			<Drawer variant='permanent' sx={{ zIndex: '1100' }}>
-				{/* <DrawerHeader /> */}
-				<Box
-					sx={{
-						width: '100%',
-						height: '100%',
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'flex-start',
-						justifyContent: 'space-between',
-						pt: '26px',
-						px: '16px',
-					}}
-				>
-					<Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-						<Box sx={{ width: '100%', px: 1 }}>
-							<img src={LogoHorizontal} alt='Triage logo' style={{ width: '60%', objectFit: 'cover' }} />
-						</Box>
+		<Drawer variant='permanent' sx={{ zIndex: '1100' }}>
+			<Box
+				sx={{
+					width: '100%',
+					height: '100%',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'flex-start',
+					justifyContent: 'space-between',
+					pt: '26px',
+					px: '16px',
+				}}
+			>
+				<Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+					<Box sx={{ width: '100%', px: 1 }}>
+						<img src={LogoHorizontal} alt='Triage logo' style={{ width: '60%', objectFit: 'cover' }} />
+					</Box>
 
-						<List sx={{ p: 0, mt: 4 }} dense={true}>
-							{menuItems.map((item, index) => (
-								<Fragment key={index}>
-									{item?.subheader && (
-										<ListSubheader sx={{ lineHeight: 'unset', mt: 3, mb: 1 }}>
-											<Typography
-												variant='overline'
-												sx={{
-													color: '#585858',
-												}}
+					<List sx={{ p: 0, mt: 4 }} dense={true}>
+						{menuItems.map((item, index) => (
+							<Fragment key={index}>
+								{item?.subheader && (
+									<ListSubheader sx={{ lineHeight: 'unset', mt: 3, mb: 1 }}>
+										<Typography
+											variant='overline'
+											sx={{
+												color: '#585858',
+											}}
+										>
+											{item.subheader}
+										</Typography>
+									</ListSubheader>
+								)}
+
+								{!item?.subheader && (
+									<ListItem disablePadding sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}>
+										{item.title !== 'Settings' && item.title !== 'Manage' && item.title !== 'Profile' && item.title !== 'Email' && (
+											<StyledListItemBtn
+												component={Link}
+												to={'/' + item.title.toLowerCase()}
+												selected={activeRoute(item.title.toLowerCase())}
+												disabled={item.title !== 'Dashboard' && item.title !== 'Tickets'}
+												disableRipple
 											>
-												{item.subheader}
-											</Typography>
-										</ListSubheader>
-									)}
+												<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
 
-									{!item?.subheader && (
-										<ListItem disablePadding sx={{ display: 'block', mt: index !== 0 ? 0.2 : 0 }}>
-											{item.title !== 'Settings' && item.title !== 'Manage' && item.title !== 'Profile' && item.title !== 'Email' && (
+												<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+											</StyledListItemBtn>
+										)}
+
+										{manageSubmenuItems.length > 0 && item.title === 'Manage' && (
+											<>
 												<StyledListItemBtn
-													component={Link}
-													to={'/' + item.title.toLowerCase()}
-													selected={activeRoute(item.title.toLowerCase())}
-													disabled={item.title !== 'Dashboard' && item.title !== 'Tickets'}
+													onClick={handleManageClick}
+													selected={!manageOpen && path.split('/')[1] === 'manage'}
 													disableRipple
+													sx={{ justifyContent: 'space-between' }}
 												>
-													<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
-
-													<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'flex-start',
+														}}
+													>
+														<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+														<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+													</Box>
+													{manageOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
 												</StyledListItemBtn>
-											)}
 
-											{manageSubmenuItems.length > 0 && item.title === 'Manage' && (
-												<>
-													<StyledListItemBtn
-														onClick={handleManageClick}
-														selected={!manageOpen && path.split('/')[1] === 'manage'}
-														disableRipple
-														sx={{ justifyContent: 'space-between' }}
+												<Collapse in={manageOpen} timeout='auto' unmountOnExit>
+													<List
+														sx={{
+															p: 0,
+															mt: 0.3,
+															pl: 4.6,
+															':before': {
+																content: '""',
+																position: 'absolute',
+																top: 0,
+																left: '24px',
+																bottom: '32px',
+																width: '2px',
+																borderRadius: '2px',
+																background: '#EFEFEF',
+															},
+														}}
+														dense={true}
 													>
-														<Box
-															sx={{
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'flex-start',
-															}}
-														>
-															<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
-															<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-														</Box>
-														{manageOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-													</StyledListItemBtn>
-
-													<Collapse in={manageOpen} timeout='auto' unmountOnExit>
-														<List
-															sx={{
-																p: 0,
-																mt: 0.3,
-																pl: 4.6,
-																':before': {
-																	content: '""',
-																	position: 'absolute',
-																	top: 0,
-																	left: '24px',
-																	bottom: '32px',
-																	width: '2px',
-																	borderRadius: '2px',
-																	background: '#EFEFEF',
-																},
-															}}
-															dense={true}
-														>
-															{manageSubmenuItems.map((item, index) => (
-																<ListItem
-																	key={index}
-																	disablePadding
-																	sx={{
-																		display: 'block',
-																		mt: index !== 0 ? 0.2 : 0,
-																		':before': {
-																			content: '""',
-																			position: 'absolute',
-																			top: '12px',
-																			left: '-13px',
-																			width: '12px',
-																			height: '12px',
-																			background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
-																		},
-																	}}
+														{manageSubmenuItems.map((item, index) => (
+															<ListItem
+																key={index}
+																disablePadding
+																sx={{
+																	display: 'block',
+																	mt: index !== 0 ? 0.2 : 0,
+																	':before': {
+																		content: '""',
+																		position: 'absolute',
+																		top: '12px',
+																		left: '-13px',
+																		width: '12px',
+																		height: '12px',
+																		background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
+																	},
+																}}
+															>
+																<StyledListItemBtn
+																	component={Link}
+																	to={'/manage/' + item.title.toLowerCase()}
+																	selected={
+																		path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'manage'
+																	}
+																	sx={{ pl: 1 }}
+																	disableRipple
 																>
-																	<StyledListItemBtn
-																		component={Link}
-																		to={'/manage/' + item.title.toLowerCase()}
-																		selected={
-																			path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'manage'
-																		}
-																		sx={{ pl: 1 }}
-																		disableRipple
-																	>
-																		<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+																	<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
 
-																		<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-																	</StyledListItemBtn>
-																</ListItem>
-															))}
-														</List>
-													</Collapse>
-												</>
-											)}
+																	<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+																</StyledListItemBtn>
+															</ListItem>
+														))}
+													</List>
+												</Collapse>
+											</>
+										)}
 
-											{item.title === 'Settings' && (
-												<>
-													<StyledListItemBtn
-														onClick={handleSettingsClick}
-														selected={!settingsOpen && path.split('/')[1] === 'settings'}
-														disableRipple
-														sx={{ justifyContent: 'space-between' }}
+										{item.title === 'Settings' && (
+											<>
+												<StyledListItemBtn
+													onClick={handleSettingsClick}
+													selected={!settingsOpen && path.split('/')[1] === 'settings'}
+													disableRipple
+													sx={{ justifyContent: 'space-between' }}
+												>
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'flex-start',
+														}}
 													>
-														<Box
-															sx={{
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'flex-start',
-															}}
-														>
-															<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
-															<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-														</Box>
-														{settingsOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-													</StyledListItemBtn>
+														<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+														<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+													</Box>
+													{settingsOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+												</StyledListItemBtn>
 
-													<Collapse in={settingsOpen} timeout='auto' unmountOnExit>
-														<List
-															sx={{
-																p: 0,
-																mt: 0.3,
-																pl: 4.6,
-																':before': {
-																	content: '""',
-																	position: 'absolute',
-																	top: 0,
-																	left: '24px',
-																	bottom: '32px',
-																	width: '2px',
-																	borderRadius: '2px',
-																	background: '#EFEFEF',
-																},
-															}}
-															dense={true}
-														>
-															{settingsSubmenuItems.map((item, index) => (
-																<ListItem
-																	key={index}
-																	disablePadding
-																	sx={{
-																		display: 'block',
-																		mt: index !== 0 ? 0.2 : 0,
-																		':before': {
-																			content: '""',
-																			position: 'absolute',
-																			top: '12px',
-																			left: '-13px',
-																			width: '12px',
-																			height: '12px',
-																			background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
-																		},
-																	}}
-																>
-																	<StyledListItemBtn
-																		component={Link}
-																		to={'/settings/' + item.title.toLowerCase()}
-																		selected={
-																			path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'settings'
-																		}
-																		sx={{ pl: 1 }}
-																		disableRipple
-																	>
-																		<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
-
-																		<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-																	</StyledListItemBtn>
-																</ListItem>
-															))}
-														</List>
-													</Collapse>
-												</>
-											)}
-
-											{item.title === 'Email' && (
-												<>
-													<StyledListItemBtn
-														onClick={handleEmailClick}
-														selected={!emailOpen && path.split('/')[1] === 'email'}
-														disableRipple
-														sx={{ justifyContent: 'space-between' }}
+												<Collapse in={settingsOpen} timeout='auto' unmountOnExit>
+													<List
+														sx={{
+															p: 0,
+															mt: 0.3,
+															pl: 4.6,
+															':before': {
+																content: '""',
+																position: 'absolute',
+																top: 0,
+																left: '24px',
+																bottom: '32px',
+																width: '2px',
+																borderRadius: '2px',
+																background: '#EFEFEF',
+															},
+														}}
+														dense={true}
 													>
-														<Box
-															sx={{
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'flex-start',
-															}}
-														>
-															<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
-															<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-														</Box>
-														{emailOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-													</StyledListItemBtn>
-
-													<Collapse in={emailOpen} timeout='auto' unmountOnExit>
-														<List
-															sx={{
-																p: 0,
-																mt: 0.3,
-																pl: 4.6,
-																':before': {
-																	content: '""',
-																	position: 'absolute',
-																	top: 0,
-																	left: '24px',
-																	bottom: '32px',
-																	width: '2px',
-																	borderRadius: '2px',
-																	background: '#EFEFEF',
-																},
-															}}
-															dense={true}
-														>
-															{emailSubmenuItems.map((item, index) => (
-																<ListItem
-																	key={index}
-																	disablePadding
-																	sx={{
-																		display: 'block',
-																		mt: index !== 0 ? 0.2 : 0,
-																		':before': {
-																			content: '""',
-																			position: 'absolute',
-																			top: '12px',
-																			left: '-13px',
-																			width: '12px',
-																			height: '12px',
-																			background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
-																		},
-																	}}
+														{settingsSubmenuItems.map((item) => (
+															<ListItem
+																key={item.title}
+																disablePadding
+																sx={{
+																	display: 'block',
+																	mt: index !== 0 ? 0.2 : 0,
+																	':before': {
+																		content: '""',
+																		position: 'absolute',
+																		top: '12px',
+																		left: '-13px',
+																		width: '12px',
+																		height: '12px',
+																		background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
+																	},
+																}}
+															>
+																<StyledListItemBtn
+																	component={Link}
+																	to={'/settings/' + item.title.toLowerCase()}
+																	selected={
+																		path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'settings'
+																	}
+																	sx={{ pl: 1 }}
+																	disableRipple
 																>
-																	<StyledListItemBtn
-																		component={Link}
-																		to={'/email/' + item.title.toLowerCase()}
-																		selected={
-																			path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'
-																		}
-																		sx={{ pl: 1 }}
-																		disableRipple
-																	>
-																		<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+																	<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
 
-																		<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
-																	</StyledListItemBtn>
-																</ListItem>
-															))}
-														</List>
-													</Collapse>
-												</>
-											)}
-										</ListItem>
-									)}
-								</Fragment>
-							))}
-						</List>
-					</Box>
-					<Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', flexGrow: 1, width: '100%' }}>
-						<List sx={{ p: 0, mt: 4 }} dense={true}>
-							<ListItem disablePadding sx={{ display: 'block', mt: 0.2 }}>
-								<Stack direction='row' alignItems='center' sx={{ justifyContent: 'space-between' }}>
-									<Box flexGrow='1'>
-										<StyledListItemBtn component={Link} to='/profile' selected={activeRoute('profile')} disableRipple>
-											<StlyedListItemIcon>{menuItems.find((item) => item.title === 'Profile').icon}</StlyedListItemIcon>
-											<MenuItemTitle variant='subtitle2'>Profile</MenuItemTitle>
-										</StyledListItemBtn>
-									</Box>
+																	<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+																</StyledListItemBtn>
+															</ListItem>
+														))}
+													</List>
+												</Collapse>
+											</>
+										)}
 
-									<IconButton aria-label='logout' onClick={authLogout} sx={{ borderRadius: '12px' }}>
-										<LogOut color='#000' size={20} />
-									</IconButton>
-								</Stack>
-							</ListItem>
-						</List>
-					</Box>
+										{item.title === 'Email' && (
+											<>
+												<StyledListItemBtn
+													onClick={handleEmailClick}
+													selected={!emailOpen && path.split('/')[1] === 'email'}
+													disableRipple
+													sx={{ justifyContent: 'space-between' }}
+												>
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'flex-start',
+														}}
+													>
+														<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+														<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+													</Box>
+													{emailOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+												</StyledListItemBtn>
+
+												<Collapse in={emailOpen} timeout='auto' unmountOnExit>
+													<List
+														sx={{
+															p: 0,
+															mt: 0.3,
+															pl: 4.6,
+															':before': {
+																content: '""',
+																position: 'absolute',
+																top: 0,
+																left: '24px',
+																bottom: '32px',
+																width: '2px',
+																borderRadius: '2px',
+																background: '#EFEFEF',
+															},
+														}}
+														dense={true}
+													>
+														{emailSubmenuItems.map((item, index) => (
+															<ListItem
+																key={index}
+																disablePadding
+																sx={{
+																	display: 'block',
+																	mt: index !== 0 ? 0.2 : 0,
+																	':before': {
+																		content: '""',
+																		position: 'absolute',
+																		top: '12px',
+																		left: '-13px',
+																		width: '12px',
+																		height: '12px',
+																		background: `url(${SubMenuHook}) no-repeat 50% 50% / 100% auto`,
+																	},
+																}}
+															>
+																<StyledListItemBtn
+																	component={Link}
+																	to={'/email/' + item.title.toLowerCase()}
+																	selected={
+																		path.split('/')[2] === item.title.toLowerCase() && path.split('/')[1] === 'email'
+																	}
+																	sx={{ pl: 1 }}
+																	disableRipple
+																>
+																	<StlyedListItemIcon>{item.icon}</StlyedListItemIcon>
+
+																	<MenuItemTitle variant='subtitle2'>{item.title}</MenuItemTitle>
+																</StyledListItemBtn>
+															</ListItem>
+														))}
+													</List>
+												</Collapse>
+											</>
+										)}
+									</ListItem>
+								)}
+							</Fragment>
+						))}
+					</List>
 				</Box>
-			</Drawer>
-		</>
+				<Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', flexGrow: 1, width: '100%' }}>
+					<List sx={{ p: 0, mt: 4 }} dense={true}>
+						<ListItem disablePadding sx={{ display: 'block', mt: 0.2 }}>
+							<Stack direction='row' alignItems='center' sx={{ justifyContent: 'space-between' }}>
+								<Box flexGrow='1'>
+									<StyledListItemBtn component={Link} to='/profile' selected={activeRoute('profile')} disableRipple>
+										<StlyedListItemIcon>{menuItems.find((item) => item.title === 'Profile').icon}</StlyedListItemIcon>
+										<MenuItemTitle variant='subtitle2'>Profile</MenuItemTitle>
+									</StyledListItemBtn>
+								</Box>
+
+								<IconButton aria-label='logout' onClick={authLogout} sx={{ borderRadius: '12px' }}>
+									<LogOut color='#000' size={20} />
+								</IconButton>
+							</Stack>
+						</ListItem>
+					</List>
+				</Box>
+			</Box>
+		</Drawer>
 	);
 };

@@ -39,12 +39,12 @@ const EmailSelect = ({ handleInputChange, value, label, name }) => {
 
 const handleSave = (settingsFormData, setLoading, setCircleLoading, UpdateSettings, refreshSettings, settings) => {
 	try {
-		var temp = settings;
+		let temp = settings;
 		temp.default_alert_email.value = settingsFormData.default_alert_email.toString();
 		temp.default_system_email.value = settingsFormData.default_system_email.toString();
 		temp.default_admin_email.value = settingsFormData.admin_email.toString();
 
-		var settings_update = [];
+		let settings_update = [];
 		settings_update.push(temp.default_system_email, temp.default_alert_email, temp.default_admin_email);
 		console.log(settings_update)
 
@@ -52,7 +52,7 @@ const handleSave = (settingsFormData, setLoading, setCircleLoading, UpdateSettin
 			...item,
 			value: item.value === '' ? null : item.value,
 		}));
-		// var template_map = {};
+		// let template_map = {};
 
 		// Object.entries(templateFormData).forEach((value) => {
 		// 	if (value[1] !== '') {
@@ -60,8 +60,8 @@ const handleSave = (settingsFormData, setLoading, setCircleLoading, UpdateSettin
 		// 	}
 		// });
 
-		// var template_updates = [];
-		// var template_update = [...templates];
+		// let template_updates = [];
+		// let template_update = [...templates];
 
 		// template_update.map((template) => {
 		// 	if (template.template_name in template_map) {
@@ -133,57 +133,57 @@ export const EmailSettings = () => {
 
 
 	return (
-			<Layout
-				title={'Email Settings'}
-				subtitle={'Email settings and options'}
-				buttonInfo={{
-					label: 'Add email',
-					icon: <MailPlus size={20} />,
-					hidden: false,
-				}}
-			>
-				<WhiteContainer noPadding>
-					<Box sx={{ padding: 2 }}>
-						<Typography variant='subtitle1'>Note: Some of these global settings can be changed at the department level</Typography>
+		<Layout
+			title={'Email Settings'}
+			subtitle={'Email settings and options'}
+			buttonInfo={{
+				label: 'Add email',
+				icon: <MailPlus size={20} />,
+				hidden: false,
+			}}
+		>
+			<WhiteContainer noPadding>
+				<Box sx={{ padding: 2 }}>
+					<Typography variant='subtitle1'>Note: Some of these global settings can be changed at the department level</Typography>
 
-						<Typography variant='h4' pb={2}>
-							Email Selection
+					<Typography variant='h4' pb={2}>
+						Email Selection
+					</Typography>
+
+					<Stack sx={{ maxWidth: 400, pb: 2 }}>
+						<EmailSelect
+							handleInputChange={handleChangeSettings}
+							value={settingsFormData?.default_system_email}
+							name='default_system_email'
+							label='Default System Email'
+						/>
+
+						<EmailSelect
+							handleInputChange={handleChangeSettings}
+							value={settingsFormData?.default_alert_email}
+							name='default_alert_email'
+							label='Default Alert Email'
+						/>
+
+						<EmailSelect handleInputChange={handleChangeSettings} value={settingsFormData?.admin_email} name='admin_email' label='Admin Email' />
+					</Stack>
+
+
+					<CircularButton
+						sx={{ py: 2, px: 6, width: 250 }}
+						onClick={() => handleSave(settingsFormData, setLoading, setCircleLoading, updateSettings, refreshSettings, settings)}
+						disabled={loading || circleLoading}
+					>
+						{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
+					</CircularButton>
+
+					{validForm && (
+						<Typography variant='subtitle1' color='red'>
+							Error: Cannot select the same template for multiple alert scenarios
 						</Typography>
-
-						<Stack sx={{ maxWidth: 400, pb: 2 }}>
-							<EmailSelect
-								handleInputChange={handleChangeSettings}
-								value={settingsFormData?.default_system_email}
-								name='default_system_email'
-								label='Default System Email'
-							/>
-
-							<EmailSelect
-								handleInputChange={handleChangeSettings}
-								value={settingsFormData?.default_alert_email}
-								name='default_alert_email'
-								label='Default Alert Email'
-							/>
-
-							<EmailSelect handleInputChange={handleChangeSettings} value={settingsFormData?.admin_email} name='admin_email' label='Admin Email' />
-						</Stack>
-
-
-						<CircularButton
-							sx={{ py: 2, px: 6, width: 250 }}
-							onClick={() => handleSave(settingsFormData, setLoading, setCircleLoading, updateSettings, refreshSettings, settings)}
-							disabled={loading || circleLoading}
-						>
-							{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}
-						</CircularButton>
-
-						{validForm && (
-							<Typography variant='subtitle1' color='red'>
-								Error: Cannot select the same template for multiple alert scenarios
-							</Typography>
-						)}
-					</Box>
-				</WhiteContainer>
-			</Layout>
+					)}
+				</Box>
+			</WhiteContainer>
+		</Layout>
 	);
 };

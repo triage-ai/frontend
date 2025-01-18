@@ -11,16 +11,17 @@ import {
 } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
 import CustomDataGrid from "../../components/data-grid";
-import { useFormBackend } from "../../hooks/useFormBackend";
+import { useData } from '../../context/DataContext';
+import { useColumnBackend } from '../../hooks/useColumnBackend';
 
 function EditToolbar(props) {
-    const { rows, setRows, setRowModesModel } = props;
+    const { rows, setRows, setRowModesModel, queue_id } = props;
 
     const handleClick = () => {
         const id = rows.length === 0 ? 0 : rows.at(-1).id + 1
         setRows((oldRows) => [
             ...oldRows,
-            { id, name: '', label: '', type: "text", isNew: true },
+            { id, name: '', default_column_id: 1, queue_id: queue_id, sort: id, width: 100, isNew: true },
         ]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
@@ -41,12 +42,15 @@ function EditToolbar(props) {
     );
 }
 
-export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
+export const CrudColumnsDataGrid = ({ rows, setRows, queue_id }) => {
 
     const [rowModesModel, setRowModesModel] = useState({});
-    const { createFormField, updateFormField, removeFormField } = useFormBackend();
+    const { createColumn, updateColumn, removeColumn } = useColumnBackend();
+    const { refreshDefaultColumns, defaultColumns } = useData()
+    const [columnMapping, setColumnMapping] = useState({})
 
     useEffect(() => {
+        refreshDefaultColumns()
         const initialRowModes = {}
         rows.forEach(row => (
             initialRowModes[row.id] = { mode: GridRowModes.View, fieldToFocus: "label" }
@@ -54,20 +58,13 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
         setRowModesModel(initialRowModes)
     }, [])
 
+    useEffect(() => {
+        let mapping = {}
+        defaultColumns.forEach(column => (mapping[column.default_column_id] = column))
+        setColumnMapping(mapping)
+    }, [defaultColumns])
+
     const columns = [
-        {
-            field: "label",
-            headerName: "Label",
-            editable: true,
-            flex: 1,
-            sortable: false,
-            filterable: false,
-            hideable: false,
-            // preProcessEditCellProps: (params) => {
-            //     const isValid = params.props.value !== '';
-            //     return { ...params.props, error: !isValid };
-            // },
-        },
         {
             field: "name",
             headerName: "Name",
@@ -78,11 +75,27 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
             hideable: false,
         },
         {
-            field: "type",
+            field: "default_column_id",
             headerName: "Type",
             editable: true,
             type: "singleSelect",
-            valueOptions: ["text", "number"],
+            valueOptions: defaultColumns.map((d) => d.default_column_id),
+            getOptionValue: (value) => {
+                return value
+            },
+            getOptionLabel: (value) => {
+                return columnMapping[value]?.name ?? ''
+            },
+            flex: 1,
+            sortable: false,
+            filterable: false,
+            hideable: false,
+        },
+        {
+            field: "sort",
+            headerName: "Order",
+            editable: true,
+            type: 'number',
             flex: 1,
             sortable: false,
             filterable: false,
@@ -100,11 +113,13 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
                 if (isInEditMode) {
                     return [
                         <GridActionsCellItem
+                            key={1}
                             icon={<SaveIcon />}
                             label="Save"
                             onClick={handleSaveClick(id)}
                         />,
                         <GridActionsCellItem
+                            key={2}
                             icon={<CancelIcon />}
                             label="Cancel"
                             className="textPrimary"
@@ -115,12 +130,14 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
                 }
                 return [
                     <GridActionsCellItem
+                        key={3}
                         icon={<EditIcon />}
                         label="Edit"
                         onClick={handleEditClick(id)}
                         color="inherit"
                     />,
                     <GridActionsCellItem
+                        key={4}
                         icon={<DeleteIcon />}
                         label="Delete"
                         onClick={handleDeleteClick(id)}
@@ -157,7 +174,8 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
 
     const handleDeleteClick = (id) => () => {
         const row = rows.find(row => row.id === id)
-        removeFormField({ field_id: row.field_id })
+        console.log(row)
+        removeColumn({ column_id: row.column_id })
             .then(() => {
                 setRows(rows.filter((row) => row.id !== id));
             })
@@ -188,24 +206,22 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
 
         let updatedRow = oldRow;
         const obj = {
-            form_id: form_id,
-            field_id: newRow.field_id ?? null,
-            order_id: 0,
-            type: newRow.type,
-            label: newRow.label,
+            queue_id: queue_id,
+            sort: newRow.sort,
+            default_column_id: newRow.default_column_id,
             name: newRow.name,
-            configuration: newRow.configuration ?? "{}",
-            hint: newRow.hint ?? ''
+            width: newRow.width,
+            column_id: newRow.column_id
         }
 
         let res;
 
         try {
             if (newRow?.isNew) {
-                res = await createFormField(obj)
+                res = await createColumn(obj)
             }
             else {
-                res = await updateFormField(obj)
+                res = await updateColumn(obj)
             }
             updatedRow = {
                 ...res.data,
@@ -215,6 +231,9 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
         }
         catch (e) {
             console.error(e)
+            if (newRow?.isNew) {
+                return {...oldRow, _action: 'delete'}
+            }
             return oldRow;
         }
 
@@ -238,6 +257,7 @@ export const FormFieldDataGrid = ({ rows, setRows, form_id }) => {
             processRowUpdate={processRowUpdate}
             EditToolbar={EditToolbar}
             disableColumnMenu
+            queue_id={queue_id}
         />
     )
 

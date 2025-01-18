@@ -1,9 +1,11 @@
 import { ThemeProvider, createTheme } from "@mui/material";
+import axios from "axios";
 import { useContext } from "react";
 import { CookiesProvider } from "react-cookie";
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import ProtectedRoute from "./components/protected-route";
+import { Sidebar } from "./components/sidebar";
 import UserProtectedRoute from "./components/user-protected-route";
 import { AuthContext } from "./context/AuthContext";
 import { Agents } from "./pages/agent/Agents";
@@ -39,12 +41,10 @@ import {
 	UserMenu,
 } from "./pages/settings/SettingsMenus";
 import { Tickets } from "./pages/ticket/Tickets";
+import { TicketView } from "./pages/ticket/TicketView";
 import { Topics } from "./pages/topic/Topics";
 import { Users } from "./pages/user/Users";
-import { Sidebar } from "./components/sidebar";
-import { drawerWidth } from "./components/sidebar";
-import axios from "axios";
-import { TicketView } from "./pages/ticket/TicketView";
+import { Queues } from "./pages/queue/Queues";
 
 const theme = createTheme({
 	palette: {
@@ -116,12 +116,13 @@ function App() {
 	axios.interceptors.response.use(response => {
 		return response;
 	}, error => {
-		if (error.response.status === 401) {
+		if (error.response.status === 401 && error.response.data.detail === "Could not validate credentials") { // This needs to be tested
 			agentLogout()
 			userLogout()
 			navigate("/")
+			return error;
 		}
-		return error;
+		throw error
 	});
 
 	return (
@@ -172,13 +173,13 @@ function App() {
 							element={<UserEmailConfirmation />}
 						/>
 						<Route
-								path="user/tickets/:ticketId"
-								element={
-									<UserProtectedRoute>
-										<UserTickets />
-									</UserProtectedRoute>
-								}
-							/>
+							path="user/tickets/:ticketId"
+							element={
+								<UserProtectedRoute>
+									<UserTickets />
+								</UserProtectedRoute>
+							}
+						/>
 						<Route
 							path="user/tickets"
 							element={
@@ -187,7 +188,7 @@ function App() {
 								</UserProtectedRoute>
 							}
 						/>
-						<Route element={<Sidebar/>}>
+						<Route element={<Sidebar />}>
 							<Route
 								path="dashboard"
 								element={<AgentDashboard />}
@@ -371,7 +372,7 @@ function App() {
 								path="manage/queues"
 								element={
 									<ProtectedRoute>
-										<Users />
+										<Queues />
 									</ProtectedRoute>
 								}
 							/>

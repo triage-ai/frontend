@@ -1,7 +1,6 @@
-import { Box, Chip, Dialog, IconButton, Popper, Typography } from '@mui/material';
-import { X } from 'lucide-react';
+import { Chip, Popper } from '@mui/material';
 import { useState } from 'react';
-import { CustomAutocomplete, CustomInput, CustomMultibox } from '../../components/custom-select';
+import { CustomInput, CustomMultibox } from '../../components/custom-select';
 // import { AddAgent } from './AddAgent';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 
@@ -15,7 +14,7 @@ export const AgentMultiSelect = ({ onChange, values, ...props }) => {
         if (e?.target?.value) {
             getAgentBySearch(e.target.value)
                 .then(res => {
-                    var formattedData = res.data.map((agent) => (agent.firstname + ' ' + agent.lastname))
+                    let formattedData = res.data.map((agent) => (agent.firstname + ' ' + agent.lastname))
                     formattedData.push('Me')
                     setAgentOptions(formattedData)
                 })

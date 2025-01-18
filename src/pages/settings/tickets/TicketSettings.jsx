@@ -1,4 +1,4 @@
-import { Box, Checkbox, CircularProgress, FormControlLabel, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, Checkbox, CircularProgress, FormControlLabel, InputAdornment, MenuItem, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { CircleHelp } from 'lucide-react';
@@ -14,6 +14,8 @@ import { SLASelect } from '../../sla/SLASelect';
 import { StatusSelect } from '../../status/StatusSelect';
 import { TopicSelect } from '../../topic/TopicSelect';
 import { handleSave, StyledSelect } from '../SettingsMenus';
+import { CustomInput } from '../../../components/custom-select';
+import { HtmlTooltip } from '../../../components/tooltip';
 
 const storedAuthState = localStorage.getItem('agentAuthState');
 
@@ -62,47 +64,49 @@ export const TicketSettings = (props) => {
 		setLoading(false);
 	};
 
-	const HtmlTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
-		[`& .${tooltipClasses.tooltip}`]: {
-			backgroundColor: '#f5f5f9',
-			color: 'rgba(0, 0, 0, 0.87)',
-			fontSize: theme.typography.pxToRem(12),
-			border: '1px solid #dadde9',
-		},
-	}));
-
 	return (
 		<Box p={3} maxwidth={600}>
 			<Stack>
 				<Stack direction='row' alignItems='center' spacing={8}>
-					<CustomFilledInput
-						label='Default Ticket Number Format'
-						name='default_ticket_number_format'
-						value={formState.default_ticket_number_format}
-						onChange={handleChange}
-						maxWidth={400}
-					/>
+					<Stack>
+						<Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
+							Default Ticket Number Format
+						</Typography>
 
-					<HtmlTooltip
-						title={
-							<React.Fragment>
-								<Typography color='inherit'>Ticket Number Format</Typography>
-								{"This sequence will be used to generated ticket numbers. Use hash signs ('#')"}
-								{' where digits will be expected in the sequence.'}{' '}
-								<b>
-									{'Anything other than hash signs'}
-									{' will be preserved in the format.'}
-								</b>
-								<br />
-								<br />
-								{'For example, for six-digit only formats, use ######. This could produce a number like 123456.'}
-							</React.Fragment>
-						}
-						placement='right'
-						arrow
-					>
-						<CircleHelp size={20} />
-					</HtmlTooltip>
+						<CustomInput
+							name='default_ticket_number_format'
+							value={formState.default_ticket_number_format}
+							onChange={handleChange}
+							InputProps={{
+
+								endAdornment: (
+									<InputAdornment position='end'>
+										<HtmlTooltip
+											title={
+												<React.Fragment>
+													<Typography color='inherit'>Ticket Number Format</Typography>
+													{"This sequence will be used to generated ticket numbers. Use hash signs ('#')"}
+													{' where digits will be expected in the sequence.'}{' '}
+													<b>
+														{'Anything other than hash signs'}
+														{' will be preserved in the format.'}
+													</b>
+													<br />
+													<br />
+													{'For example, for six-digit only formats, use ######. This could produce a number like 123456.'}
+												</React.Fragment>
+											}
+											placement='right'
+											arrow
+										>
+											<CircleHelp size={20} />
+										</HtmlTooltip>
+									</InputAdornment>
+								)
+							}}
+						/>
+					</Stack>
+
 				</Stack>
 
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
@@ -134,6 +138,7 @@ export const TicketSettings = (props) => {
 						Default Status
 					</Typography>
 					<StatusSelect
+						hideLabel
 						handleInputChange={handleChange}
 						value={formState.default_status_id}
 						name='default_status_id'
@@ -146,6 +151,7 @@ export const TicketSettings = (props) => {
 						Default Priority
 					</Typography>
 					<PrioritySelect
+						hideLabel
 						handleInputChange={handleChange}
 						value={formState.default_priority_id}
 						name='default_priority_id'
@@ -158,6 +164,7 @@ export const TicketSettings = (props) => {
 						Default SLA
 					</Typography>
 					<SLASelect
+						hideLabel
 						handleInputChange={handleChange}
 						value={formState.default_sla_id}
 						name='default_sla_id'
@@ -169,6 +176,7 @@ export const TicketSettings = (props) => {
 						Default Help Topic
 					</Typography>
 					<TopicSelect
+						hideLabel
 						handleInputChange={handleChange}
 						value={formState.default_topic_id}
 						name='default_topic_id'
@@ -211,10 +219,13 @@ export const TicketSettings = (props) => {
 							name='max_open_tickets'
 							value={formState.max_open_tickets}
 							onChange={handleChange}
+							InputProps={{
+								inputProps: { min: 0 }
+							  }}
 							sx={{
 								width: 80,
 								'& .MuiInputBase-root': {
-									borderWidth: 1,
+									borderWidth: 1.5,
 									fontWeight: 500,
 								},
 							}}

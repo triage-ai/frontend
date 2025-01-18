@@ -110,6 +110,7 @@ export const GeneralSettings = (props) => {
 						handleInputChange={handleChange}
 						value={formState.default_dept_id}
 						name='default_dept_id'
+						hideLabel
 					/>
 				</FormControl>
 			</Stack>
@@ -141,10 +142,13 @@ export const GeneralSettings = (props) => {
 						name='collision_avoidance_duration'
 						value={formState.collision_avoidance_duration}
 						onChange={handleChange}
+						InputProps={{
+							inputProps: { min: 0 }
+						  }}
 						sx={{
 							width: 80,
 							'& .MuiInputBase-root': {
-								borderWidth: 1,
+								borderWidth: 1.5,
 								fontWeight: 500,
 							},
 						}}

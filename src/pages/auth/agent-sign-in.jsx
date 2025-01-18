@@ -4,9 +4,9 @@ import AppIcon from '../../assets/app-icon-black.png';
 import logoBlack from '../../assets/logo-black.svg';
 import logo from '../../assets/logo-white.svg';
 
-import { Box, Button, CircularProgress, InputAdornment, TextField, Typography, styled } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, IconButton, InputAdornment, TextField, Typography, styled } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
+import { Activity, Lock, Mail, Split, Tag, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
@@ -77,16 +77,16 @@ export const AgentSignIn = () => {
 	const navigate = useNavigate();
 	const { agentSignInEmailAndPassword } = useSetAuthCookie();
 
+	const [notification, setNotification] = useState('')
+
 	const signIn = async (e) => {
 		e.preventDefault();
 		setLoading(true);
 
 		if (validateEmail(email) && password !== '') {
 			agentSignInEmailAndPassword(email, password)
-				// signInWithEmailAndPassword(auth, email, password)
-				.then((userCredential) => {
-					// getApiToken(userCredential);
-					const agentData = userCredential.data;
+				.then((agentCredential) => {
+					const agentData = agentCredential.data;
 
 					const authInfo = {
 						isAuth: true,
@@ -102,6 +102,7 @@ export const AgentSignIn = () => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
 					console.error(errorCode, errorMessage);
+					setNotification(error.response?.data?.detail);
 					setLoading(false);
 				});
 		} else if (!validateEmail(email)) {
@@ -122,6 +123,133 @@ export const AgentSignIn = () => {
 	};
 
 	return (
+		// <Box
+		// 	sx={{
+		// 		display: 'flex',
+		// 		flexDirection: 'column',
+		// 		alignItems: 'center',
+		// 		width: '100%',
+		// 	}}
+		// >
+
+		// 	<Box
+		// 		sx={{
+		// 			width: '300px',
+		// 			display: 'flex',
+		// 			flexDirection: 'column',
+		// 			justifyContent: 'center',
+		// 			alignItems: 'center',
+		// 			pt: '35px'
+		// 		}}
+		// 	>
+
+
+		// 		<Box
+		// 			component='img'
+		// 			src={AppIcon}
+		// 			className='App-logo'
+		// 			alt='logo'
+		// 			pb={3}
+		// 		/>
+
+		// 		<Typography variant='h3' mb={3}>
+		// 			Sign in to Triage
+		// 		</Typography>
+
+		// 		<Box
+		// 			sx={{
+		// 				border: '1px solid black',
+		// 				borderRadius: '8px',
+		// 				padding: '16px',
+		// 			}}
+		// 		>
+		// 			<form onSubmit={(e) => signIn(e)}>
+		// 				<CustomTextField
+		// 					size='small'
+		// 					label=''
+		// 					id='email'
+		// 					autoComplete='username'
+		// 					sx={{
+		// 						mb: 1,
+		// 						'& .MuiInputBase-root': {
+		// 							border: error ? '2px solid #ff7474' : '2px solid transparent',
+		// 						},
+		// 					}}
+		// 					placeholder='Your email'
+		// 					InputProps={{
+		// 						startAdornment: (
+		// 							<InputAdornment position='start'>
+		// 								<Mail color='#575757' />
+		// 							</InputAdornment>
+		// 						),
+		// 					}}
+		// 					value={email}
+		// 					onChange={(event) => {
+		// 						if (validateEmail(email)) {
+		// 							setError(false);
+		// 						}
+		// 						setEmail(event.target.value);
+		// 					}}
+		// 				/>
+
+		// 				<CustomTextField
+		// 					label=''
+		// 					id='password'
+		// 					type='password'
+		// 					autoComplete='current-password'
+		// 					sx={{
+		// 						'& .MuiInputBase-root': {
+		// 							border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
+		// 						},
+		// 					}}
+		// 					placeholder='Your password'
+		// 					InputProps={{
+		// 						startAdornment: (
+		// 							<InputAdornment position='start'>
+		// 								<Lock color='#575757' />
+		// 							</InputAdornment>
+		// 						),
+		// 					}}
+		// 					value={password}
+		// 					onChange={(event) => {
+		// 						// if (validatePassword(password)) {
+		// 						// 	setError(false);
+		// 						// }
+		// 						setPassword(event.target.value);
+		// 					}}
+		// 				/>
+
+		// 				<Button
+		// 					sx={{
+		// 						backgroundColor: '#22874E',
+		// 						color: '#FFF',
+		// 						borderRadius: '12px',
+		// 						width: '100%',
+		// 						fontSize: '0.9375rem',
+		// 						fontWeight: 600,
+		// 						lineHeight: 1,
+		// 						textTransform: 'unset',
+		// 						padding: '16.5px 10px',
+		// 						marginTop: '12px',
+		// 						marginBottom: '28px',
+		// 						transition: 'all 0.3s',
+		// 						'&:hover': {
+		// 							backgroundColor: '#29b866',
+		// 						},
+		// 						'&:disabled': {
+		// 							color: 'unset',
+		// 							opacity: 0.4,
+		// 						},
+		// 					}}
+		// 					type='submit'
+		// 					disabled={loading || !validateEmail(email) || password === ''}
+		// 				>
+		// 					{loading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Sign in'}
+		// 				</Button>
+		// 			</form>
+		// 		</Box>
+		// 	</Box>
+		// </Box>
 		<Box
 			sx={{
 				width: '100%',
@@ -325,12 +453,12 @@ export const AgentSignIn = () => {
 
 							<h1
 								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
+									fontSize: '2rem',
+									fontWeight: 500,
 									color: '#1B1D1F',
 									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
+									marginTop: '20px',
+									marginBottom: '20px',
 								}}
 							>
 								Agent Sign in
@@ -403,7 +531,7 @@ export const AgentSignIn = () => {
 								Or continue with email and password
 							</span> */}
 
-							<p
+							{/* <p
 								style={{
 									fontSize: '0.875rem',
 									fontWeight: 600,
@@ -416,9 +544,17 @@ export const AgentSignIn = () => {
 								}}
 							>
 								Sign in with email and password
-							</p>
+							</p> */}
+
+
+
 
 							<form onSubmit={(e) => signIn(e)}>
+							{notification &&
+								<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{mb: 2, border: '1px solid rgb(239, 83, 80);'}} >
+								{notification}
+							  </Alert>
+							}
 								<CustomTextField
 									label=''
 									id='email'
@@ -513,5 +649,6 @@ export const AgentSignIn = () => {
 				</Grid>
 			</Grid>
 		</Box>
+
 	);
 };

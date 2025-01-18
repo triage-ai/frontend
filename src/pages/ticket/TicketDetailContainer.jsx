@@ -75,7 +75,7 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer, type 
 			});
 		}
 		if (ticket.thread) {
-			var events_and_entries = ticket.thread.entries.concat(ticket.thread.events);
+			let events_and_entries = ticket.thread.entries.concat(ticket.thread.events);
 			ticket.thread.events_and_entries = events_and_entries.sort(datetime_sort);
 		}
 		return ticket;
@@ -93,11 +93,11 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer, type 
 			}
 			else {
 				getTicketByIdForUser(ticketInfo.ticket_id)
-				.then(response => response.data)
-				.then(ticket => {
-					ticket = preProcessTicket(ticket);
-					setTicket(ticket);
-				});
+					.then(response => response.data)
+					.then(ticket => {
+						ticket = preProcessTicket(ticket);
+						setTicket(ticket);
+					});
 			}
 		}
 	}, [ticketInfo]);

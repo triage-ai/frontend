@@ -48,7 +48,7 @@ export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
 	}, []);
 
 	const permissionsFromString = (jsonString) => {
-		var list;
+		let list;
 		try {
 			list = JSON.parse(jsonString);
 		} catch (err) {
@@ -128,7 +128,7 @@ export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
 				}}
 			>
 				<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
-					Role inroleation
+					Role information
 				</Typography>
 
 				<CustomFilledInput label='Name' onChange={handleInputChange} value={formData.name} name='name' mb={2} fullWidth />

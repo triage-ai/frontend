@@ -1,5 +1,5 @@
 import { Box, Button, Chip, IconButton, List, ListItem, MenuItem, Stack, Typography } from '@mui/material'
-import { Trash2, X } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { CustomFilledInput } from '../../components/custom-input'
 import { CustomInput, CustomMultibox, CustomSelect } from '../../components/custom-select'
@@ -9,10 +9,10 @@ import { AgentMultiSelect } from '../agent/AgentMultiSelect'
 import { UserMultiSelect } from '../user/UserMultiSelect'
 
 const updateValue = (filters, idx, value) => (
-    [...filters.slice(0, idx), [filters[idx][0], filters[idx][1], value],...filters.slice(idx + 1)]
+    [...filters.slice(0, idx), [filters[idx][0], filters[idx][1], value], ...filters.slice(idx + 1)]
 )
 
-export const Filter = ({filters, setFilters}) => {
+export const Filter = ({ filters, setFilters }) => {
 
     const filterFields = [
         { label: 'Ticket #', value: 'number' },
@@ -154,7 +154,7 @@ export const Filter = ({filters, setFilters}) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', pb: 2 }} height={500} >
-            <Box sx={{overflowY: 'auto'}} mb={2}>
+            <Box sx={{ overflowY: 'auto' }} mb={2}>
                 <List>
                     {filters.map((filter, idx) => (
                         <ListItem key={idx}>
@@ -302,7 +302,7 @@ const DateSelect = ({ filters, setFilters, idx }) => {
 const DateRangeSelect = ({ filters, setFilters, idx }) => {
     const handleDateChange = (newValue, index) => {
         const value = newValue ? newValue.utc().format('YYYY-MM-DD') : null
-        var arr = ['', '']
+        let arr = ['', '']
 
         if (filters[idx][2] instanceof Array) {
             arr = [...filters[idx][2]]
@@ -556,10 +556,10 @@ const TrueFalseSelect = ({ filters, setFilters, idx }) => {
         setFilters(updateValue(filters, idx, e.target.value))
     }
     const options = [
-        {label: 'true', value: 1},
-        {label: 'false', value: 0}
+        { label: 'true', value: 1 },
+        { label: 'false', value: 0 }
     ]
-   
+
     return (
         <CustomInput
             select
@@ -571,25 +571,25 @@ const TrueFalseSelect = ({ filters, setFilters, idx }) => {
             onChange={handleChange}
         >
             <MenuItem value="">
-				<Typography variant="subtitle2">- Choose value -</Typography>
-			</MenuItem>
+                <Typography variant="subtitle2">- Choose value -</Typography>
+            </MenuItem>
             {options?.map(option => (
-				<MenuItem
-					key={option.value}
-					value={option.value}
-					sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
-				>
-					{option.label}{' '}
-					{option.sublabel && (
-						<Typography
-							variant="caption"
-							sx={{ lineHeight: 1, color: '#545555' }}
-						>
-							({option.sublabel})
-						</Typography>
-					)}
-				</MenuItem>
-			))}
+                <MenuItem
+                    key={option.value}
+                    value={option.value}
+                    sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
+                >
+                    {option.label}{' '}
+                    {option.sublabel && (
+                        <Typography
+                            variant="caption"
+                            sx={{ lineHeight: 1, color: '#545555' }}
+                        >
+                            ({option.sublabel})
+                        </Typography>
+                    )}
+                </MenuItem>
+            ))}
         </CustomInput>
     )
 }

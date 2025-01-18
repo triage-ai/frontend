@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddDepartment } from './AddDepartment';
 
-export const DepartmentSelect = ({ handleInputChange, value, name }) => {
+export const DepartmentSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedDepartments, refreshDepartments } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshDepartments();
@@ -24,15 +26,15 @@ export const DepartmentSelect = ({ handleInputChange, value, name }) => {
 	return (
 		<>
 			<CustomSelect
-				label="Department"
+				label={"Department"}
 				onChange={handleInputChange}
-				value={value}
+				value={formattedDepartments.length === 0 ? '' : value}
 				name={name ?? "dept_id"}
-				mb={2}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedDepartments}
+				{...otherProps}
 			/>
 
 			<Dialog

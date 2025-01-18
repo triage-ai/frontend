@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-var localizedFormat = require("dayjs/plugin/localizedFormat");
+let localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.extend(localizedFormat)
 dayjs.extend(utc)
 

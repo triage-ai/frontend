@@ -2,8 +2,14 @@ import { Box, Button, IconButton, List, ListItem, Stack } from "@mui/material"
 import { Trash2 } from "lucide-react"
 import { useEffect, useMemo } from "react"
 import { CustomSelect } from "../../components/custom-select"
+import PropTypes from "prop-types"
 
 export const Sort = ({ sorts, setSorts }) => {
+
+    Sort.propTypes = {
+        sorts: PropTypes.array,
+        setSorts: PropTypes.func,
+    }
 
     const sortFields = [
         { label: 'Ticket #', value: 'number' },
@@ -16,8 +22,8 @@ export const Sort = ({ sorts, setSorts }) => {
     ]
 
     const sortDirections = [
-        {label: 'ascending', value: 1},
-        {label: 'descending', value: -1}
+        { label: 'ascending', value: 1 },
+        { label: 'descending', value: -1 }
     ]
 
     const internalSorts = useMemo(() => (
@@ -31,14 +37,16 @@ export const Sort = ({ sorts, setSorts }) => {
         })
     ), [sorts])
 
-    // useEffect(() => {
-    //     console.log(sorts)
-    // }, [sorts])
+    useEffect(() => {
+        console.log(sorts)
+        // console.log(internalSorts)
+        console.log(internalSorts)
+    }, [sorts, internalSorts])
 
     const handleFieldChange = (e, idx) => {
         const tempArr = [...sorts]
-        var value = e.target.value
-        
+        let value = e.target.value
+
         if (value && internalSorts[idx][1] === -1) {
             value = '-' + value
         }
@@ -48,7 +56,7 @@ export const Sort = ({ sorts, setSorts }) => {
 
     const handleOperationChange = (e, idx) => {
         const tempArr = [...sorts]
-        var value = internalSorts[idx][0]
+        let value = internalSorts[idx][0]
         if (e.target.value === -1) {
             value = '-' + value
         }
@@ -66,10 +74,10 @@ export const Sort = ({ sorts, setSorts }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column', pb: 2 }} height={500} >
-            <Box sx={{overflowY: 'auto'}} mb={2}>
+            <Box sx={{ overflowY: 'auto' }} mb={2}>
                 <List>
-                {internalSorts.map((sort, idx) => (
-                        <ListItem key={idx}>
+                    {internalSorts.map((sort, idx) => (
+                        <ListItem key={sort[0]}>
                             <Stack spacing={1} direction='row' width='100%' alignItems={'center'}>
                                 <CustomSelect
                                     label='Field'
@@ -81,7 +89,7 @@ export const Sort = ({ sorts, setSorts }) => {
                                     size={'small'}
                                 />
                                 {sort[0] && <CustomSelect
-                                    defaultValue={1}
+                                    value={sort[1]}
                                     label='Direction'
                                     onChange={(e) => handleOperationChange(e, idx)}
                                     name='direction'

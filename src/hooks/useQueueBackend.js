@@ -3,6 +3,17 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useQueueBackend = () => {
+	const createQueue = async queueInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + 'queue/create',
+			queueInfo,
+			config
+		);
+	};
 	const { agentAuthState, userAuthState } = useContext(AuthContext);
 
 	// This will also return the default queues
@@ -59,29 +70,29 @@ export const useQueueBackend = () => {
 	// 	return await axios.get(process.env.REACT_APP_BACKEND_URL + `ticket/id/${id}`, config);
 	// };
 
-	// const createTicket = async ticketInfo => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
 
-	// 	return await axios.post(
-	// 		process.env.REACT_APP_BACKEND_URL + 'ticket/create',
-	// 		ticketInfo,
-	// 		config
-	// 	);
-	// };
+	const updateQueue = async (queueInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	// const updateTicket = async (ticketId, ticketInfo) => {
-	// 	const config = {
-	// 		headers: { Authorization: `Bearer ${agentAuthState.token}` },
-	// 	};
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL + 'queue/put/' + queueInfo.queue_id,
+			queueInfo,
+			config
+		);
+	};
 
-	// 	return await axios.put(
-	// 		process.env.REACT_APP_BACKEND_URL + 'ticket/put/' + ticketId,
-	// 		ticketInfo,
-	// 		config
-	// 	);
-	// };
+	const removeQueue = async queueInfo => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
 
-	return { getQueuesForAgent, getQueuesForUser, getAllDefaultColumns };
+		return await axios.delete(
+			process.env.REACT_APP_BACKEND_URL + 'queue/delete/' + queueInfo.queue_id,
+			config
+		);
+	};
+
+	return { createQueue, getQueuesForAgent, getQueuesForUser, getAllDefaultColumns, updateQueue, removeQueue };
 };

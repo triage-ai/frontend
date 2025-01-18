@@ -5,9 +5,11 @@ import { CustomSelect } from '../../components/custom-select';
 import { useData } from '../../context/DataContext';
 import { AddStatus } from './AddStatus';
 
-export const StatusSelect = ({ handleInputChange, value, name }) => {
+export const StatusSelect = ({ handleInputChange, value, name, ...props }) => {
 	const { formattedStatuses, refreshStatuses } = useData();
 	const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
+	const { mt, mb, ...otherProps } = props;
 
 	useEffect(() => {
 		refreshStatuses();
@@ -26,13 +28,13 @@ export const StatusSelect = ({ handleInputChange, value, name }) => {
 			<CustomSelect
 				label="Status"
 				onChange={handleInputChange}
-				value={value}
+				value={formattedStatuses.length === 0 ? '' : value}
 				name={name ?? "status_id"}
-				mb={2}
+				mb={mb}
 				fullWidth
-				
 				handleAddBtnClick={openDialog}
 				options={formattedStatuses}
+				{...otherProps}
 			/>
 
 			<Dialog

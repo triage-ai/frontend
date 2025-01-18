@@ -1,11 +1,10 @@
-import { Box, MenuItem, Stack, styled, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography } from '@mui/material';
+import { Box, Stack, styled, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 import { Settings2 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
+import { CustomSelect } from '../../components/custom-select';
+import { CustomDatePicker } from '../../components/date-picker';
 import { Layout } from '../../components/layout';
 import { CircularButton } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
@@ -13,9 +12,6 @@ import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
-import { StyledSelect } from '../settings/SettingsMenus';
-import { CustomDatePicker } from '../../components/date-picker';
-import { CustomSelect } from '../../components/custom-select';
 
 const StyledTabs = styled((props) => <Tabs {...props} TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }} />)({
 	'& .Mui-selected': {
@@ -137,7 +133,7 @@ const Dashboard = () => {
 		{ label: "Two Weeks", value: "Two Weeks" },
 		{ label: "One Month", value: "One Month" },
 		{ label: "One Quarter", value: "One Quarter" }
-	  ];
+	];
 
 	const { refreshDepartments, departments, refreshTopics, topics } = useData();
 	useEffect(() => {
@@ -165,12 +161,12 @@ const Dashboard = () => {
 
 	const handleRefresh = async () => {
 		try {
-			var start_date = selectedDate;
-			var end_date = calculateNewDate(start_date, selectedPeriod);
-			var points = [];
-			var y1 = [];
-			var y2 = [];
-			var y3 = [];
+			let start_date = selectedDate;
+			let end_date = calculateNewDate(start_date, selectedPeriod);
+			let points = [];
+			let y1 = [];
+			let y2 = [];
+			let y3 = [];
 			start_date = dayjs(start_date).format('MM-DD-YYYY');
 			let graph_data = await getTicketBetweenDates(start_date, end_date);
 

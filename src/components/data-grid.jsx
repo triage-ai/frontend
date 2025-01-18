@@ -4,11 +4,11 @@ import {
 } from '@mui/x-data-grid';
 import { useMemo } from "react";
 
-const CustomDataGrid = ({ rows, setRows, columns, rowModesModel, setRowModesModel, onRowModesModelChange, onRowEditStop, processRowUpdate, disableColumnMenu, EditToolbar }) => {
+const CustomDataGrid = ({ rows, setRows, columns, rowModesModel, setRowModesModel, onRowModesModelChange, onRowEditStop, processRowUpdate, disableColumnMenu, EditToolbar, props }) => {
 
 	const slotProps = useMemo(() => (
 		{
-			toolbar: { rows, setRows, setRowModesModel },
+			toolbar: { rows, setRows, setRowModesModel, ...props },
 		}
 	),
 		[rows]
