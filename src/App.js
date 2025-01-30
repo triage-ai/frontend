@@ -10,18 +10,17 @@ import UserProtectedRoute from './components/user-protected-route';
 import { AuthContext } from './context/AuthContext';
 import { Agents } from './pages/agent/Agents';
 import { AgentConfirmation } from './pages/auth/agent/agent-confirmation';
-import { AgentSignIn } from './pages/auth/agent/agent-sign-in';
 import { AgentResetPassword } from './pages/auth/agent/agent-reset-password';
 import { AgentResetPasswordConfirmation } from './pages/auth/agent/agent-reset-password-confirmation';
 import { AgentResetPasswordForm } from './pages/auth/agent/agent-reset-password-form';
-import { Users } from './pages/user/Users';
-import { UserSignUpConfirmation } from './pages/auth/user/user-sign-up-confirmation';
+import { AgentSignIn } from './pages/auth/agent/agent-sign-in';
 import { UserEmailConfirmation } from './pages/auth/user/user-email-confirmation';
-import { UserSignIn } from './pages/auth/user/user-sign-in';
-import { UserSignUp } from './pages/auth/user/user-sign-up';
 import { UserResetPassword } from './pages/auth/user/user-reset-password';
 import { UserResetPasswordConfirmation } from './pages/auth/user/user-reset-password-confirmation';
 import { UserResetPasswordForm } from './pages/auth/user/user-reset-password-form';
+import { UserSignIn } from './pages/auth/user/user-sign-in';
+import { UserSignUp } from './pages/auth/user/user-sign-up';
+import { UserSignUpConfirmation } from './pages/auth/user/user-sign-up-confirmation';
 import { AgentDashboard } from './pages/dashboard/AgentDashboard';
 import { UserTickets } from './pages/dashboard/UserTickets';
 import { Departments } from './pages/department/Departments';
@@ -34,13 +33,16 @@ import { Forms } from './pages/form/Forms';
 import { Groups } from './pages/group/Groups';
 import { Landing } from './pages/landing/landing';
 import { Profile } from './pages/profile/AgentProfile';
+import { Queues } from './pages/queue/Queues';
 import { Roles } from './pages/role/Roles';
 import { Settings } from './pages/settings/Settings';
 import { AgentMenu, CompanyMenu, KnowledgebaseMenu, SystemMenu, TaskMenu, TicketMenu, UserMenu } from './pages/settings/SettingsMenus';
+import { GuestTicketSearch } from './pages/ticket/GuestTicketSearch';
 import { Tickets } from './pages/ticket/Tickets';
 import { TicketView } from './pages/ticket/TicketView';
-import { GuestTicketConfirmation } from './pages/ticket/GuestTicketConfirmation';
 import { Topics } from './pages/topic/Topics';
+import { Users } from './pages/user/Users';
+import { GuestTicketView } from './pages/ticket/GuestTicketView';
 
 const theme = createTheme({
 	palette: {
@@ -182,6 +184,15 @@ function App() {
 								</UserProtectedRoute>
 							}
 						/>
+						<Route 
+							path='guest/ticket' 
+							element={<GuestTicketView />} 
+						/>
+						<Route 
+							path='guest/ticket_search' 
+							element={<GuestTicketSearch />} 
+						/>
+
 						<Route element={<Sidebar />}>
 							<Route path='dashboard' element={<AgentDashboard />} />
 							<Route
@@ -207,10 +218,6 @@ function App() {
 										<TicketView />
 									</ProtectedRoute>
 								}
-							/>
-							<Route 
-								path='guest/confirm_ticket/:token' 
-								element={<GuestTicketConfirmation />} 
 							/>
 							<Route
 								path='settings/system'

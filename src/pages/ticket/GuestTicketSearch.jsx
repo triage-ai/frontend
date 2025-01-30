@@ -1,41 +1,43 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Activity, Split, Tag } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../App.css';
 import logoBlack from '../../assets/logo-black.svg';
 import logo from '../../assets/logo-white.svg';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
+import { AuthContext } from '../../context/AuthContext';
+import { useSetAuthCookie } from '../../hooks/useSetAuthCookie';
 
-export const GuestTicketConfirmation = () => {
-	const { token } = useParams();
-	// const { confirmGuestToken } = useUserBackend();
-	const [loading, setLoading] = useState(true);
-	const [status, setStatus] = useState(0);
+export const GuestTicketSearch = () => {
+	const [loading, setLoading] = useState(false);
+	const { setGuestData } = useContext(AuthContext);
+
+	const { guestSignInEmailAndTicketNumber } = useSetAuthCookie();
+
     const [isFormValid, setIsFormValid] = useState(false);
+	// const [notification, setNotification] = useState('')
+
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		email: '',
 		ticket_number: '',
 	});
 
-    const validateSubmit = () => {
-        return formData.username !== '' && formData.password !== '';
+	const validateEmail = email => {
+		return String(email)
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			);
 	};
 
-	// useEffect(() => {
-	// 	confirmGuestToken(token)
-	// 		.then((res) => {
-	// 			setLoading(false);
-	// 			setStatus(1);
-	// 		})
-	// 		.catch((err) => {
-	// 			setLoading(false);
-	// 			console.error(err);
-	// 		});
-	// }, []);
+    const validateSubmit = () => {
+        return validateEmail(formData.email) && formData.ticket_number !== '';
+	};
+
 
     useEffect(() => {
 		const isValid = validateSubmit();
@@ -51,7 +53,30 @@ export const GuestTicketConfirmation = () => {
 	};
 
     const handleAction = () => {
-        console.log('hello');
+		setLoading(true);
+		guestSignInEmailAndTicketNumber(formData.email, formData.ticket_number)
+				.then(userCredential => {
+					const userData = userCredential.data;
+
+					const authInfo = {
+						isAuth: true,
+						user_id: userData.user_id,
+						email: userData.email,
+						ticket_number: userData.ticket_number,
+						token: userData.token,
+					};
+					setGuestData(authInfo);
+					setLoading(false);
+					navigate('/guest/ticket');
+				})
+				.catch((error) => {
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					console.error(errorCode, errorMessage);
+					alert(error.response?.data?.detail);
+					setLoading(false);
+				});
+  
     }
 
 	return (
@@ -258,37 +283,43 @@ export const GuestTicketConfirmation = () => {
 
 							{/* <CheckCircle size={60} color='#34b233' /> */}
 
-							{loading ? (
-								<CircularProgress size={80} thickness={5} sx={{ color: '#9A9FA5' }} />
-							) : (
-								<h5
-									style={{
-										// fontSize: '0.95rem',
-										fontWeight: 600,
-										color: '#1B1D1F',
-										letterSpacing: '-0.01em',
-										lineHeight: 1.2,
-										marginTop: '20px',
-										marginBottom: 0,
-										textAlign: 'center',
-                                        paddingBottom: 20
-									}}
-								>
-									{status === 0 ? 'Unable to confirm token' : 'Enter the email and ticket number associated with this ticket!'}
-								</h5>
-							)}
 
-							{!loading && status === 1 && (
-								<Box>
-									<CustomFilledInput label='Email' onChange={handleChange} value={formData.email} name='email' fullWidth mb={2} />
-                                    <CustomFilledInput label='Ticket Number' onChange={handleChange} value={formData.ticket_number} name='ticket_number' fullWidth mb={2} />
+							<h5
+								style={{
+									// fontSize: '0.95rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: '20px',
+									marginBottom: 0,
+									textAlign: 'center',
+									paddingBottom: 20
+								}}
+							>
+								Enter the email and ticket number associated with the ticket you want to view!
+							</h5>
+		
+
+					
+							<Box>
+								<CustomFilledInput label='Email' onChange={handleChange} value={formData.email} name='email' fullWidth mb={2} />
+								<CustomFilledInput label='Ticket Number' onChange={handleChange} value={formData.ticket_number} name='ticket_number' fullWidth mb={2} />
 
 
-									<CircularButton sx={{ py: 2, px: 6 }} onClick={handleAction} disabled={!isFormValid}>
-										Find Ticket
-									</CircularButton>
-								</Box>
-							)}
+								<CircularButton fullWidth sx={{ py: 2, px: 6 }} onClick={handleAction} disabled={!isFormValid}>
+									{loading ? (
+										<CircularProgress
+											size={22}
+											thickness={5}
+											sx={{ color: '#FFF' }}
+										/>
+									) : (
+										'Find Ticket'
+									)}
+								</CircularButton>
+							</Box>
+
 						</header>
 					</div>
 				</Grid>

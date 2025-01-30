@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export const useTicketBackend = () => {
-	const { agentAuthState, userAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState, guestAuthState } = useContext(AuthContext);
 
 	const getTicketsbyAdvancedSearch = async (payload, search, page, size) => {
 		const config = {
@@ -67,6 +67,17 @@ export const useTicketBackend = () => {
 
 		return await axios.get(
 			process.env.REACT_APP_BACKEND_URL + `ticket/number/${number}`,
+			config
+		);
+	};
+
+	const getTicketByNumberForGuest = async (number) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + `ticket/guest/number/${number}`,
 			config
 		);
 	};
@@ -169,6 +180,7 @@ export const useTicketBackend = () => {
 		getTicketByQueue,
 		getTicketByIdForUser,
 		getTicketByNumber,
+		getTicketByNumberForGuest,
 		getTicketForms,
 		createTicket,
 		createTicketForUser,

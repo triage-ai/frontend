@@ -157,6 +157,7 @@ export const Landing = () => {
 				>
 					<Button
 						disableRipple
+						onClick={() => navigate('/user/login')}
 						sx={{
 							backgroundColor: 'transparent',
 							border: '1.5px solid #22874E',
@@ -179,6 +180,7 @@ export const Landing = () => {
 					</Button>
 					<Button
 						disableRipple
+						onClick={() => navigate('guest/ticket_search')}
 						sx={{
 							backgroundColor: 'transparent',
 							border: '1.5px solid #22874E',

@@ -27,9 +27,10 @@ import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
 import humanFileSize from '../../functions/file-size-formatter';
-import { useAttachmentBackend } from '../../hooks/useAttachmentsBackend';
+import { useAttachmentBackend } from '../../hooks/useAttachmentBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
 import { FileCard } from './FileCard';
+
 
 let localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -52,7 +53,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	const [files, setFiles] = useState([]);
 	const { defaultSettings } = useData()
 	const { createThreadEntry, createThreadEntryForUser } = useThreadsBackend();
-	const { getPresignedURL, createAttachment } = useAttachmentBackend();
+	const { getPresignedURL } = useAttachmentBackend();
 	const { agentAuthState, userAuthState, permissions } = useContext(AuthContext);
 	const editor = useEditor({
 		extensions: extensions,
@@ -64,10 +65,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 			}));
 		},
 	});
-
-	getSettingsByKey('agent_max_file_size').then(res => {
-		setMaxUploadSize(res.data.value)
-	})
 
 	const getDirection = (agent_id, option1, option2) => {
 		if ((agent_id && type === 'agent') || (!agent_id && type !== 'agent')) {
@@ -155,23 +152,23 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	};
 
 	const handleFileUpload = (event) => {
-		const length = event.target.files.length;
-		let tempArray = [];
-		let sizeExceed = false
-		for (let i = 0; i < length; i++) {
-			if (event.target.files[i].size > Number(defaultSettings.agent_max_file_size.value)) {
-				sizeExceed = true
-				continue
-			}
-			tempArray.push(event.target.files[i]);
-		}
-		setFiles((p) => [...p, ...tempArray]);
-		event.target.value = '';
+        const length = event.target.files.length;
+        let tempArray = [];
+        let sizeExceed = false
+        for (let i = 0; i < length; i++) {
+            if (event.target.files[i].size > Number(defaultSettings.agent_max_file_size.value)) {
+                sizeExceed = true
+                continue
+            }
+            tempArray.push(event.target.files[i]);
+        }
+        setFiles((p) => [...p, ...tempArray]);
+        event.target.value = '';
 
-		if (sizeExceed) {
-			alert(`One or more files exceed the max upload limit of ${humanFileSize(defaultSettings.agent_max_file_size.value, true)}!`)
-		}
-	};
+        if (sizeExceed) {
+            alert(`One or more files exceed the max upload limit of ${humanFileSize(defaultSettings.agent_max_file_size.value, true)}!`)
+        }
+    };
 
 	const handleDeleteFile = (idx) => {
 		setFiles((p) => [...p.slice(0, idx), ...p.slice(idx + 1)]);
