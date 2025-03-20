@@ -2,19 +2,14 @@ import { useTheme } from '@emotion/react';
 import {
 	Box,
 	Button, CssBaseline,
-	Dialog,
 	Drawer,
-	IconButton,
 	Slide,
-	Typography, styled,
-	useMediaQuery
+	styled
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { LogOut, Menu, X } from 'lucide-react';
 import React, { forwardRef, useContext, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import { AppBarHeight } from './layout';
+import { Outlet } from 'react-router-dom';
+import { DrawerContext } from '../context/DrawerContext';
 import { SidebarItems } from './sidebar-items';
 
 export const drawerWidth = 250;
@@ -79,26 +74,21 @@ export const Transition = forwardRef(function Transition(props, ref) {
 
 export const Sidebar = () => {
 
-	const [mobileOpen, setMobileOpen] = useState(false);
+	// const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const initialTime = 10; // in seconds
+	const { mobileOpen, handleDrawerTransitionEnd, handleDrawerClose } = useContext(DrawerContext);
 
 	const theme = useTheme();
 
-	const handleDrawerClose = () => {
-		setIsClosing(true);
-		setMobileOpen(false);
-	};
+	// const handleDrawerClose = () => {
+	// 	setIsClosing(true);
+	// 	setMobileOpen(false);
+	// };
 
-	const handleDrawerTransitionEnd = () => {
-		setIsClosing(false);
-	};
-
-	const handleDrawerToggle = () => {
-		if (!isClosing) {
-			setMobileOpen(!mobileOpen);
-		}
-	};
+	// const handleDrawerTransitionEnd = () => {
+	// 	setIsClosing(false);
+	// };
 
 	return ( <>
 		<Box sx={{ display: 'flex' }}>

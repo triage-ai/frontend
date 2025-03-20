@@ -4,9 +4,9 @@ import AppIcon from '../../../assets/app-icon-black.png';
 import logoBlack from '../../../assets/logo-black.svg';
 import logo from '../../../assets/logo-white.svg';
 
-import { Alert, Box, Button, CircularProgress, IconButton, InputAdornment, Link, TextField, Typography, styled } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, InputAdornment, Link, TextField, Typography, styled } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Lock, Mail, Split, Tag, X } from 'lucide-react';
+import { Activity, Lock, Mail, Split, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import { useSetAuthCookie } from '../../../hooks/useSetAuthCookie';
@@ -253,7 +253,7 @@ export const AgentSignIn = () => {
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',

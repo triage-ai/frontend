@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Box,
 	Dialog, IconButton, Stack,
 	Table,
@@ -56,6 +57,7 @@ export const Departments = () => {
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
     const [search, setSearch] = useState('');
+	const [confirmation, setConfirmation] = useState('')
 
 	useEffect(() => {
         refreshDepartments()
@@ -131,7 +133,13 @@ export const Departments = () => {
 			}}
             AddResource={AddDepartment}
 			refreshResource={refreshDepartments}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -308,6 +316,7 @@ export const Departments = () => {
 						<AddDepartment
 							handleEdited={handleEdited}
 							editDepartment={selectedDepartment}
+							setConfirmation={setConfirmation}
 						/>
 					</Box>
 				</Dialog>
@@ -351,6 +360,7 @@ export const Departments = () => {
 							editDepartment={selectedDepartment}
 							handleDelete={handleDelete}
 							handleClose={handleDeleteDialogClose}
+							setConfirmation={setConfirmation}
 						/>
 					</Box>
 				</Dialog>

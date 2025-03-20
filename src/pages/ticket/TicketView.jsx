@@ -32,8 +32,8 @@ export const TicketView = () => {
     }, [])
 
     const handleChange = (name, value) => {
-        console.log(name)
-        console.log(value)
+        // console.log(name)
+        // console.log(value)
         setTicket(
             p => ({
                 ...p,

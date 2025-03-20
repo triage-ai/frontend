@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import LogoHorizontal from '../../assets/logo-horizontal-primary.svg'
+import LogoHorizontal from '../../assets/logo-horizontal-primary.svg';
 
 import {
 	AppBar,
 	Box,
 	Button,
-	TextField,
-	Typography,
-	styled
+	Typography
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import { Activity, Search, Split, Tag, TicketCheck, TicketPlus, Type } from 'lucide-react';
+import { Search, TicketCheck, TicketPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { AppBarHeight } from '../../components/layout';
 import { useSettingsBackend } from '../../hooks/useSettingsBackend';
 import { SearchTextField } from '../agent/Agents';
-import { AppBarHeight } from '../../components/layout';
 
 export const Landing = () => {
 	const [logoUrl, setLogoUrl] = useState('')
@@ -47,7 +41,7 @@ export const Landing = () => {
 				overflowY: 'auto'
 			}}
 		>
-			<AppBar color='transparent' sx={{ boxShadow: 'none', px: 4, height: AppBarHeight, justifyContent: 'center' }} >
+			<AppBar color='transparent' sx={{ boxShadow: 'none', px: 4, height: AppBarHeight, justifyContent: 'center' }} position="relative">
 				<Box
 					display='flex'
 					flexDirection='row'
@@ -59,7 +53,6 @@ export const Landing = () => {
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'flex-start',
-							height: '100%',
 							maxWidth: '250px', // Limit max width for the logo
 							height: '60px', // Limit max height for the logo
 							overflow: 'hidden', // Hide any overflow from oversized logos
@@ -99,7 +92,6 @@ export const Landing = () => {
 
 			<Box
 				sx={{
-					mt: AppBarHeight,
 					background: 'radial-gradient(180% 100% at 20% 10%, #000 5%, #0da54d, #D0FFD6), #010312',
 					// background: 'radial-gradient(130% 135% at 30% 10%, #0000 40%, #0da54d, #D0FFD6), #010312',
 					display: 'flex',
@@ -157,7 +149,7 @@ export const Landing = () => {
 				>
 					<Button
 						disableRipple
-						onClick={() => navigate('/user/login')}
+						onClick={() => navigate('/guest/ticket/create')}
 						sx={{
 							backgroundColor: 'transparent',
 							border: '1.5px solid #22874E',

@@ -1,4 +1,4 @@
-import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { Alert, Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import { MailPlus, Pencil, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +23,7 @@ export const Emails = () => {
 
 	const [selectedEmail, setSelectedEmail] = useState({});
 	const [buttonClicked, setButtonClicked] = useState('');
+	const [confirmation, setConfirmation] = useState('');
 
 	useEffect(() => {
 		refreshEmails();
@@ -89,7 +90,13 @@ export const Emails = () => {
 			}}
 			AddResource={AddEmail}
 			refreshResource={refreshEmails}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				{emails.length !== 0 && (
 					<Table>
@@ -237,7 +244,7 @@ export const Emails = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddEmail handleCreated={handleEmailCreated} handleEdited={handleEmailEdited} editEmail={selectedEmail} />
+						<AddEmail handleCreated={handleEmailCreated} handleEdited={handleEmailEdited} editEmail={selectedEmail} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
@@ -276,7 +283,7 @@ export const Emails = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteEmail editEmail={selectedEmail} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+						<DeleteEmail editEmail={selectedEmail} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}

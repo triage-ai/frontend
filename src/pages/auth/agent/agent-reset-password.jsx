@@ -3,10 +3,10 @@ import Grid from '@mui/material/Grid2';
 import { Activity, Mail, Split, Tag } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAgentBackend } from '../../../hooks/useAgentBackend';
 import '../../../App.css';
 import logoBlack from '../../../assets/logo-black.svg';
 import logo from '../../../assets/logo-white.svg';
+import { useAgentBackend } from '../../../hooks/useAgentBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -89,7 +89,7 @@ export const AgentResetPassword = () => {
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',

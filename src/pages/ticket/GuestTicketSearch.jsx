@@ -1,6 +1,6 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Alert, Box, CircularProgress, IconButton, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Split, Tag } from 'lucide-react';
+import { Activity, ArrowLeft, Split, Tag } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../App.css';
@@ -18,7 +18,7 @@ export const GuestTicketSearch = () => {
 	const { guestSignInEmailAndTicketNumber } = useSetAuthCookie();
 
     const [isFormValid, setIsFormValid] = useState(false);
-	// const [notification, setNotification] = useState('')
+	const [notification, setNotification] = useState('')
 
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
@@ -73,7 +73,7 @@ export const GuestTicketSearch = () => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
 					console.error(errorCode, errorMessage);
-					alert(error.response?.data?.detail);
+					setNotification(error.response?.data?.detail);
 					setLoading(false);
 				});
   
@@ -283,22 +283,46 @@ export const GuestTicketSearch = () => {
 
 							{/* <CheckCircle size={60} color='#34b233' /> */}
 
+							{notification && ( 							
+								<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{mb: 2, border: '1px solid rgb(239, 83, 80);'}} >
+									{notification}
+								</Alert>							
+							)}
 
-							<h5
+							<Box
+								sx={{position: 'relative', width: '100%', textAlign: 'center'}}
+							>
+								<IconButton
+									sx={{ position: 'absolute', top: 0, left: 0, zIndex: 1000 }}
+									onClick={() => navigate('/')}
+								>
+									<ArrowLeft />
+								</IconButton>
+								<Typography
+									variant="h1"
+									sx={{ color: '#1B1D1F' }}
+								>
+									Search
+								</Typography>
+							</Box>
+
+
+							<h6
 								style={{
 									// fontSize: '0.95rem',
-									fontWeight: 600,
+									fontWeight: 400,
 									color: '#1B1D1F',
 									letterSpacing: '-0.01em',
 									lineHeight: 1.2,
-									marginTop: '20px',
+									marginTop: '10px',
 									marginBottom: 0,
 									textAlign: 'center',
-									paddingBottom: 20
+									paddingBottom: 20,
+									fontSize: 16
 								}}
 							>
 								Enter the email and ticket number associated with the ticket you want to view!
-							</h5>
+							</h6>
 		
 
 					

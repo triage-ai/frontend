@@ -128,6 +128,18 @@ export const useTicketBackend = () => {
 		);
 	};
 
+	const createTicketForGuest = async (ticketInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + "ticket/create/guest",
+			ticketInfo,
+			config
+		);
+	};
+
 	const updateTicket = async (ticketInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -150,6 +162,20 @@ export const useTicketBackend = () => {
 		return await axios.put(
 			process.env.REACT_APP_BACKEND_URL +
 				"ticket/user/update/" +
+				ticketInfo.ticket_id,
+			ticketInfo,
+			config
+		);
+	};
+
+	const updateTicketForGuest = async (ticketInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL +
+				"ticket/guest/update/" +
 				ticketInfo.ticket_id,
 			ticketInfo,
 			config
@@ -184,8 +210,10 @@ export const useTicketBackend = () => {
 		getTicketForms,
 		createTicket,
 		createTicketForUser,
+		createTicketForGuest,
 		updateTicket,
 		updateTicketForUser,
+		updateTicketForGuest,
 		getTicketBetweenDates,
 		getDashboardStats
 	};

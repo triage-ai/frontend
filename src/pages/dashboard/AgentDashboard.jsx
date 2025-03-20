@@ -100,10 +100,6 @@ const calculateNewDate = (date, period) => {
 };
 
 export const AgentDashboard = () => {
-	const headers = [{ id: 1, label: 'Dashboard' }];
-
-	const components = [<Dashboard />];
-
 	return (
 		<Layout
 			title={'Dashboard'}
@@ -114,7 +110,9 @@ export const AgentDashboard = () => {
 				hidden: false,
 			}}
 		>
-			<Header headers={headers} components={components} />
+			<WhiteContainer noPadding>
+				<Box sx={{ padding: 2 }}><Dashboard /></Box>
+			</WhiteContainer>
 		</Layout>
 	);
 };
@@ -142,9 +140,9 @@ const Dashboard = () => {
 	}, []);
 
 	const components = [
-		<Department selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={departments} />,
-		<Topics selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={topics} />,
-		<Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod} />,
+		<Department selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={departments} timedata={timeData} />,
+		<Topics selectedDate={selectedDate} selectedPeriod={selectedPeriod} category={topics} timedata={timeData} />,
+		<Agent selectedDate={selectedDate} selectedPeriod={selectedPeriod} timedata={timeData} />,
 	];
 
 	const handleDateChange = (newDate) => {
@@ -182,6 +180,7 @@ const Dashboard = () => {
 			console.error('Error with retrieving the information', err);
 		}
 	};
+
 	useEffect(() => {
 		handleRefresh();
 	}, []);
@@ -242,7 +241,7 @@ const Dashboard = () => {
 
 				<CircularButton
 					sx={{ py: 2, px: 6, width: 250 }}
-					onClick={() => handleRefresh(selectedDate, calculateNewDate(selectedDate, selectedPeriod), getTicketBetweenDates)}
+					onClick={() => handleRefresh()}
 				>
 					Refresh
 				</CircularButton>
@@ -273,8 +272,8 @@ const Dashboard = () => {
 						leftAxis='linearAxis'
 						series={[
 							{ curve: 'linear', yAxisId: 'linearAxis', label: 'Created', data: ypoints.y1 },
-							// { curve: 'linear', , yAxisId: 'linearAxis', label: 'Updated', data: ypoints.y2 },
-							// { curve: 'linear', yAxisId: 'linearAxis', label: 'Overdue', data: ypoints.y3 },
+							{ curve: 'linear', yAxisId: 'linearAxis', label: 'Updated', data: ypoints.y2 },
+							{ curve: 'linear', yAxisId: 'linearAxis', label: 'Overdue', data: ypoints.y3 },
 						]}
 					/>
 				) : (
@@ -299,7 +298,7 @@ const Dashboard = () => {
 	);
 };
 
-const Department = ({ selectedPeriod, selectedDate, category }) => {
+const Department = ({ selectedPeriod, selectedDate, category, timedata }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
 
@@ -309,12 +308,14 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 			res.data.forEach((department) => {
 				if (category.length) {
 					let new_cat = category.find((cat) => cat.dept_id === department.category_id);
-					department.category_name = new_cat.name;
+					if (new_cat && new_cat.name) {
+						department.category_name = new_cat.name;
+					}
 				}
 			});
 			setDashboardData(res.data);
 		});
-	}, [category]);
+	}, [timedata]);
 
 
 	return (
@@ -368,7 +369,7 @@ const Department = ({ selectedPeriod, selectedDate, category }) => {
 	);
 };
 
-const Topics = ({ selectedPeriod, selectedDate, category }) => {
+const Topics = ({ selectedPeriod, selectedDate, category, timedata }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
 
@@ -383,7 +384,7 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 			});
 			setDashboardData(res.data);
 		});
-	}, []);
+	}, [timedata]);
 
 	return (
 		<Box>
@@ -436,7 +437,7 @@ const Topics = ({ selectedPeriod, selectedDate, category }) => {
 	);
 };
 
-const Agent = ({ selectedPeriod, selectedDate }) => {
+const Agent = ({ selectedPeriod, selectedDate, timedata }) => {
 	const { getDashboardStats } = useTicketBackend();
 	const [dashboardData, setDashboardData] = useState([]);
 	const { agentAuthState } = useContext(AuthContext);
@@ -451,7 +452,7 @@ const Agent = ({ selectedPeriod, selectedDate }) => {
 				setAgent(agentData.data);
 			});
 		});
-	}, [])
+	}, [timedata])
 
 	return (
 		<Box>

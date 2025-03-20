@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useRoleBackend } from '../../hooks/useRoleBackend';
 
-export const DeleteRole = ({ editRole, handleDelete, handleClose }) => {
+export const DeleteRole = ({ editRole, handleDelete, handleClose, setConfirmation }) => {
 	const { removeRole } = useRoleBackend();
 
 	const deleteRole = () => {
 		removeRole(editRole)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Role was deleted!')
 			})
 			.catch(err => console.error(err));
 	};
@@ -19,7 +20,7 @@ export const DeleteRole = ({ editRole, handleDelete, handleClose }) => {
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the role {editRole.firstname + ' ' + editRole.lastname}?
+				Are you sure you want to delete the role {editRole.name}?
 			</Typography>
 
 			<Typography

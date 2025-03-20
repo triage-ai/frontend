@@ -128,7 +128,7 @@ export const UserSignUp = () => {
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',

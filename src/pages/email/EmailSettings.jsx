@@ -42,11 +42,10 @@ const handleSave = (settingsFormData, setLoading, setCircleLoading, UpdateSettin
 		let temp = settings;
 		temp.default_alert_email.value = settingsFormData.default_alert_email.toString();
 		temp.default_system_email.value = settingsFormData.default_system_email.toString();
-		temp.default_admin_email.value = settingsFormData.admin_email.toString();
+		temp.default_admin_email.value = settingsFormData.default_admin_email.toString();
 
 		let settings_update = [];
 		settings_update.push(temp.default_system_email, temp.default_alert_email, temp.default_admin_email);
-		console.log(settings_update)
 
 		settings_update = settings_update.map((item) => ({
 			...item,
@@ -103,7 +102,7 @@ export const EmailSettings = () => {
 	const [settingsFormData, settingsSetFormData] = useState({
 		default_system_email: '',
 		default_alert_email: '',
-		admin_email: '',
+		default_admin_email: '',
 	});
 
 
@@ -116,7 +115,7 @@ export const EmailSettings = () => {
 		settingsSetFormData({
 			default_system_email: settings?.default_system_email?.value ?? '',
 			default_alert_email: settings?.default_alert_email?.value ?? '',
-			admin_email: settings?.admin_email?.value ?? '',
+			default_admin_email: settings?.default_admin_email?.value ?? '',
 		});
 	}, [settings]);
 
@@ -144,8 +143,6 @@ export const EmailSettings = () => {
 		>
 			<WhiteContainer noPadding>
 				<Box sx={{ padding: 2 }}>
-					<Typography variant='subtitle1'>Note: Some of these global settings can be changed at the department level</Typography>
-
 					<Typography variant='h4' pb={2}>
 						Email Selection
 					</Typography>
@@ -165,7 +162,7 @@ export const EmailSettings = () => {
 							label='Default Alert Email'
 						/>
 
-						<EmailSelect handleInputChange={handleChangeSettings} value={settingsFormData?.admin_email} name='admin_email' label='Admin Email' />
+						<EmailSelect handleInputChange={handleChangeSettings} value={settingsFormData?.default_admin_email} name='default_admin_email' label='Admin Email' />
 					</Stack>
 
 

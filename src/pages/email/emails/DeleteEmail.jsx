@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../../components/sidebar';
 import { useEmailBackend } from '../../../hooks/useEmailBackend';
 
-export const DeleteEmail = ({ editEmail, handleDelete, handleClose }) => {
+export const DeleteEmail = ({ editEmail, handleDelete, handleClose, setConfirmation }) => {
 	const { removeEmail } = useEmailBackend();
 
 	const deleteEmail = () => {
 		removeEmail(editEmail)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Email was deleted!')
 			})
 			.catch(err => console.error(err));
 	};

@@ -95,7 +95,8 @@ export const UserAddTicket = ({ handleTicketCreated, handleTicketEdited, editTic
             description: formData.description,
             title: formData.title,
             topic_id: formData.topic_id ? formData.topic_id : null,
-            form_values: form_values
+            form_values: form_values,
+            source: 'native'
         }
     }
 

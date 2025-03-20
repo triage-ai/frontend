@@ -102,6 +102,17 @@ const AuthProvider = ({ children }) => {
 		localStorage.removeItem('userAuthState');
 	};
 
+	const guestLogout = () => {
+		setGuestAuthState({
+			isAuth: false,
+			user_id: null,
+			token: null,
+			email: null,
+			ticket_number: null,
+		});
+		localStorage.removeItem('guestAuthState');
+	};
+
 	const refreshAgentData = async (agentAuthState) => {
 		getAgentById(agentAuthState)
 			.then((agentRes) => {
@@ -117,8 +128,8 @@ const AuthProvider = ({ children }) => {
 	}
 
 	const value = useMemo(() => (
-		{ agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, permissions, preferences }
-	), [agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, permissions, preferences])
+		{ agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, guestLogout, permissions, preferences, setPermissions, setPreferences }
+	), [agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, guestLogout, permissions, preferences, setPermissions, setPreferences])
 
 	return (
 		<AuthContext.Provider value={value}>

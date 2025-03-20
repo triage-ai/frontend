@@ -37,12 +37,6 @@ export const Sort = ({ sorts, setSorts }) => {
         })
     ), [sorts])
 
-    useEffect(() => {
-        console.log(sorts)
-        // console.log(internalSorts)
-        console.log(internalSorts)
-    }, [sorts, internalSorts])
-
     const handleFieldChange = (e, idx) => {
         const tempArr = [...sorts]
         let value = e.target.value

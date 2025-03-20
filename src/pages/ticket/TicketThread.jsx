@@ -116,7 +116,10 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 			})
 			.then(() => {
 				updateCurrentTicket(updatedTicket);
-			});
+			})
+			.catch((err) => {
+				alert(err.response.data.detail)
+			})
 		} else {
 			threadEntryCreate(newThreadEntry)
 			.then((response) => {
@@ -135,17 +138,16 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		await Promise.all(
 			Object.entries(presigned_urls).map(([fileName, url]) => {
 				const file = files.find((f) => f.name === fileName);
-				try {
-					axios.put(url, file, {
-						headers: {
-							'Content-Type': file.type,
-							'Content-Disposition': `inline; filename="${fileName}"`,
-						},
-					});
-					attachments.push({ name: fileName, link: url.split('?')[0], type: file.type, size: file.size, inline: 1});
-				} catch (error) {
-					console.error(`Error uploading ${fileName}:`, error.message);
-				}
+				axios.put(url, file, {
+					headers: {
+						'Content-Type': file.type,
+						'Content-Disposition': `inline; filename="${fileName}"`,
+					},
+				})
+				.catch((error) => {
+					alert('There is an error with the S3 confirguration. Attachment upload failed and will not be added to the thread.');
+				})
+				attachments.push({ name: fileName, link: url.split('?')[0], type: file.type, size: file.size, inline: 1});
 			})
 		);
 		return attachments;
@@ -156,6 +158,10 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
         let tempArray = [];
         let sizeExceed = false
         for (let i = 0; i < length; i++) {
+			if (files.some(file => file.name === event.target.files[i].name)) {
+				alert('Cannot upload the same file more than once')
+				continue
+			}
             if (event.target.files[i].size > Number(defaultSettings.agent_max_file_size.value)) {
                 sizeExceed = true
                 continue
@@ -188,6 +194,11 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		if (item.field === 'due_date') {
 			newValue = newValue ? formatDate(newValue, 'lll') : null;
 			prevValue = prevValue ? formatDate(prevValue, 'lll') : null;
+		}
+
+		if(item.field === 'overdue') {
+			newValue = newValue ? 'True' : 'False';
+			prevValue = prevValue ? 'True' : 'False';
 		}
 
 		const field = capitilize(item.field.replace('_id', '').replace('_', ' '));

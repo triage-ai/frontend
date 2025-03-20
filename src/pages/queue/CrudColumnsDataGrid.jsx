@@ -174,7 +174,6 @@ export const CrudColumnsDataGrid = ({ rows, setRows, queue_id }) => {
 
     const handleDeleteClick = (id) => () => {
         const row = rows.find(row => row.id === id)
-        console.log(row)
         removeColumn({ column_id: row.column_id })
             .then(() => {
                 setRows(rows.filter((row) => row.id !== id));

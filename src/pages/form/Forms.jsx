@@ -1,4 +1,4 @@
-import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
+import { Alert, Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -48,6 +48,7 @@ export const Forms = () => {
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
 	const [search, setSearch] = useState('');
+	const [confirmation, setConfirmation] = useState('');
 
 	useEffect(() => {
 		refreshForms();
@@ -113,7 +114,13 @@ export const Forms = () => {
 			}}
 			AddResource={AddForm}
 			refreshResource={refreshForms}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -266,7 +273,7 @@ export const Forms = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddForm handleEdited={handleEdited} editForm={selectedForm} />
+						<AddForm handleEdited={handleEdited} editForm={selectedForm} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
@@ -305,7 +312,7 @@ export const Forms = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteForm editForm={selectedForm} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+						<DeleteForm editForm={selectedForm} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}

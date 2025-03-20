@@ -277,16 +277,6 @@ export const UserTickets = () => {
 					}}
 				>
 					<Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { md: 'none' } }}
-						>
-							<Menu />
-						</IconButton>
-
 						<Box sx={{ display: 'flex', flexDirection: 'column', color: '#1B1D1F' }}>
 							<Typography variant="h2">{appBarTitle}</Typography>
 							{appBarSubtitle !== '' && (

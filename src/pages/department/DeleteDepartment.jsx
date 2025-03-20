@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 
-export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose }) => {
+export const DeleteDepartment = ({ editDepartment, handleDelete, handleClose, setConfirmation }) => {
 	const { removeDepartment } = useDepartmentBackend();
 
 	const deleteDepartment = () => {
 		removeDepartment(editDepartment)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Department was deleted!')
 			})
 			.catch(err => console.error(err));
 	};

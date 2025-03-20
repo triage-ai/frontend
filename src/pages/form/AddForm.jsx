@@ -5,7 +5,7 @@ import { CircularButton } from '../../components/sidebar';
 import { useFormBackend } from '../../hooks/useFormBackend';
 import { FormFieldDataGrid } from './FormFieldDataGrid';
 
-export const AddForm = ({ handleCreated, handleEdited, editForm }) => {
+export const AddForm = ({ handleCreated, handleEdited, editForm, setConfirmation }) => {
 	const { createForm, updateForm } = useFormBackend();
 
 	const [isFormValid, setIsFormValid] = useState(false);
@@ -59,12 +59,14 @@ export const AddForm = ({ handleCreated, handleEdited, editForm }) => {
 			updateForm(prepareFormData(formData))
 				.then((res) => {
 					handleEdited();
+					setConfirmation('Form successfully edited!')
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createForm(prepareFormData(formData))
 				.then((res) => {
 					handleCreated();
+					setConfirmation('Form successfully created!')
 				})
 				.catch((err) => console.error(err));
 		}

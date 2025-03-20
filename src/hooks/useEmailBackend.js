@@ -41,7 +41,6 @@ export const useEmailBackend = () => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
 		};
-		console.log(emailInfo)
 		return await axios.put(
 			process.env.REACT_APP_BACKEND_URL +
 				"email/put/" +
@@ -64,6 +63,18 @@ export const useEmailBackend = () => {
 		);
 	};
 
-    return {getAllEmails, getEmailById, createEmail, updateEmail, removeEmail}
+	const sendTestEmail = async (emailInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${agentAuthState.token}` },
+		};
+
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + "email/test_email",
+			emailInfo,
+			config,
+		);
+	};
+
+    return {getAllEmails, getEmailById, createEmail, updateEmail, removeEmail, sendTestEmail}
 
 }

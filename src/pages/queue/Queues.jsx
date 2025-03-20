@@ -1,4 +1,4 @@
-import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
+import { Alert, Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
@@ -47,6 +47,7 @@ export const Queues = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [buttonClicked, setButtonClicked] = useState('');
+    const [confirmation, setConfirmation] = useState('')
     const { agentAuthState } = useContext(AuthContext)
 
     useEffect(() => {
@@ -106,7 +107,13 @@ export const Queues = () => {
             }}
             AddResource={AddQueue}
             refreshResource={refreshQueues}
+            setConfirmation={setConfirmation}
         >
+            {confirmation && (
+                <Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+                    {confirmation}
+                </Alert>	
+            )}
             <WhiteContainer noPadding>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
                     <Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -265,7 +272,7 @@ export const Queues = () => {
                             <X size={20} />
                         </IconButton>
 
-                        <AddQueue handleEdited={handleEdited} editQueue={selectedQueue} />
+                        <AddQueue handleEdited={handleEdited} editQueue={selectedQueue} setConfirmation={setConfirmation} />
                     </Box>
                 </Dialog>
             )}
@@ -304,7 +311,7 @@ export const Queues = () => {
                             </IconButton>
                         </Box>
 
-                        <DeleteQueue editQueue={selectedQueue} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+                        <DeleteQueue editQueue={selectedQueue} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
                     </Box>
                 </Dialog>
             )}

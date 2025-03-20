@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useAgentBackend } from '../../hooks/useAgentBackend';
 
-export const DeleteAgent = ({ editAgent, handleDelete, handleClose }) => {
+export const DeleteAgent = ({ editAgent, handleDelete, handleClose, setConfirmation }) => {
 	const { removeAgent } = useAgentBackend();
 
 	const deleteAgent = () => {
 		removeAgent(editAgent)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Agent was deleted!')
 			})
 			.catch(err => console.error(err));
 	};

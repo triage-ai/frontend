@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 export const useThreadsBackend = () => {
-	const { agentAuthState, userAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState, guestAuthState } = useContext(AuthContext);
 
 	const createThreadEntry = async (threadInfo) => {
 		const config = {
@@ -20,6 +20,14 @@ export const useThreadsBackend = () => {
 		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/user', threadInfo, config);
 	};
 
+	const createThreadEntryForGuest = async (threadInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+		threadInfo.user_id = guestAuthState.user_id;
+		return await axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/guest', threadInfo, config);
+	};
+
 	const threadEntryAgentEmailReply = async (threadInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -34,7 +42,7 @@ export const useThreadsBackend = () => {
 		return axios.post(process.env.REACT_APP_BACKEND_URL + 'thread_entry/create/send_attachment_reply', emailInfo, config);
 	};
 
-	return { createThreadEntry, createThreadEntryForUser, threadEntryAgentEmailReply, send_attachment_email };
+	return { createThreadEntry, createThreadEntryForUser, threadEntryAgentEmailReply, send_attachment_email, createThreadEntryForGuest };
 
 	// const getAllOpenTickets = async () => {
 	// 	const config = {

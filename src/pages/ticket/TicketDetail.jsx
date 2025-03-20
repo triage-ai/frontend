@@ -93,6 +93,12 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 											label={ticket.priority.priority_desc}
 											sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }}
 										/>
+										{ticket.overdue === 1 && ( 
+											<Chip
+												label='Overdue'
+												sx={{ backgroundColor: '#f77c7c', marginLeft: '8px'}}
+											/>
+										)}
 								</>
 							)}
 						</Box>
@@ -181,11 +187,19 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 												}}
 												IconComponent={CustomChevron}
 											>
-												{statuses.map((status) => (
-													<MenuItem key={status.status_id} value={status.name}>
-														<Typography variant='subtitle2'>{status.name}</Typography>
-													</MenuItem>
-												))}
+												{statuses
+													.filter(status => {
+														if (!permissions.hasOwnProperty('ticket.close') && status.state === 'closed') {
+															return false;
+														}
+														return true;
+													})
+													.map(status => (
+														<MenuItem key={status.status_id} value={status.name}>
+															<Typography variant='subtitle2'>{status.name}</Typography>
+														</MenuItem>
+													))
+												}
 											</Select>
 										</FormControl>
 									</Box>
@@ -256,7 +270,14 @@ export const TicketDetail = ({ ticket, closeDrawer, updateCurrentTicket, openEdi
 															year: 'numeric',
 														})
 														.replace(',', ' ')
-													: 'Not set'}
+													: new Date(ticket.est_due_date)
+														.toLocaleDateString('en-US', {
+															day: '2-digit',
+															month: 'short',
+															year: 'numeric',
+														})
+														.replace(',', ' ')
+												}
 											</Typography>
 										</Box>
 									</Box>

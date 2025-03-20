@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useFormBackend } from '../../hooks/useFormBackend';
 
-export const DeleteForm = ({ editForm, handleDelete, handleClose }) => {
+export const DeleteForm = ({ editForm, handleDelete, handleClose, setConfirmation }) => {
 	const { removeForm } = useFormBackend();
 
 	const deleteForm = () => {
 		removeForm(editForm)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Form was deleted!')
 			})
 			.catch(err => console.error(err));
 	};
@@ -19,7 +20,7 @@ export const DeleteForm = ({ editForm, handleDelete, handleClose }) => {
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the form {editForm.firstname + ' ' + editForm.lastname}?
+				Are you sure you want to delete the form {editForm.title}?
 			</Typography>
 
 			<Typography

@@ -136,7 +136,7 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer, type 
 						sx={{ marginBottom: '12px' }}
 					/>
 
-					<CircularTab
+					{(type !== 'agent' || (type === 'agent' && permissions.hasOwnProperty('ticket.reply'))) && <CircularTab
 						icon={
 							<MessageSquareText
 								size={22}
@@ -144,7 +144,7 @@ export const TicketDetailContainer = ({ ticketInfo, openEdit, closeDrawer, type 
 							/>
 						}
 						aria-label="Details"
-					/>
+					/> }
 				</Tabs>
 				<TabPanel
 					value={value}

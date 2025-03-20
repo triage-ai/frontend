@@ -36,7 +36,6 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 	}, [editTemplate])
 
 	const handleChange = (entry) => {
-		console.log(formData);
 		setFormData({
 			...formData,
 			[entry.target.name]: entry.target.value,
@@ -44,7 +43,6 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 	};
 
 	const handleCheckBox = (event) => {
-		console.log(event)
 		setFormData({
 			...formData,
 			[event.target.name]: event.target.checked ? 'on' : 'off',
@@ -90,14 +88,12 @@ export const AddTemplate = ({ handleCreated, handleEdited, editTemplate }) => {
 				...p,
 				body: editor.getHTML()
 			}))
-			console.log(editor.getHTML())
 		}
 	});
 
 	useEffect(() => {
 		const isValid = validateTemplate();
 		setIsFormValid(isValid);
-		console.log(formData)
 	}, [formData]);
 
 	const transformString = (inputString) => {

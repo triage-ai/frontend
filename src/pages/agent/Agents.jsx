@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Box,
 	Dialog,
 	FormControl,
@@ -17,6 +18,7 @@ import {
 import TablePagination from '@mui/material/TablePagination';
 import { ChevronDown, Mail, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
+import { StyledInput } from '../../components/custom-select';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
@@ -26,7 +28,6 @@ import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import { AddAgent } from './AddAgent';
 import { DeleteAgent } from './DeleteAgent';
-import { CustomInput, StyledInput } from '../../components/custom-select';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -72,6 +73,7 @@ export const Agents = () => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
+	const [confirmation, setConfirmation] = useState('');
 	const { agentAuthState } = useContext(AuthContext);
 
 	useEffect(() => {
@@ -84,13 +86,13 @@ export const Agents = () => {
 			.catch((err) => {
 				console.error(err);
 			});
-		getAllGroups()
-			.then((res) => {
-				setGroups(res.data);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		// getAllGroups()
+		// 	.then((res) => {
+		// 		setGroups(res.data);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.error(err);
+		// 	});
 	}, []);
 
 	useEffect(() => {
@@ -156,6 +158,9 @@ export const Agents = () => {
 	const resendEmail = (agent_id) => {
 		//Do some notification stuff here
 		resendConfirmationEmail(agent_id)
+		.then(() => {
+			setConfirmation('Confirmation email was resent if an email was configured')
+		})
 		.catch(error => {
 			console.error(error);
 		});
@@ -173,7 +178,13 @@ export const Agents = () => {
 			}}
 			AddResource={AddAgent}
 			refreshResource={refreshAgents}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -426,7 +437,7 @@ export const Agents = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddAgent handleEdited={handleAgentEdited} editAgent={selectedAgent} />
+						<AddAgent handleEdited={handleAgentEdited} editAgent={selectedAgent} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
@@ -465,7 +476,7 @@ export const Agents = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteAgent editAgent={selectedAgent} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+						<DeleteAgent editAgent={selectedAgent} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}

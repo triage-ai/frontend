@@ -1,15 +1,15 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
-import { useTopicBackend } from '../../hooks/useTopicBackend';
+import { useSLABackend } from '../../hooks/useSLABackend';
 
-export const DeleteTopic = ({ editTopic, handleDelete, handleClose, setConfirmation }) => {
-	const { removeTopic } = useTopicBackend();
+export const DeleteSLA = ({ editSLA, handleDelete, handleClose, setConfirmation }) => {
+	const { removeSLA } = useSLABackend();
 
-	const deleteTopic = () => {
-		removeTopic(editTopic)
+	const deleteSLA = () => {
+		removeSLA(editSLA)
 			.then(res => {
 				handleDelete();
-				setConfirmation('Topic was deleted!')
+				setConfirmation('SLA was deleted!')
 			})
 			.catch(err => console.error(err));
 	};
@@ -20,14 +20,14 @@ export const DeleteTopic = ({ editTopic, handleDelete, handleClose, setConfirmat
 				variant="h2"
 				sx={{ mb: 2, lineHeight: 1.3 }}
 			>
-				Are you sure you want to delete the topic {editTopic.topic}?
+				Are you sure you want to delete {editSLA.name}?
 			</Typography>
 
 			<Typography
 				variant="body1"
 				sx={{ color: '#545555', mb: 5 }}
 			>
-				This will remove the topic from your topics table. You can always add another topic later
+				This will remove the SLA from your SLAs table. You can always add another SLA later
 				on.
 			</Typography>
 
@@ -45,7 +45,7 @@ export const DeleteTopic = ({ editTopic, handleDelete, handleClose, setConfirmat
 							background: '#b82828',
 						},
 					}}
-					onClick={deleteTopic}
+					onClick={deleteSLA}
 				>
 					Yes, delete
 				</CircularButton>

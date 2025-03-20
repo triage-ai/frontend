@@ -3,10 +3,10 @@ import Grid from '@mui/material/Grid2';
 import { Activity, Mail, Split, Tag } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserBackend } from '../../../hooks/useUserBackend';
 import '../../../App.css';
 import logoBlack from '../../../assets/logo-black.svg';
 import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -89,7 +89,7 @@ export const UserResetPassword = () => {
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',

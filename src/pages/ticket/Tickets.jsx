@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Badge,
 	Box,
 	Chip,
@@ -64,6 +65,7 @@ export const Tickets = () => {
 	const [totalTickets, setTotalTickets] = useState(0);
 	const [selectedQueueId, setSelectedQueueId] = useState(null);
 	const [searchActive, setSearchActive] = useState(false);
+	const [confirmation, setConfirmation] = useState('')
 
 	const [search, setSearch] = useState('')
 
@@ -271,7 +273,13 @@ export const Tickets = () => {
 			}}
 			AddResource={AddTicket}
 			refreshResource={refreshCurrentTicketList}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box
 					sx={{
@@ -576,6 +584,7 @@ export const Tickets = () => {
 						handleCreated={handleTicketCreated}
 						handleEdited={handleTicketEdited}
 						editTicket={selectedTicket}
+						setConfirmation={setConfirmation}
 					/>
 				</Box>
 			</Dialog>

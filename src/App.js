@@ -8,6 +8,7 @@ import ProtectedRoute from './components/protected-route';
 import { Sidebar } from './components/sidebar';
 import UserProtectedRoute from './components/user-protected-route';
 import { AuthContext } from './context/AuthContext';
+import { DrawerProvider } from './context/DrawerContext';
 import { Agents } from './pages/agent/Agents';
 import { AgentConfirmation } from './pages/auth/agent/agent-confirmation';
 import { AgentResetPassword } from './pages/auth/agent/agent-reset-password';
@@ -36,13 +37,15 @@ import { Profile } from './pages/profile/AgentProfile';
 import { Queues } from './pages/queue/Queues';
 import { Roles } from './pages/role/Roles';
 import { Settings } from './pages/settings/Settings';
-import { AgentMenu, CompanyMenu, KnowledgebaseMenu, SystemMenu, TaskMenu, TicketMenu, UserMenu } from './pages/settings/SettingsMenus';
+import { CompanyMenu, SystemMenu, TicketMenu } from './pages/settings/SettingsMenus';
+import { SLAs } from './pages/sla/SLA';
+import { GuestAddTicket } from './pages/ticket/GuestAddTicket';
 import { GuestTicketSearch } from './pages/ticket/GuestTicketSearch';
+import { GuestTicketView } from './pages/ticket/GuestTicketView';
 import { Tickets } from './pages/ticket/Tickets';
 import { TicketView } from './pages/ticket/TicketView';
 import { Topics } from './pages/topic/Topics';
 import { Users } from './pages/user/Users';
-import { GuestTicketView } from './pages/ticket/GuestTicketView';
 
 const theme = createTheme({
 	palette: {
@@ -96,7 +99,7 @@ const theme = createTheme({
 });
 
 function App() {
-	const { agentAuthState, userAuthState, agentLogout, userLogout } = useContext(AuthContext);
+	const { agentAuthState, userAuthState, agentLogout, userLogout, guestLogout } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	axios.interceptors.response.use(response => {
@@ -105,6 +108,7 @@ function App() {
 		if (error.response.status === 401 && error.response.data.detail === "Could not validate credentials") { // This needs to be tested
 			agentLogout()
 			userLogout()
+			guestLogout()
 			navigate("/")
 			return error;
 		}
@@ -186,14 +190,25 @@ function App() {
 						/>
 						<Route 
 							path='guest/ticket' 
-							element={<GuestTicketView />} 
+							element={
+							<DrawerProvider>
+								<GuestTicketView />
+							</DrawerProvider>
+						}/>
+						<Route
+							path='guest/ticket/create'
+							element={<GuestAddTicket />}
 						/>
 						<Route 
 							path='guest/ticket_search' 
 							element={<GuestTicketSearch />} 
 						/>
 
-						<Route element={<Sidebar />}>
+						<Route element={
+							<DrawerProvider>
+								<Sidebar />
+							</DrawerProvider>
+						}>
 							<Route path='dashboard' element={<AgentDashboard />} />
 							<Route
 								path='tickets'
@@ -243,7 +258,7 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
-							<Route
+							{/* <Route
 								path='settings/tasks'
 								element={
 									<ProtectedRoute requireAdmin>
@@ -274,7 +289,7 @@ function App() {
 										<Settings Menu={KnowledgebaseMenu} />
 									</ProtectedRoute>
 								}
-							/>
+							/> */}
 
 							<Route
 								path='email/emails'
@@ -379,7 +394,7 @@ function App() {
 								path='manage/slas'
 								element={
 									<ProtectedRoute>
-										<Users />
+										<SLAs />
 									</ProtectedRoute>
 								}
 							/>
