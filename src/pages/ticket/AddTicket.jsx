@@ -6,16 +6,16 @@ import {
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CustomDateTimePicker } from '../../components/date-time-picker';
 import { CircularButton } from '../../components/sidebar';
+import { AuthContext } from '../../context/AuthContext';
 import { useFormBackend } from '../../hooks/useFormBackend';
 import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { AgentSelect } from '../agent/AgentSelect';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { FormInput } from '../form/FormInput';
-import { GroupSelect } from '../group/GroupSelect';
 import { PrioritySelect } from '../priority/PrioritySelect';
 import { SLASelect } from '../sla/SLASelect';
 import { StatusSelect } from '../status/StatusSelect';
@@ -24,12 +24,13 @@ import { UserSelect } from '../user/UserSelect';
 
 dayjs.extend(utc)
 
-export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
+export const AddTicket = ({ handleCreated, handleEdited, editTicket, setConfirmation }) => {
 
 	AddTicket.propTypes = {
 		handleCreated: PropTypes.func,
 		handleEdited: PropTypes.func,
-		editTicket: PropTypes.object
+		editTicket: PropTypes.object,
+		setConfirmation: PropTypes.func
 	}
 
 	const { createTicket, updateTicket, getTicketForms } = useTicketBackend();
@@ -38,6 +39,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 	const [forms, setForms] = useState([])
 	const [formFields, setFormFields] = useState([])
 	const [formValues, setFormValues] = useState({})
+	const { permissions } = useContext(AuthContext)
 
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [formData, setFormData] = useState({
@@ -132,6 +134,7 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 			topic_id: formData.topic_id ? formData.topic_id : null,
 			group_id: formData.group_id ? formData.group_id : null,
 			due_date: formData.due_date,
+			source: 'native',
 			form_values: form_values
 		}
 	}
@@ -221,12 +224,14 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 			updateTicket(prepareEditTicketFormData())
 				.then(res => {
 					handleEdited();
+					setConfirmation('Ticket successfully edited!')
 				})
 				.catch(err => console.error(err));
 		} else {
 			createTicket(prepareNewTicketFormData())
 				.then(res => {
 					handleCreated();
+					setConfirmation('Ticket successfully created')
 				})
 				.catch(err => console.error(err));
 		}
@@ -320,12 +325,14 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					Optional information
 				</Typography>
 
-				<AgentSelect
-					name='agent'
-					handleInputChange={handleAgentChange}
-					value={formData.agent ?? ''}
-					mb={2}
-				/>
+				{(editTicket ? permissions.hasOwnProperty('ticket.transfer') : permissions.hasOwnProperty('ticket.assign')) && (
+					<AgentSelect
+						name='agent'
+						handleInputChange={handleAgentChange}
+						value={formData.agent ?? ''}
+						mb={2}
+					/>
+				)}
 
 				<DepartmentSelect
 					handleInputChange={handleInputChange}
@@ -351,14 +358,14 @@ export const AddTicket = ({ handleCreated, handleEdited, editTicket }) => {
 					mb={2}
 				/>
 
-				<GroupSelect
+				{/* <GroupSelect
 					handleInputChange={handleInputChange}
 					value={formData.group_id ?? ''}
 					mb={2}
-				/>
+				/> */}
 
 				<CustomDateTimePicker
-					defaultValue={editTicket?.due_date}
+					defaultValue={editTicket?.due_date ? editTicket?.due_date : editTicket?.est_due_date}
 					onChange={handleDueDateChange}
 					mb={2}
 				/>

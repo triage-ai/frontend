@@ -1,17 +1,17 @@
 import {
 	Box,
-	Button, InputAdornment, TextField,
+	Button, TextField,
 	Typography,
 	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Mail, Split, Tag } from 'lucide-react';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import { Activity, CheckCircle, Split, Tag } from 'lucide-react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -66,37 +66,24 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserResetPassword = () => {
+export const UserSignUpConfirmation = () => {
 
+	const { user_id } = useParams()
+	const { resendConfirmationEmail } = useUserBackend()
 
-	const { sendResetPasswordEmail } = useUserBackend()
-
-	const [email, setEmail] = useState('');
-	const [error, setError] = useState(false);
-
-	const navigate = useNavigate();
-
-	const validateEmail = email => {
-		return String(email)
-			.toLowerCase()
-			.match(
-				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-			);
-	};
-
-	const sendResetPassword = () => {
-		sendResetPasswordEmail(email)
-		.then(res => {
-			navigate('/reset_password/confirmation/' + res.data.user_id)
-		})
-		.catch(err => console.error(err))
+	const resendEmail = () => {
+		resendConfirmationEmail(user_id)
+		.catch(error => {
+			console.error(error);
+		});
+		window.location.reload();
 	}
 
 	return (
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',
@@ -307,7 +294,7 @@ export const UserResetPassword = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header">
+						<header className="App-header-wide">
 							<Box
 								sx={{
 									width: '100%',
@@ -352,88 +339,64 @@ export const UserResetPassword = () => {
 								alt="logo"
 							/> */}
 
-							{/* <CheckCircle size={60} color='#34b233' /> */}
-
-							<h3
+							<CheckCircle size={60} color='#34b233' />
+							<h5
 								style={{
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.03em',
-									marginTop: '30px',
-								}}
-							>
-								Reset password
-							</h3>
-							<p
-								style={{
-									fontSize: '0.875rem',
+									// fontSize: '0.95rem',
 									fontWeight: 600,
 									color: '#1B1D1F',
 									letterSpacing: '-0.01em',
 									lineHeight: 1.2,
-									marginTop: 0,
+									marginTop: '20px',
+									marginBottom: 0,
+									textAlign: 'center',
+								}}
+							>
+								Check Your Email
+							</h5>
+
+							<p
+								style={{
+									fontSize: '0.8rem',
+									fontWeight: 600,
+									color: '#1B1D1F',
+									letterSpacing: '-0.01em',
+									lineHeight: 1.2,
+									marginTop: '10px',
 									marginBottom: '20px',
 									textAlign: 'center',
 								}}
 							>
-								Enter your email below to reset your password
+								Follow the steps in the confirmation sent to your email
 							</p>
 
-							<CustomTextField
-								label=""
-								id="email"
-								autoComplete="username"
-								sx={{
-									mb: 1,
-									'& .MuiInputBase-root': {
-										border: error ? '2px solid #ff7474' : '2px solid transparent',
-									},
-								}}
-								placeholder="Your email"
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">
-											<Mail color="#575757" />
-										</InputAdornment>
-									),
-								}}
-								value={email}
-								onChange={event => {
-									if (validateEmail(email)) {
-										setError(false);
-									}
-									setEmail(event.target.value);
-								}}
-							/>
-
 							<Button
-								sx={{
-									backgroundColor: '#22874E',
-									color: '#FFF',
-									borderRadius: '12px',
-									width: '100%',
-									fontSize: '0.9375rem',
-									fontWeight: 600,
-									lineHeight: 1,
-									textTransform: 'unset',
-									padding: '16.5px 10px',
-									marginTop: '12px',
-									marginBottom: '28px',
-									transition: 'all 0.3s',
-									'&:hover': {
-										backgroundColor: '#29b866',
-									},
-									'&:disabled': {
-										color: 'unset',
-										opacity: 0.4,
-									},
-								}}
-								onClick={() => sendResetPassword()}
-								disabled={!validateEmail(email)}
-							>
-								Reset password
-							</Button>
+									sx={{
+										backgroundColor: '#22874E',
+										color: '#FFF',
+										borderRadius: '12px',
+										fontSize: '0.9375rem',
+										fontWeight: 600,
+										lineHeight: 1,
+										textTransform: 'unset',
+										padding: '16.5px 10px',
+										marginTop: '12px',
+										marginBottom: '28px',
+										transition: 'all 0.3s',
+										'&:hover': {
+											backgroundColor: '#29b866',
+										},
+										'&:disabled': {
+											color: 'unset',
+											opacity: 0.4,
+										},
+									}}
+									onClick={() => resendEmail()}
+								>
+									Resend Email
+								</Button>
 
+						
 						</header>
 					</div>
 				</Grid>

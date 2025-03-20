@@ -6,12 +6,11 @@ import { useTopicBackend } from '../../hooks/useTopicBackend';
 import { AgentSelect } from '../agent/AgentSelect';
 import { DepartmentSelect } from '../department/DepartmentSelect';
 import { FormSelect } from '../form/FormSelect';
-import { GroupSelect } from '../group/GroupSelect';
 import { PrioritySelect } from '../priority/PrioritySelect';
 import { SLASelect } from '../sla/SLASelect';
 import { StatusSelect } from '../status/StatusSelect';
 
-export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
+export const AddTopic = ({ handleCreated, handleEdited, editTopic, setConfirmation }) => {
 	const { createTopic, updateTopic } = useTopicBackend();
 
 	const [manager, setManager] = useState(null);
@@ -23,7 +22,7 @@ export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 		dept_id: '',
 		priority_id: '',
 		agent_id: '',
-		group_id: '',
+		// group_id: '',
 		sla_id: '',
 		form_id: '',
 		topic: '',
@@ -49,7 +48,7 @@ export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 			dept_id: dept_id === '' ? null : dept_id,
 			priority_id: priority_id === '' ? null : priority_id,
 			agent_id: agent_id === '' ? null : agent_id,
-			group_id: group_id === '' ? null : group_id,
+			// group_id: group_id === '' ? null : group_id,
 			sla_id: sla_id === '' ? null : sla_id,
 			form_id: form_id === '' ? null : form_id,
 			notes: notes,
@@ -88,12 +87,14 @@ export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 			updateTopic(prepareFormData(formData))
 				.then((res) => {
 					handleEdited();
+					setConfirmation('Topic edited successfully!')
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createTopic(prepareFormData(formData))
 				.then((res) => {
 					handleCreated();
+					setConfirmation('Topic created successfully!')
 				})
 				.catch((err) => console.error(err));
 		}
@@ -133,7 +134,7 @@ export const AddTopic = ({ handleCreated, handleEdited, editTopic }) => {
 
 				<DepartmentSelect handleInputChange={handleInputChange} value={formData.dept_id ?? ''} mb={2}/>
 
-				<GroupSelect handleInputChange={handleInputChange} value={formData.group_id ?? ''} mb={2}/>
+				{/* <GroupSelect handleInputChange={handleInputChange} value={formData.group_id ?? ''} mb={2}/> */}
 
 				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id ?? ''} mb={2}/>
 

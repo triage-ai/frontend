@@ -1,25 +1,19 @@
 import {
 	Box,
-	Checkbox,
 	CircularProgress,
 	FormControl,
-	FormControlLabel,
 	MenuItem,
-	Typography,
 	Stack,
-	Dialog,
-	Button,
-	IconButton,
+	Typography
 } from '@mui/material';
 import { useState } from 'react';
+import { CustomFilledInput } from '../../../components/custom-input';
+import { CustomSelect } from '../../../components/custom-select';
 import { CircularButton } from '../../../components/sidebar';
+import { CustomTextField } from '../../../components/sidebar-items';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import { handleSave, StyledSelect } from '../SettingsMenus';
-import { SquareArrowOutUpRight, X } from 'lucide-react';
-import { WhiteContainer } from '../../../components/white-container';
-import { CustomFilledInput } from '../../../components/custom-input';
-import { CustomSelect } from '../../../components/custom-select';
 
 export const Attachments = props => {
 	const { settingsData } = props;
@@ -30,12 +24,16 @@ export const Attachments = props => {
 	const [formState, setFormState] = useState({
 		store_attachments: settingsData.store_attachments.value,
 		agent_max_file_size: settingsData.agent_max_file_size.value,
-		login_required: settingsData.login_required.value,
+		// login_required: settingsData.login_required.value,
 		s3_bucket_name: settingsData.s3_bucket_name.value,
 		s3_bucket_region: settingsData.s3_bucket_region.value,
 		s3_access_key: settingsData.s3_access_key.value,
 		s3_secret_access_key: settingsData.s3_secret_access_key.value
 	});
+	const [fileSize, setFileSize] = useState({
+		agent_file_size_number: parseInt(settingsData.agent_max_file_size.value) >= 1e6 ? parseInt(settingsData.agent_max_file_size.value) / 1e6 : parseInt(settingsData.agent_max_file_size.value) / 1000,
+		agent_file_size_unit: parseInt(settingsData.agent_max_file_size.value) >= 1e6 ? 'MB' : 'kB'
+	})
 
 	const handleChange = event => {
 		setFormState({
@@ -45,6 +43,38 @@ export const Attachments = props => {
 
 		setLoading(false);
 	};
+
+	const handleFileSizeChange = event => {
+		if(event.target.name === 'agent_file_size_number') {
+			setFormState({
+				...formState,
+				['agent_max_file_size']: fileSize.agent_file_size_unit === 'MB' ? (event.target.value * 1e6).toString() : (event.target.value * 1000).toString()
+			})
+
+			setLoading(false);
+		} else if(event.target.name === 'agent_file_size_unit') {
+			if(fileSize.agent_file_size_unit === 'MB' && event.target.value === 'kB') {
+				setFormState({
+					...formState,
+					['agent_max_file_size']: (parseInt(formState.agent_max_file_size) / 1000).toString()
+				})
+
+				setLoading(false);
+			} else if(fileSize.agent_file_size_unit === 'kB' && event.target.value === 'MB') {
+				setFormState({
+					...formState,
+					['agent_max_file_size']: (parseInt(formState.agent_max_file_size) * 1000).toString()
+				})
+
+				setLoading(false);
+			}
+		}
+
+		setFileSize({
+			...fileSize,
+			[event.target.name]: event.target.value
+		})
+	}
 
 	const handleCheckBox = event => {
 
@@ -57,7 +87,6 @@ export const Attachments = props => {
 
 	};
 
-	const sizeOptions = [{ label: '512 kb', value: '512000' }, { label: '1 mb', value: '1000000' }, { label: '2 mb', value: '2000000' }]
 	const storageOptions = [{ label: 'AWS S3', value: 's3' }]
 	const customStorageOptions = {
 		's3': [
@@ -72,6 +101,7 @@ export const Attachments = props => {
 		<Box
 			p={3}
 			maxWidth={600}
+			sx={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<Typography
 				variant="h4"
@@ -109,19 +139,36 @@ export const Attachments = props => {
 			</Typography>
 
 			<FormControl>
-				<CustomSelect
-					hideLabel
-					label={'Agent Max Upload Size'}
-					onChange={handleChange}
-					value={formState.agent_max_file_size}
-					name={"agent_max_file_size"}
-					mb={2}
-					options={sizeOptions}
-					sx={{ width: 200 }}
-				/>
+				<Stack direction='row' spacing={2} alignItems='center'>
+					<CustomTextField
+						type='number'
+						name='agent_file_size_number'
+						value={fileSize.agent_file_size_number}
+						onChange={handleFileSizeChange}
+						label="File Size"
+						variant="filled"
+						mb={2}
+						InputProps={{
+							inputProps: { min: 0 }
+							}}
+						sx={{
+							width: '50%',
+							'& .MuiInputBase-root': {
+								borderWidth: 1.5,
+								fontWeight: 500,
+							},
+						}}
+					/>
+
+					<StyledSelect name='agent_file_size_unit' value={fileSize.agent_file_size_unit} onChange={handleFileSizeChange} sx={{width: '70px', mb: 1.5}}>
+						<MenuItem value='kB'>kB</MenuItem>
+						<MenuItem value='MB'>MB</MenuItem>
+					</StyledSelect>
+				</Stack>
+
 			</FormControl>
 
-			<Typography
+			{/* <Typography
 				variant="h4"
 				sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}
 			>
@@ -144,7 +191,7 @@ export const Attachments = props => {
 						Require login to view any attachments
 					</Typography>
 				}
-			/>
+			/> */}
 
 			<CircularButton
 				sx={{ py: 2, px: 6, mt: 3, width: 250 }}

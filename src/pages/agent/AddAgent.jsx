@@ -1,9 +1,9 @@
 import {
+	Alert,
 	Box,
 	Checkbox,
 	FormControlLabel,
 	IconButton,
-	InputAdornment,
 	Stack,
 	Step,
 	StepConnector,
@@ -11,10 +11,10 @@ import {
 	Stepper,
 	Typography,
 	stepConnectorClasses,
-	styled,
+	styled
 } from '@mui/material';
 import jstz from 'jstz';
-import { Check, Eye, EyeOff, MapPin } from 'lucide-react';
+import { Check, MapPin } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
@@ -82,7 +82,7 @@ function QontoStepIcon(props) {
 
 const steps = ['Information', 'Settings', 'Access', 'Authentication'];
 
-export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
+export const AddAgent = ({ handleCreated, handleEdited, editAgent, setConfirmation }) => {
 
 	AddAgent.propTypes = {
 		handleCreated: PropTypes.func,
@@ -101,21 +101,21 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	const [activeStep, setActiveStep] = useState(0);
 	const [isNextDisabled, setIsNextDisabled] = useState(true);
 	const [showPassword, setShowPassword] = useState(false);
+	const [notification, setNotification] = useState('')
 	const [formData, setFormData] = useState({
 		dept_id: '',
 		role_id: '',
 		email: '',
-		username: '',
 		phone: '',
 		firstname: '',
 		lastname: '',
 		signature: '',
 		timezone: '',
 		admin: 0,
-		password: '',
 	});
 
 	let timezoneOptions = Intl.supportedValuesOf('timeZone').map(t => ({ value: t, label: t }));
+	timezoneOptions.push({ value: 'EST', label: 'EST' });
 
 	useEffect(() => {
 		timezoneOptions.push({ label: 'UTC', value: 'UTC' })
@@ -204,13 +204,13 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 	};
 
 	const validateStep4 = () => {
-		const { email, username, password } = formData;
+		const { email } = formData;
 
 		if (editAgent) {
-			return email !== '' && username !== '';
+			return validateEmail(email);
 		}
 
-		return email !== '' && username !== '' && password !== '';
+		return validateEmail(email);
 	};
 
 	// Function to validate current step
@@ -241,19 +241,29 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 		return JSON.stringify(obj);
 	};
 
+	const validateEmail = email => {
+		return String(email)
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			);
+	};
+
 	const handleAction = () => {
 		if (editAgent) {
 			updateAgent({ ...formData, permissions: formatPermissions() })
 				.then((res) => {
 					handleEdited();
+					setConfirmation("Agent edited successfully! Any change to permissions or roles will take effect after next login")
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createAgent({ ...formData, permissions: formatPermissions() })
 				.then((res) => {
 					handleCreated();
+					setConfirmation("Agent created successfully! An email should have been sent to the agent if an email is configured")
 				})
-				.catch((err) => console.error(err));
+				.catch((err) => setNotification(err.response.data.detail));
 		}
 	};
 
@@ -326,6 +336,7 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						textAlign: 'left',
 						display: 'flex',
 						flexDirection: 'column',
+						width: '600px'
 					}}
 				>
 					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
@@ -435,39 +446,20 @@ export const AddAgent = ({ handleCreated, handleEdited, editAgent }) => {
 						pt: 3,
 						borderRadius: '12px',
 						textAlign: 'left',
+						width: '600px'
 					}}
 				>
+					{notification && (
+						<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{mb: 2, border: '1px solid rgb(239, 83, 80);'}} >
+							{notification}
+						</Alert>	
+					)}
 					<Typography variant='h4' sx={{ fontWeight: 600, mb: 2 }}>
 						Authentication
 					</Typography>
 
 					<CustomFilledInput label='Email' onChange={handleInputChange} value={formData.email} name='email' mb={2} fullWidth />
 
-					<CustomFilledInput label='Username' onChange={handleInputChange} value={formData.username} name='username' mb={2} halfWidth mr={'2%'} />
-
-					{!editAgent && (
-						<CustomFilledInput
-							label='Password'
-							onChange={handleInputChange}
-							value={formData.password}
-							name='password'
-							halfWidth
-							type={showPassword ? 'text' : 'password'}
-							autoComplete='new-password'
-							endAdornment={
-								<InputAdornment position='end'>
-									<IconButton
-										aria-label='toggle password visibility'
-										onClick={handleClickShowPassword}
-										onMouseDown={(e) => e.preventDefault()}
-										edge='end'
-									>
-										{showPassword ? <EyeOff /> : <Eye />}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
-					)}
 				</Box>
 			)}
 

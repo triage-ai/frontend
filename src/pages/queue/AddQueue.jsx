@@ -1,15 +1,15 @@
 import { Box, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material';
+import { CircleHelp } from 'lucide-react';
+import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
+import { HtmlTooltip } from '../../components/tooltip';
 import { AuthContext } from '../../context/AuthContext';
 import { useQueueBackend } from '../../hooks/useQueueBackend';
-import { CircleHelp } from 'lucide-react';
-import { HtmlTooltip } from '../../components/tooltip';
 import { QueueMenu } from './QueueMenu';
-import PropTypes from 'prop-types';
 
-export const AddQueue = ({ handleCreated, handleEdited, editQueue }) => {
+export const AddQueue = ({ handleCreated, handleEdited, editQueue, setConfirmation }) => {
 
     AddQueue.propTypes = {
         handleCreated: PropTypes.func,
@@ -81,12 +81,14 @@ export const AddQueue = ({ handleCreated, handleEdited, editQueue }) => {
             updateQueue(prepareQueueData())
                 .then((res) => {
                     handleEdited();
+                    setConfirmation('Queue edited successfully!')
                 })
                 .catch((err) => console.error(err));
         } else {
             createQueue(prepareQueueData())
                 .then((res) => {
                     handleCreated();
+                    setConfirmation('Queue created successfully!')
                 })
                 .catch((err) => console.error(err));
         }

@@ -33,14 +33,29 @@ const AuthProvider = ({ children }) => {
 			  };
 	};
 
+	const getGuestInitialAuthState = () => {
+		const storedAuthState = localStorage.getItem('guestAuthState');
+		return storedAuthState
+			? JSON.parse(storedAuthState)
+			: {
+					isAuth: false,
+					user_id: null,
+					email: null,
+					ticket_number: null,
+					token: null,
+			  };
+	};
+
 	const [agentAuthState, setAgentAuthState] = useState(getAgentInitialAuthState);
 	const [userAuthState, setUserAuthState] = useState(getUserInitialAuthState);
+	const [guestAuthState, setGuestAuthState] = useState(getGuestInitialAuthState);
 	const [permissions, setPermissions] = useState({});
 	const [preferences, setPreferences] = useState({});
 
 	useEffect(() => {
 		const storedAgentAuthState = localStorage.getItem('agentAuthState');
 		const storedUserAuthState = localStorage.getItem('userAuthState');
+		const storedGuestAuthState = localStorage.getItem('guestAuthState');
 
 		if (storedAgentAuthState) {
 			const agentData = JSON.parse(storedAgentAuthState)
@@ -48,6 +63,7 @@ const AuthProvider = ({ children }) => {
 			refreshAgentData(agentData)
 		}
 		if (storedUserAuthState) setUserAuthState(JSON.parse(storedUserAuthState));
+		if (storedGuestAuthState) setGuestAuthState(JSON.parse(storedGuestAuthState));
 	}, []);
 
 	const setAgentData = (agentData) => {
@@ -59,6 +75,11 @@ const AuthProvider = ({ children }) => {
 	const setUserData = (userData) => {
 		setUserAuthState(userData);
 		localStorage.setItem('userAuthState', JSON.stringify(userData));
+	};
+
+	const setGuestData = (guestData) => {
+		setGuestAuthState(guestData);
+		localStorage.setItem('guestAuthState', JSON.stringify(guestData));
 	};
 
 	const agentLogout = () => {
@@ -81,6 +102,17 @@ const AuthProvider = ({ children }) => {
 		localStorage.removeItem('userAuthState');
 	};
 
+	const guestLogout = () => {
+		setGuestAuthState({
+			isAuth: false,
+			user_id: null,
+			token: null,
+			email: null,
+			ticket_number: null,
+		});
+		localStorage.removeItem('guestAuthState');
+	};
+
 	const refreshAgentData = async (agentAuthState) => {
 		getAgentById(agentAuthState)
 			.then((agentRes) => {
@@ -96,8 +128,8 @@ const AuthProvider = ({ children }) => {
 	}
 
 	const value = useMemo(() => (
-		{ agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout, permissions, preferences }
-	), [agentAuthState, userAuthState, setAgentData, setUserData, agentLogout, userLogout, permissions, preferences])
+		{ agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, guestLogout, permissions, preferences, setPermissions, setPreferences }
+	), [agentAuthState, userAuthState, guestAuthState, setAgentData, setUserData, setGuestData, agentLogout, userLogout, guestLogout, permissions, preferences, setPermissions, setPreferences])
 
 	return (
 		<AuthContext.Provider value={value}>

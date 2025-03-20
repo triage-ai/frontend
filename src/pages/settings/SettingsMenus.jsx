@@ -8,21 +8,16 @@ import { BasicInformation } from './company/CompanyBasicInfo';
 import { Logos } from './company/Logos';
 import { KnowledgebaseSettings } from './knowledgebase/KnowledgebaseSettings';
 import { Attachments } from './system/AttachmentsSettings';
-import { DateAndTime } from './system/DateTimeSettings';
 import { GeneralSettings } from './system/GeneralSettings';
-import { SystemLanguages } from './system/SystemLanguages';
 import { TaskSettings } from './tasks/TaskSettings';
 import { TaskAlertsAndNotices } from './tasks/TasksAlertsAndNotices';
-import { AlertsAndNotices } from './tickets/AlertsAndNotices';
-import { Autoresponder } from './tickets/AutoResponder';
 import { TicketSettings } from './tickets/TicketSettings';
 import { UserSettings } from './users/UserSettings';
 import { UserTemplates } from './users/UserTemplates';
 
 export const handleSave = async (data, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings) => {
 	try {
-		console.log(data)
-		const fields = ["default_status_id", "default_priority_id", "default_sla_id", "default_topic_id", "default_dept_id"];
+		const fields = ["default_status_id", "default_priority_id", "default_sla_id", "default_topic_id", "default_dept_id", "default_ticket_queue"];
 		fields.forEach((key) => {
 			if (data[key]) {
 				data[`${key}`] = data[key].toString();
@@ -32,14 +27,12 @@ export const handleSave = async (data, setLoading, setCircleLoading, settingsDat
 		let updates = [];
 		Object.entries(data).forEach((k) => {
 			let row = settingsData[k[0]];
-			console.log(row)
 			row.value = k[1];
 			updates.push(row);
 		});
 
 
 
-		console.log(updates)
 		setCircleLoading(true);
 		await updateSettings(updates);
 		await refreshSettings();
@@ -162,12 +155,12 @@ const Header = ({ headers, components }) => {
 export const SystemMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'General Settings' },
-		{ id: 2, label: 'Date & Time Options' },
-		{ id: 3, label: 'System Languages' },
+		// { id: 2, label: 'Date & Time Options' },
+		// { id: 3, label: 'System Languages' },
 		{ id: 4, label: 'Attachment Storage & Settings' },
 	];
 
-	const components = [<GeneralSettings {...props} />, <DateAndTime {...props} />, <SystemLanguages {...props} />, <Attachments {...props} />];
+	const components = [<GeneralSettings {...props} />, <Attachments {...props} />];
 
 	return <Header headers={headers} components={components} />;
 };
@@ -193,15 +186,15 @@ export const CompanyMenu = (props) => {
 export const TicketMenu = (props) => {
 	const headers = [
 		{ id: 1, label: 'Settings' },
-		{ id: 2, label: 'Autoresponder' },
-		{ id: 3, label: 'Alerts & Notices' },
+		// { id: 2, label: 'Autoresponder' },
+		// { id: 3, label: 'Alerts & Notices' },
 		// { id: 4, label: 'Queues' },
 	];
 
 	const components = [
 		<TicketSettings {...props} />,
-		<Autoresponder {...props} />,
-		<AlertsAndNotices {...props} />,
+		// <Autoresponder {...props} />,
+		// <AlertsAndNotices {...props} />,
 		// <Queues {...props} />,
 	];
 	return <Header headers={headers} components={components} />;

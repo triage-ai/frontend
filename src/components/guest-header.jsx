@@ -1,20 +1,23 @@
 import { useTheme } from '@emotion/react';
 import {
 	Box,
-	Button, CssBaseline,
-	Dialog, IconButton,
-	Slide,
+	Button,
+	Chip,
+	CssBaseline,
+	IconButton,
 	Typography, styled,
 	useMediaQuery
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { Menu, X } from 'lucide-react';
-import React, { forwardRef, useContext, useState } from 'react';
+import { Menu } from 'lucide-react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { DrawerContext } from '../context/DrawerContext';
+import formatDate from '../functions/date-formatter';
 import { AppBarHeight } from './layout';
 
-export const drawerWidth = 250;
+const drawerWidth = 250;
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer - 1,
@@ -29,7 +32,7 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
 	// borderBottom: '1px solid #F4F4F4',
 }));
 
-export const CircularButton = styled(Button)(() => ({
+const CircularButton = styled(Button)(() => ({
 	backgroundColor: '#22874E',
 	color: '#FFF',
 	borderRadius: '50px',
@@ -64,65 +67,27 @@ export const CircularButton = styled(Button)(() => ({
 // 	})
 // );
 
-export const Transition = forwardRef(function Transition(props, ref) {
-	return (
-		<Slide
-			direction="up"
-			ref={ref}
-			{...props}
-		/>
-	);
-});
 
-export const Header = ({
-	appBarTitle,
-	appBarSubtitle,
-	buttonInfo,
-	AddResource,
-	refreshResource,
-	setConfirmation
-}) => {
-
+export const GuestHeader = ({ ticket, buttonInfo }) => {
+    const { guestLogout } = useContext(AuthContext);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const initialTime = 10; // in seconds
 	const [timeLeft, setTimeLeft] = useState(initialTime);
 	const navigate = useNavigate();
-	const { handleDrawerToggle } = useContext(DrawerContext);
+    const { handleDrawerToggle } = useContext(DrawerContext);
 
 
 	const theme = useTheme();
 	const [openDialog, setOpenDialog] = useState(false);
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-	// const handleDrawerClose = () => {
-	// 	setIsClosing(true);
-	// 	setMobileOpen(false);
-	// };
+    const handleTicketClose = () => {
+        guestLogout();
+        navigate("/")
+    }
 
-	// const handleDrawerTransitionEnd = () => {
-	// 	setIsClosing(false);
-	// };
 
-	// const handleDrawerToggle = () => {
-	// 	console.log('hello from header.jsx')
-	// 	if (!isClosing) {
-	// 		setMobileOpen(!mobileOpen);
-	// 	}
-	// };
-
-	const handleClickDialogOpen = () => {
-		setOpenDialog(true);
-	};
-
-	const handleDialogClose = () => {
-		setOpenDialog(false);
-	};
-
-	const handleCreated = () => {
-		handleDialogClose()
-		refreshResource()
-	}
 
 	return (
 		<Box sx={{ display: 'flex' }}>
@@ -148,14 +113,14 @@ export const Header = ({
 					sx={{
 						height: AppBarHeight,
 						display: 'flex',
-						alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center',
+						alignItems: 'flex-start',
 						justifyContent: 'space-between',
 						py: { xs: 1, md: 3 },
 						px: { xs: 2, md: 5 },
 					}}
 				>
 					<Box
-						sx={{ display: 'flex', alignItems: appBarSubtitle !== '' ? 'flex-start' : 'center' }}
+						sx={{ display: 'flex', alignItems: 'flex-start'  }}
 					>
 						<IconButton
 							color="inherit"
@@ -168,83 +133,33 @@ export const Header = ({
 						</IconButton>
 
 						<Box sx={{ display: 'flex', flexDirection: 'column', color: '#1B1D1F' }}>
-							<Typography variant="h2">{appBarTitle}</Typography>
-							{appBarSubtitle !== '' && (
-								<Typography
-									variant="subtitle2"
-									sx={{
-										letterSpacing: '-0.03em',
-										lineHeight: 1.9,
-										color: '#545555',
-									}}
-								>
-									{appBarSubtitle}
-								</Typography>
-							)}
+							<Typography variant="h2">#{ticket.number} - "{ticket.title}"</Typography>
+                            <Typography
+                                variant="subtitle2"
+                                sx={{
+                                    letterSpacing: '-0.03em',
+                                    lineHeight: 1.9,
+                                    color: '#545555',
+                                }}
+                            >
+									Created: {formatDate(ticket.created, 'MM-DD-YY hh:mm A')} · Updated: {formatDate(ticket.updated, 'MM-DD-YY hh:mm A')} · Priority: <Chip label={ticket.priority.priority_desc} sx={{ backgroundColor: ticket.priority.priority_color, px: '8px' }} />
+                            </Typography>
 						</Box>
 					</Box>
 
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 
-						{buttonInfo.hidden !== false && <CircularButton
+						<CircularButton
 							sx={{ mr: 1 }}
-							onClick={handleClickDialogOpen}
+							onClick={handleTicketClose}
 						>
 							{buttonInfo.icon}
 							{buttonInfo.label}
-						</CircularButton>}
+						</CircularButton>
 
 					</Box>
 				</Box>
 			</AppBar>
-
-			<Dialog
-				open={openDialog}
-				TransitionComponent={Transition}
-				onClose={handleDialogClose}
-				// maxWidth={'xl'}
-				// fullWidth
-				// fullScreen={fullScreen}
-				PaperProps={{
-					sx: {
-						width: '100%',
-						maxWidth: 'unset',
-						height: 'calc(100% - 64px)',
-						maxHeight: 'unset',
-						margin: 0,
-						background: '#f1f4f2',
-						borderBottomLeftRadius: 0,
-						borderBottomRightRadius: 0,
-						padding: 2,
-					},
-				}}
-				sx={{ '& .MuiDialog-container': { alignItems: 'flex-end' } }}
-			>
-				<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
-					<IconButton
-						aria-label="close dialog"
-						onClick={handleDialogClose}
-						sx={{
-							width: '40px',
-							height: '40px',
-							position: 'fixed',
-							right: '26px',
-							top: 'calc(64px + 26px)',
-							color: '#545555',
-							transition: 'all 0.2s',
-							'&:hover': {
-								color: '#000',
-							},
-						}}
-					>
-						<X size={20} />
-					</IconButton>
-
-					{AddResource && <AddResource handleCreated={handleCreated} setConfirmation={setConfirmation}/>}
-				</Box>
-
-			</Dialog>
-
 		</Box>
 	);
 };

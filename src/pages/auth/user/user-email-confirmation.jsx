@@ -8,10 +8,10 @@ import Grid from '@mui/material/Grid2';
 import { Activity, Split, Tag } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../App.css';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useUserBackend } from '../../../hooks/useUserBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -70,7 +70,6 @@ export const UserEmailConfirmation = () => {
 
 	const { token } = useParams()
 
-	const { user_id } = useParams()
 	const { confirmToken } = useUserBackend()
 
 	const [loading, setLoading] = useState(true)

@@ -5,10 +5,9 @@ import { CircularButton } from '../../components/sidebar';
 import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useNotification } from '../../hooks/useNotification';
 import { AgentSelect } from '../agent/AgentSelect';
-import { ScheduleSelect } from '../schedule/ScheduleSelect';
 import { SLASelect } from '../sla/SLASelect';
 
-export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) => {
+export const AddDepartment = ({ handleCreated, handleEdited, editDepartment, setConfirmation }) => {
 	const { createDepartment, updateDepartment } = useDepartmentBackend();
 
 	const sendNotification = useNotification();
@@ -18,7 +17,6 @@ export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) =
 
 	const [formData, setFormData] = useState({
 		sla_id: '',
-		schedule_id: '',
 		email_id: '',
 		manager_id: '',
 		name: '',
@@ -71,12 +69,14 @@ export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) =
 			updateDepartment(prepareFormData(formData))
 				.then((res) => {
 					handleEdited();
+					setConfirmation('Department successfully edited!')
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createDepartment(prepareFormData(formData))
 				.then((res) => {
 					handleCreated();
+					setConfirmation('Department successfully created!')
 				})
 				.catch((err) => console.error(err));
 		}
@@ -112,7 +112,7 @@ export const AddDepartment = ({ handleCreated, handleEdited, editDepartment }) =
 
 				<SLASelect handleInputChange={handleInputChange} value={formData.sla_id} mb={2} />
 
-				<ScheduleSelect handleInputChange={handleInputChange} value={formData.schedule_id} mb={2} />
+				{/* <ScheduleSelect handleInputChange={handleInputChange} value={formData.schedule_id} mb={2} /> */}
 
 				<AgentSelect name='manager' handleInputChange={handleManagerChange} value={manager ?? ''} mb={2} />
 

@@ -14,17 +14,16 @@ import {
 	styled,
 } from '@mui/material';
 import {
+	AlarmClock,
 	BriefcaseBusiness,
 	Building2,
 	ChevronDown,
 	ChevronUp,
 	CircleUserRound,
-	ClipboardList,
 	Files,
 	Filter,
 	Headset,
 	KeyRound,
-	Lightbulb,
 	LogOut,
 	Mail,
 	MailPlus,
@@ -38,7 +37,7 @@ import {
 	SquareUserRound,
 	Ticket,
 	UserRound,
-	Wrench,
+	Wrench
 } from 'lucide-react';
 import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -220,10 +219,10 @@ export const getManageSubmenuItems = (permissions, adminStatus) => [
 	},
 	...(adminStatus
 		? [
-			// {
-			// 	title: 'SLA',
-			// 	icon: <AlarmClock size={20} />,
-			// },
+			{
+				title: 'SLAs',
+				icon: <AlarmClock size={20} />,
+			},
 			// {
 			// 	title: 'Schedules',
 			// 	icon: <Calendar size={20} />,
@@ -269,22 +268,22 @@ const settingsSubmenuItems = [
 		title: 'Tickets',
 		icon: <Ticket size={20} />,
 	},
-	{
-		title: 'Tasks',
-		icon: <ClipboardList size={20} />,
-	},
-	{
-		title: 'Agents',
-		icon: <Headset size={20} />,
-	},
-	{
-		title: 'Users',
-		icon: <UserRound size={20} />,
-	},
-	{
-		title: 'Knowledgebase',
-		icon: <Lightbulb size={20} />,
-	},
+	// {
+	// 	title: 'Tasks',
+	// 	icon: <ClipboardList size={20} />,
+	// },
+	// {
+	// 	title: 'Agents',
+	// 	icon: <Headset size={20} />,
+	// },
+	// {
+	// 	title: 'Users',
+	// 	icon: <UserRound size={20} />,
+	// },
+	// {
+	// 	title: 'Knowledgebase',
+	// 	icon: <Lightbulb size={20} />,
+	// },
 ];
 
 const emailSubmenuItems = [

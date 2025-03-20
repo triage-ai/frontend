@@ -1,22 +1,21 @@
 import { Box, styled } from '@mui/material';
-import { Sidebar } from './sidebar';
 import { Header } from './header';
 
 export const AppBarHeight = '100px';
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+export const DrawerHeader = styled('div')(({ theme }) => ({
 	height: `calc(${AppBarHeight} + 5px)`,
 	// necessary for content to be below app bar
 	...theme.mixins.toolbar,
 }));
 
-const DrawerContentContainer = styled(Box)(() => ({
+export const DrawerContentContainer = styled(Box)(() => ({
 	width: '100%',
 	minHeight: '100vh',
 	background: '#f1f4f2',
 }));
 
-export const Layout = ({ children, title, subtitle, buttonInfo, AddResource, refreshResource }) => {
+export const Layout = ({ children, title, subtitle, buttonInfo, AddResource, refreshResource, setConfirmation }) => {
 	return (
 		<Box sx={{ display: 'flex', background: '#FFF' }}>
 			<Header
@@ -25,6 +24,7 @@ export const Layout = ({ children, title, subtitle, buttonInfo, AddResource, ref
 				buttonInfo={buttonInfo}
 				AddResource={AddResource}
 				refreshResource={refreshResource}
+				setConfirmation={setConfirmation}
 			/>
 			<DrawerContentContainer>
 				<DrawerHeader />

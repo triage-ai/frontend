@@ -100,7 +100,6 @@ const profileSave = async (formData, profileData, updateUserProfile, refreshUser
 export const UserProfile = () => {
 	const headers = [
 		{ id: 1, label: 'Account' },
-		{ id: 2, label: 'Preferences' },
 	];
 	const [components, setComponents] = useState([]);
 	const { userAuthState } = useContext(AuthContext);
@@ -112,7 +111,6 @@ export const UserProfile = () => {
 		refreshUser();
 	}, []);
 
-	console.log(userAuthState);
 
 	const refreshUser = (user = null) => {
 		if (user) {
@@ -125,7 +123,7 @@ export const UserProfile = () => {
 	};
 
 	useEffect(() => {
-		setComponents([<Account profileData={profileData} refreshUser={refreshUser} />, <Preferences />]);
+		setComponents([<Account profileData={profileData} refreshUser={refreshUser} />]);
 	}, [profileData]);
 
 	return <Header headers={headers} components={components} />;
@@ -211,12 +209,12 @@ const Account = ({ refreshUser, profileData }) => {
 	);
 };
 
-const Preferences = () => {
-	return (
-		<Stack maxWidth={455} alignItems='center'>
-			<Typography variant='subtitle1' width={455}>
-				user preference
-			</Typography>
-		</Stack>
-	);
-};
+// const Preferences = () => {
+// 	return (
+// 		<Stack maxWidth={455} alignItems='center'>
+// 			<Typography variant='subtitle1' width={455}>
+// 				user preference
+// 			</Typography>
+// 		</Stack>
+// 	);
+// };

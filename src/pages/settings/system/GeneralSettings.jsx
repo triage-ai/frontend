@@ -1,12 +1,10 @@
-import { Box, Checkbox, CircularProgress, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Stack, Typography } from '@mui/material';
+import { Box, CircularProgress, FormControl, MenuItem, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
-import { CustomFilledInput } from '../../../components/custom-input';
 import { CircularButton } from '../../../components/sidebar';
-import { CustomTextField } from '../../../components/sidebar-items';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
-import { handleSave, StyledSelect } from '../SettingsMenus';
 import { DepartmentSelect } from '../../department/DepartmentSelect';
+import { handleSave, StyledSelect } from '../SettingsMenus';
 
 export const GeneralSettings = (props) => {
 	const { settingsData } = props;
@@ -15,20 +13,20 @@ export const GeneralSettings = (props) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
 	const [formState, setFormState] = useState({
-		helpdesk_status: settingsData.helpdesk_status.value,
-		helpdesk_url: settingsData.helpdesk_url.value || '',
-		helpdesk_name: settingsData.helpdesk_name.value || '',
+		// helpdesk_status: settingsData.helpdesk_status.value,
+		// helpdesk_url: settingsData.helpdesk_url.value || '',
+		// helpdesk_name: settingsData.helpdesk_name.value || '',
 		default_dept_id: settingsData.default_dept_id.value,
-		force_http: settingsData.force_http.value,
-		collision_avoidance_duration: settingsData.collision_avoidance_duration.value || '',
-		default_page_size: settingsData.default_page_size.value,
-		default_log_level: settingsData.default_log_level.value,
-		purge_logs: settingsData.purge_logs.value,
-		show_avatars: settingsData.show_avatars.value || '',
-		enable_rich_text: settingsData.enable_rich_text.value || '',
-		allow_system_iframe: settingsData.allow_system_iframe.value || '',
-		embedded_domain_whitelist: settingsData.embedded_domain_whitelist.value || '',
-		acl: settingsData.acl.value || '',
+		// force_http: settingsData.force_http.value,
+		// collision_avoidance_duration: settingsData.collision_avoidance_duration.value || '',
+		// default_page_size: settingsData.default_page_size.value,
+		// default_log_level: settingsData.default_log_level.value,
+		// purge_logs: settingsData.purge_logs.value,
+		// show_avatars: settingsData.show_avatars.value || '',
+		// enable_rich_text: settingsData.enable_rich_text.value || '',
+		// allow_system_iframe: settingsData.allow_system_iframe.value || '',
+		// embedded_domain_whitelist: settingsData.embedded_domain_whitelist.value || '',
+		// acl: settingsData.acl.value || '',
 	});
 	const purge = [
 		'Never Purge Logs',
@@ -66,7 +64,7 @@ export const GeneralSettings = (props) => {
 
 	return (
 		<Box p={3} maxWidth={600}>
-			<Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
+			{/* <Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
 				Help Desk Status
 			</Typography>
 
@@ -98,11 +96,11 @@ export const GeneralSettings = (props) => {
 				<CustomFilledInput label='Helpdesk URL' name='helpdesk_url' value={formState.helpdesk_url} onChange={handleChange} />
 
 				<CustomFilledInput label='Helpdesk Name/Title' name='helpdesk_name' value={formState.helpdesk_name} onChange={handleChange} />
-			</Stack>
+			</Stack> */}
 
 			<Stack>
 				<FormControl>
-					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+					<Typography variant='h4' sx={{ fontWeight: 600, mb: 1.5 }}>
 						Default Department
 					</Typography>
 
@@ -115,7 +113,7 @@ export const GeneralSettings = (props) => {
 				</FormControl>
 			</Stack>
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Force HTTP
 				</Typography>
@@ -129,9 +127,9 @@ export const GeneralSettings = (props) => {
 						</Typography>
 					}
 				/>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Collision Avoidance Duration
 				</Typography>
@@ -155,9 +153,9 @@ export const GeneralSettings = (props) => {
 					/>
 					<Typography variant='subtitle1'>minutes</Typography>
 				</Stack>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Default Page Size
 				</Typography>
@@ -170,9 +168,9 @@ export const GeneralSettings = (props) => {
 						<MenuItem value='100'>100</MenuItem>
 					</StyledSelect>
 				</FormControl>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Default Log Level
 				</Typography>
@@ -184,9 +182,9 @@ export const GeneralSettings = (props) => {
 						<MenuItem value='ERROR'>ERROR</MenuItem>
 					</StyledSelect>
 				</FormControl>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Purge Logs
 				</Typography>
@@ -202,9 +200,9 @@ export const GeneralSettings = (props) => {
 						})}
 					</StyledSelect>
 				</FormControl>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Show Avatars
 				</Typography>
@@ -217,9 +215,9 @@ export const GeneralSettings = (props) => {
 						</Typography>
 					}
 				/>
-			</Stack>
+			</Stack> */}
 
-			<Stack>
+			{/* <Stack>
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Enable Rich Text
 				</Typography>
@@ -232,10 +230,9 @@ export const GeneralSettings = (props) => {
 						</Typography>
 					}
 				/>
-			</Stack>
+			</Stack> */}
 
-			<Stack mt={3} spacing={2}>
-				<CustomFilledInput label='Allow System iFrame' name='allow_system_iframe' value={formState.allow_system_iframe} onChange={handleChange} />
+				{/* <CustomFilledInput label='Allow System iFrame' name='allow_system_iframe' value={formState.allow_system_iframe} onChange={handleChange} />
 
 				<CustomFilledInput
 					label='Embedded Domain Whitelist'
@@ -244,8 +241,9 @@ export const GeneralSettings = (props) => {
 					onChange={handleChange}
 				/>
 
-				<CustomFilledInput label='ACL' name='acl' value={formState.acl} onChange={handleChange} sx={{ pb: 2 }} />
+				<CustomFilledInput label='ACL' name='acl' value={formState.acl} onChange={handleChange} sx={{ pb: 2 }} /> */}
 
+			<Stack mt={3} spacing={2}>
 				<CircularButton
 					sx={{ py: 2, px: 6, width: 250 }}
 					onClick={() => handleSave(formState, setLoading, setCircleLoading, settingsData, updateSettings, refreshSettings)}

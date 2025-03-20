@@ -13,7 +13,6 @@ import { useSettingsBackend } from '../hooks/useSettingsBackend';
 import { useSLABackend } from '../hooks/useSLABackend';
 import { useStatusBackend } from '../hooks/useStatusBackend';
 import { useTemplateBackend } from '../hooks/useTemplateBackend';
-import { useTicketBackend } from '../hooks/useTicketBackend';
 import { useTopicBackend } from '../hooks/useTopicBackend';
 import { AuthContext } from './AuthContext';
 
@@ -40,7 +39,7 @@ export const DataProvider = ({ children }) => {
 	const { getAllSchedules } = useScheduleBackend();
 	const { getAllEmails } = useEmailBackend();
 	const { getAllForms } = useFormBackend();
-	const { preferences } = useContext(AuthContext)
+	const { preferences, permissions } = useContext(AuthContext)
 
 	const [agents, setAgents] = useState([]);
 	// const [tickets, setTickets] = useState([]);
@@ -218,8 +217,12 @@ export const DataProvider = ({ children }) => {
 			.then(status => {
 				const statusData = status.data;
 				const formattedStatuses = statusData.map(status => {
-					return { value: status.status_id, label: status.name };
-				});
+                    if (!permissions.hasOwnProperty('ticket.close') && status.state === 'closed') {
+                        return null;
+                    }
+                    return { value: status.status_id, label: status.name };
+                })
+                .filter(Boolean); // Remove null values
 
 				setStatuses(statusData);
 				setFormattedStatuses(formattedStatuses);

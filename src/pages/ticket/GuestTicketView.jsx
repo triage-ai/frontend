@@ -1,36 +1,27 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, timelineItemClasses, TimelineSeparator } from '@mui/lab';
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Avatar,
-	Box,
-	IconButton,
-	Link,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-	Stack,
-	styled,
-	Typography,
-} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, IconButton, Link, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, styled, Typography } from '@mui/material';
 import { useEditor } from '@tiptap/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { CloudUploadIcon, File, Paperclip, Send, X } from 'lucide-react';
+import { CloudUploadIcon, File, Paperclip, Send, TicketX, X } from 'lucide-react';
 import { RichTextReadOnly } from 'mui-tiptap';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GuestHeader } from '../../components/guest-header';
+import { GuestSidebar } from '../../components/guest-sidebar';
+import { CircularButton } from '../../components/header';
+import { AppBarHeight, DrawerContentContainer, DrawerHeader } from '../../components/layout';
 import { extensions, RichTextEditorBox } from '../../components/rich-text-editor';
+import { WhiteContainer } from '../../components/white-container';
 import { AuthContext } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import formatDate from '../../functions/date-formatter';
 import humanFileSize from '../../functions/file-size-formatter';
 import { useAttachmentBackend } from '../../hooks/useAttachmentBackend';
 import { useThreadsBackend } from '../../hooks/useThreadBackend';
+import { useTicketBackend } from '../../hooks/useTicketBackend';
 import { FileCard } from './FileCard';
-
 
 let localizedFormat = require('dayjs/plugin/localizedFormat');
 dayjs.extend(localizedFormat);
@@ -47,14 +38,177 @@ const CustomInput = styled('input')({
 	cursor: 'pointer',
 });
 
-export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type }) => {
+const PostButton = ({ handleSubmit, disabled }) => {
+	return (
+		<Box border={disabled ? '1.5px solid #E5EFE9' : '1.5px solid #5a9ee5'} borderRadius='8px'>
+			<IconButton onClick={handleSubmit} disabled={disabled}>
+				<Send size={20} />
+			</IconButton>
+		</Box>
+	);
+};
+
+export const GuestTicketView = () => {
+	const { getTicketByNumberForGuest } = useTicketBackend();
+	const { guestAuthState, guestLogout } = useContext(AuthContext);
+	const [ticket, setTicket] = useState(null);
+	const [value, setValue] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
+	const headers = [
+		{ id: 1, label: 'Thread' },
+	];
+    
+
+	function preProcessTicket(ticket) {
+		if (ticket.thread && ticket.thread.events) {
+			ticket.thread.events.forEach((event) => {
+				let eventData = JSON.parse(event.data);
+	
+				event.field = eventData.field;
+				event.prev_val = eventData.prev_val;
+				event.new_val = eventData.new_val;
+	
+				if (eventData.hasOwnProperty('new_id')) {
+					event.prev_id = eventData.prev_id;
+					event.new_id = eventData.new_id;
+				}
+			});
+		}
+		if (ticket.thread) {
+			let events_and_entries = ticket.thread.entries.concat(ticket.thread.events);
+			ticket.thread.events_and_entries = events_and_entries.sort(datetime_sort);
+		}
+		return ticket;
+	}
+	
+	function datetime_sort(a, b) {
+		return new Date(a.created).getTime() - new Date(b.created).getTime();
+	}
+	
+	const updateTicket = (newTicket) => {
+		newTicket = preProcessTicket(newTicket);
+		setTicket(newTicket);
+	};
+	
+	
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
+
+	const handleTicketClose = () => {
+        guestLogout();
+        navigate("/")
+    }
+
+	useEffect(() => {
+		setLoading(true);
+		if (guestAuthState.isAuth === true) {
+			getTicketByNumberForGuest(guestAuthState.ticket_number)
+				.then((response) => response.data)
+				.then((ticket) => {
+					ticket = preProcessTicket(ticket);
+					setTicket(ticket);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+		setLoading(false);
+	}, []);
+
+	return (
+		<WhiteContainer noPadding>
+			{loading ? (
+				<Box
+					sx={{
+						width: '100%',
+						// height: '60vh', // whitecontainer min height
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+						justifyContent: 'center',
+						opacity: '65%',
+					}}
+				>
+					<Skeleton variant='rounded' width={210} height={60} />
+					<Skeleton variant='rounded' width={210} height={60} />
+					<Skeleton variant='rounded' width={210} height={60} />
+				</Box>
+			) : !ticket ? (
+				<Box
+					sx={{
+						width: '100%',
+						height: '60vh', // whitecontainer min height
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+						justifyContent: 'center',
+						opacity: '65%',
+					}}
+				>
+					<TicketX size={80} />
+					<Typography fontWeight={600} variant='h2'>
+						Session expired
+					</Typography>
+					<Typography variant='subtitle2'>Head back to our home page to check a ticket's status or make a new ticket</Typography>
+					<CircularButton
+						sx={{ mt: 1, padding: 2 }}
+						onClick={handleTicketClose}
+					>
+						Home
+					</CircularButton>
+				</Box>
+			) : (
+				<>
+					<GuestSidebar ticket={ticket} setTicket={setTicket} preProcessTicket={preProcessTicket} />
+					
+					<Box sx={{ display: 'flex', background: '#FFF' }}>
+						<GuestHeader
+							ticket={ticket}
+							buttonInfo={{
+								label: 'Close Ticket',
+								icon: <X size={20} />,
+							}}
+						/>
+						<DrawerContentContainer>
+							<DrawerHeader />
+							{/* <main
+								className="content"
+								style={{ height: '100%' }}
+								>
+								{children}
+								</main> */}
+							<Box
+								sx={{
+									height: `calc(100% - ${AppBarHeight})`,
+									px: { xs: 2, md: 5 },
+									zIndex: '4',
+									position: 'relative'
+									// padding: 1,
+									// overflow: 'hidden',
+								}}
+							>
+								<WhiteContainer noPadding>
+									<ThreadView ticket={ticket} updateTicket={updateTicket} />
+								</WhiteContainer>
+							</Box>
+						</DrawerContentContainer>
+					</Box>
+				</>
+			)}
+		</WhiteContainer>
+	);
+};
+
+const ThreadView = ({ ticket, updateTicket }) => {
 	const [formData, setFormData] = useState({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 	const [postDisabled, setPostDisabled] = useState(true);
 	const [files, setFiles] = useState([]);
 	const { defaultSettings } = useData()
-	const { createThreadEntry, createThreadEntryForUser } = useThreadsBackend();
+	const { createThreadEntryForGuest } = useThreadsBackend();
 	const { getPresignedURL } = useAttachmentBackend();
-	const { agentAuthState, userAuthState, permissions } = useContext(AuthContext);
+	const { guestAuthState } = useContext(AuthContext);
 	const editor = useEditor({
 		extensions: extensions,
 		content: '',
@@ -67,20 +221,17 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 	});
 
 	const getDirection = (agent_id, option1, option2) => {
+		let type = 'user';
 		if ((agent_id && type === 'agent') || (!agent_id && type !== 'agent')) {
 			return option1;
 		} else return option2;
 	};
 
 	const handleSubmit = async () => {
-		// ABSTRACT SO THAT I CAN USE IT FOR EITHER TYPE OF THREAD ENTRY
-		const threadEntryCreate = type === 'agent' ? createThreadEntry : createThreadEntryForUser;
+		const threadEntryCreate = createThreadEntryForGuest;
 		let newThreadEntry = { ...formData, thread_id: ticket.thread.thread_id };
-		if (type === 'agent') {
-			newThreadEntry.agent_id = agentAuthState.agent_id;
-		} else {
-			newThreadEntry.user_id = userAuthState.user_id;
-		}
+		newThreadEntry.user_id = guestAuthState.user_id;
+		
 
 		let updatedTicket = { ...ticket };
 		if (files.length !== 0) {
@@ -115,11 +266,8 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				})
 			})
 			.then(() => {
-				updateCurrentTicket(updatedTicket);
-			})
-			.catch((err) => {
-				alert(err.response.data.detail)
-			})
+				updateTicket(updatedTicket);
+			});
 		} else {
 			threadEntryCreate(newThreadEntry)
 			.then((response) => {
@@ -128,7 +276,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				setFormData({ subject: null, body: '', type: 'A', editor: '', recipients: '' });
 			})
 			.then(() => {
-				updateCurrentTicket(updatedTicket);
+				updateTicket(updatedTicket);
 			});
 		}
 	};
@@ -158,10 +306,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
         let tempArray = [];
         let sizeExceed = false
         for (let i = 0; i < length; i++) {
-			if (files.some(file => file.name === event.target.files[i].name)) {
-				alert('Cannot upload the same file more than once')
-				continue
-			}
             if (event.target.files[i].size > Number(defaultSettings.agent_max_file_size.value)) {
                 sizeExceed = true
                 continue
@@ -264,39 +408,17 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 		setPostDisabled(editor.isEmpty && files.length === 0);
 	}, [formData, files]);
 
+
 	return (
 		<Box sx={{ height: '100%', width: '100%', justifyContent: 'space-between', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-			<Box
-				sx={{
-					width: '100%',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					padding: '28px',
-				}}
-			>
-				<Box sx={{ display: 'flex', alignItems: 'center' }}>
-					<Typography variant='h6' fontWeight={600}>
-						Ticket thread
-					</Typography>
-				</Box>
-
-				<Box sx={{ display: 'flex', alignItems: 'center' }}>
-					<IconButton sx={{ borderRadius: '8px' }} aria-label='edit' onClick={closeDrawer}>
-						<X color='#6E7772' strokeWidth={1.5} />
-					</IconButton>
-				</Box>
-			</Box>
-
-			<Box sx={{ height: '100%', px: '28px', position: 'relative', overflowY: 'auto' }}>
-				<Timeline
+			<Box sx={{ height: '100%', px: '28px', position: 'relative', overflowY: 'auto', width: '100%' }}>
+				<Timeline       
 					sx={{
-						px: 0,
-						position: 'relative',
 						[`& .${timelineItemClasses.root}:before`]: {
-							flex: 0,
-							padding: 0,
+						flex: 0.3,
+						padding: 0,
 						},
+						width: '85%',
 					}}
 				>
 					{ticket.thread.events_and_entries.map((item) =>
@@ -308,7 +430,7 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 								</TimelineSeparator>
 								<TimelineContent paddingTop={0}>
 									<Box>
-										<Typography variant='subtitle2' fontWeight={600} color='#1B1D1F' align={getDirection(item.agent_id, 'right', 'left')}>
+										<Typography variant='subtitle2' fontWeight={600} color='#1B1D1F' align={getDirection(item.agent_id, 'right', 'left')} sx={{ alignSelf: getDirection(item.agent_id, 'flex-end', 'flex-start')}}>
 											{item.subject}
 										</Typography>
 										<Box
@@ -414,7 +536,6 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 							</TimelineItem>
 						)
 					)}
-
 					<Box
 						sx={{
 							position: 'absolute',
@@ -429,77 +550,65 @@ export const TicketThread = ({ ticket, closeDrawer, updateCurrentTicket, type })
 				</Timeline>
 			</Box>
 
-			{(type === 'user' || permissions.hasOwnProperty('ticket.edit')) && (
-				<Box sx={{ px: '28px', py: '20px' }}>
-					<RichTextEditorBox
-						PostButton={<PostButton handleSubmit={handleSubmit} disabled={postDisabled} />}
-						editor={editor}
-						footer={
-							<Stack>
-								{files.length !== 0 && (
-									<Box sx={{ borderTop: '1.5px solid #E5EFE9', maxHeight: '200px', overflowY: 'auto' }}>
-										<List dense>
-											{files.map((file, idx) => (
-												<ListItem
-													key={idx}
-													secondaryAction={
-														<IconButton edge='end' aria-label='delete' onClick={() => handleDeleteFile(idx)}>
-															<X />
-														</IconButton>
-													}
-												>
-													<ListItemAvatar>
-														<Avatar>
-															<File />
-														</Avatar>
-													</ListItemAvatar>
-													<ListItemText primary={file.name} secondary={humanFileSize(file.size, true, 1)} />
-												</ListItem>
-											))}
-										</List>
-									</Box>
-								)}
+			<Box sx={{ px: '28px', py: '20px', width: '65%', alignSelf: 'center' }}>
+				<RichTextEditorBox
+					PostButton={<PostButton handleSubmit={handleSubmit} disabled={postDisabled} />}
+					editor={editor}
+					footer={
+						<Stack>
+							{files.length !== 0 && (
+								<Box sx={{ borderTop: '1.5px solid #E5EFE9', maxHeight: '200px', overflowY: 'auto' }}>
+									<List dense>
+										{files.map((file, idx) => (
+											<ListItem
+												key={idx}
+												secondaryAction={
+													<IconButton edge='end' aria-label='delete' onClick={() => handleDeleteFile(idx)}>
+														<X />
+													</IconButton>
+												}
+											>
+												<ListItemAvatar>
+													<Avatar>
+														<File />
+													</Avatar>
+												</ListItemAvatar>
+												<ListItemText primary={file.name} secondary={humanFileSize(file.size, true, 1)} />
+											</ListItem>
+										))}
+									</List>
+								</Box>
+							)}
 
-								<Stack
-									justifyContent={'center'}
-									direction={'row'}
-									py={2}
-									sx={{
-										borderTop: '1.5px solid #E5EFE9',
-									}}
-									spacing={1}
-									height='60px'
-								>
-									<CloudUploadIcon color='grey' />
-									<Typography color='grey'>
-										Drop files to attach, or
-										<label>
-											<Link underline='none'> browse</Link>
-										</label>
-									</Typography>
-								</Stack>
-								<CustomInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
+							<Stack
+								justifyContent={'center'}
+								direction={'row'}
+								py={2}
+								sx={{
+									borderTop: '1.5px solid #E5EFE9',
+								}}
+								spacing={1}
+								height='60px'
+							>
+								<CloudUploadIcon color='grey' />
+								<Typography color='grey'>
+									Drop files to attach, or
+									<label>
+										<Link underline='none'> browse</Link>
+									</label>
+								</Typography>
 							</Stack>
-						}
-					></RichTextEditorBox>
+							<CustomInput type='file' onChange={(event) => handleFileUpload(event)} multiple />
+						</Stack>
+					}
+				></RichTextEditorBox>
 
-					{/* <Box mt={2} width={'100%'} textAlign={'center'}>
-						<CircularButton sx={{ py: 2, px: 6, width: 200 }} onClick={handleSubmit} disabled={postDisabled}>
-							Post
-						</CircularButton>
-					</Box> */}
-				</Box>
-			)}
+				{/* <Box mt={2} width={'100%'} textAlign={'center'}>
+					<CircularButton sx={{ py: 2, px: 6, width: 200 }} onClick={handleSubmit} disabled={postDisabled}>
+						Post
+					</CircularButton>
+				</Box> */}
+			</Box>
 		</Box>
-	);
-};
-
-const PostButton = ({ handleSubmit, disabled }) => {
-	return (
-		<Box border={disabled ? '1.5px solid #E5EFE9' : '1.5px solid #5a9ee5'} borderRadius='8px'>
-			<IconButton onClick={handleSubmit} disabled={disabled}>
-				<Send size={20} />
-			</IconButton>
-		</Box>
-	);
+	)
 };

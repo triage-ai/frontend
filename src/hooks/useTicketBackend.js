@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export const useTicketBackend = () => {
-	const { agentAuthState, userAuthState } = useContext(AuthContext);
+	const { agentAuthState, userAuthState, guestAuthState } = useContext(AuthContext);
 
 	const getTicketsbyAdvancedSearch = async (payload, search, page, size) => {
 		const config = {
@@ -71,6 +71,17 @@ export const useTicketBackend = () => {
 		);
 	};
 
+	const getTicketByNumberForGuest = async (number) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.get(
+			process.env.REACT_APP_BACKEND_URL + `ticket/guest/number/${number}`,
+			config
+		);
+	};
+
 	const getTicketByIdForUser = async (id) => {
 		const config = {
 			headers: { Authorization: `Bearer ${userAuthState.token}` },
@@ -117,6 +128,18 @@ export const useTicketBackend = () => {
 		);
 	};
 
+	const createTicketForGuest = async (ticketInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.post(
+			process.env.REACT_APP_BACKEND_URL + "ticket/create/guest",
+			ticketInfo,
+			config
+		);
+	};
+
 	const updateTicket = async (ticketInfo) => {
 		const config = {
 			headers: { Authorization: `Bearer ${agentAuthState.token}` },
@@ -139,6 +162,20 @@ export const useTicketBackend = () => {
 		return await axios.put(
 			process.env.REACT_APP_BACKEND_URL +
 				"ticket/user/update/" +
+				ticketInfo.ticket_id,
+			ticketInfo,
+			config
+		);
+	};
+
+	const updateTicketForGuest = async (ticketInfo) => {
+		const config = {
+			headers: { Authorization: `Bearer ${guestAuthState.token}` },
+		};
+
+		return await axios.put(
+			process.env.REACT_APP_BACKEND_URL +
+				"ticket/guest/update/" +
 				ticketInfo.ticket_id,
 			ticketInfo,
 			config
@@ -169,11 +206,14 @@ export const useTicketBackend = () => {
 		getTicketByQueue,
 		getTicketByIdForUser,
 		getTicketByNumber,
+		getTicketByNumberForGuest,
 		getTicketForms,
 		createTicket,
 		createTicketForUser,
+		createTicketForGuest,
 		updateTicket,
 		updateTicketForUser,
+		updateTicketForGuest,
 		getTicketBetweenDates,
 		getDashboardStats
 	};

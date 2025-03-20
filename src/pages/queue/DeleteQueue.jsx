@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useQueueBackend } from '../../hooks/useQueueBackend';
 
-export const DeleteQueue = ({ editQueue, handleDelete, handleClose }) => {
+export const DeleteQueue = ({ editQueue, handleDelete, handleClose, setConfirmation }) => {
 	const { removeQueue } = useQueueBackend();
 
 	const deleteQueue = () => {
 		removeQueue(editQueue)
 			.then(res => {
 				handleDelete();
+				setConfirmation('Queue was deleted!')
 			})
 			.catch(err => console.error(err));
 	};

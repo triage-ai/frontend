@@ -1,21 +1,18 @@
-import { Box, Checkbox, CircularProgress, FormControlLabel, InputAdornment, MenuItem, Stack, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { Box, CircularProgress, InputAdornment, MenuItem, Stack, Typography } from '@mui/material';
 import { CircleHelp } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
-import { CustomFilledInput } from '../../../components/custom-input';
+import { CustomInput } from '../../../components/custom-select';
 import { CircularButton } from '../../../components/sidebar';
-import { CustomTextField } from '../../../components/sidebar-items';
+import { HtmlTooltip } from '../../../components/tooltip';
 import { useData } from '../../../context/DataContext';
 import { useSettingsBackend } from '../../../hooks/useSettingsBackend';
 import { PrioritySelect } from '../../priority/PrioritySelect';
+import { QueueSelect } from '../../queue/QueueSelect';
 import { SLASelect } from '../../sla/SLASelect';
 import { StatusSelect } from '../../status/StatusSelect';
 import { TopicSelect } from '../../topic/TopicSelect';
 import { handleSave, StyledSelect } from '../SettingsMenus';
-import { CustomInput } from '../../../components/custom-select';
-import { HtmlTooltip } from '../../../components/tooltip';
 
 const storedAuthState = localStorage.getItem('agentAuthState');
 
@@ -29,20 +26,20 @@ export const TicketSettings = (props) => {
 	const [formState, setFormState] = useState({
 		default_ticket_number_format: settingsData.default_ticket_number_format.value,
 		default_ticket_number_sequence: settingsData.default_ticket_number_sequence.value,
-		top_level_ticket_counts: settingsData.top_level_ticket_counts.value,
+		// top_level_ticket_counts: settingsData.top_level_ticket_counts.value,
 		default_status_id: settingsData.default_status_id.value,
 		default_priority_id: settingsData.default_priority_id.value,
 		default_sla_id: settingsData.default_sla_id.value,
 		default_topic_id: settingsData.default_topic_id.value,
-		lock_semantics: settingsData.lock_semantics.value,
+		// lock_semantics: settingsData.lock_semantics.value,
 		default_ticket_queue: settingsData.default_ticket_queue.value,
-		max_open_tickets: settingsData.max_open_tickets.value,
-		human_verification: settingsData.human_verification.value,
-		collaborator_tickets_visibility: settingsData.collaborator_tickets_visibility.value,
-		claim_on_response: settingsData.claim_on_response.value,
-		auto_refer_on_close: settingsData.auto_refer_on_close.value,
-		require_help_topic_to_close: settingsData.require_help_topic_to_close.value,
-		allow_external_images: settingsData.allow_external_images.value,
+		// max_open_tickets: settingsData.max_open_tickets.value,
+		// human_verification: settingsData.human_verification.value,
+		// collaborator_tickets_visibility: settingsData.collaborator_tickets_visibility.value,
+		// claim_on_response: settingsData.claim_on_response.value,
+		// auto_refer_on_close: settingsData.auto_refer_on_close.value,
+		// require_help_topic_to_close: settingsData.require_help_topic_to_close.value,
+		// allow_external_images: settingsData.allow_external_images.value,
 	});
 
 	const handleChange = (entry) => {
@@ -119,10 +116,10 @@ export const TicketSettings = (props) => {
 					sx={{ width: 200 }}
 				>
 					<MenuItem value='Random'>Random</MenuItem>
-					<MenuItem value='Incrementing'>Incrementing</MenuItem>
+					{/* <MenuItem value='Incrementing'>Incrementing</MenuItem> */}
 				</StyledSelect>
 
-				<Stack>
+				{/* <Stack>
 					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 						Top-Level Ticket Counts
 					</Typography>
@@ -131,7 +128,7 @@ export const TicketSettings = (props) => {
 						control={<Checkbox checked={formState.top_level_ticket_counts === 'on' ? true : false} onChange={handleCheckBox} />}
 						label='Enable'
 					/>
-				</Stack>
+				</Stack> */}
 
 				<Stack sx={{ width: 200 }}>
 					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
@@ -184,31 +181,27 @@ export const TicketSettings = (props) => {
 					/>
 				</Stack>
 
-				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
+				{/* <Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Lock Semantics
 				</Typography>
 				<StyledSelect name='lock_semantics' value={formState.lock_semantics} onChange={handleChange} sx={{ width: 350 }}>
 					<MenuItem value='Disabled'>Disabled</MenuItem>
 					<MenuItem value='Lock on view'>Lock on view</MenuItem>
 					<MenuItem value='Lock on activity'>Lock on activity</MenuItem>
-				</StyledSelect>
+				</StyledSelect> */}
 
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 					Default Ticket Queue
 				</Typography>
-				<StyledSelect name='default_ticket_queue' value={formState.default_ticket_queue} onChange={handleChange} sx={{ width: 350 }}>
-					<MenuItem value='Open'>Open</MenuItem>
-					<MenuItem value='Closed'>Closed</MenuItem>
-					<MenuItem value='Unanswered'>Unanswered</MenuItem>
-					<MenuItem value='Overdue'>Overdue</MenuItem>
-					<MenuItem value='My Tickets'>My Tickets</MenuItem>
-					<MenuItem value='Today'>Today</MenuItem>
-					<MenuItem value='This Week'>This Week</MenuItem>
-					<MenuItem value='This Month'>This Month</MenuItem>
-					<MenuItem value='This Year'>This Year</MenuItem>
-				</StyledSelect>
+				<QueueSelect
+					hideLabel
+					handleInputChange={handleChange}
+					value={formState.default_ticket_queue}
+					name='default_ticket_queue'
+					sx={{ width: 200, pb: 3 }}
+				/>
 
-				<Stack>
+				{/* <Stack>
 					<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 1.5 }}>
 						Maximum Open Tickets
 					</Typography>
@@ -298,7 +291,7 @@ export const TicketSettings = (props) => {
 						control={<Checkbox checked={formState.allow_external_images === 'on' ? true : false} onChange={handleCheckBox} />}
 						label='Enable'
 					/>
-				</Stack>
+				</Stack> */}
 
 				<CircularButton
 					sx={{ py: 2, px: 6, width: 250 }}

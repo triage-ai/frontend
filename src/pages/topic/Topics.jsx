@@ -1,4 +1,4 @@
-import { Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
+import { Alert, Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -48,6 +48,7 @@ export const Topics = () => {
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
 	const [search, setSearch] = useState('');
+	const [confirmation, setConfirmation] = useState('');
 
 	useEffect(() => {
 		refreshTopics();
@@ -112,7 +113,13 @@ export const Topics = () => {
 			}}
 			AddResource={AddTopic}
 			refreshResource={refreshTopics}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -273,7 +280,7 @@ export const Topics = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddTopic handleEdited={handleEdited} editTopic={selectedTopic} />
+						<AddTopic handleEdited={handleEdited} editTopic={selectedTopic} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
@@ -312,7 +319,7 @@ export const Topics = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteTopic editTopic={selectedTopic} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+						<DeleteTopic editTopic={selectedTopic} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}

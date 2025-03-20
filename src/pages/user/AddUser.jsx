@@ -1,13 +1,14 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../components/custom-input';
 import { CircularButton } from '../../components/sidebar';
 import { useUserBackend } from '../../hooks/useUserBackend';
 
-export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
+export const AddUser = ({ handleCreated, handleEdited, editUser, setConfirmation }) => {
 	const { createUser, updateUser } = useUserBackend();
 
 	const [isFormValid, setIsFormValid] = useState(false);
+	const [notification, setNotification] = useState('')
 	const [formData, setFormData] = useState({
 		firstname: '',
 		lastname: '',
@@ -15,7 +16,7 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
 	});
 
 	const validateForm = () => {
-		return formData.firstname !== '' && formData.lastname !== '' && formData.email !== '';
+		return formData.firstname !== '' && formData.lastname !== '' && validateEmail(formData.email);
 	};
 
 	useEffect(() => {
@@ -28,6 +29,14 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
 			setFormData(editUser);
 		}
 	}, [editUser]);
+
+	const validateEmail = (email) => {
+		return String(email)
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			);
+	};
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -42,14 +51,16 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
 			updateUser(formData)
 				.then((res) => {
 					handleEdited();
+					setConfirmation('User successfully edited!')
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createUser(formData)
 				.then((res) => {
 					handleCreated();
+					setConfirmation('User successfully created!')
 				})
-				.catch((err) => console.error(err));
+				.catch((err) => setNotification(err.response.data.detail));
 		}
 	};
 
@@ -64,6 +75,12 @@ export const AddUser = ({ handleCreated, handleEdited, editUser }) => {
 					? 'Edit the details for this user'
 					: 'We will gather essential details about the new user. Complete the following steps to ensure accurate setup and access.'}
 			</Typography>
+
+			{notification && (
+				<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{mb: 2, border: '1px solid rgb(239, 83, 80);'}} >
+					{notification}
+				</Alert>	
+			)}
 
 			<Box
 				sx={{

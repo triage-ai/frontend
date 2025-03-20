@@ -2,13 +2,14 @@ import { Box, Stack, Typography } from '@mui/material';
 import { CircularButton } from '../../components/sidebar';
 import { useUserBackend } from '../../hooks/useUserBackend';
 
-export const DeleteUser = ({ editUser, handleDelete, handleClose }) => {
+export const DeleteUser = ({ editUser, handleDelete, handleClose, setConfirmation }) => {
 	const { removeUser } = useUserBackend();
 
 	const deleteUser = () => {
 		removeUser(editUser)
 			.then(res => {
 				handleDelete();
+				setConfirmation('User was deleted!')
 			})
 			.catch(err => console.error(err));
 	};

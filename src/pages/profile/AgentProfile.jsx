@@ -101,8 +101,9 @@ const profileSaveSig = async (signature, profileData, updateAgent, refreshAgent,
 	}
 };
 
-const profileSavePref = async (preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
+const profileSavePref = async (setPreferences, preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading) => {
 	try {
+		setPreferences(JSON.parse(preferences))
 		let updates = { ...profileData };
 		updates['preferences'] = preferences;
 		setCircleLoading(true);
@@ -269,6 +270,7 @@ const Account = ({ refreshAgent, profileData }) => {
 const Preferences = ({ refreshAgent, profileData }) => {
 	const [loading, setLoading] = useState(true);
 	const [circleLoading, setCircleLoading] = useState(false);
+	const { setPreferences } = useContext(AuthContext);
 	const { updateAgent } = useAgentBackend();
 	const { formattedQueues, refreshQueues } = useData()
 	const [formData, setFormData] = useState({
@@ -276,7 +278,7 @@ const Preferences = ({ refreshAgent, profileData }) => {
 		default_from_name: profileData.default_preferences.default_from_name,
 		agent_default_ticket_queue: profileData.default_preferences.agent_default_ticket_queue,
 		default_signature: profileData.default_preferences.default_signature,
-		editor_spacing: profileData.default_preferences.editor_spacing,
+		// editor_spacing: profileData.default_preferences.editor_spacing,
 		preferences: profileData.preferences,
 	});
 
@@ -327,10 +329,9 @@ const Preferences = ({ refreshAgent, profileData }) => {
 					onChange={handleChange}
 					sx={{ width: 435 }}
 				>
-					<MenuItem value='Email Name'>Email Address Name</MenuItem>
+					<MenuItem value='Email Address Name'>Email Address Name</MenuItem>
 					<MenuItem value='Department Name'>Department Name</MenuItem>
 					<MenuItem value='My Name'>My Name</MenuItem>
-					<MenuItem value='System Default'>System Default</MenuItem>
 				</StyledSelect>
 			</Stack>
 
@@ -372,7 +373,7 @@ const Preferences = ({ refreshAgent, profileData }) => {
 				</StyledSelect>
 			</Stack>
 
-			<Stack direction='row' spacing={2} alignItems='center' pb={4}>
+			{/* <Stack direction='row' spacing={2} alignItems='center' pb={4}>
 				<Typography variant='subtitle1' pr={25.8}>
 					Editor Spacing:
 				</Typography>
@@ -385,11 +386,11 @@ const Preferences = ({ refreshAgent, profileData }) => {
 					<MenuItem value='Single'>Single</MenuItem>
 					<MenuItem value='Double'>Double</MenuItem>
 				</StyledSelect>
-			</Stack>
+			</Stack> */}
 
 			<CircularButton
 				sx={{ py: 2, px: 6, width: 250 }}
-				onClick={() => profileSavePref(formData.preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading)}
+				onClick={() => profileSavePref(setPreferences, formData.preferences, profileData, updateAgent, refreshAgent, setLoading, setCircleLoading)}
 				disabled={loading || circleLoading}
 			>
 				{circleLoading ? <CircularProgress size={22} thickness={5} sx={{ color: '#FFF' }} /> : 'Save Changes'}

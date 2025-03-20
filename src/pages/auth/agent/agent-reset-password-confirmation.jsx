@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import '../../App.css';
-import AppIcon from '../../assets/app-icon-black.png';
-import logoBlack from '../../assets/logo-black.svg';
-import logo from '../../assets/logo-white.svg';
-
 import {
 	Box,
-	Button,
-	CircularProgress, TextField,
+	Button, TextField,
 	Typography,
 	styled
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Activity, Split, Tag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useUserBackend } from '../../hooks/useUserBackend';
+import { Activity, CheckCircle, Split, Tag } from 'lucide-react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import '../../../App.css';
+import logoBlack from '../../../assets/logo-black.svg';
+import logo from '../../../assets/logo-white.svg';
+import { useAgentBackend } from '../../../hooks/useAgentBackend';
 
 const ProviderButton = styled(Box)({
 	border: '2px solid #EFEFEF',
@@ -69,65 +66,24 @@ const RedirectButton = styled('a')({
 	},
 });
 
-export const UserSignUp = () => {
-	const [loading, setLoading] = useState(false);
+export const AgentResetPasswordConfirmation = () => {
 
-	const [email, setEmail] = useState('');
-	const [error, setError] = useState(false);
+	const { agent_id } = useParams()
+	const { resendResetPasswordEmail } = useAgentBackend()
 
-	const [firstname, setFirstname] = useState('');
-	const [lastname, setLastname] = useState('')
-
-	const [password, setPassword] = useState('');
-	const [passwordError, setPasswordError] = useState(false);
-
-	const { registerUser } = useUserBackend();
-
-	const navigate = useNavigate();
-
-	const signIn = async e => {
-		e.preventDefault();
-		setLoading(true);
-
-		if (validateEmail(email) && password !== '' && firstname !== '' && lastname !== '') {
-			registerUser({email, password, firstname, lastname})
-				.then(res => {
-					setLoading(false);
-					navigate('/signup/confirmation/' + res.data.user_id);
-				})
-				.catch(error => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					console.error(errorCode, errorMessage);
-					setLoading(false);
-				});
-
-		} else if (!validateEmail(email)) {
-			setError(true);
-			setLoading(false);
-		} else if (password === '') {
-			setPasswordError(true);
-			setLoading(false);
-		}
-	};
-
-	const validateEmail = email => {
-		return String(email)
-			.toLowerCase()
-			.match(
-				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-			);
-	};
-
-	const validateName = input => {
-		return input !== ''
+	const resendEmail = () => {
+		resendResetPasswordEmail(agent_id)
+		.catch(error => {
+			console.error(error);
+		});
+		window.location.reload();
 	}
 
 	return (
 		<Box
 			sx={{
 				width: '100%',
-				display: 'flex',
+				// display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				backgroundColor: '#FCFCFC',
@@ -338,7 +294,7 @@ export const UserSignUp = () => {
 							// backgroundColor: '#FCFCFC',
 						}}
 					>
-						<header className="App-header">
+						<header className="App-header-wide">
 							<Box
 								sx={{
 									width: '100%',
@@ -376,220 +332,49 @@ export const UserSignUp = () => {
 								</Typography> */}
 							</Box>
 
-							<img
+							{/* <img
 								src={AppIcon}
 								className="App-logo"
 								// style={{ width: '0px' }}
 								alt="logo"
-							/>
+							/> */}
 
-							<h1
+							<CheckCircle size={60} color='#34b233' />
+							<h5
 								style={{
-									fontSize: '3rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.03em',
-									marginTop: '30px',
-									marginBottom: '30px',
-								}}
-							>
-								User Sign Up
-							</h1>
-
-							{/* <p
-								style={{
-									fontSize: '0.875rem',
+									// fontSize: '0.95rem',
 									fontWeight: 600,
 									color: '#1B1D1F',
 									letterSpacing: '-0.01em',
 									lineHeight: 1.2,
-									marginTop: 0,
-									marginBottom: '20px',
+									marginTop: '20px',
+									marginBottom: 0,
 									textAlign: 'center',
 								}}
 							>
-								Sign in with a provider
-							</p>
-
-							<Box sx={{ display: 'flex', width: '100%', gap: '10px', mb: '35px' }}>
-								<ProviderButton onClick={loginWithSAML}>
-									<img
-										src={microsoftIcon}
-										alt="Microsoft Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Microsoft
-									</span>
-								</ProviderButton>
-
-								<ProviderButton>
-									<img
-										src={googleIcon}
-										alt="Google Icon"
-									/>
-									<span
-										style={{
-											fontSize: '0.9375rem',
-											fontWeight: 700,
-											color: '#1B1D1F',
-											marginLeft: '8px',
-										}}
-									>
-										Google
-									</span>
-								</ProviderButton>
-							</Box>
-
-							<hr style={{ width: '100%', border: '1px solid #EFEFEF', margin: 0 }} /> */}
-
-							{/* <span
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: '32px',
-									marginBottom: '25px',
-								}}
-							>
-								Or continue with email and password
-							</span> */}
+								Check Your Email
+							</h5>
 
 							<p
 								style={{
-									fontSize: '0.875rem',
+									fontSize: '0.8rem',
 									fontWeight: 600,
 									color: '#1B1D1F',
 									letterSpacing: '-0.01em',
 									lineHeight: 1.2,
-									marginTop: 0,
+									marginTop: '10px',
 									marginBottom: '20px',
 									textAlign: 'center',
 								}}
 							>
-								Sign up by entering your information
+								Follow the steps in the confirmation sent to your email
 							</p>
 
-							<form onSubmit={e => signIn(e)}>
-							<CustomTextField
-									label=""
-									id="firstname"
-									autoComplete="given-name"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="First name"
-									value={firstname}
-									onChange={event => {
-										if (validateName(email)) {
-											setError(false);
-										}
-										setFirstname(event.target.value);
-									}}
-								/>
-								<CustomTextField
-									label=""
-									id="lastname"
-									autoComplete="family-name"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Last name"
-									value={lastname}
-									onChange={event => {
-										if (validateName(email)) {
-											setError(false);
-										}
-										setLastname(event.target.value);
-									}}
-								/>
-								<CustomTextField
-									label=""
-									id="email"
-									autoComplete="username"
-									sx={{
-										mb: 1,
-										'& .MuiInputBase-root': {
-											border: error ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Your email"
-									// InputProps={{
-									// 	startAdornment: (
-									// 		<InputAdornment position="start">
-									// 			<Mail color="#575757" />
-									// 		</InputAdornment>
-									// 	),
-									// }}
-									value={email}
-									onChange={event => {
-										if (validateEmail(email)) {
-											setError(false);
-										}
-										setEmail(event.target.value);
-									}}
-								/>
-
-								<CustomTextField
-									label=""
-									id="password"
-									type="password"
-									autoComplete="current-password"
-									sx={{
-										'& .MuiInputBase-root': {
-											border: passwordError ? '2px solid #ff7474' : '2px solid transparent',
-										},
-									}}
-									placeholder="Your password"
-									// InputProps={{
-									// 	startAdornment: (
-									// 		<InputAdornment position="start">
-									// 			<Lock color="#575757" />
-									// 		</InputAdornment>
-									// 	),
-									// }}
-									value={password}
-									onChange={event => {
-										// if (validatePassword(password)) {
-										// 	setError(false);
-										// }
-										setPassword(event.target.value);
-									}}
-								/>
-								<p
-								style={{
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									color: '#1B1D1F',
-									letterSpacing: '-0.01em',
-									lineHeight: 1.2,
-									marginTop: 15,
-									marginBottom: '20px',
-									textAlign: 'center',
-								}}
-							>
-							</p>
-
-								<Button
+							<Button
 									sx={{
 										backgroundColor: '#22874E',
 										color: '#FFF',
 										borderRadius: '12px',
-										width: '100%',
 										fontSize: '0.9375rem',
 										fontWeight: 600,
 										lineHeight: 1,
@@ -606,27 +391,12 @@ export const UserSignUp = () => {
 											opacity: 0.4,
 										},
 									}}
-									type="submit"
-									disabled={loading || !validateEmail(email) || password === '' || firstname === '' || lastname === ''}
+									onClick={() => resendEmail()}
 								>
-									{loading ? (
-										<CircularProgress
-											size={22}
-											thickness={5}
-											sx={{ color: '#FFF' }}
-										/>
-									) : (
-										'Sign up'
-									)}
+									Resend Email
 								</Button>
-							</form>
 
-							{/* <Typography
-								variant="caption"
-								sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#9A9FA5' }}
-							>
-								Don't have an account? <RedirectButton onClick={goToAuth}>Sign up</RedirectButton>
-							</Typography> */}
+						
 						</header>
 					</div>
 				</Grid>

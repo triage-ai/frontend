@@ -23,7 +23,7 @@ export const EditableInput = ({ handleChange, value, variant, name }) => {
         <Box
             onBlur={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget)) {
-                    console.log('we hit this')
+                    // console.log('we hit this')
                     setEditMode(false)
                 }
             }}>
@@ -172,7 +172,7 @@ export const EditableSelect = ({ handleChange, value, variant, name, refresh, op
                     <Typography
                         variant={variant}
                         onClick={(e) => {
-                            console.log('on click typography')
+                            // console.log('on click typography')
                             setEditMode(true)
                         }}>
                         {options.find(option => option.value === value)?.label ?? ''}
@@ -186,9 +186,9 @@ function useLostFocus(ref, editMode, setEditMode) {
     useEffect(() => {
 
         function handleClickOutside(event) {
-            console.log('does the ref contain?:', ref?.current?.contains(event.target))
+            // console.log('does the ref contain?:', ref?.current?.contains(event.target))
             if (ref.current && !ref.current.contains(event.target)) {
-                console.log('this should flase')
+                // console.log('this should flase')
                 setEditMode(false)
             }
         }

@@ -1,15 +1,23 @@
-import { Alert, Box, Dialog, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, styled } from '@mui/material';
+import {
+	Alert,
+	Box,
+	Dialog, IconButton, Stack,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow, Typography, styled
+} from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
-import { Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
-import { AuthContext } from '../../context/AuthContext';
 import formatDate from '../../functions/date-formatter';
-import { useUserBackend } from '../../hooks/useUserBackend';
-import { AddUser } from './AddUser';
-import { DeleteUser } from './DeleteUser';
+import { useSLABackend } from '../../hooks/useSLABackend';
+import { AddSLA } from './AddSLA';
+import { DeleteSLA } from './DeleteSLA';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -38,63 +46,56 @@ export const SearchTextField = styled('input')({
 	},
 });
 
-export const Users = () => {
-	const { getAllUsersBySearch, resendConfirmationEmail } = useUserBackend();
-	const [page, setPage] = useState(0);
-	const [size, setSize] = useState(10);
-	const [totalUsers, setTotalUsers] = useState(0);
-	const [users, setUsers] = useState([]);
-	const [selectedUser, setSelectedUser] = useState({});
+export const SLAs = () => {
+	const { getAllSLAs, updateSLA, removeSLA } = useSLABackend();
+	const [page, setPage] = useState(0)
+	const [size, setSize] = useState(10)
+	const [totalSLAs, setTotalSLAs] = useState(0);
+	const [SLAs, setSLAs] = useState([]);
+	const [selectedSLA, setSelectedSLA] = useState({});
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
-	const [search, setSearch] = useState('');
-	const [confirmation, setConfirmation] = useState('');
-	const { agentAuthState, permissions } = useContext(AuthContext);
+    const [search, setSearch] = useState('');
+	const [confirmation, setConfirmation] = useState('')
 
 	useEffect(() => {
-		refreshUsers();
-	}, [page, size]);
-
+        refreshSLAs()
+    }, []);
+	
 	const handleChangePage = (e, newValue) => {
-		setPage(newValue);
-	};
+		setPage(newValue)
+	}
 
 	const handleChangeRowsPerPage = (e) => {
-		setSize(e.target.value);
-	};
+		setSize(e.target.value)
+		setPage(0)
+	}
 
-	const handleSearchChange = (e) => {
-		setSearch(e.target.value);
-	};
+    const handleSearchChange = (e) => {
+        setSearch(e.target.value)
+    }
 
-	const handleSearch = (e) => {
-		if (e.key === 'Enter') {
-			refreshUsers();
-		}
-	};
+    const handleSearch = (e) => {
+        if (e.key === "Enter") {
+            refreshSLAs()
+        }
+    }
 
-	const resendEmail = (user_id) => {
-		//Do some notification here
-		resendConfirmationEmail(user_id).catch((error) => {
-			console.error(error);
-		});
-		// window.location.reload();
-	};
+	const refreshSLAs = () => {
 
-	const refreshUsers = () => {
-		getAllUsersBySearch(search, page + 1, size)
-			.then((res) => {
-				setUsers(res.data.items);
-				setTotalUsers(res.data.total);
+		getAllSLAs(search, page + 1, size)
+			.then(res => {
+				setSLAs(res.data)
+				setTotalSLAs(res.data.length)
 			})
-			.catch((err) => {
+			.catch(err => {
 				console.error(err);
 			});
-	};
+	}
 
-	const handleDialogOpen = (user, button) => {
-		setSelectedUser(user);
+	const handleDialogOpen = (SLA, button) => {
+		setSelectedSLA(SLA);
 		setButtonClicked(button);
 
 		if (button === 'edit') {
@@ -110,7 +111,7 @@ export const Users = () => {
 
 	const handleEdited = () => {
 		handleDialogClose();
-		refreshUsers();
+		refreshSLAs();
 	};
 
 	const handleDeleteDialogClose = () => {
@@ -119,20 +120,19 @@ export const Users = () => {
 
 	const handleDelete = () => {
 		handleDeleteDialogClose();
-		refreshUsers();
+		refreshSLAs();
 	};
 
 	return (
 		<Layout
-			title={'User List'}
-			subtitle={'View your users and add new ones'}
+			title={'SLA List'}
+			subtitle={'View your SLAs and add new ones'}
 			buttonInfo={{
-				label: 'Add user',
-				icon: <UserRoundPlus size={20} />,
-				hidden: permissions.hasOwnProperty('user.create')
+				label: 'Add SLA',
+				icon: <Plus size={20} />,
 			}}
-			AddResource={AddUser}
-			refreshResource={refreshUsers}
+            AddResource={AddSLA}
+			refreshResource={refreshSLAs}
 			setConfirmation={setConfirmation}
 		>
 			{confirmation && (
@@ -142,14 +142,15 @@ export const Users = () => {
 			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
-					<Box sx={{ position: 'relative', width: '20%', opacity: 1 }}>
+					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
 						<SearchTextField
-							type='text'
-							label='Search'
-							variant='filled'
-							placeholder='Search'
-							onKeyDown={handleSearch}
-							onChange={handleSearchChange}
+							disabled
+							type="text"
+							label="Search"
+							variant="filled"
+							placeholder="Search"
+                            onKeyDown={handleSearch}
+                            onChange={handleSearchChange}
 							sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
 						/>
 						<Box
@@ -165,9 +166,12 @@ export const Users = () => {
 								justifyContent: 'center',
 							}}
 						>
-							<Search size={20} />
+							<Search
+								size={20}
+							/>
 						</Box>
 					</Box>
+
 				</Box>
 
 				<Table>
@@ -181,26 +185,26 @@ export const Users = () => {
 							}}
 						>
 							<TableCell>
-								<Typography variant='overline'>Name</Typography>
+								<Typography variant="overline">Name</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant='overline'>Status</Typography>
+								<Typography variant="overline">Grace Period</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant='overline'>Created</Typography>
+								<Typography variant="overline">Created</Typography>
 							</TableCell>
 							<TableCell>
-								<Typography variant='overline'>Updated</Typography>
+								<Typography variant="overline">Updated</Typography>
 							</TableCell>
-							<TableCell align='right'>
-								<Typography variant='overline'></Typography>
+							<TableCell align="right">
+								<Typography variant="overline"></Typography>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{users.map((user) => (
+						{SLAs.slice(page*size, page*size + size).map(SLA => (
 							<TableRow
-								key={user.user_id}
+								key={SLA.sla_id}
 								sx={{
 									'&:last-child td, &:last-child th': { border: 0 },
 									'& .MuiTableCell-root': {
@@ -210,39 +214,43 @@ export const Users = () => {
 									},
 								}}
 							>
-								<TableCell>{user.firstname + ' ' + user.lastname}</TableCell>
-								<TableCell>{user.status === 0 ? 'Complete' : user.status === 1 ? 'Pending' : 'Guest'}</TableCell>
-								<TableCell>{formatDate(user.created, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell>{formatDate(user.updated, 'MM-DD-YY hh:mm A')}</TableCell>
-								<TableCell component='th' scope='row' align='right'>
-									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
-										{permissions.hasOwnProperty('user.edit') && (
-												<IconButton
-													sx={{
-														'&:hover': {
-															background: '#f3f6fa',
-															color: '#105293',
-														},
-													}}
-													onClick={() => handleDialogOpen(user, 'edit')}
-												>
-													<Pencil size={18} />
-												</IconButton>
-										)}
+								<TableCell>{SLA.name}</TableCell>
+								<TableCell>{SLA.grace_period}</TableCell>
+								<TableCell>{formatDate(SLA.created, 'MM-DD-YY hh:mm A')}</TableCell>
+                                <TableCell>{formatDate(SLA.updated, 'MM-DD-YY hh:mm A')}</TableCell>
+								<TableCell
+									component="th"
+									scope="row"
+									align="right"
+								>
+									<Stack
+										direction="row"
+										spacing={0.5}
+										sx={{ justifyContent: 'flex-end' }}
+									>
+										<IconButton
+											sx={{
+												'&:hover': {
+													background: '#f3f6fa',
+													color: '#105293',
+												},
+											}}
+											onClick={() => handleDialogOpen(SLA, 'edit')}
+										>
+											<Pencil size={18} />
+										</IconButton>
 
-										{permissions.hasOwnProperty('user.delete') && (
-											<IconButton
-												sx={{
-													'&:hover': {
-														background: '#faf3f3',
-														color: '#921010',
-													},
-												}}
-												onClick={() => handleDialogOpen(user, 'delete')}
-											>
-												<Trash2 size={18} />
-											</IconButton>
-										)}
+										<IconButton
+											sx={{
+												'&:hover': {
+													background: '#faf3f3',
+													color: '#921010',
+												},
+											}}
+											onClick={() => handleDialogOpen(SLA, 'delete')}
+										>
+											<Trash2 size={18} />
+										</IconButton>
 									</Stack>
 								</TableCell>
 							</TableRow>
@@ -250,14 +258,14 @@ export const Users = () => {
 					</TableBody>
 				</Table>
 				<Box>
-					<TablePagination
-						component='div'
-						count={totalUsers}
-						page={page}
-						onPageChange={handleChangePage}
-						rowsPerPage={size}
-						onRowsPerPageChange={handleChangeRowsPerPage}
-					/>
+				<TablePagination
+					component="div"
+					count={totalSLAs}
+					page={page}
+					onPageChange={handleChangePage}
+					rowsPerPage={size}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 				</Box>
 			</WhiteContainer>
 
@@ -283,7 +291,7 @@ export const Users = () => {
 				>
 					<Box sx={{ maxWidth: '650px', margin: '14px auto 0px', textAlign: 'center' }}>
 						<IconButton
-							aria-label='close dialog'
+							aria-label="close dialog"
 							onClick={handleDialogClose}
 							sx={{
 								width: '40px',
@@ -301,7 +309,11 @@ export const Users = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddUser handleEdited={handleEdited} editUser={selectedUser} setConfirmation={setConfirmation} />
+						<AddSLA
+							handleEdited={handleEdited}
+							editSLA={selectedSLA}
+							setConfirmation={setConfirmation}
+						/>
 					</Box>
 				</Dialog>
 			)}
@@ -324,7 +336,7 @@ export const Users = () => {
 					<Box sx={{ textAlign: 'center' }}>
 						<Box sx={{ width: '100%', textAlign: 'right', pb: 2 }}>
 							<IconButton
-								aria-label='close dialog'
+								aria-label="close dialog"
 								onClick={handleDeleteDialogClose}
 								sx={{
 									width: '40px',
@@ -340,7 +352,12 @@ export const Users = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteUser editUser={selectedUser} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
+						<DeleteSLA
+							editSLA={selectedSLA}
+							handleDelete={handleDelete}
+							handleClose={handleDeleteDialogClose}
+							setConfirmation={setConfirmation}
+						/>
 					</Box>
 				</Dialog>
 			)}

@@ -1,34 +1,35 @@
-import { Box, IconButton, InputAdornment, Stack, styled, Tooltip, tooltipClasses, Typography } from '@mui/material';
+import { Alert, Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Stack, Typography } from '@mui/material';
 import { CircleHelp, Eye, EyeOff, Pencil, X } from 'lucide-react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { CustomFilledInput } from '../../../components/custom-input';
-import { CustomSelect } from '../../../components/custom-select';
 import { CircularButton } from '../../../components/sidebar';
-import { useEmailBackend } from '../../../hooks/useEmailBackend';
 import { HtmlTooltip } from '../../../components/tooltip';
+import { useEmailBackend } from '../../../hooks/useEmailBackend';
 
-export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
-	const [isFormValid, setIsFormValid] = useState(false);
+export const AddEmail = ({ handleCreated, handleEdited, editEmail, setConfirmation }) => {
+	const [isFormValid, setIsFormValid] = useState(false);  
 	const { updateEmail, createEmail } = useEmailBackend();
 	const [passwordExists, setPasswordExists] = useState(true);
 	const [emailChange, setEmailChange] = useState(true);
 	const [editable, setEditable] = useState(true);
 	const [showPassword, setShowPassword] = useState(false);
+	const [notification, setNotification] = useState(false);
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
 		email_from_name: '',
 		notes: '',
 		mail_server: '',
-		status: 'Not Active',
+		imap_active_status: 'off',
+		imap_server: '',
 	});
 
 	const validateSubmit = () => {
 		if (editEmail) {
-			return !emailChange || (emailChange && formData.email && formData.password && formData.mail_server && validateEmail(formData.email));
+			return (emailChange ? validateEmail(formData.email) && formData.password && formData.mail_server : true) && formData.mail_server && (formData.imap_active_status === 'on' ? formData.imap_server : true)
 		} else {
-			return formData.email && formData.password && formData.mail_server && validateEmail(formData.email);
+			return validateEmail(formData.email) && formData.password && formData.mail_server && (formData.imap_active_status === 'on' ? formData.imap_server : true)
 		}
 	};
 
@@ -47,7 +48,8 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 				email_from_name: editEmail.email_from_name,
 				notes: editEmail.notes,
 				mail_server: editEmail.mail_server,
-				status: editEmail.status,
+				imap_active_status: editEmail.imap_active_status === 1 ? 'on' : 'off',
+				imap_server: editEmail.imap_server,
 			});
 			setPasswordExists(false);
 			setEmailChange(false);
@@ -55,10 +57,16 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 	}, [editEmail]);
 
 	const handleChange = (entry) => {
-		console.log(formData);
 		setFormData({
 			...formData,
 			[entry.target.name]: entry.target.value,
+		});
+	};
+
+	const handleCheckBox = (event) => {
+		setFormData({
+			...formData,
+			[event.target.name]: event.target.checked ? 'on' : 'off',
 		});
 	};
 
@@ -67,35 +75,36 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 	};
 
 	const handleAction = () => {
+		formData['imap_active_status'] = formData.imap_active_status === 'on' ? 1 : 0
 		if (editEmail) {
-			try {
-				let updates = { ...editEmail };
-				if (!emailChange) {
-					formData['password'] = editEmail.password;
-					formData['status'] = editEmail.status;
-				}
-				Object.entries(formData).forEach((update) => {
-					updates[update[0]] = update[1];
-				});
-				console.log(updates);
-				updateEmail(updates)
-					.then((res) => {
-						handleEdited();
-					})
-					.catch((err) => console.error(err));
-			} catch (error) {
-				console.error(error);
+			let updates = { ...editEmail };
+			if (!emailChange) {
+				formData['password'] = editEmail.password;
 			}
+			Object.entries(formData).forEach((update) => {
+				updates[update[0]] = update[1];
+			});
+			updateEmail(updates)
+				.then((res) => {
+					handleEdited();
+					setConfirmation('Email successfully edited!')
+				})
+				.catch((err) => {
+					console.error(err);
+					setNotification(err.response?.data?.detail);
+					formData['imap_active_status'] = 'off'
+				})
 		} else {
-			try {
-				createEmail(formData)
-					.then((res) => {
-						handleCreated();
-					})
-					.catch((err) => console.error(err));
-			} catch (error) {
-				console.error(error);
-			}
+			createEmail(formData)
+				.then((res) => {
+					handleCreated();
+					setConfirmation('Email successfully created!')
+				})
+				.catch((err) => {
+					console.error(err)
+					setNotification(err.response?.data?.detail);
+					formData['imap_active_status'] = 'off'
+				});
 		}
 	};
 
@@ -110,7 +119,7 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 		setEditable(false);
 		setFormData((p) => ({
 			...p,
-			status: 'Not Active',
+			imap_active_status: 'off',
 		}));
 	};
 
@@ -119,7 +128,8 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 			...p,
 			email: editEmail.email,
 			password: '',
-			status: editEmail.status,
+			imap_active_status: editEmail.active === 1 ? 'on' : 'off',
+			imap_server: editEmail.imap_server,
 		}));
 		setEmailChange(false);
 		setPasswordExists(false);
@@ -135,6 +145,12 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 			<Typography variant='subtitle2'>
 				{editEmail ? 'Edit email information.' : 'Please fill out the following information for the new email.'}
 			</Typography>
+
+			{notification && (
+				<Alert severity="error" onClose={() => setNotification('')} icon={false} sx={{mb: 2, border: '1px solid rgb(239, 83, 80);'}} >
+					{notification}
+				</Alert>	
+			)}
 
 			<Box
 				sx={{
@@ -217,14 +233,15 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 											title={
 												<React.Fragment>
 													<Typography color='inherit'>Email Password</Typography>
-													{'The password provided here will not be the regular password used to log in.'}
-													{' This feature is only supported for Gmail. After creating a Gmail or if you have a Gmail already,'}
-													{'make sure to enable 2FA under Account Settings > Security and head to'}{' '}
-													<a href='https://myaccount.google.com/apppasswords'>this website</a>
+													{'The password provided here will not be the regular password used to log in to your email.'}
+													{' This feature is usually only supported for accounts that have 2FA/MFA, but consult'}
+													{' your email service provider\'s documentation on third-party app passwords to see if'}
+													{' 2FA/MFA is required to generate an app password.'}
 													<br />
 													<br />
-													{'Pick a name that will specify this an App Password for this website and copy the password generated by Google.'}
-													{' Paste this as the password into the box to the left.'}
+													{'Find where the app password settings are (usually in the security or privacy tab where 2FA/MFA was at).'}
+													{' Pick a name that will signify you are using an app password for this site so you can monitor and revoke it when needed.'}
+													{' Then, copy and paste the generated password into this box.'}
 												</React.Fragment>
 											}
 											placement='right'
@@ -240,10 +257,8 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 					</Stack>
 				)}
 
-				<Typography variant='subtitle1' sx={{ mt: 2, mb: 1 }}>
-					Email Server
-				</Typography>
-				<CustomSelect
+
+				{/* <CustomSelect
 					label='Email Server'
 					onChange={handleChange}
 					value={formData?.mail_server}
@@ -251,7 +266,85 @@ export const AddEmail = ({ handleCreated, handleEdited, editEmail }) => {
 					mb={2}
 					fullWidth
 					options={[{ label: 'smtp.gmail.com', value: 'smtp.gmail.com' }]}
+				/> */}
+				
+				<CustomFilledInput 
+					label='Email Server' 
+					onChange={handleChange} 
+					value={formData?.mail_server} 
+					name='mail_server' 
+					fullWidth 
+					mb={2} 
+					mt={2} 
+					endAdornment={
+						<InputAdornment position='end'>
+							<HtmlTooltip
+								title={
+									<React.Fragment>
+										<Typography color='inherit'>SMTP Server</Typography>
+										{'This will control your '}<b>Outgoing Mail</b>{'.'}
+										{' This will allow you to send emails with the provided email address through the site, which you can set up in the "Email Settings" tab.'}
+										{' Visit your email provider’s support page and search for SMTP settings. Most providers'}
+										{' list them in their help documentation. You can also try looking up "[Your Email Provider]'}
+										{' SMTP server" to find the correct server. This will typically begin with "smtp" and'}
+										{' have some unique name following it that signifies it is that provider\'s SMTP server'}
+
+									</React.Fragment>
+								}
+								placement='right'
+								arrow
+							>
+								<CircleHelp size={20} />
+							</HtmlTooltip>
+						</InputAdornment>
+					}
+					/>
+
+
+				<FormControlLabel
+					name='imap_active_status'
+					control={<Checkbox checked={formData.imap_active_status === 'on' ? true : false} onChange={handleCheckBox} />}
+					label={
+						<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
+							Enable IMAP Server
+						</Typography>
+					}
 				/>
+				
+				<CustomFilledInput 
+					label='IMAP Mail Server' 
+					onChange={handleChange} 
+					value={formData?.imap_server} 
+					disabled={formData.imap_active_status === 'off' ? true : false} 
+					name='imap_server' 
+					fullWidth 
+					mb={2}
+					endAdornment={
+						<InputAdornment position='end'>
+							<HtmlTooltip
+								title={
+									<React.Fragment>
+										<Typography color='inherit'>IMAP Server</Typography>
+										{'This will control your '}<b>Incoming Mail</b>{'.'}
+										{' This will allow you to enable emails\' inboxes to be monitored and have any emails sent automatically turn into tickets.'}
+										{' Visit your email provider’s support page and search for IMAP settings. Most providers'}
+										{' list them in their help documentation. You can also try looking up "[Your Email Provider]'}
+										{' IMAP server" to find the correct server. This will typically begin with "imap" and'}
+										{' have some unique name following it that signifies it is that provider\'s IMAP server'}
+										{' Some providers may have IMAP disabled by default, so you must enable it in the IMAP settings before submitting.'}
+										<b> This feature is best supported by Gmail, but is also supported by AOL, Yahoo and iCloud mail. Support for Outlook will be added soon.</b>
+
+									</React.Fragment>
+								}
+								placement='right'
+								arrow
+							>
+								<CircleHelp size={20} />
+							</HtmlTooltip>
+						</InputAdornment>
+					} 
+				/>
+			
 
 				<Typography variant='h4' sx={{ fontWeight: 600, mt: 3, mb: 2 }}>
 					Optional information

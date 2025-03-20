@@ -5,7 +5,7 @@ import { CircularButton } from '../../components/sidebar';
 import { TransferList } from '../../components/transfer-list';
 import { useRoleBackend } from '../../hooks/useRoleBackend';
 
-export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
+export const AddRole = ({ handleCreated, handleEdited, editRole, setConfirmation }) => {
 	const { createRole, updateRole, getRolePermissions } = useRoleBackend();
 
 	const [isFormValid, setIsFormValid] = useState(false);
@@ -94,12 +94,14 @@ export const AddRole = ({ handleCreated, handleEdited, editRole }) => {
 			updateRole(data)
 				.then((res) => {
 					handleEdited();
+					setConfirmation('Role edited succesfully!')
 				})
 				.catch((err) => console.error(err));
 		} else {
 			createRole(data)
 				.then((res) => {
 					handleCreated();
+					setConfirmation('Role created successfully!')
 				})
 				.catch((err) => console.error(err));
 		}

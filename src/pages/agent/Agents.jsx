@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Box,
 	Dialog,
 	FormControl,
@@ -15,8 +16,9 @@ import {
 	styled,
 } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
-import { ChevronDown, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
+import { ChevronDown, Mail, Pencil, Search, Trash2, UserRoundPlus, X } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
+import { StyledInput } from '../../components/custom-select';
 import { Layout } from '../../components/layout';
 import { Transition } from '../../components/sidebar';
 import { WhiteContainer } from '../../components/white-container';
@@ -26,7 +28,6 @@ import { useDepartmentBackend } from '../../hooks/useDepartmentBackend';
 import { useGroupBackend } from '../../hooks/useGroupBackend';
 import { AddAgent } from './AddAgent';
 import { DeleteAgent } from './DeleteAgent';
-import { CustomInput, StyledInput } from '../../components/custom-select';
 
 export const SearchTextField = styled('input')({
 	width: '100%',
@@ -59,7 +60,7 @@ export const SearchTextField = styled('input')({
 export const Agents = () => {
 	const { getAllDepartments } = useDepartmentBackend();
 	const { getAllGroups } = useGroupBackend();
-	const { getAllAgentsByDeptAndGroup } = useAgentBackend();
+	const { getAllAgentsByDeptAndGroup, resendConfirmationEmail } = useAgentBackend();
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
 	const [totalAgents, setTotalAgents] = useState(0);
@@ -72,6 +73,7 @@ export const Agents = () => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [buttonClicked, setButtonClicked] = useState('');
+	const [confirmation, setConfirmation] = useState('');
 	const { agentAuthState } = useContext(AuthContext);
 
 	useEffect(() => {
@@ -84,13 +86,13 @@ export const Agents = () => {
 			.catch((err) => {
 				console.error(err);
 			});
-		getAllGroups()
-			.then((res) => {
-				setGroups(res.data);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		// getAllGroups()
+		// 	.then((res) => {
+		// 		setGroups(res.data);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.error(err);
+		// 	});
 	}, []);
 
 	useEffect(() => {
@@ -153,6 +155,18 @@ export const Agents = () => {
 		setGroup(e.target.value);
 	};
 
+	const resendEmail = (agent_id) => {
+		//Do some notification stuff here
+		resendConfirmationEmail(agent_id)
+		.then(() => {
+			setConfirmation('Confirmation email was resent if an email was configured')
+		})
+		.catch(error => {
+			console.error(error);
+		});
+		// window.location.reload();
+	}
+
 	return (
 		<Layout
 			title={'Agent List'}
@@ -164,7 +178,13 @@ export const Agents = () => {
 			}}
 			AddResource={AddAgent}
 			refreshResource={refreshAgents}
+			setConfirmation={setConfirmation}
 		>
+			{confirmation && (
+				<Alert severity="success" onClose={() => setConfirmation('')} icon={false} sx={{mb: 2, border: '1px solid rgb(129, 199, 132);'}} >
+					{confirmation}
+				</Alert>	
+			)}
 			<WhiteContainer noPadding>
 				<Box sx={{ display: 'flex', alignItems: 'center', py: 1.75, px: 2.25 }}>
 					<Box sx={{ position: 'relative', width: '20%', opacity: 0.2 }}>
@@ -287,6 +307,9 @@ export const Agents = () => {
 							<TableCell>
 								<Typography variant='overline'>Phone</Typography>
 							</TableCell>
+							<TableCell>
+								<Typography variant='overline'>Status</Typography>
+							</TableCell>
 							<TableCell align='right'>
 								<Typography variant='overline'></Typography>
 							</TableCell>
@@ -312,9 +335,24 @@ export const Agents = () => {
 								<TableCell>{agent.department.name}</TableCell>
 								<TableCell>{agent.email}</TableCell>
 								<TableCell>{agent.phone}</TableCell>
+								<TableCell>{agent.status === 0 ? 'Complete' : 'Pending'}</TableCell>
 								<TableCell component='th' scope='row' align='right'>
 									<Stack direction='row' spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
-										{agentAuthState.isAdmin && (
+										{agent.status === 0 ? (
+											agentAuthState.isAdmin && (
+												<IconButton
+													sx={{
+														'&:hover': {
+															background: '#f3f6fa',
+															color: '#105293',
+														},
+													}}
+													onClick={() => handleDialogOpen(agent, 'edit')}
+												>
+													<Pencil size={18} />
+												</IconButton>
+											)
+										) : (
 											<IconButton
 												sx={{
 													'&:hover': {
@@ -322,9 +360,9 @@ export const Agents = () => {
 														color: '#105293',
 													},
 												}}
-												onClick={() => handleDialogOpen(agent, 'edit')}
+												onClick={() => resendEmail(agent.agent_id)}
 											>
-												<Pencil size={18} />
+												<Mail size={18} />
 											</IconButton>
 										)}
 
@@ -399,7 +437,7 @@ export const Agents = () => {
 							<X size={20} />
 						</IconButton>
 
-						<AddAgent handleEdited={handleAgentEdited} editAgent={selectedAgent} />
+						<AddAgent handleEdited={handleAgentEdited} editAgent={selectedAgent} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
@@ -438,7 +476,7 @@ export const Agents = () => {
 							</IconButton>
 						</Box>
 
-						<DeleteAgent editAgent={selectedAgent} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} />
+						<DeleteAgent editAgent={selectedAgent} handleDelete={handleDelete} handleClose={handleDeleteDialogClose} setConfirmation={setConfirmation} />
 					</Box>
 				</Dialog>
 			)}
