@@ -110,16 +110,16 @@ export const Landing = () => {
 					How can we help?
 				</Typography>
 				<Box sx={{ width: '60%', maxWidth: '700px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
-					<SearchTextField
+					{/* <SearchTextField
 						type="text"
 						label="Search"
 						variant="filled"
 						placeholder="Search"
 						disabled
 						sx={{ '&:hover': { borderColor: '#E5EFE9' } }}
-					/>
+					/> */}
 
-					<Box
+					{/* <Box
 						sx={{
 							py: '10px',
 							width: '42px',
@@ -137,7 +137,7 @@ export const Landing = () => {
 							size={20}
 							color="#FCFCFC"
 						/>
-					</Box>
+					</Box> */}
 				</Box>
 			</Box>
 			<Box width='calc(100% - 45px)' mt={3}>
